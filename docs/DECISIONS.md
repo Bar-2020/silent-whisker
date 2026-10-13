@@ -18,6 +18,6 @@ Missing decision mid-phase: add the next free `D-nn` with a recommendation, then
 | D-11 | Donations: a link to a hosted page (Ko-fi, Buy Me a Coffee, PayPal). No payment code. | proposed |
 | D-12 | No push notifications in v1. Alerts show on the map and in a list. | proposed |
 | D-13 | AWS region: pick in Phase 1, where Rekognition and Bedrock Guardrails are both available. | open |
-| D-14 | Thresholds for "needs food" and "needs water" (hours). Food: 24 h since the last counted feeding log if it was a full bowl, 12 h if partial (accepted, see D-16). Water, highlight levels (and whether the early morning / late evening routine shows), never-logged spots and per-spot overrides: open. | open |
+| D-14 | Thresholds for "needs food" and "needs water" (hours). Food: 24 h since the last counted feeding log if it was a full bowl, 12 h if partial (accepted, see D-16). One highlight level per type, no "due soon" stage; the early morning and late evening routine is guidance text only (accepted). Water, never-logged spots and per-spot overrides: open. | open |
 | D-15 | Cost figures and the CloudFront free allowance were taken from search results, not the AWS pages. Re-check before Phase 1. | open |
 | D-16 | Feeding logs record the amount fed, chosen by the volunteer: full bowl (keeps the spot fed 24 h) or partial (12 h). Self-reported: the R-09 photo checks cannot judge quantity. | accepted |
