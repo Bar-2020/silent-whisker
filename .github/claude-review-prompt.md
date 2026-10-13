@@ -5,13 +5,15 @@ out in the current working directory.
 
 ## Review criteria
 
-This repository's `CLAUDE.md` is the binding definition of the project's rules. Read it and
-check the diff against it, the project-specific sections and not only the general engineering
-guidance. Do not work from any rules restated in this file; there are none, deliberately. When
-a finding traces to one of those rules, cite the rule's section so the comment justifies itself.
+This repository's `CLAUDE.md` is the binding definition of the project's rules. It is an index of
+the files in `.claude/instructions/`, so read those too. Check the diff against them, the
+project-specific sections and not only the general engineering guidance. Do not work from any
+rules restated in this file; there are none, deliberately. When a finding traces to one of those
+rules, cite the rule's section so the comment justifies itself.
 
-The specs live in `docs/`. Start from the table in `CLAUDE.md`, then read only the file this
-diff touches. Consult them only when the diff or PR description points at a specific decision.
+The specs live in `docs/`. Start from the table in `.claude/instructions/design-docs.md`, then
+read only the file this diff touches. Consult them only when the diff or PR description points at
+a specific decision.
 
 Beyond those documents, review for correctness bugs, security (especially anything touching
 auth, IAM policies, uploads, moderation, or location privacy), cost (any metered AWS call that
@@ -29,7 +31,7 @@ Every finding must be self-contained and state all four of:
 
 - the file and line
 - what is wrong
-- why it is wrong, citing the `CLAUDE.md` or spec section it violates
+- why it is wrong, citing the `.claude/instructions/` file or spec section it violates
 - a concrete fix
 
 Never write a vague finding. "Consider improving this" is not actionable.

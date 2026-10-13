@@ -12,7 +12,7 @@ import { join, dirname, resolve, relative, extname } from 'path';
  */
 
 const REPO_ROOT = resolve(__dirname, '..');
-const SCANNED_DIRS = ['docs'];
+const SCANNED_DIRS = ['docs', '.claude/instructions'];
 const SCANNED_ROOT_FILES = ['README.md', 'CLAUDE.md'];
 
 function walk(dir: string): string[] {
