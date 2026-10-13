@@ -7,8 +7,8 @@ import tseslint from 'typescript-eslint';
 // Hebrew is the primary language and the layout is fully right-to-left, so
 // physical edges are always wrong in styles. `start`/`end` (CSS logical
 // properties) flip with the writing direction; `left`/`right` do not. See
-// CLAUDE.md "RTL-safe styles". Plain .css files get the same check from
-// stylelint once the web app exists.
+// .claude/instructions/hard-rules.md "RTL-safe styles". Plain .css files get the same check
+// from stylelint once the web app exists.
 const PHYSICAL_EDGE_PROPS = [
   'left',
   'right',
@@ -33,7 +33,7 @@ const PHYSICAL_EDGE_PROPS = [
 // `const { left, right } = rect` is an ObjectPattern and perfectly correct.
 const RTL_SELECTORS = PHYSICAL_EDGE_PROPS.map((name) => ({
   selector: `ObjectExpression > Property[key.name="${name}"], ObjectExpression > Property[key.value="${name}"]`,
-  message: `"${name}" is a physical edge and does not flip in RTL. Use the logical equivalent (start/end) instead. CLAUDE.md, RTL-safe styles.`,
+  message: `"${name}" is a physical edge and does not flip in RTL. Use the logical equivalent (start/end) instead. .claude/instructions/hard-rules.md, RTL-safe styles.`,
 }));
 
 export default defineConfig(

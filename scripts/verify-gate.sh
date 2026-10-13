@@ -27,7 +27,7 @@ cd "$(git rev-parse --show-toplevel 2>/dev/null || echo .)" || exit 0
 PATHS=(
   'src' 'infra' 'functions' '__tests__'
   'package.json' 'tsconfig.json' 'eslint.config.js' '.prettierrc' '.prettierignore' '.fallowrc.json'
-  'docs' 'README.md' 'CLAUDE.md'
+  'docs' '.claude/instructions' 'README.md' 'CLAUDE.md'
 )
 
 if [ -z "$(git status --porcelain -- "${PATHS[@]}" 2>/dev/null)" ]; then
