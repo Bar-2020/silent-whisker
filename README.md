@@ -14,7 +14,7 @@ npm run verify   # typecheck, lint, tests, fallow audit
 ```
 
 Development is spec driven: [docs/](docs/PRODUCT.md) is the source of truth and
-[CLAUDE.md](CLAUDE.md) holds the rules.
+[CLAUDE.md](CLAUDE.md) indexes the rules in `.claude/instructions/`.
 
 ## Contributing
 
