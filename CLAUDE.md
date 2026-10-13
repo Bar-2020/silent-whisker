@@ -1,20 +1,39 @@
 # CLAUDE.md
 
-Each section lives in its own file in `.claude/instructions/`. Only this index is always loaded:
-open a file when its note applies, before you start the work it covers.
+Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
+
+**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+
+Longer guidelines live in `.claude/instructions/`. Open a file when its note applies, before you
+start the work it covers. The hard rules and working style are imported below, so they always load.
 
 | File | What it holds, and when to read it |
 |---|---|
-| [behavioral-guidelines.md](.claude/instructions/behavioral-guidelines.md) | Preamble to the four guidelines below: caution over speed, judgment on trivial tasks |
-| [think-before-coding.md](.claude/instructions/think-before-coding.md) | State assumptions, surface tradeoffs, ask when unclear. Before any non-trivial task |
+| [think-before-coding.md](.claude/instructions/think-before-coding.md) | State assumptions, ask when unclear. Before any non-trivial task |
 | [simplicity-first.md](.claude/instructions/simplicity-first.md) | Minimum code, nothing speculative. Before writing code |
-| [surgical-changes.md](.claude/instructions/surgical-changes.md) | Touch only what the request needs, clean up only your own orphans. Before editing existing code |
-| [goal-driven-execution.md](.claude/instructions/goal-driven-execution.md) | Turn the task into verifiable goals and loop until verified. Before multi-step work |
-| [design-docs.md](.claude/instructions/design-docs.md) | The five specs in `docs/` and which to read first. Before a task that touches behavior or specs |
-| [project.md](.claude/instructions/project.md) | What Silent Whisker is: audience, languages, hosting, funding. When you need product context |
-| [hard-rules.md](.claude/instructions/hard-rules.md) | Ten non-negotiables: server enforcement, `t('key')`, RTL, UTC, privacy, moderation, AWS cap. Before writing or reviewing any code |
-| [naming.md](.claude/instructions/naming.md) | `R-nn`, `D-nn`, `snake_case`, never renumber. Before adding rules, decisions, stored fields or tests |
-| [folder-structure.md](.claude/instructions/folder-structure.md) | Feature-based layout, features never import each other. Before creating or moving files |
-| [working-style.md](.claude/instructions/working-style.md) | One phase at a time, `npm run verify`, the spec wins, Conventional Commits. Before you start and before you say done |
+| [surgical-changes.md](.claude/instructions/surgical-changes.md) | Touch only what the request needs. Before editing existing code |
+| [goal-driven-execution.md](.claude/instructions/goal-driven-execution.md) | Verifiable goals, loop until verified. Before multi-step work |
+| [design-docs.md](.claude/instructions/design-docs.md) | The specs in `docs/` and which to read first. Before a task that touches behavior or specs |
 | [pre-pr-review.md](.claude/instructions/pre-pr-review.md) | Numbered `[R1]...` review with `/ponytail-review` and `/code-review`. Before opening a PR |
-| [current-state.md](.claude/instructions/current-state.md) | Which build phase the repo is in. Before planning |
+
+## Project: Silent Whisker
+
+A free, open-source (MIT) web app where volunteers map stray-cat feeding spots, log feedings and
+water with photo proof, flag cats in danger, and chat. Hebrew first, English second. Israel first.
+Runs on AWS inside the free tier where possible. Ads and donation links cover the rest.
+
+@.claude/instructions/hard-rules.md
+
+### Naming
+`R-nn` rules, `D-nn` decisions, `snake_case` for stored fields. Never renumber, never reuse. Cite
+the `R-nn` in the test that proves it.
+
+### Folder structure
+Feature-based. `src/features/<feature>/` owns its screens, components, hooks and data access.
+`src/shared/` only when a second feature needs it. **Features never import from each other.**
+`infra/` is the AWS CDK app, `functions/` the Lambda handlers.
+
+@.claude/instructions/working-style.md
+
+### Current state
+Phase 0: the verification harness only. No app code yet.
