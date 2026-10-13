@@ -1,8 +1,7 @@
 # Silent Whisker
 
-A free, open-source map of stray-cat feeding spots, built by volunteers. Log a feeding or fresh
-water with a photo, flag a cat in danger, find the spots that need help most. Hebrew first,
-English second.
+A free, open-source app made for helping stray cats, built by a cat lover. Log a feeding or fresh
+water with a photo, flag a cat in danger, find the spots that need help most, and share your favourite cats with the community.
 
 Status: early. Phase 0 (harness) only. See [docs/PRODUCT.md](docs/PRODUCT.md) for scope and build
 order.
@@ -27,3 +26,5 @@ enforces is a CLAUDE.md edit. See [.github/workflows/ci.yml](.github/workflows/c
 ## License
 
 [MIT](LICENSE)
+
+Made with <3 By Bar Almog
