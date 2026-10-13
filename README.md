@@ -18,10 +18,9 @@ Development is spec driven: [docs/](docs/PRODUCT.md) is the source of truth and
 
 ## Contributing
 
-Every PR runs `npm run verify` in CI, then gets an automatic review from Claude, posted as
-`[R1]`, `[R2]`, ... findings. The reviewer checks the diff against CLAUDE.md, so changing what it
-enforces is a CLAUDE.md edit. See [.github/workflows/ci.yml](.github/workflows/ci.yml) and
-[.github/claude-review-prompt.md](.github/claude-review-prompt.md).
+Every PR runs `npm run verify` in CI. The automatic Claude review (`[R1]`, `[R2]`, ... findings,
+checked against CLAUDE.md) is currently disabled. See [.github/workflows/ci.yml](.github/workflows/ci.yml)
+and [.github/claude-review-prompt.md](.github/claude-review-prompt.md).
 
 ## License
 
