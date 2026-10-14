@@ -17,6 +17,9 @@ proposed values that live in `src/constants/` (see [DECISIONS.md](DECISIONS.md))
 | R-10 | One counted feeding and one counted water log per spot per member per 3 hours. | Lambda |
 | R-11 | Photos are resized on the client to at most 1600 px and 500 KB before upload. | Lambda (size check) |
 | R-12 | A member can create at most 5 spots a day. | Lambda |
+| R-13 | From 375 px wide (iPhone XS) up to desktop, no screen scrolls sideways or is cut off, at phone, tablet and desktop widths. | CI viewport test |
+| R-14 | `he.json` and `en.json` have the same keys, and every `t()` key is type-checked against them. | Test, `tsc` |
+| R-15 | Municipal stations cannot be renamed, deactivated or deleted by members. Only the import changes them. | Lambda |
 
 ## Proof checks (R-09)
 

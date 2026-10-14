@@ -18,3 +18,12 @@ Draft. Lambda behind CloudFront. JSON. Errors are `{ "code": "SOME_CODE" }` with
 | `POST /reports` | member | Report content | |
 | `PATCH /me` | member | Update profile | `MODERATION_REJECTED` |
 | `POST /admin/users/{id}/ban`, `.../restrict-chat` | admin | Ban, restrict chat | `FORBIDDEN` |
+
+## Static files
+
+Same CloudFront distribution as the app (no CORS). Not Lambdas.
+
+| Path | Holds |
+|---|---|
+| `/locales/he.json`, `/locales/en.json` | All UI strings (D-20) |
+| `/data/municipal-spots.geojson` | Municipal feeding stations (D-22) |

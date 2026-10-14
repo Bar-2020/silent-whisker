@@ -6,7 +6,7 @@ fields `snake_case`. All times UTC ISO 8601. Every item has `status` and `create
 | Entity | Key fields | Notes |
 |---|---|---|
 | `users` | `user_id`, `display_name`, `city`, `avatar_key`, `status` (`active`/`banned`), `chat_restricted_until`, `is_admin`, counters (`cats_helped`, `feedings`, `waters`) | `user_id` is the Cognito subject |
-| `spots` | `spot_id`, `name`, `photo_key`, `address`, `lat`, `lng`, `geohash`, `approx_lat`, `approx_lng`, `active`, `last_fed_at`, `last_watered_at`, `created_by` | `approx_*` is computed once at creation. `lat`, `lng`, `address` never leave the server except via R-03 |
+| `spots` | `spot_id`, `name`, `photo_key`, `address`, `lat`, `lng`, `geohash`, `approx_lat`, `approx_lng`, `active`, `last_fed_at`, `last_watered_at`, `created_by`, `source`, `source_id` | `approx_*` is computed once at creation. `lat`, `lng`, `address` never leave the server except via R-03. `source` is `user` or a municipal source id; imports have no `created_by`. Municipal rows enter this table in Phase 4 (D-23) |
 | `logs` | `log_id`, `spot_id`, `user_id`, `kind` (`feeding`/`water`), `photo_key`, `counted` (bool), `photo_hash`, `status` | `counted` is the result of the R-09 checks |
 | `cats` | `cat_id`, `spot_id`, `name`, `photo_key`, `created_by`, `like_count`, `status` | One photo per sighting |
 | `comments` | `comment_id`, `cat_id`, `user_id`, `text`, `status` | |
@@ -25,3 +25,9 @@ fields `snake_case`. All times UTC ISO 8601. Every item has `status` and `create
 - Needs-food/water layer: computed in the client from `last_fed_at`, `last_watered_at`, `active`
   and the thresholds in `src/constants/`. No server job.
 - Spot page: logs, cats, messages by `spot_id`, newest first.
+
+## Static files (CDN, no table)
+
+Translations (`/locales/{lang}.json`) and municipal stations (`/data/municipal-spots.geojson`,
+schema in [SOURCES.md](SOURCES.md)). Both are built in git and deployed to S3, never written by a
+Lambda.

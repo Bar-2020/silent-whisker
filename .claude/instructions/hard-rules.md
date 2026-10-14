@@ -2,13 +2,21 @@
 - **Server enforces every rule.** Auth, privacy, moderation, caps, bans: all in Lambda or IAM.
   Client checks are UX, never enforcement. A rule that only exists in the client is not implemented.
 - **Every user-facing string goes through `t('key')`.** No hardcoded strings, not even placeholders.
+  Strings live only in `he.json` and `en.json` (same keys in both), served from the CDN, never
+  bundled.
 - **RTL-safe styles.** CSS logical properties (`margin-inline-start`, `inset-inline-end`,
   `text-align: start`), never `left`/`right`. Hebrew is the primary language.
+- **No inline styles.** No `style` attribute, no `element.style`. Styles live in a `.css` file beside
+  the component (CSS Modules). To vary a style, switch a class or a `data-*` attribute.
+- **Responsive from 375 px.** Mobile first; phone, tablet and desktop (R-13). Breakpoints are written
+  once, in `src/styles/`.
 - **All timestamps stored in UTC.** Convert at display time only.
 - **No hard deletes of user content.** Status changes only. Exceptions: account deletion, and
   quarantined uploads that moderation rejected (an S3 lifecycle rule expires them).
 - **TypeScript strict.** No `any`, no `@ts-ignore` to get past a real type error.
-- **Constants live in `src/constants/`** (limits, thresholds, caps). Never inline the numbers.
+- **Constants live in `src/constants/`** (limits, thresholds, caps, timeouts, sizes, counts, radii).
+  No magic numbers in logic: a numeric literal other than 0, 1 or -1 is a lint error. Visual values
+  (spacing, colours) live in `src/styles/`.
 - **Nothing user-supplied is public until moderation approves it.** Photos and text. If the
   moderation call fails, the content stays hidden.
 - **Exact coordinates and addresses never leave the server** except to a signed-in member, within

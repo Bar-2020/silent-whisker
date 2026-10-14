@@ -36,6 +36,25 @@ const RTL_SELECTORS = PHYSICAL_EDGE_PROPS.map((name) => ({
   message: `"${name}" is a physical edge and does not flip in RTL. Use the logical equivalent (start/end) instead. .claude/instructions/hard-rules.md, RTL-safe styles.`,
 }));
 
+// Styles live in a .css file beside the component, never in the markup or on
+// an element. See .claude/instructions/hard-rules.md "No inline styles".
+const NO_INLINE_STYLE_MESSAGE =
+  'No inline styles. Move the rule to a .css file beside the component and switch a class or a data-* attribute. .claude/instructions/hard-rules.md, No inline styles.';
+const INLINE_STYLE_SELECTORS = [
+  'JSXAttribute[name.name="style"]',
+  'MemberExpression[property.name="style"]',
+].map((selector) => ({ selector, message: NO_INLINE_STYLE_MESSAGE }));
+
+// ESLint's no-magic-numbers lets `const LIMIT = 30` through anywhere, which
+// would leave limits scattered across logic files. Constants belong in
+// src/constants/, so a numeric top-level const is rejected everywhere else.
+const NUMERIC_CONST_MESSAGE =
+  'Numeric constants live in src/constants/. Move this one there and import it. .claude/instructions/hard-rules.md, Constants.';
+const NUMERIC_CONST_SELECTORS = [
+  'Program > VariableDeclaration > VariableDeclarator > Literal[value>1]',
+  'Program > ExportNamedDeclaration > VariableDeclaration > VariableDeclarator > Literal[value>1]',
+].map((selector) => ({ selector, message: NUMERIC_CONST_MESSAGE }));
+
 export default defineConfig(
   { ignores: ['node_modules/', 'dist/', 'cdk.out/', 'coverage/', '.claude/skills/'] },
   js.configs.recommended,
@@ -52,7 +71,34 @@ export default defineConfig(
         tsconfigRootDir: import.meta.dirname,
       },
     },
-    rules: { 'no-restricted-syntax': ['error', ...RTL_SELECTORS] },
+    rules: { 'no-restricted-syntax': ['error', ...RTL_SELECTORS, ...INLINE_STYLE_SELECTORS] },
+  },
+  {
+    // Business logic holds no magic numbers: limits, timeouts, sizes and counts
+    // are named in src/constants/. 0, 1 and -1 stay readable in place. Tests
+    // use literals freely. A later rule block replaces the earlier
+    // no-restricted-syntax list instead of merging, so this one repeats it.
+    files: ['src/**/*.{ts,tsx}', 'functions/**/*.ts'],
+    ignores: ['**/constants/**', '**/*.test.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-magic-numbers': [
+        'error',
+        {
+          ignore: [0, 1, -1],
+          ignoreArrayIndexes: true,
+          ignoreEnums: true,
+          ignoreNumericLiteralTypes: true,
+          ignoreReadonlyClassProperties: true,
+          ignoreTypeIndexes: true,
+        },
+      ],
+      'no-restricted-syntax': [
+        'error',
+        ...RTL_SELECTORS,
+        ...INLINE_STYLE_SELECTORS,
+        ...NUMERIC_CONST_SELECTORS,
+      ],
+    },
   },
   {
     // Tests parse the repo's own trusted markdown, never untrusted input, so
