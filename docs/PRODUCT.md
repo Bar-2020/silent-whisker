@@ -24,9 +24,30 @@ first, English second. Israel first.
 6. **Places**: vets and organisations that help strays, as map points of interest.
 7. **Chat**: small, per spot or per cat. Automatic moderation.
 8. **Profile**: avatar, name, city, stats (cats helped, feedings, water given).
-9. **Languages**: Hebrew (default, RTL) and English.
+9. **Languages**: Hebrew (default, RTL) and English. Every string is in `he.json` and `en.json`,
+   served from the CDN (D-20, R-14).
+10. **Municipal stations**: feeding stations cities have already installed, imported from public
+    sources and shown as read-only spots ([SOURCES.md](SOURCES.md), D-22).
 
 All photos and all text (names, cat names, spot names, chat) are moderated (R-04).
+
+## Devices
+
+One responsive app for phone, tablet and desktop, designed mobile first. The smallest screen is an
+iPhone XS (375 x 812 px); nothing scrolls sideways or is cut off from there up (R-13, D-18).
+
+## First run
+
+On the first load, before the map, one short screen says the browser is about to ask for location
+(to check that a log was made at the spot) and camera (to photograph the feeding as proof), and
+that both help keep the map accurate. One tap starts the browser prompts. Refusing never blocks the
+app: a log without location is saved as unverified (R-09). The profile explains how to turn a
+permission back on. No notification permission in v1 (D-12). See D-19.
+
+## Hosting and domain
+
+No domain is bought at the start: the app runs on its CloudFront address. Buy one before public
+launch (D-24).
 
 ## Location privacy
 
@@ -50,8 +71,10 @@ mode. Live (realtime) updates.
 One phase, one PR or smaller. Do not start a phase while the previous one is half built.
 
 0. Repo and harness: `npm run verify` green, CI, Stop hook.
-1. AWS infra and deploy pipeline (CDK, GitHub OIDC, budget alert, daily cap function).
-2. Map and spots, read only (approximate positions, Hebrew/English shell).
+1. AWS infra and deploy pipeline (CDK, GitHub OIDC, budget alert, daily cap function). The CDN
+   serves the app, `/locales/` and `/data/`.
+2. Map and spots, read only (approximate positions, Hebrew/English shell, responsive shell, first-run
+   screen, municipal stations layer from the static GeoJSON).
 3. Google sign-in, profile, create spot, moderated photo upload.
 4. Feeding and water logs with photo proof, and the "needs food/water" layer.
 5. Cats, likes, comments, chat.
