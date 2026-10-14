@@ -14,6 +14,7 @@ start the work it covers. The hard rules and working style are imported below, s
 | [surgical-changes.md](.claude/instructions/surgical-changes.md) | Touch only what the request needs. Before editing existing code |
 | [goal-driven-execution.md](.claude/instructions/goal-driven-execution.md) | Verifiable goals, loop until verified. Before multi-step work |
 | [design-docs.md](.claude/instructions/design-docs.md) | The specs in `docs/` and which to read first. Before a task that touches behavior or specs |
+| [extensibility.md](.claude/instructions/extensibility.md) | How to build so future change stays cheap. Before adding a feature, folder or shared module |
 | [pre-pr-review.md](.claude/instructions/pre-pr-review.md) | Numbered `[R1]...` review with `/ponytail-review` and `/code-review`. Before opening a PR |
 
 ## Project: Silent Whisker
