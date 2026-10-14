@@ -1,6 +1,6 @@
 ## Design docs
 
-**`docs/` is the source of truth.** Five short files, each capped at 150 lines (a test enforces it):
+**`docs/` is the source of truth.** Six short files, each capped at 150 lines (a test enforces it):
 
 | File | What it holds |
 |---|---|
@@ -9,6 +9,7 @@
 | [docs/DATA.md](../../docs/DATA.md) | Tables and the queries they serve |
 | [docs/API.md](../../docs/API.md) | Endpoint table |
 | [docs/DECISIONS.md](../../docs/DECISIONS.md) | The `D-nn` log: accepted, proposed, open |
+| [docs/AWS.md](../../docs/AWS.md) | AWS regions, prices and free-tier facts, with sources and dates |
 
 Read PRODUCT and RULES first, then only the file your task touches. If you edit a spec, keep it
 short: cut before you add.
