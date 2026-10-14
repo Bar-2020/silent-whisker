@@ -59,8 +59,7 @@ mechanism, not the map itself, is the thing a copycat can't fake.
 
 Volunteers use this outdoors, at the feeding spot, phone in hand, to log a feeding or water
 top-up on the spot (the proof-radius check requires it, R-09). Launch region is Israel
-(D-08); the AWS region decision itself is being settled by a live test (D-13). The product is
-Hebrew-first and RTL by default, with English as the secondary language.
+(D-08). The product is Hebrew-first and RTL by default, with English as the secondary language.
 
 ## Devices
 
@@ -127,7 +126,8 @@ visual work should not invent or assume any of these exist.
 ## Product Principles
 
 1. Privacy by default: exact locations and raw phone coordinates never leave the server except to
-   a signed-in member within the daily limit; everyone else gets an approximate area only.
+   a signed-in member within the daily limit; other members get an approximate area only, and
+   signed-out people get no map at all, just the sign-in screen (D-39).
 2. Every rule is enforced server-side; a client-only check is not an implemented rule.
 3. Trust through verification: a counted log proves the volunteer was physically at the spot,
    rather than relying on self-reported claims.
