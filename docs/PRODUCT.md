@@ -1,8 +1,19 @@
 # Product
 
+<!-- impeccable:product-schema 1 -->
+
 Silent Whisker is a free, open-source web app (installable PWA) where volunteers map stray-cat
 feeding spots, log feedings and water, flag cats in danger, and chat. Hebrew first, English
 second. Israel first.
+
+## Platform
+
+web
+
+## Stack
+
+React, Vite, TypeScript, react-leaflet, react-i18next. AWS: S3 + CloudFront, Lambda, DynamoDB,
+Cognito. CDK in TypeScript, deployed from GitHub Actions with OIDC (D-02).
 
 ## Who uses it
 
@@ -31,6 +42,21 @@ second. Israel first.
 
 All photos and all text (names, cat names, spot names, chat) are moderated (R-04). The profile
 picture is the member's own Google photo, shown only if they choose (D-21).
+
+## Positioning
+
+A Facebook group or a shared spreadsheet can list feeding spots, but it cannot prove a log is
+real. Silent Whisker's logs only count when the volunteer's phone is physically within the proof
+radius of the spot and the rate limits pass (R-09, D-16, D-18), so the "needs food/water" map
+layer (D-14, D-17) reflects verified activity, not self-reported claims. That verified-log
+mechanism, not the map itself, is the thing a copycat can't fake.
+
+## Operating Context
+
+Volunteers use this outdoors, at the feeding spot, phone in hand, to log a feeding or water
+top-up on the spot (the proof-radius check requires it, R-09). Launch region is Israel
+(D-08); the AWS region decision itself is being settled by a live test (D-13). The product is
+Hebrew-first and RTL by default, with English as the secondary language.
 
 ## Location privacy
 
@@ -66,3 +92,20 @@ One phase, one PR or smaller. Do not start a phase while the previous one is hal
 5. Cats, likes, comments, chat.
 6. Alerts, places, stats, ads, donation link, launch checklist (privacy policy, terms, Hebrew
    moderation test).
+
+## Evidence on Hand
+
+No logo, visual brand assets, or reference apps on hand yet (blank slate, confirmed). Future
+visual work should not invent or assume any of these exist.
+
+## Product Principles
+
+1. Privacy by default: exact locations and raw phone coordinates never leave the server except to
+   a signed-in member within the daily limit; everyone else gets an approximate area only.
+2. Every rule is enforced server-side; a client-only check is not an implemented rule.
+3. Trust through verification: a counted log proves the volunteer was physically at the spot,
+   rather than relying on self-reported claims.
+4. Cost-bounded by design: every metered call runs through a daily cap, so growth in usage can
+   never produce a surprise bill.
+5. Hebrew and Israel first: RTL and Hebrew moderation are launch requirements, not a later
+   localisation pass.
