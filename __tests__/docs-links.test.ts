@@ -146,3 +146,29 @@ describe('spec size budget', () => {
     expect(lines).toBeLessThanOrEqual(MAX_SPEC_LINES);
   });
 });
+
+/**
+ * A cited rule or decision that does not exist sends a reader to nothing. Every R-nn and D-nn a
+ * spec mentions must have a row in RULES.md or DECISIONS.md.
+ */
+function definedIds(file: string, prefix: string): Set<string> {
+  const ids = new Set<string>();
+  const source = readFileSync(join(REPO_ROOT, 'docs', file), 'utf8');
+  for (const [, id] of source.matchAll(new RegExp(`^\\| (${prefix}-\\d+) \\|`, 'gm'))) {
+    ids.add(id);
+  }
+  return ids;
+}
+
+describe('rule and decision references', () => {
+  const defined = new Set([...definedIds('RULES.md', 'R'), ...definedIds('DECISIONS.md', 'D')]);
+  const specs = readdirSync(join(REPO_ROOT, 'docs')).filter((f) => extname(f) === '.md');
+
+  it.each(specs)('docs/%s cites only defined R-nn and D-nn', (name) => {
+    const text = readFileSync(join(REPO_ROOT, 'docs', name), 'utf8');
+    const unknown = [...text.matchAll(/\b[RD]-\d+\b/g)]
+      .map(([id]) => id)
+      .filter((id) => !defined.has(id));
+    expect(unknown).toEqual([]);
+  });
+});
