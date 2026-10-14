@@ -7,3 +7,6 @@ coverage/
 .env
 .env.*
 !.env.example
+
+# Impeccable engine binary: the launcher downloads it on first use.
+.claude/skills/impeccable/scripts/bin/
