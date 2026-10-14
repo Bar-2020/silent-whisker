@@ -39,27 +39,26 @@ A GitHub Actions workflow, scheduled and manually triggerable (limits in `src/co
 2. Validate: inside Israel's bounds, required fields present, and a source's count has not dropped
    by more than the allowed share against the previous run (an outage must not empty the map).
 3. Diff against `data/municipal/municipal-spots.geojson`. No change, no pull request.
-4. Open a pull request with the new file. Merging runs the deploy job: upload to S3 through OIDC,
-   invalidate CloudFront.
+4. Open a pull request with the new file. Merging runs the deploy job, which loads the file into
+   the `spots` table (upsert by `source` and `source_id`; a station missing from the file becomes
+   `removed`).
 
 Why a pull request and not a Lambda: the diff is reviewed before it goes live, a revert is the
-rollback, there is nothing running in AWS, and no metered call exists to cap (R-05). Risk: GitHub
+rollback, nothing runs in AWS between releases (the deploy job's role may only write municipal rows),
+and no metered call exists to cap (R-05). Risk: GitHub
 pauses scheduled workflows in a repo with no activity for 60 days.
 
-## Output: one GeoJSON file on the CDN
+## Output: a GeoJSON file in git, rows in `spots`
 
-`/data/municipal-spots.geojson`, RFC 7946 (WGS84), all of Israel, same CloudFront distribution as
-the app (no CORS, D-36). Leaflet loads it natively. Estimated at about 1 MB raw for 3,000 stations
-and a fraction of that compressed (measure it). It works in Phase 2, before any Lambda exists.
+`data/municipal/municipal-spots.geojson`, RFC 7946 (WGS84), all of Israel. It is the reviewed artifact,
+not a public file. Sign-in is required (D-39), so stations reach members like every other spot, through
+the member-only API: approximate on the map, exact through the lookup (R-03, D-35). A public copy on
+the CDN was rejected: cheap and cached, but it would hand exact points to anyone. Names and addresses
+are shown as the city publishes them (Hebrew, no machine translation in v1).
 
 Per feature, `snake_case`: `id`, `name`, `address`, `city`, `source`, `precision`
 (`source_point`, `geocoded`, `manual`), `status` (`active`, `removed`). Top level: a `sources` map
 with `url`, `permission` and `fetched_at` (UTC) per source, so attribution is one lookup.
-
-| Alternative | Verdict |
-|---|---|
-| DynamoDB plus API only | Needed from Phase 4 so members can log at stations (D-35). Not needed to show them |
-| Per-area tiles, vector tiles (PMTiles) | Only past tens of thousands of points |
 
 ## Stable ids
 
@@ -104,9 +103,3 @@ in `permission`, and show "Data: <municipality>" on the map. If a municipality a
 3. Lists: Ramat HaSharon, then Jerusalem once access is sorted out.
 4. Freedom of Information requests for the rest. Retry OSM when Overpass answers. OSM data is ODbL
    share-alike, so decide before merging it.
-
-## Not doing
-
-Scraping news articles. Getting around a 403. Machine translation of Hebrew addresses (shown as
-published). Amazon Location geocoding (metered, R-05): geocode once offline and cache the result in
-git.
