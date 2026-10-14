@@ -9,7 +9,7 @@ proposed values that live in `src/constants/` (see [DECISIONS.md](DECISIONS.md))
 | R-02 | Visitors can read spots (approximate only). Every write requires sign-in. | Cognito authorizer |
 | R-03 | Exact coordinates and addresses go only to signed-in members, at most 30 lookups a day each. | Lambda |
 | R-04 | Nothing user-supplied is public until moderation approves it. If the check fails, it stays hidden. | Lambda, S3 quarantine |
-| R-05 | Every metered AWS call goes through one function that checks the daily cap. At the cap, uploads wait as pending. | Lambda |
+| R-05 | Every metered AWS call goes through one function that checks the daily cap. At the cap, uploads are refused until the cap resets. | Lambda |
 | R-06 | Timestamps are stored in UTC. | Lambda |
 | R-07 | User content is never hard deleted. Status changes only. | Lambda |
 | R-08 | Banned users cannot write. Chat-restricted users cannot post messages. | Lambda |
@@ -19,17 +19,18 @@ proposed values that live in `src/constants/` (see [DECISIONS.md](DECISIONS.md))
 | R-12 | A member can create at most 5 spots a day. | Lambda |
 | R-13 | A member has at most 30 counted feeding and water logs in any rolling 24 hours. | Lambda |
 | R-16 | A "this spot was empty" report needs the reporter within the proof radius of the spot, never disputes the reporter's own log, and is allowed once per spot per type (food or water) per member per 3 hours. | Lambda |
-| R-17 | A member can make at most 60 log or empty-report attempts a day, counted or not, and a refused attempt gets one identical answer whatever check failed. | Lambda |
+| R-17 | A member can make at most 60 log or empty-report attempts a day, counted or not, and a refused empty report gets one identical answer whatever check failed. | Lambda |
 
 ## Proof checks (R-09)
 
-A log is **counted** when all pass, otherwise it is saved as **unverified**: visible in the spot's
-history, but it does not reset the timers or add to stats. No photo is needed (D-18).
+A log is **counted** when the location check passes, otherwise it is saved as **unverified**:
+visible in the spot's history, but it does not reset the timers or add to stats. No photo is needed
+(D-18).
 
-1. The phone's location, read at the moment of submit, is within the proof radius (50 m) of the
-   spot and reports an accuracy of 50 m or better (D-25).
-2. R-10 is not exceeded.
-3. R-13 is not exceeded.
+- The phone's location, read at the moment of submit, is within the proof radius (50 m) of the
+  spot and reports an accuracy of 50 m or better (D-25).
+
+A log over R-10 or R-13 is refused and not saved (D-23).
 
 The answer to the member says only counted or unverified, never the distance. Every attempt counts
 toward R-17. The phone's own coordinates are not stored.
