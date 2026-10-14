@@ -6,7 +6,7 @@ proposed values that live in `src/constants/` (see [DECISIONS.md](DECISIONS.md))
 | ID | Rule | Enforced by |
 |---|---|---|
 | R-01 | The server enforces every rule below. Client checks are UX only. | Lambda, IAM |
-| R-02 | Visitors can read spots (approximate only). Every write requires sign-in. | Cognito authorizer |
+| R-02 | Replaced by R-22 (it let visitors read spots, approximate only). | |
 | R-03 | Exact coordinates and addresses go only to signed-in members, at most 30 lookups a day each. | Lambda |
 | R-04 | Nothing user-supplied is public until moderation approves it. If the check fails, it stays hidden. | Lambda, S3 quarantine |
 | R-05 | Every metered AWS call goes through one function that checks the daily cap. At the cap, uploads are refused until the cap resets. | Lambda |
@@ -20,6 +20,11 @@ proposed values that live in `src/constants/` (see [DECISIONS.md](DECISIONS.md))
 | R-13 | A member has at most 30 counted feeding and water logs in any rolling 24 hours. | Lambda |
 | R-16 | A "this spot was empty" report needs the reporter within the proof radius of the spot, never disputes the reporter's own log, and is allowed once per spot per type (food or water) per member per 3 hours. | Lambda |
 | R-17 | A member can make at most 60 log or empty-report attempts a day, counted or not, and a refused empty report gets one identical answer whatever check failed. | Lambda |
+| R-18 | From 360 px wide up to desktop, no screen scrolls sideways or is cut off, at phone, tablet and desktop widths. The iPhone XS (375 x 812 px) is the smallest iPhone tested. | CI viewport test |
+| R-19 | `he.json` and `en.json` have the same keys, and every `t()` key is type-checked against them. | Test, `tsc` |
+| R-20 | Municipal stations cannot be renamed, deactivated or deleted by members. Only the import changes them. | Lambda |
+| R-21 | Every endpoint and every file served is rate limited: per IP at the edge for the app files, `/locales/` and the API, and per member for writes. Over the limit the request is refused and nothing is saved (the API answers 429 with `Retry-After`, the edge 403). Every limit is a constant. | CloudFront WAF, Lambda |
+| R-22 | Every API route requires a valid sign-in. The only things served without one are the landing page, the privacy policy, the terms and the translation files. | Cognito authorizer |
 
 ## Proof checks (R-09)
 
@@ -42,7 +47,8 @@ fake them.
 ## Moderation (R-04)
 
 - **Photos**: uploaded to a private quarantine prefix, checked by Rekognition, copied to the public
-  prefix only if approved. Rejected uploads expire by S3 lifecycle rule.
+  prefix only if approved. Members see approved photos through short-lived signed URLs, never an
+  open address (D-39). Rejected uploads expire by S3 lifecycle rule.
 - **Profile pictures**: not uploaded in v1. The member's own Google account photo is shown as
   Google supplies it, only if the member chose to (D-21, D-27).
 - **Text**: checked by Bedrock Guardrails before the write is accepted. Comprehend toxicity is
