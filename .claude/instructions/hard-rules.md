@@ -22,3 +22,5 @@
 - **Exact coordinates and addresses never leave the server** except to a signed-in member, within
   the daily lookup limit (R-03).
 - **Every metered AWS call goes through one function that checks the daily cap** (R-05).
+- **Every endpoint and every file served is rate limited** (R-21). A new endpoint ships with its
+  limit in `src/constants/` and a test that calls it past the limit and expects a refusal.

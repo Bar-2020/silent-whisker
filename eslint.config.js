@@ -50,10 +50,17 @@ const INLINE_STYLE_SELECTORS = [
 // src/constants/, so a numeric top-level const is rejected everywhere else.
 const NUMERIC_CONST_MESSAGE =
   'Numeric constants live in src/constants/. Move this one there and import it. .claude/instructions/hard-rules.md, Constants.';
+// Any number but 0 and 1, fractions included, and the same behind a unary minus.
+// A string such as '10' is not a number and passes.
 const NUMERIC_CONST_SELECTORS = [
-  'Program > VariableDeclaration > VariableDeclarator > Literal[value>1]',
-  'Program > ExportNamedDeclaration > VariableDeclaration > VariableDeclarator > Literal[value>1]',
-].map((selector) => ({ selector, message: NUMERIC_CONST_MESSAGE }));
+  'Program > VariableDeclaration > VariableDeclarator',
+  'Program > ExportNamedDeclaration > VariableDeclaration > VariableDeclarator',
+]
+  .flatMap((declarator) => [
+    `${declarator} > Literal[value=type(number)]:not([value=0]):not([value=1])`,
+    `${declarator} > UnaryExpression[operator="-"] > Literal[value=type(number)]:not([value=1])`,
+  ])
+  .map((selector) => ({ selector, message: NUMERIC_CONST_MESSAGE }));
 
 export default defineConfig(
   { ignores: ['node_modules/', 'dist/', 'cdk.out/', 'coverage/', '.claude/skills/'] },
@@ -79,7 +86,7 @@ export default defineConfig(
     // use literals freely. A later rule block replaces the earlier
     // no-restricted-syntax list instead of merging, so this one repeats it.
     files: ['src/**/*.{ts,tsx}', 'functions/**/*.ts'],
-    ignores: ['**/constants/**', '**/*.test.{ts,tsx}'],
+    ignores: ['src/constants/**', '**/*.test.{ts,tsx}'],
     rules: {
       '@typescript-eslint/no-magic-numbers': [
         'error',
