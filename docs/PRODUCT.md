@@ -6,8 +6,9 @@ second. Israel first.
 
 ## Who uses it
 
-- **Visitor** (signed out): sees all spots on the map, at approximate positions. Cannot interact.
-- **Member** (signed in with Google): everything else. Sees exact addresses within a daily limit.
+- **Member** (signed in with Google): everyone who uses the app. Sees the map at approximate
+  positions, and exact addresses within a daily limit. Signed-out people see only a landing page,
+  the privacy policy and the terms (D-39).
 - **Founder**: the member who created a spot. Can rename it and mark it inactive.
 - **Admin** (later): a member with an admin flag. Bans users, restricts chat. No separate admin
   screens: the actions are buttons in the normal screens, shown only to admins.
@@ -17,7 +18,7 @@ second. Israel first.
 1. **Map** (Leaflet + OpenStreetMap). All feeding spots. Spots that most need food or water are
    highlighted, based on time since the last counted log and whether the spot is active.
 2. **Spot**: name (founder's, or generated from the street), photo, exact address, approximate
-   area on the public map. Active or inactive.
+   area on the map. Active or inactive.
 3. **Feeding and water logs**: no photo. The volunteer picks a full or partial bowl (D-16). A log
    counts when the phone is within the proof radius of the spot and the limits pass (R-09), and then updates
    the spot's timers. Anyone at the spot can report "this spot was empty" (D-19).
@@ -27,29 +28,51 @@ second. Israel first.
 7. **Chat**: small, per spot or per cat. Automatic moderation.
 8. **Profile**: at first sign-in the app asks for the full name, the city (the map opens there) and whether to show the
    Google photo, otherwise initials (D-21, D-27). Stats: cats helped, feedings, water given.
-9. **Languages**: Hebrew (default, RTL) and English.
+9. **Languages**: Hebrew (default, RTL) and English. Every string is in `he.json` and `en.json`,
+   served from the CDN (D-32, R-19).
+10. **Municipal stations**: feeding stations cities have already installed, imported from public
+    sources and shown as read-only spots ([SOURCES.md](SOURCES.md), D-34).
 
 All photos and all text (names, cat names, spot names, chat) are moderated (R-04). The profile
 picture is the member's own Google photo, shown only if they choose (D-21).
 
+## Devices
+
+One responsive app for phone, tablet and desktop, designed mobile first. The smallest screen is 360
+px wide (common Android phones); the iPhone XS (375 x 812 px) is the smallest iPhone tested.
+Nothing scrolls sideways or is cut off from there up (R-18, D-30).
+
+## First run
+
+Sign-in comes first: a signed-out visit shows only the landing page and the sign-in button.
+Right after the first sign-in, before the map, one short screen says the browser is about to ask
+for the phone's location, which checks that a log or an "empty" report was made at the spot (R-09, R-16) and so keeps
+the map accurate. One tap starts the browser prompt, which asks for a precise position. Refusing never
+blocks the app: a log without a good enough location is saved as unverified (R-09). The profile
+explains how to turn the permission back on. Nothing else needs a permission: logs have no photo
+(D-18), and photos for spots and cats come from the phone's own picker, which has no browser prompt.
+No notification permission in v1 (D-12). See D-31.
+
 ## Location privacy
 
-Each spot stores an exact address. The public map shows only an approximate area (a circle of
+Each spot stores an exact address. The map shows only an approximate area (a circle of
 about 300 m whose center is offset by a fixed random amount). Signed-in members can open the exact
-address, up to a daily limit (R-03). Visitors never see it. A member's own phone location is used
+address, up to a daily limit (R-03). A member's own phone location is used
 for the proof radius checks (R-09, R-16); only the distance, rounded to 10 m, is kept.
 
 ## Money
 
 Cost target: free for the first 6 months, then a few dollars a month at most (D-15, D-22,
-[AWS.md](AWS.md#costs)). Moderation is pay per call, so a daily cap bounds it (R-05). Income: ads
-(AdSense, with a consent banner for EU visitors) and a donation link to a hosted page. No payment
+[AWS.md](AWS.md#costs)). Moderation is pay per call, so a daily cap bounds it (R-05). Income: a
+donation link to a hosted page, and ads only on the public landing page (AdSense cannot see pages
+behind sign-in without a crawler login, D-39), with a consent banner for EU visitors. No payment
 code in this repo.
 
 ## Non-goals for v1
 
 Push notifications. Phone or Apple login. A native app. A separate admin site. Payments. Offline
-mode. Live (realtime) updates. Changing the profile picture in the app (v2).
+mode. Live (realtime) updates. A public map for signed-out visitors. Changing the profile picture in the app
+(v2).
 
 ## Build order
 
@@ -57,12 +80,15 @@ One phase, one PR or smaller. Do not start a phase while the previous one is hal
 
 0. Repo and harness: `npm run verify` green, CI, Stop hook.
 1. AWS infra and deploy pipeline (CDK, GitHub OIDC, region test D-13, AWS Budget of $20 a month,
-   daily cap function).
-2. Map and spots, read only (approximate positions, Hebrew/English shell).
-3. Google sign-in, profile, create spot (proposed: its pin starts from the founder's phone
-   location), moderated photo upload.
-4. Feeding and water logs (no photo) and the "needs food/water" layer. Proposed: when several
-   members dispute one member's logs, an admin gets a flag and that member's next logs need a photo.
+   daily cap function). The CDN, on the CloudFront Free plan with IP rate limiting (D-38), serves the
+   app and `/locales/`.
+2. Google sign-in and profile, the public landing and legal pages, Hebrew/English shell,
+   responsive shell. Sign-in is required (D-39), so it comes before the map.
+3. Map and spots (approximate positions), municipal stations loaded into `spots`, create spot
+   (proposed: its pin starts from the founder's phone location), moderated photo upload.
+4. Feeding and water logs (no photo), the first-run location screen and the "needs food/water"
+   layer; municipal stations become loggable (D-35). Proposed: when several members dispute one
+   member's logs, an admin gets a flag and that member's next logs need a photo.
 5. Cats, likes, comments, chat.
-6. Alerts, places, stats, ads, donation link, launch checklist (privacy policy, terms, Hebrew
+6. Alerts, places, stats, landing-page ads, donation link, launch checklist (privacy policy, terms, Hebrew
    moderation test).
