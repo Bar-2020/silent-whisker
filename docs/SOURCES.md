@@ -1,7 +1,7 @@
 # Sources: municipal feeding stations
 
 Seed data for the map: the feeding stations municipalities have already installed. Not user
-content, so moderation (R-04) does not apply, but nothing is trusted blindly. Decisions: D-22, D-23.
+content, so moderation (R-04) does not apply, but nothing is trusted blindly. Decisions: D-34, D-35.
 
 ## What exists (checked 2026-10-14)
 
@@ -21,8 +21,8 @@ No national dataset exists. Full coverage of Israel cannot come from public data
 
 1. **API sources** (ArcGIS REST), automatic. Query `where=1=1&outSR=4326&f=geojson`, page with
    `resultOffset` while `exceededTransferLimit` is true. A new ArcGIS city is one registry entry.
-2. **Published lists** (HTML or PDF). Fetch the page, extract addresses, geocode once, cache the
-   result by address, mark `precision: geocoded`. A human reviews the diff. Where a city blocks bots
+2. **Published lists** (HTML or PDF). Fetch the page, extract addresses, geocode once (below), cache
+   the result by address, mark `precision: geocoded`. A human reviews every point in the diff. Where a city blocks bots
    or has no list, ask for the data instead (a Freedom of Information request to the vet department).
 3. **Manual and members.** `data/municipal/manual.csv` by pull request, and members add the rest
    as ordinary spots from Phase 3.
@@ -49,7 +49,7 @@ pauses scheduled workflows in a repo with no activity for 60 days.
 ## Output: one GeoJSON file on the CDN
 
 `/data/municipal-spots.geojson`, RFC 7946 (WGS84), all of Israel, same CloudFront distribution as
-the app (no CORS, D-24). Leaflet loads it natively. Estimated at about 1 MB raw for 3,000 stations
+the app (no CORS, D-36). Leaflet loads it natively. Estimated at about 1 MB raw for 3,000 stations
 and a fraction of that compressed (measure it). It works in Phase 2, before any Lambda exists.
 
 Per feature, `snake_case`: `id`, `name`, `address`, `city`, `source`, `precision`
@@ -58,7 +58,7 @@ with `url`, `permission` and `fetched_at` (UTC) per source, so attribution is on
 
 | Alternative | Verdict |
 |---|---|
-| DynamoDB plus API only | Needed from Phase 4 so members can log at stations (D-23). Not needed to show them |
+| DynamoDB plus API only | Needed from Phase 4 so members can log at stations (D-35). Not needed to show them |
 | Per-area tiles, vector tiles (PMTiles) | Only past tens of thousands of points |
 
 ## Stable ids
@@ -68,6 +68,26 @@ sequence next to a `date_import` stamp, so it is probably renumbered on each imp
 `source` + hash of the coordinates rounded to 5 decimals. A point that moves less than the match
 distance (constant) between runs keeps its old id. A station that disappears becomes `removed`,
 never deleted.
+
+## Geocoding
+
+A geocoder turns an address into coordinates. Only Tier 2 needs one: Tel Aviv already publishes
+coordinates, and a list of a handful of addresses can simply be placed by hand (`precision: manual`).
+
+Nominatim (the OSM server, already the city lookup in D-29) was tested on the 25 Tel Aviv stations,
+against the city's own coordinates (checked 2026-10-14): 20 answered, 19 of them within 150 m, median
+error 23 m, worst 350 m. 5 found nothing (gardens, a car park, an odd spelling): those get a pin by
+hand. Rules for the import job:
+
+- One thread, an identifying User-Agent, at most 4 requests a minute for a recurring script (a one-off
+  small batch may go at 1 a second), and every result cached in git so no address is asked twice.
+- Reject a result that falls outside its city (a wrong answer would be confident, not empty).
+- Data is ODbL: credit OpenStreetMap next to the other sources.
+- 50 m is the proof radius for a log (D-18) and a geocoded point can be 100 m or more off, so a
+  person checks it on the map before the station becomes loggable (D-35).
+
+Not chosen: Google (its terms limit storing results), Amazon Location (metered, so it would need the
+R-05 cap, and storing results costs more), GovMap (could not reach it from here).
 
 ## Permission
 
@@ -89,4 +109,4 @@ in `permission`, and show "Data: <municipality>" on the map. If a municipality a
 
 Scraping news articles. Getting around a 403. Machine translation of Hebrew addresses (shown as
 published). Amazon Location geocoding (metered, R-05): geocode once offline and cache the result in
-git. The geocoder is not chosen yet (open question in D-22).
+git.

@@ -20,14 +20,16 @@ start the work it covers. The hard rules and working style are imported below, s
 ## Project: Silent Whisker
 
 A free, open-source (MIT) web app where volunteers map stray-cat feeding spots, log feedings and
-water with photo proof, flag cats in danger, and chat. Hebrew first, English second. Israel first.
+water, flag cats in danger, and chat. Hebrew first, English second. Israel first.
 Runs on AWS inside the free tier where possible. Ads and donation links cover the rest.
 
 @.claude/instructions/hard-rules.md
 
 ### Naming
 `R-nn` rules, `D-nn` decisions, `snake_case` for stored fields. Never renumber, never reuse. Cite
-the `R-nn` in the test that proves it.
+the `R-nn` in the test that proves it. When talking to the user, never write a rule or decision
+number on its own (`R-10`, `D-17`): always say what it is, for example "R-10 (one counted feeding
+and one counted water log per spot per member per 3 hours)". A human does not remember the numbers.
 
 ### Folder structure
 Feature-based. `src/features/<feature>/` owns its screens, components, hooks and data access.

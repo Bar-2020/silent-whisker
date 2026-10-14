@@ -8,7 +8,7 @@
   `text-align: start`), never `left`/`right`. Hebrew is the primary language.
 - **No inline styles.** No `style` attribute, no `element.style`. Styles live in a `.css` file beside
   the component (CSS Modules). To vary a style, switch a class or a `data-*` attribute.
-- **Responsive from 375 px.** Mobile first; phone, tablet and desktop (R-13). Breakpoints are written
+- **Responsive from 360 px.** Mobile first; phone, tablet and desktop (R-18). Breakpoints are written
   once, in `src/styles/`.
 - **All timestamps stored in UTC.** Convert at display time only.
 - **No hard deletes of user content.** Status changes only. Exceptions: account deletion, and
