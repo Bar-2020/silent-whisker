@@ -25,7 +25,7 @@ second. Israel first.
 5. **Alerts**: a cat in danger or sick, shown on the map until resolved.
 6. **Places**: vets and organisations that help strays, as map points of interest.
 7. **Chat**: small, per spot or per cat. Automatic moderation.
-8. **Profile**: at first sign-in the app asks for the full name, the city and whether to show the
+8. **Profile**: at first sign-in the app asks for the full name, the city (the map opens there) and whether to show the
    Google photo, otherwise initials (D-21, D-27). Stats: cats helped, feedings, water given.
 9. **Languages**: Hebrew (default, RTL) and English.
 
