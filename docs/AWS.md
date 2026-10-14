@@ -44,6 +44,7 @@ big decision.
 | DynamoDB | always free: 25 GB, 25 WCU, 25 RCU, but only for provisioned capacity. On-demand in Tel Aviv: $0.85 per million writes, $0.17 per million reads | S12, S15 |
 | S3 | no free allowance for a new account. Standard per GB-month: $0.0250 Tel Aviv, $0.0245 Frankfurt, $0.0230 Ireland | S12, S16 |
 | Budgets | monitoring is free, the first two action-enabled budgets are free | S12, S17 |
+| Amazon Location Service (city lookup, D-29) | 20,000 geocode requests a month free, for 3 months only; the price after that is in the developer guide, not read | S20 |
 
 ## Free plan
 
@@ -96,3 +97,4 @@ sign-up credit. The AWS Budget is only a backup: it alerts, and is not instant.
 - S17: https://aws.amazon.com/aws-cost-management/aws-budgets/pricing/
 - S18: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-social-idp.html
 - S19: https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-use-invoke-guardrail-checks.html
+- S20: https://aws.amazon.com/location/pricing/ (read 2026-10-14)
