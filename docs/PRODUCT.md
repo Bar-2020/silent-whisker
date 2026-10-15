@@ -85,7 +85,7 @@ Each spot stores an exact address. The map shows only an approximate area (a cir
 about 300 m whose center is offset by a fixed random amount). Signed-in members can open the exact
 address, up to a daily limit (R-03). A member's own phone location is used
 for the proof radius checks (R-09, R-16); only the distance, rounded to 10 m, is kept. A pin the member
-sets with "my location" (custom spot, cat alert, random cat photo) is kept like an exact position and shown approximately, or as a place tag (D-42, R-28).
+sets with "my location" (custom spot, cat alert) is kept like an exact position and shown approximately; a random cat photo keeps only its neighbourhood (D-42, R-28).
 
 ## Money
 
