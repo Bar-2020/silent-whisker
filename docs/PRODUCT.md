@@ -37,7 +37,7 @@ Cognito. CDK in TypeScript, deployed from GitHub Actions with OIDC (D-02).
    location tag, in an Instagram-style feed, never on the map. Others like and comment (D-44, D-45).
 5. **Cat alerts**: a sick cat or a cat in danger, with a photo and a note, tagged from where the
    member stands. On the map for 6 hours; admins resolve or extend (D-41, D-42).
-6. **Chat**: small, per spot or per cat. Automatic moderation.
+6. **Chat**: small, per spot only; cat posts have comments instead (D-48). Automatic moderation.
 7. **Profile**: at first sign-in the app asks for the full name, the city (the map opens there) and whether to show the
    Google photo, otherwise initials (D-21, D-27). Stats: cats helped, feedings, water given.
 8. **Languages**: Hebrew (default, RTL) and English. Every string is in `he.json` and `en.json`,
