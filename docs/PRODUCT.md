@@ -17,8 +17,8 @@ Cognito. CDK in TypeScript, deployed from GitHub Actions with OIDC (D-02).
 
 ## Who uses it
 
-- **Member** (signed in with Google): everyone who uses the app. Sees the map at approximate
-  positions, and exact addresses within a daily limit. Signed-out people see only a landing page,
+- **Member** (signed in with Google): everyone who uses the app. Sees city stations and cat alerts
+  exactly, custom spots approximately with the exact address within a daily limit. Signed-out people see only a landing page,
   the privacy policy and the terms (D-39).
 - **Founder**: the member who created a spot. Can rename it and mark it inactive.
 - **Admin**: a member with an admin flag. Approves custom spots, bans users, restricts chat, resolves or extends
@@ -28,8 +28,8 @@ Cognito. CDK in TypeScript, deployed from GitHub Actions with OIDC (D-02).
 
 1. **Map** (Leaflet + OpenStreetMap): feeding spots (official and custom) and cat alerts, never cat photos
    (D-45). Spots that most need food or water are highlighted, based on time since the last counted log and whether the spot is active.
-2. **Spot**: name (founder's, or generated from the street), photo, exact address, approximate
-   area on the map. Active or inactive. Members add custom spots; an admin approves each (D-43).
+2. **Spot**: name (founder's, or generated from the neighbourhood), photo, exact address. On the map,
+   a city station is an exact point and a custom spot an approximate area (D-47). Active or inactive. Members add custom spots; an admin approves each (D-43).
 3. **Feeding and water logs**: no photo. The volunteer picks a full or partial bowl (D-16). A log
    counts when the phone is within the proof radius of the spot and the limits pass (R-09), and then updates
    the spot's timers. Anyone at the spot can report "this spot was empty" (D-19).
@@ -81,11 +81,11 @@ No notification permission in v1 (D-12). See D-31.
 
 ## Location privacy
 
-Each spot stores an exact address. The map shows only an approximate area (a circle of
-about 300 m whose center is offset by a fixed random amount). Signed-in members can open the exact
-address, up to a daily limit (R-03). A member's own phone location is used
-for the proof radius checks (R-09, R-16); only the distance, rounded to 10 m, is kept. A pin the member
-sets with "my location" (custom spot, cat alert) is kept like an exact position and shown approximately; a random cat photo keeps only its neighbourhood (D-42, R-28).
+Each spot stores an exact address. City stations, which cities publish, and cat alerts, which helpers must find, show exactly (D-47).
+A custom spot shows only an approximate area (a circle of about 300 m whose center is offset by a fixed random amount); members
+open its exact address up to 30 spots a day, and the phone remembers the ones it opened (R-03). A member's own phone location is used
+for the proof radius checks (R-09, R-16); only the distance, rounded to 10 m, is kept. A cat alert's pin is the phone's
+location at submit; a "my location" custom spot is kept exact and shown approximately; a random cat photo keeps only its neighbourhood (R-28).
 
 ## Money
 
@@ -122,7 +122,7 @@ One phase, one PR or smaller. Do not start a phase while the previous one is hal
 2. Google sign-in and profile, the public landing and legal pages, Hebrew/English shell,
    responsive shell, and `DESIGN.md` (UI and UX design). Sign-in is required (D-39), so it comes
    before the map.
-3. Map and spots (approximate positions), municipal stations loaded into `spots`, custom spots
+3. Map and spots (city stations exact, custom spots approximate), municipal stations loaded into `spots`, custom spots
    (proposed: a separate form, admin approval, D-43), the admin approval buttons, moderated photo upload.
 4. Feeding and water logs (no photo), the first-run location screen and the "needs food/water"
    layer; municipal stations become loggable (D-35). Proposed: when several members dispute one
@@ -137,8 +137,8 @@ visual work should not invent or assume any of these exist.
 
 ## Product Principles
 
-1. Privacy by default: exact locations and raw phone coordinates never leave the server except to
-   a signed-in member within the daily limit; other members get an approximate area only, and
+1. Privacy by default: a custom spot's exact location leaves the server only for a signed-in member
+   within the daily limit, raw phone coordinates never do except as a cat alert's pin (D-47), and
    signed-out people get no map at all, just the sign-in screen (D-39).
 2. Every rule is enforced server-side; a client-only check is not an implemented rule.
 3. Trust through verification: a counted log proves the volunteer was physically at the spot,
