@@ -99,6 +99,16 @@ Push notifications. Phone or Apple login. A native app. A separate admin site. P
 mode. Live (realtime) updates. A public map for signed-out visitors. Changing the profile picture in the app
 (v2).
 
+## UI and UX design
+
+Code first, no Figma (D-40). The tool is Impeccable (`.claude/skills/impeccable`).
+
+1. Before a phase builds screens, run `/impeccable shape` for each area it touches (first run,
+   map, spot and logging, cats, chat).
+2. Phase 2 picks the look once, which writes `DESIGN.md`.
+3. Before each PR with screens, run `critique`, `audit` and `polish`.
+4. Proposed tone: quiet and legible outdoors, not bold.
+
 ## Build order
 
 One phase, one PR or smaller. Do not start a phase while the previous one is half built.
@@ -108,7 +118,8 @@ One phase, one PR or smaller. Do not start a phase while the previous one is hal
    daily cap function). The CDN, on the CloudFront Free plan with IP rate limiting (D-38), serves the
    app and `/locales/`.
 2. Google sign-in and profile, the public landing and legal pages, Hebrew/English shell,
-   responsive shell. Sign-in is required (D-39), so it comes before the map.
+   responsive shell, and `DESIGN.md` (UI and UX design). Sign-in is required (D-39), so it comes
+   before the map.
 3. Map and spots (approximate positions), municipal stations loaded into `spots`, create spot
    (proposed: its pin starts from the founder's phone location), moderated photo upload.
 4. Feeding and water logs (no photo), the first-run location screen and the "needs food/water"
