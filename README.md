@@ -8,6 +8,10 @@ order.
 
 ## Develop
 
+Needs Node 22.18 or newer (the current LTS, 24, works). On an older Node, `npm ci` silently skips the
+Vite+ binaries and `npm run verify` fails with "Cannot find native binding": upgrade Node and run
+`npm ci` again.
+
 ```
 npm ci
 npm run verify   # typecheck, lint, tests, fallow audit
