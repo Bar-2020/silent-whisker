@@ -1,6 +1,8 @@
 {
   "$schema": "./node_modules/fallow/schema.json",
   "entry": ["__tests__/**/*.test.ts", "src/**/*.test.{ts,tsx}"],
+  "dynamicallyLoaded": ["lint/silent-whisker-plugin.js"],
+  "ignoreDependencies": ["eslint-plugin-sonarjs"],
   "duplicates": {
     "mode": "strict"
   }
