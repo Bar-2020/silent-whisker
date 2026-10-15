@@ -25,7 +25,7 @@ No national dataset exists. Full coverage of Israel cannot come from public data
    the result by address, mark `precision: geocoded`. A human reviews every point in the diff. Where a city blocks bots
    or has no list, ask for the data instead (a Freedom of Information request to the vet department).
 3. **Manual and members.** `data/municipal/manual.csv` by pull request, and members add the rest
-   as ordinary spots from Phase 3.
+   as custom spots in the app from Phase 3 (D-43).
 
 Sources live in a registry (`pipelines/municipal/sources.json`): `id`, municipality (he, en), `kind`
 (`arcgis`, `html_list`, `manual_csv`), `url`, field mapping, permission and `last_checked`. Cities
@@ -51,9 +51,9 @@ pauses scheduled workflows in a repo with no activity for 60 days.
 ## Output: a GeoJSON file in git, rows in `spots`
 
 `data/municipal/municipal-spots.geojson`, RFC 7946 (WGS84), all of Israel. It is the reviewed artifact,
-not a public file. Sign-in is required (D-39), so stations reach members like every other spot, through
-the member-only API: approximate on the map, exact through the lookup (R-03, D-35). A public copy on
-the CDN was rejected: cheap and cached, but it would hand exact points to anyone. Names and addresses
+not a public file. Sign-in is required (D-39), so stations reach members through
+the member-only API, at their exact point and address (D-47). A public copy on the CDN was
+rejected: cheap and cached, but it would hand exact points to people who are not signed in. Names and addresses
 are shown as the city publishes them (Hebrew, no machine translation in v1).
 
 Per feature, `snake_case`: `id`, `name`, `address`, `city`, `source`, `precision`
