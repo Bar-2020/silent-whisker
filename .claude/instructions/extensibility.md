@@ -15,7 +15,8 @@ This does not override [simplicity-first.md](simplicity-first.md).
    interfaces with one implementation.
 4. **Every convention gets a mechanical check.** `CLAUDE.md` is advisory and gets forgotten in a
    long session; a lint rule, test or hook does not. A new hard rule ships with its check (the
-   RTL, inline-style and magic-number rules are ESLint rules), and the error message names the fix.
+   RTL, inline-style and magic-number rules are lint rules, configured in `vite.config.ts`), and the
+   error message names the fix.
 5. **Plan before cross-cutting work.** A change touching more than one feature, or a table in
    [DATA.md](../../docs/DATA.md), starts with a plan the user can read. Small commits, small PRs, and
    [pre-pr-review.md](pre-pr-review.md) before opening one.

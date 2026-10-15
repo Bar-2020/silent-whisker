@@ -18,15 +18,18 @@ jobs:
           # single-commit shallow clone.
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      # Vite+: installs Node 22 (the oxlint/oxfmt binaries need >=22.12), restores the
+      # dependency cache and installs with a frozen lockfile (fails if package-lock.json
+      # is out of date). Pinned to an exact release; the `v1` tag no longer receives updates.
+      - uses: voidzero-dev/setup-vp@v1.21.2
         with:
           node-version: 22
-          cache: npm
+          cache: true
+          run-install: |
+            - args: ['--frozen-lockfile']
 
-      - run: npm ci
-
-      # typecheck · eslint + prettier · jest · fallow audit. The same command the
-      # Stop hook and every phase's Verification section refer to.
+      # typecheck · vp check (oxfmt + oxlint) · vp test · fallow audit. The same command
+      # the Stop hook and every phase's Verification section refer to.
       - run: npm run verify
 
   review:

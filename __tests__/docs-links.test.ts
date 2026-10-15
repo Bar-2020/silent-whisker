@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vite-plus/test';
 import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { join, dirname, resolve, relative, extname } from 'path';
 
