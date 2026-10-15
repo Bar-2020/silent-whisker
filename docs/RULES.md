@@ -7,12 +7,12 @@ proposed values that live in `src/constants/` (see [DECISIONS.md](DECISIONS.md))
 |---|---|---|
 | R-01 | The server enforces every rule below. Client checks are UX only. | Lambda, IAM |
 | R-02 | Replaced by R-22 (it let visitors read spots, approximate only). | |
-| R-03 | Every position is exact. City stations and cat alerts go to every signed-in member. A custom spot goes only to a member whose phone is within 150 m of it with an accuracy of 50 m or better, while it is active and its food or water is not green, or to its creator or an admin (D-47). | Lambda |
+| R-03 | Every position is exact. City stations and cat alerts go to every signed-in member. A custom spot goes to a member in any one of three cases: the member's phone is within 150 m of it with an accuracy of 50 m or better; the spot is active and its food or water is not green; or the member is its creator or an admin (D-47). | Lambda |
 | R-04 | Nothing user-supplied is public until moderation approves it. If the check fails, it stays hidden. | Lambda, S3 quarantine |
 | R-05 | Every metered AWS call goes through one function that checks the daily cap. At the cap, uploads are refused until the cap resets. | Lambda |
 | R-06 | Timestamps are stored in UTC. | Lambda |
 | R-07 | User content is never hard deleted. Status changes only. | Lambda |
-| R-08 | Banned users cannot write. Chat-restricted users cannot post messages. | Lambda |
+| R-08 | Banned users cannot write. Chat-restricted users cannot post chat messages or comments. | Lambda |
 | R-09 | A log counts toward a spot's timers only if it passes the proof checks (below). | Lambda |
 | R-10 | One counted feeding and one counted water log per spot per member per 3 hours. | Lambda |
 | R-11 | Photos are resized on the client to at most 1600 px and 500 KB before upload. | Lambda (size check) |

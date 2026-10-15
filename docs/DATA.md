@@ -11,7 +11,7 @@ fields `snake_case`. All times UTC ISO 8601. Every item except `daily_counters` 
 | `cats` | `cat_id`, `spot_id`, `name`, `photo_key`, `geohash`, `geo_cell`, `area`, `created_by`, `like_count`, `status` | One post per photo; the photo must contain a cat (R-25). `name` is optional and moderated. `spot_id` is set for a cat at a spot and empty for a random cat. `geohash` is the neighbourhood cell (its length is a constant): the spot's cell, or the cell of the phone's location, else of the profile city. It is the only position kept, and `geo_cell` is its first part for the feed; an exact point is never stored (R-28). `area` is the place tag shown in the feed: the spot's name, or a coarse place name from a cached reverse lookup (D-29). `like_count` is kept by Lambda from `likes` |
 | `likes` | `cat_id`, `user_id`, `status` (`active`/`removed`) | One row per member per cat (R-26); liking again flips `status`, no row is deleted |
 | `comments` | `comment_id`, `cat_id`, `user_id`, `text`, `status` | |
-| `messages` | `message_id`, `scope` (`spot`/`cat`), `scope_id`, `user_id`, `text`, `status` | |
+| `messages` | `message_id`, `spot_id`, `user_id`, `text`, `status` | Chat is per spot only; cat posts have `comments` (D-48) |
 | `cat_alerts` | `cat_alert_id`, `kind` (`danger`/`sick`), `lat`, `lng`, `geo_cell`, `photo_key`, `note`, `status`, `expires_at`, `resolved_at`, `created_by` | `photo_key` (must contain a cat, R-25) and `note` are required. The pin is the phone's location at submit, shown exactly to members (D-47). `status` is the moderation status (below), nothing is shown until `approved`. `expires_at` is `created_at` + 6 h, +12 h per extension; `resolved_at` is set by an admin. Shown only per R-24 |
 | `reports` | `reporter_id`, `target_type`, `target_id`, `status` (`open`/`closed`) | Admin queue. `target_id` is the reported item's id; ids never repeat across tables (ULIDs) |
 | `daily_counters` | `key`, `count`, `expires_at` | One row per limit per UTC day: `moderation#2026-10-13` for the shared cap (R-05), `<limit>#<user_id>#2026-10-13` for a member's limits: new spots (R-12), log and empty-report attempts (R-17), cat alerts (R-23), cat photos and comments (R-25), uploads (R-30) and the write budget (R-21). The request adds 1 only if the count is under the limit, in the same write, so two requests at once cannot both pass. Limits over a rolling window (R-10, R-13, R-16) are counted from `logs` instead. `expires_at` lets DynamoDB remove old rows on its own. No `status` or `created_at` |
@@ -35,7 +35,7 @@ cells the app asks the member to zoom in.
 | `cats` | `cat_id` | | `spot_id`, `created_at`; `geo_cell`, `created_at` | Likes and comments by id, cats on the spot page, the feed's last 7 days (D-45) |
 | `likes` | `cat_id` | `user_id` | | One like per member per cat (R-26) |
 | `comments` | `cat_id` | `comment_id` | | Cat page, newest first |
-| `messages` | `scope_id` | `message_id` | | Chat of a spot or a cat, newest first |
+| `messages` | `spot_id` | `message_id` | | Chat of a spot, newest first |
 | `cat_alerts` | `cat_alert_id` | | `geo_cell`, `expires_at` | Map and list (R-24): `expires_at` after now, or after now minus 24 hours for admins |
 | `reports` | `reporter_id` | `target_id` | `status`, `created_at` (keys only) | One report per member per item, hiding what a member reported from them, the admin queue |
 | `daily_counters` | `key` | | | Daily limits; DynamoDB deletes rows after `expires_at` |
@@ -44,7 +44,7 @@ cells the app asks the member to zoom in.
 Capacity (D-26): each table and each index needs at least 1 read and 1 write unit, so these 11
 tables and 7 indexes take 18 of the 25 free units, leaving 7 for the busiest (`logs`, `spots`,
 `daily_counters`). That holds about one counted log a second, plus DynamoDB's short burst
-allowance. Merging `comments` into `messages` would free one unit.
+allowance.
 
 ## Queries
 
