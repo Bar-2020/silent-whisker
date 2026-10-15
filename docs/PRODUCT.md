@@ -105,9 +105,10 @@ Code first, no Figma (D-40). The tool is Impeccable (`.claude/skills/impeccable`
 
 1. Before a phase builds screens, run `/impeccable shape` for each area it touches (first run,
    map, spot and logging, cats, chat). It returns a written brief; confirm it before any code.
-2. Phase 2 picks the look once, which writes `DESIGN.md`. No brand assets exist yet.
-3. Build with Impeccable's live mode, then `critique`, `audit` and `polish` before each PR.
-4. The hard rules win over its output. Tone: quiet and legible outdoors, not bold.
+2. Phase 2 picks the look once, which writes `DESIGN.md`.
+3. Build from the confirmed brief, iterate with Impeccable's live mode, then `critique`, `audit`
+   and `polish` before each PR.
+4. Proposed tone: quiet and legible outdoors, not bold.
 
 ## Build order
 
