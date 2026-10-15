@@ -25,6 +25,13 @@ proposed values that live in `src/constants/` (see [DECISIONS.md](DECISIONS.md))
 | R-20 | Municipal stations cannot be renamed, deactivated or deleted by members. Only the import changes them. | Lambda |
 | R-21 | Every endpoint and every file served is rate limited: per IP at the edge for the app files, `/locales/` and the API, and per member for writes. Over the limit the request is refused and nothing is saved (the API answers 429 with `Retry-After`, the edge 403). Every limit is a constant. | CloudFront WAF, Lambda |
 | R-22 | Every API route requires a valid sign-in. The only things served without one are the landing page, the privacy policy, the terms and the translation files. | Cognito authorizer |
+| R-23 | A cat alert needs a photo, a note and the phone's location, read at submit, with an accuracy of 50 m or better (D-25), or nothing is saved. A member can raise at most 5 cat alerts a day. | Lambda |
+| R-24 | Members see a cat alert only while it is approved, not resolved and not expired: it expires 6 hours after it is raised, plus 12 hours for each extension, with no limit on extensions. Only an admin can resolve or extend one. | Lambda |
+| R-25 | A cat photo, and the photo of a cat alert, must contain a cat (checked by Rekognition), or it is rejected and never shown. A member can post at most 10 cat photos and write at most 60 comments a day. | Lambda |
+| R-26 | A member's like on a cat counts once; liking again takes it back. | Lambda |
+| R-27 | A custom spot stays hidden from other members, and takes no logs or empty reports, until an admin approves it. Only an admin can approve or reject one. | Lambda |
+| R-28 | A cat photo's exact position never leaves the server: members get only a place tag (the spot's name, or a coarse area). Cat photos are never returned by the map routes. | Lambda |
+| R-29 | The feed gives a member the cat photos they have not seen before any they have; a photo counts as seen once the feed has served it to them. | Lambda |
 
 ## Proof checks (R-09)
 
