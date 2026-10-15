@@ -1,0 +1,67 @@
+<!-- Source of ../logo.png (512x512 px). Text is set in Rubik (SIL OFL); install it before re-rendering. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="logo-title">
+  <title id="logo-title">Silent Whisker</title>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b3170"/>
+      <stop offset="1" stop-color="#0e1131"/>
+    </linearGradient>
+    <linearGradient id="fur" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffbe62"/>
+      <stop offset="1" stop-color="#f28f33"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffc766" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ffc766" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="pin"><path d="M256 440 L356.9 310.8 A128 128 0 1 0 155.1 310.8 Z"/></clipPath>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#sky)"/>
+  <circle cx="256" cy="250" r="230" fill="url(#glow)"/>
+
+  <!-- stars -->
+  <g fill="#fff3d6">
+    <circle cx="74" cy="92" r="4"/><circle cx="118" cy="48" r="2.5"/><circle cx="440" cy="130" r="3.5"/>
+    <circle cx="402" cy="60" r="2.5"/><circle cx="58" cy="210" r="2.5"/><circle cx="462" cy="250" r="3"/>
+    <circle cx="86" cy="420" r="3"/><circle cx="430" cy="410" r="2.5"/>
+  </g>
+
+  <!-- ground ping: the proof radius -->
+  <ellipse cx="256" cy="446" rx="150" ry="26" fill="none" stroke="#ffc766" stroke-opacity="0.45" stroke-width="4" stroke-dasharray="3 12" stroke-linecap="round"/>
+  <ellipse cx="256" cy="446" rx="84" ry="15" fill="#080a22" fill-opacity="0.55"/>
+
+  <!-- ears -->
+  <g stroke-linejoin="round" stroke-width="18" stroke="#f6a04d">
+    <path d="M138 200 L152 72 L238 114 Z" fill="#f6a04d"/>
+    <path d="M374 200 L360 72 L274 114 Z" fill="#f6a04d"/>
+  </g>
+  <path d="M160 176 L162 106 L212 130 Z" fill="#ff9fb4" stroke="#ff9fb4" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M352 176 L350 106 L300 130 Z" fill="#ff9fb4" stroke="#ff9fb4" stroke-width="10" stroke-linejoin="round"/>
+
+  <!-- head + pin -->
+  <path d="M256 440 L356.9 310.8 A128 128 0 1 0 155.1 310.8 Z" fill="url(#fur)"/>
+  <g clip-path="url(#pin)">
+    <ellipse cx="256" cy="400" rx="150" ry="120" fill="#fff4e2"/>
+    <ellipse cx="256" cy="304" rx="64" ry="46" fill="#fff4e2"/>
+  </g>
+
+  <!-- forehead stripes -->
+  <g stroke="#d9772b" stroke-width="11" stroke-linecap="round" fill="none">
+    <path d="M256 112 V152"/><path d="M222 122 L230 156"/><path d="M290 122 L282 156"/>
+  </g>
+
+  <!-- face -->
+  <g stroke="#1a1d45" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M186 250 Q210 218 234 250" stroke-width="12"/>
+    <path d="M278 250 Q302 218 326 250" stroke-width="12"/>
+    <path d="M256 296 V306 M256 306 Q242 322 226 310 M256 306 Q270 322 286 310" stroke-width="6"/>
+  </g>
+  <path d="M240 280 H272 L256 298 Z" fill="#ff8fa6" stroke="#ff8fa6" stroke-width="6" stroke-linejoin="round"/>
+
+  <!-- whiskers -->
+  <g stroke="#fff8ec" stroke-width="5" stroke-linecap="round" fill="none">
+    <path d="M178 290 Q120 272 66 276"/><path d="M176 306 Q116 306 60 318"/><path d="M182 322 Q130 340 82 362"/>
+    <path d="M334 290 Q392 272 446 276"/><path d="M336 306 Q396 306 452 318"/><path d="M330 322 Q382 340 430 362"/>
+  </g>
+</svg>
