@@ -20,7 +20,7 @@ Cognito. CDK in TypeScript, deployed from GitHub Actions with OIDC (D-02).
 - **Member** (signed in with Google): everyone who uses the app. Sees city stations and cat alerts
   exactly, custom spots approximately with the exact address within a daily limit. Signed-out people see only a landing page,
   the privacy policy and the terms (D-39).
-- **Founder**: the member who created a spot. Can rename it and mark it inactive.
+- **Custom spot creator**: the member who added a custom spot. Can rename it and mark it inactive.
 - **Admin**: a member with an admin flag. Approves custom spots, bans users, restricts chat, resolves or extends
   cat alerts. No separate admin screens: the actions are buttons in the normal screens, shown only to admins.
 
@@ -28,8 +28,8 @@ Cognito. CDK in TypeScript, deployed from GitHub Actions with OIDC (D-02).
 
 1. **Map** (Leaflet + OpenStreetMap): feeding spots (official and custom) and cat alerts, never cat photos
    (D-45). Spots that most need food or water are highlighted, based on time since the last counted log and whether the spot is active.
-2. **Spot**: name (founder's, or generated from the neighbourhood), photo, exact address. On the map,
-   a city station is an exact point and a custom spot an approximate area (D-47). Active or inactive. Members add custom spots; an admin approves each (D-43).
+2. **Spot**: name (the custom spot creator's, or generated from the neighbourhood), photo, exact address. On the map,
+   a city station is an exact point and a custom spot an approximate area (D-47). Active or inactive. The app adds only custom spots, each approved by an admin (D-43); city stations come only from the import pipeline (D-34).
 3. **Feeding and water logs**: no photo. The volunteer picks a full or partial bowl (D-16). A log
    counts when the phone is within the proof radius of the spot and the limits pass (R-09), and then updates
    the spot's timers. Anyone at the spot can report "this spot was empty" (D-19).

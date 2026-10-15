@@ -25,7 +25,7 @@ No national dataset exists. Full coverage of Israel cannot come from public data
    the result by address, mark `precision: geocoded`. A human reviews every point in the diff. Where a city blocks bots
    or has no list, ask for the data instead (a Freedom of Information request to the vet department).
 3. **Manual and members.** `data/municipal/manual.csv` by pull request, and members add the rest
-   as ordinary spots from Phase 3.
+   as custom spots in the app from Phase 3 (D-43).
 
 Sources live in a registry (`pipelines/municipal/sources.json`): `id`, municipality (he, en), `kind`
 (`arcgis`, `html_list`, `manual_csv`), `url`, field mapping, permission and `last_checked`. Cities
