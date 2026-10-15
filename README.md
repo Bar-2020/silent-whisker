@@ -76,7 +76,7 @@ flowchart LR
 | App | React, Vite, TypeScript, react-leaflet, react-i18next, installable PWA |
 | Backend | AWS Lambda behind CloudFront, DynamoDB, Cognito, S3 |
 | Infrastructure | AWS CDK in TypeScript, deployed from GitHub Actions with OIDC |
-| Quality | `npm run verify`: typecheck, ESLint, Prettier, Vitest, fallow audit |
+| Quality | `npm run verify`: typecheck, Vite+ (Oxlint and Oxfmt), Vitest, fallow audit |
 
 ## Roadmap
 
@@ -92,7 +92,9 @@ flowchart LR
 
 ## Develop
 
-Node 22 or newer.
+Needs Node 22.18 or newer (the current LTS, 24, works). On an older Node, `npm ci` silently skips the
+Vite+ binaries and `npm run verify` fails with "Cannot find native binding": upgrade Node and run
+`npm ci` again.
 
 ```
 npm ci
