@@ -104,10 +104,9 @@ mode. Live (realtime) updates. A public map for signed-out visitors. Changing th
 Code first, no Figma (D-40). The tool is Impeccable (`.claude/skills/impeccable`).
 
 1. Before a phase builds screens, run `/impeccable shape` for each area it touches (first run,
-   map, spot and logging, cats, chat). It returns a written brief; confirm it before any code.
+   map, spot and logging, cats, chat).
 2. Phase 2 picks the look once, which writes `DESIGN.md`.
-3. Build from the confirmed brief, iterate with Impeccable's live mode, then `critique`, `audit`
-   and `polish` before each PR.
+3. Before each PR with screens, run `critique`, `audit` and `polish`.
 4. Proposed tone: quiet and legible outdoors, not bold.
 
 ## Build order
