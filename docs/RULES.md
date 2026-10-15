@@ -7,7 +7,7 @@ proposed values that live in `src/constants/` (see [DECISIONS.md](DECISIONS.md))
 |---|---|---|
 | R-01 | The server enforces every rule below. Client checks are UX only. | Lambda, IAM |
 | R-02 | Replaced by R-22 (it let visitors read spots, approximate only). | |
-| R-03 | Exact coordinates and addresses go only to signed-in members, at most 30 lookups a day each. | Lambda |
+| R-03 | A custom spot's exact coordinates and address go only to signed-in members, at most 30 different spots a day each, and the map search for custom spots uses only the approximate point. City stations and cat alerts are shown exactly to every signed-in member (D-47). | Lambda |
 | R-04 | Nothing user-supplied is public until moderation approves it. If the check fails, it stays hidden. | Lambda, S3 quarantine |
 | R-05 | Every metered AWS call goes through one function that checks the daily cap. At the cap, uploads are refused until the cap resets. | Lambda |
 | R-06 | Timestamps are stored in UTC. | Lambda |

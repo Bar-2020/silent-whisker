@@ -52,8 +52,8 @@ pauses scheduled workflows in a repo with no activity for 60 days.
 
 `data/municipal/municipal-spots.geojson`, RFC 7946 (WGS84), all of Israel. It is the reviewed artifact,
 not a public file. Sign-in is required (D-39), so stations reach members like every other spot, through
-the member-only API: approximate on the map, exact through the lookup (R-03, D-35). A public copy on
-the CDN was rejected: cheap and cached, but it would hand exact points to anyone. Names and addresses
+the member-only API, at their exact point and address (D-47). A public copy on the CDN was
+rejected: cheap and cached, but it would hand exact points to people who are not signed in. Names and addresses
 are shown as the city publishes them (Hebrew, no machine translation in v1).
 
 Per feature, `snake_case`: `id`, `name`, `address`, `city`, `source`, `precision`

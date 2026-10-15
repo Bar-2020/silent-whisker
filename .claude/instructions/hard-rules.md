@@ -19,8 +19,8 @@
   (spacing, colours) live in `src/styles/`.
 - **Nothing user-supplied is public until moderation approves it.** Photos and text. If the
   moderation call fails, the content stays hidden.
-- **Exact coordinates and addresses never leave the server** except to a signed-in member, within
-  the daily lookup limit (R-03).
+- **A custom spot's exact coordinates and address never leave the server** except to a signed-in
+  member, within the daily lookup limit (R-03). City stations and cat alerts are exact for members.
 - **Every metered AWS call goes through one function that checks the daily cap** (R-05).
 - **Every endpoint and every file served is rate limited** (R-21). A new endpoint ships with its
   limit in `src/constants/` and a test that calls it past the limit and expects a refusal.
