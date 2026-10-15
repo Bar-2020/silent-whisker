@@ -132,8 +132,8 @@ One phase, one PR or smaller. Do not start a phase while the previous one is hal
 
 ## Evidence on Hand
 
-No logo, visual brand assets, or reference apps on hand yet (blank slate, confirmed). Future
-visual work should not invent or assume any of these exist.
+Repo art (cat-pin logo, README images) lives in `.github/assets/`. It is not the app's design
+system: Phase 2 picks the look and writes DESIGN.md. No reference apps yet; do not invent any.
 
 ## Product Principles
 
