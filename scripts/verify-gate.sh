@@ -26,7 +26,7 @@ cd "$(git rev-parse --show-toplevel 2>/dev/null || echo .)" || exit 0
 # docs-only turn is exactly the kind that can turn `npm test` red.
 PATHS=(
   'src' 'infra' 'functions' '__tests__'
-  'package.json' 'tsconfig.json' 'eslint.config.js' '.prettierrc' '.prettierignore' '.fallowrc.json'
+  'package.json' 'tsconfig.json' 'vite.config.ts' 'lint' '.fallowrc.json'
   'docs' '.claude/instructions' 'README.md' 'CLAUDE.md'
 )
 

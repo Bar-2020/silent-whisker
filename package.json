@@ -6,26 +6,21 @@
   "license": "MIT",
   "private": true,
   "engines": {
-    "node": ">=22"
+    "node": "^22.18.0 || ^24.11.0 || >=26.0.0"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "lint": "eslint . --max-warnings 0 && prettier --check .",
-    "lint:fix": "eslint . --fix && prettier --write .",
-    "test": "vitest run",
+    "lint": "vp check",
+    "lint:fix": "vp check --fix",
+    "test": "vp test run",
     "fallow": "fallow audit",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run fallow"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.5",
     "@types/node": "^22.20.1",
-    "eslint": "^9.39.5",
-    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-sonarjs": "^4.2.1",
     "fallow": "^3.28.0",
-    "prettier": "^3.9.6",
     "typescript": "~6.0.3",
-    "typescript-eslint": "^8.70.1",
-    "vitest": "^3.2.4"
+    "vite-plus": "1.2.0"
   }
 }
