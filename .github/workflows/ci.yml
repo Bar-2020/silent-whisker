@@ -18,12 +18,13 @@ jobs:
           # single-commit shallow clone.
           fetch-depth: 0
 
-      # Vite+: installs Node 22 (the oxlint/oxfmt binaries need >=22.12), restores the
-      # dependency cache and installs with a frozen lockfile (fails if package-lock.json
-      # is out of date). Pinned to an exact release; the `v1` tag no longer receives updates.
+      # Vite+: installs the current LTS Node (matches `nvm use lts` locally; Vite+ needs
+      # >=22.18), restores the dependency cache and installs with a frozen lockfile (fails
+      # if package-lock.json is out of date). Pinned to an exact release; the `v1` tag no
+      # longer receives updates.
       - uses: voidzero-dev/setup-vp@v1.21.2
         with:
-          node-version: 22
+          node-version: lts
           cache: true
           run-install: |
             - args: ['--frozen-lockfile']
