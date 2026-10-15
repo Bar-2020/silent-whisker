@@ -6,13 +6,12 @@ Draft. Lambda behind CloudFront. JSON. Errors are `{ "code": "SOME_CODE" }` with
 
 | Method and path | Who | Does | Refusals |
 |---|---|---|---|
-| `GET /spots?bbox=` | member | Approved spots in the viewport: city stations with their exact point and address, custom spots approximate only (D-47), plus the caller's own pending ones (R-27) | |
-| `GET /spots/{id}/exact` | member | Exact address and coordinates of a custom spot; the same spot again that day is not counted twice (R-03) | `LOOKUP_LIMIT` (R-03) |
+| `GET /spots?bbox=` | member | Approved spots in the viewport at their exact point: every city station, and the custom spots R-03 allows, using the optional `lat`, `lng`, `accuracy_m` (not stored); plus the caller's own pending ones (R-27) | |
 | `POST /spots` | member | Create a custom spot, saved as `pending` (R-27), from either `address` (looked up) or `lat`, `lng`, `accuracy_m` ("my location"), plus optional `name` and `photo_key` (D-43) | `DAILY_LIMIT` (R-12), `ADDRESS_NOT_FOUND` (D-43), `LOCATION_REQUIRED` (D-43), `BANNED`, `MODERATION_REJECTED` |
 | `POST /uploads` | member | Presigned URL to the quarantine prefix | `BANNED`, `UPLOAD_LIMIT` (R-30), `CAP_REACHED` (R-05) |
 | `POST /spots/{id}/logs` | member | Create a feeding or water log from `kind`, `amount`, `lat`, `lng`, `accuracy_m`. The answer is only counted or unverified, never the distance | `BANNED`, `ATTEMPT_LIMIT` (R-17), `TOO_SOON` (R-10), `LOG_LIMIT` (R-13) |
 | `POST /spots/{id}/empty` | member | Report the food or the water as empty (D-19) | `BANNED`, `ATTEMPT_LIMIT` (R-17), `REFUSED` (R-16, one answer for every failed check) |
-| `GET /spots/{id}` | member | Spot detail, approved logs, approved cats with their like counts | |
+| `GET /spots/{id}` | member | Spot detail with the exact address, approved logs, approved cats with their like counts; a custom spot only as R-03 allows, from the same optional `lat`, `lng`, `accuracy_m` | `NOT_FOUND` (also when R-03 hides it, so a hidden spot looks like a missing one) |
 | `POST /cats` | member | Post a cat photo from `photo_key`, optional `name`, and either `spot_id` (a cat at a spot) or `lat`, `lng` (a random cat; rounded to a neighbourhood cell and not stored; with neither, the profile city is used) (D-44) | `BANNED`, `DAILY_LIMIT` (R-25), `NO_CAT_IN_PHOTO` (R-25), `MODERATION_REJECTED` |
 | `POST /cats/feed` | member | The next 20 photos of the feed: recent approved cat photos close by that the member has not seen, most liked first, skipping the ids in `seen` (the photos the app has shown, the last few hundred), then the seen ones again when none are left; each with a place tag and no coordinates (R-28, R-29, D-45). Optional `lat`, `lng`, rounded to a neighbourhood cell (else the profile city); they are not stored. It is a POST only because the `seen` list is too long for a URL; it writes nothing | |
 | `POST /cats/{id}/like` | member | Like, or take the like back (R-26) | `BANNED` |
