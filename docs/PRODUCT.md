@@ -132,9 +132,8 @@ One phase, one PR or smaller. Do not start a phase while the previous one is hal
 
 ## Evidence on Hand
 
-A cat-pin logo and README art exist in `.github/assets/`. They are repo art, not the app's design
-system: Phase 2 picks the look once and writes DESIGN.md. No reference apps on hand yet. Future
-visual work should not invent or assume any others exist.
+Repo art (cat-pin logo, README images) lives in `.github/assets/`. It is not the app's design
+system: Phase 2 picks the look and writes DESIGN.md. No reference apps yet; do not invent any.
 
 ## Product Principles
 
