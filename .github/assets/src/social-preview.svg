@@ -127,6 +127,6 @@
   <g font-family="Rubik, 'Segoe UI', system-ui, sans-serif">
     <text x="240" y="300" font-size="86" font-weight="800" fill="#fff3d6">Silent Whisker</text>
     <text x="244" y="358" font-size="30" font-weight="500" fill="#c8ccff">Map the spots. Feed the strays. Keep them safe.</text>
-    <text x="930" y="410" text-anchor="end" font-size="27" font-weight="500" fill="#ffc766">מפת נקודות האכלה לחתולי רחוב</text>
+    <text x="930" y="410" text-anchor="end" font-size="31" font-weight="500" fill="#ffc766">החתולים שותקים. אנחנו מקשיבים.&#x200F;</text>
   </g>
 </svg>
