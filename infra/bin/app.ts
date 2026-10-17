@@ -1,6 +1,7 @@
 import { App } from 'aws-cdk-lib';
 import { HOME_REGION } from '../../src/constants/aws';
 import { DeployRoleStack } from '../deploy-role-stack';
+import { HostingStack } from '../hosting-stack';
 
 const budgetEmail = process.env.BUDGET_EMAIL;
 if (!budgetEmail) {
@@ -8,9 +9,8 @@ if (!budgetEmail) {
 }
 
 const app = new App();
-const account = process.env.CDK_DEFAULT_ACCOUNT;
+const env = { account: process.env.CDK_DEFAULT_ACCOUNT, region: HOME_REGION };
 
-new DeployRoleStack(app, 'SilentWhiskerDeployRole', {
-  env: { account, region: HOME_REGION },
-  budgetEmail,
-});
+new DeployRoleStack(app, 'SilentWhiskerDeployRole', { env, budgetEmail });
+// `npm run build` writes dist/ first.
+new HostingStack(app, 'SilentWhiskerHosting', { env, siteDir: 'dist' });
