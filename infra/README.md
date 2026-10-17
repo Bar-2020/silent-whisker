@@ -7,6 +7,7 @@ stored anywhere (D-02).
 | Stack | Region | Holds |
 |---|---|---|
 | `SilentWhiskerDeployRole` | eu-north-1 | The GitHub deploy role |
+| `SilentWhiskerHosting` | eu-north-1 | The private bucket and CloudFront for the app and `/locales/` (D-36) |
 
 ## One-time setup
 
@@ -17,17 +18,21 @@ AWS CLI; check `node --version` is 22.18 or newer. If it is older, run
 
 ```bash
 git clone https://github.com/Bar-2020/silent-whisker.git && cd silent-whisker
-npm ci
+npm ci && npm run build
 ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
 npx cdk bootstrap aws://$ACCOUNT/eu-north-1
 npx cdk deploy SilentWhiskerDeployRole
 ```
 
 `cdk bootstrap` creates the roles and bucket CDK deploys through. The last command prints
-`DeployRoleArn`.
+`DeployRoleArn`. The first merge to `main` after the GitHub step below deploys the rest; the
+hosting stack prints the app address as `SiteUrl`.
 
-Then in GitHub, Settings, Environments: create `production`, limit it to the `main` branch, and
-add the variable `AWS_DEPLOY_ROLE_ARN` (the printed ARN).
+Then in GitHub, Settings:
+1. Environments: create `production` and limit it to the `main` branch.
+2. Secrets and variables, Actions, **Variables** tab: add the **repository** variable
+   `AWS_DEPLOY_ROLE_ARN` (the printed ARN). Not an environment variable: the deploy job checks it
+   before the environment loads, and skips while it is empty.
 
 ### AWS Budget, by hand
 
