@@ -12,7 +12,8 @@ stored anywhere (D-02).
 
 The account is a project from AWS's simplified sign-up, locked to eu-north-1 (D-49). Run in AWS
 CloudShell (the `>_` icon in the console), signed in to that project. CloudShell already has the
-AWS CLI; check `node --version` is 22.18 or newer.
+AWS CLI; check `node --version` is 22.18 or newer. If it is older, run
+`export N_PREFIX=$HOME/.n PATH=$HOME/.n/bin:$PATH && npx -y n 24` first.
 
 ```bash
 git clone https://github.com/Bar-2020/silent-whisker.git && cd silent-whisker

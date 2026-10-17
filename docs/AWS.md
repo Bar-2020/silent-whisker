@@ -21,7 +21,7 @@ big decision.
   (guardrail profile `eu.guardrail.v1:0`, S3).
 - Tel Aviv supports DetectLabels, DetectModerationLabels, DetectText and the face operations (S1).
   An earlier search snippet saying only DetectFaces and CompareFaces was wrong.
-- Cognito, Lambda, DynamoDB and S3 have endpoints in all six Regions (S7). Budgets and CloudFront
+- Cognito, Lambda, DynamoDB and S3 have endpoints in all seven Regions (S7). Budgets and CloudFront
   are global.
 - Standard tier is required for Hebrew: it lists Hebrew as "Supported", not "Optimized". Classic
   tier covers only English, French and Spanish, and AWS warns that guardrails are ineffective in
@@ -59,7 +59,8 @@ big decision.
   no Tel Aviv), no WAF on CloudFront and no multi-Region features. Bedrock calls that create no
   resource still work in every Region enabled by default (S23). Stockholm has no Rekognition (S1).
 - A project on the Paid plan can have a spend limit, at least $20 a month: at the limit AWS pauses
-  the project and keeps the data for 90 days; credits do not count toward it (S24).
+  the project and keeps the data for 90 days. AWS says spend limits "exclude credits" (S24); check
+  in AWS Settings, when setting it, whether it counts usage before or after credits.
 - "Activate advanced features" lifts the limits, but needs the Paid plan first, deletes spend
   limits and cannot be undone (S25).
 - The Free plan of the account in use ends about 2027-04-18 (183 days left on 2026-10-17).
