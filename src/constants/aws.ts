@@ -1,7 +1,7 @@
 // Where the app runs and what it may spend. See docs/AWS.md and DECISIONS.md D-13, D-22.
 
-/** CloudFront's web ACL and the Free plan subscription must live here. */
-export const EDGE_REGION = 'us-east-1';
+/** Everything that can run in Israel does, settled by the region test in Phase 1 (D-13). */
+export const HOME_REGION = 'il-central-1';
 
 /** The only GitHub repository whose deploy job may act in the AWS account (D-02). */
 export const GITHUB_REPOSITORY = 'Bar-2020/silent-whisker';
