@@ -37,7 +37,8 @@ jobs:
       - run: npx cdk synth --quiet
 
   # Every merge to main goes online (D-02). Skipped until the one-time setup in infra/README.md
-  # has set the role variable, so main stays green before AWS is ready.
+  # has set the role variable, so main stays green before AWS is ready. It must be a repository
+  # variable: a job's `if` runs before environment variables load.
   deploy:
     needs: verify
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.AWS_DEPLOY_ROLE_ARN != ''
@@ -60,6 +61,7 @@ jobs:
       - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
           role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          # Same as HOME_REGION in src/constants/aws.ts; YAML cannot import it.
           aws-region: eu-north-1
 
       - run: npm run build
