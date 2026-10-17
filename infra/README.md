@@ -10,6 +10,10 @@ stored anywhere (D-02).
 
 ## One-time setup
 
+The account must be a standard one ("Sign up for AWS (advanced)"), not a "project" from AWS's
+simplified sign-up, which cannot use Tel Aviv, Rekognition or WAF ([AWS.md](../docs/AWS.md#free-plan)).
+Enable the Israel (Tel Aviv) Region first: Account settings, AWS Regions.
+
 Run in AWS CloudShell (the `>_` icon in the AWS console), signed in as the account owner.
 CloudShell already has the AWS CLI; check `node --version` is 22.18 or newer.
 
