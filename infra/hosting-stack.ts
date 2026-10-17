@@ -1,5 +1,5 @@
 import { CfnOutput, RemovalPolicy, Stack, type StackProps } from 'aws-cdk-lib';
-import { Distribution } from 'aws-cdk-lib/aws-cloudfront';
+import { Distribution, PriceClass } from 'aws-cdk-lib/aws-cloudfront';
 import { S3BucketOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { BlockPublicAccess, Bucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
@@ -29,6 +29,8 @@ export class HostingStack extends Stack {
     const distribution = new Distribution(this, 'Site', {
       defaultBehavior: { origin: S3BucketOrigin.withOriginAccessControl(bucket) },
       defaultRootObject: 'index.html',
+      // The cheapest class beyond the free allowance; it still includes Israel and Europe.
+      priceClass: PriceClass.PRICE_CLASS_100,
     });
 
     // Uploads the build and clears CloudFront's cache, so new wording shows without waiting.

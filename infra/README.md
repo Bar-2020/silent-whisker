@@ -28,8 +28,11 @@ npx cdk deploy SilentWhiskerDeployRole
 `DeployRoleArn`. The first merge to `main` after the GitHub step below deploys the rest; the
 hosting stack prints the app address as `SiteUrl`.
 
-Then in GitHub, Settings, Environments: create `production`, limit it to the `main` branch, and
-add the variable `AWS_DEPLOY_ROLE_ARN` (the printed ARN).
+Then in GitHub, Settings:
+1. Environments: create `production` and limit it to the `main` branch.
+2. Secrets and variables, Actions, **Variables** tab: add the **repository** variable
+   `AWS_DEPLOY_ROLE_ARN` (the printed ARN). Not an environment variable: the deploy job checks it
+   before the environment loads, and skips while it is empty.
 
 ### AWS Budget, by hand
 

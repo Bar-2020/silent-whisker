@@ -29,6 +29,20 @@ describe('hosting (D-36: one CloudFront address for the app and /locales/)', () 
     });
   });
 
+  it('uses the cheapest price class, which still covers Israel', () => {
+    template.hasResourceProperties('AWS::CloudFront::Distribution', {
+      DistributionConfig: Match.objectLike({ PriceClass: 'PriceClass_100' }),
+    });
+  });
+
+  it('uploads the build and clears the whole CloudFront cache on each deploy', () => {
+    // With a distribution and no DistributionPaths, the upload step invalidates `/*`.
+    template.hasResourceProperties('Custom::CDKBucketDeployment', {
+      DistributionId: Match.anyValue(),
+      DistributionPaths: Match.absent(),
+    });
+  });
+
   it('keeps the bucket when the stack is deleted', () => {
     template.hasResource('AWS::S3::Bucket', { DeletionPolicy: 'Retain' });
   });
