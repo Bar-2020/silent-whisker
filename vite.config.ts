@@ -194,6 +194,11 @@ export default defineConfig({
         },
       },
       {
+        // CDK declares a resource by constructing it inside its scope: `new Bucket(this, ...)`.
+        files: ['infra/**/*.ts'],
+        rules: { 'sonarjs/constructor-for-side-effects': 'off' },
+      },
+      {
         // Tests parse the repo's own trusted markdown, never untrusted input, so
         // the backtracking cost sonarjs warns about is not a real attack surface.
         files: ['__tests__/docs-links.test.ts'],
