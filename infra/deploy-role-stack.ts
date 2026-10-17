@@ -60,6 +60,9 @@ export class DeployRoleStack extends Stack {
         budgetType: 'COST',
         timeUnit: 'MONTHLY',
         budgetLimit: { amount: MONTHLY_BUDGET_USD, unit: 'USD' },
+        // Count usage before credits: with credits netted out the Free plan always shows $0, and
+        // the alert exists to notice the credit burning fast (D-22).
+        costTypes: { includeCredit: false },
       },
       notificationsWithSubscribers: [
         {

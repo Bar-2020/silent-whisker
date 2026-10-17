@@ -44,9 +44,14 @@ describe('deploy role (D-02: GitHub deploys with OIDC, no stored keys)', () => {
 });
 
 describe('AWS Budget (D-22)', () => {
-  it('is 20 USD a month and emails at 80% actual and 100% forecast', () => {
+  it('is 20 USD a month before credits and emails at 80% actual and 100% forecast', () => {
     template.hasResourceProperties('AWS::Budgets::Budget', {
-      Budget: { BudgetLimit: { Amount: 20, Unit: 'USD' }, TimeUnit: 'MONTHLY', BudgetType: 'COST' },
+      Budget: {
+        BudgetLimit: { Amount: 20, Unit: 'USD' },
+        TimeUnit: 'MONTHLY',
+        BudgetType: 'COST',
+        CostTypes: { IncludeCredit: false },
+      },
       NotificationsWithSubscribers: [
         Match.objectLike({
           Notification: Match.objectLike({ NotificationType: 'ACTUAL', Threshold: 80 }),
