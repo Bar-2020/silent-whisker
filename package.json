@@ -15,7 +15,8 @@
     "test": "vp test run",
     "fallow": "fallow audit",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run fallow",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "build": "vp build"
   },
   "devDependencies": {
     "@types/node": "^22.20.1",
