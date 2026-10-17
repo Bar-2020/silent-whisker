@@ -31,6 +31,10 @@ jobs:
       # the Stop hook and every phase's Verification section refer to.
       - run: npm run verify
 
+      # Builds the CloudFormation templates and runs CDK's checks (e.g. a resource type the
+      # Region does not offer), so they fail here, not in a deploy.
+      - run: npx cdk synth --quiet
+
   review:
     needs: verify
     # Disabled. To re-enable, restore:
