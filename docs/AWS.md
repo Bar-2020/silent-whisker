@@ -9,7 +9,7 @@ big decision.
 
 | Region | Rekognition DetectLabels and DetectModerationLabels | Guardrails Standard (ApplyGuardrail) | Text may be processed in |
 |---|---|---|---|
-| eu-north-1 (Stockholm), the Region in use (D-13) | no (S1) | yes, a source Region of the EU profile (S3); confirm by test | the EU list (S3) |
+| eu-north-1 (Stockholm), the Region in use (D-13) | no (S1) | yes, a source Region of the EU profile (S3); tested with Hebrew on 2026-10-17 | the EU list (S3) |
 | il-central-1 (Tel Aviv) | yes (S1) | listed (S2, S3) but no `bedrock-runtime` endpoint in the General Reference (S5): test first, D-13 | the EU list or Tel Aviv (S3) |
 | eu-central-1 (Frankfurt) | yes (S1) | yes, 50 text units per second (S5) | the EU list (S3) |
 | eu-west-1 (Ireland) | yes (S1) | yes, 200 text units per second (S5) | the EU list (S3) |
