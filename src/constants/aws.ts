@@ -1,7 +1,7 @@
-// Where the app runs and what it may spend. See docs/AWS.md and DECISIONS.md D-13, D-22.
+// Where the app runs and what it may spend. See docs/AWS.md and DECISIONS.md D-13, D-22, D-49.
 
-/** Everything that can run in Israel does, settled by the region test in Phase 1 (D-13). */
-export const HOME_REGION = 'il-central-1';
+/** The only Region the AWS account allows (D-13, D-49). */
+export const HOME_REGION = 'eu-north-1';
 
 /** The only GitHub repository whose deploy job may act in the AWS account (D-02). */
 export const GITHUB_REPOSITORY = 'Bar-2020/silent-whisker';

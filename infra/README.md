@@ -6,30 +6,30 @@ stored anywhere (D-02).
 
 | Stack | Region | Holds |
 |---|---|---|
-| `SilentWhiskerDeployRole` | il-central-1 | The GitHub deploy role, the $20 a month AWS Budget (D-22) |
+| `SilentWhiskerDeployRole` | eu-north-1 | The GitHub deploy role, the $20 a month AWS Budget (D-22) |
 
 ## One-time setup
 
-The account must be a standard one ("Sign up for AWS (advanced)"), not a "project" from AWS's
-simplified sign-up, which cannot use Tel Aviv, Rekognition or WAF ([AWS.md](../docs/AWS.md#free-plan)).
-Enable the Israel (Tel Aviv) Region first: Account settings, AWS Regions.
-
-Run in AWS CloudShell (the `>_` icon in the AWS console), signed in as the account owner.
-CloudShell already has the AWS CLI; check `node --version` is 22.18 or newer.
+The account is a project from AWS's simplified sign-up, locked to eu-north-1 (D-49). Run in AWS
+CloudShell (the `>_` icon in the console), signed in to that project. CloudShell already has the
+AWS CLI; check `node --version` is 22.18 or newer.
 
 ```bash
 git clone https://github.com/Bar-2020/silent-whisker.git && cd silent-whisker
 npm ci
 ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
-npx cdk bootstrap aws://$ACCOUNT/us-east-1 aws://$ACCOUNT/il-central-1
+npx cdk bootstrap aws://$ACCOUNT/eu-north-1
 BUDGET_EMAIL=you@example.com npx cdk deploy SilentWhiskerDeployRole
 ```
 
-`cdk bootstrap` creates the roles and bucket CDK deploys through, once per Region. The last
-command prints `DeployRoleArn` and AWS emails the budget address to confirm it.
+`cdk bootstrap` creates the roles and bucket CDK deploys through. The last command prints
+`DeployRoleArn` and AWS emails the budget address to confirm it.
 
 Then in GitHub, Settings, Environments: create `production`, limit it to the `main` branch, and
 add two variables: `AWS_DEPLOY_ROLE_ARN` (the printed ARN) and `BUDGET_EMAIL`.
+
+Before the Free plan ends (about 2027-04-18): upgrade to the Paid plan and set the project's
+spend limit to $20 a month in AWS Settings, Billing (D-22).
 
 ## Local checks
 

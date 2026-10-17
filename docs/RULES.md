@@ -23,11 +23,11 @@ proposed values that live in `src/constants/` (see [DECISIONS.md](DECISIONS.md))
 | R-18 | From 360 px wide up to desktop, no screen scrolls sideways or is cut off, at phone, tablet and desktop widths. The iPhone XS (375 x 812 px) is the smallest iPhone tested. | CI viewport test |
 | R-19 | `he.json` and `en.json` have the same keys, and every `t()` key is type-checked against them. | Test, `tsc` |
 | R-20 | Municipal stations cannot be renamed, deactivated or deleted by members. Only the import changes them. | Lambda |
-| R-21 | Every endpoint and every file served is rate limited: per IP at the edge for the app files, `/locales/` and the API, and per member for writes. Over the limit the request is refused and nothing is saved (the API answers 429 with `Retry-After`, the edge 403). Every limit is a constant. | CloudFront WAF, Lambda |
+| R-21 | Every endpoint is rate limited: per route at the API front door, and per member for writes. Over the limit the request is refused and nothing is saved (429 with `Retry-After`). The app files and `/locales/` have no per-IP limit, because the account allows no WAF; CloudFront's free allowance and the spend limit bound them (D-38, D-49). Every limit is a constant. | API Gateway, Lambda |
 | R-22 | Every API route requires a valid sign-in. The only things served without one are the landing page, the privacy policy, the terms and the translation files. | Cognito authorizer |
 | R-23 | A cat alert needs a photo, a note and the phone's location, read at submit, with an accuracy of 50 m or better (D-25), or nothing is saved. A member can raise at most 5 cat alerts a day. | Lambda |
 | R-24 | Members see a cat alert only while it is approved, not resolved and not expired: it expires 6 hours after it is raised, plus 12 hours for each extension, counted from the old expiry or from now, whichever is later, with no limit on extensions. Only an admin can resolve or extend one, and can still see and extend one for 24 hours after it expired, but not a resolved one. | Lambda |
-| R-25 | A cat photo, and the photo of a cat alert, must contain a cat (checked by Rekognition), or it is rejected and never shown. A member can post at most 10 cat photos and write at most 60 comments a day. | Lambda |
+| R-25 | A cat photo, and the photo of a cat alert, must contain a cat (checked by the photo check, D-09), or it is rejected and never shown. A member can post at most 10 cat photos and write at most 60 comments a day. | Lambda |
 | R-26 | A member's like on a cat counts once; liking again takes it back. | Lambda |
 | R-27 | A custom spot stays hidden from other members, and takes no logs or empty reports, until an admin approves it. Only an admin can approve or reject one. | Lambda |
 | R-28 | A cat photo keeps no exact position, only its neighbourhood cell and a place tag, and the feed rounds the member's own position to a cell too, so nothing filters on a precise point. Cat photos are never returned by the map routes. | Lambda |
@@ -54,7 +54,7 @@ fake them.
 
 ## Moderation (R-04)
 
-- **Photos**: uploaded to a private quarantine prefix, checked by Rekognition, copied to the public
+- **Photos**: uploaded to a private quarantine prefix, checked by the photo check (D-09), copied to the public
   prefix only if approved. Members see approved photos through short-lived signed URLs, never an
   open address (D-39). Rejected uploads expire by S3 lifecycle rule.
 - **Profile pictures**: not uploaded in v1. The member's own Google account photo is shown as
