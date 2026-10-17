@@ -1,0 +1,19 @@
+// Where the app runs and what it may spend. See docs/AWS.md and DECISIONS.md D-13, D-22.
+
+/** CloudFront's web ACL and the Free plan subscription must live here. */
+export const EDGE_REGION = 'us-east-1';
+
+/** The only GitHub repository whose deploy job may act in the AWS account (D-02). */
+export const GITHUB_REPOSITORY = 'Bar-2020/silent-whisker';
+
+/** The GitHub environment the deploy job runs in; only `main` may use it. */
+export const GITHUB_DEPLOY_ENVIRONMENT = 'production';
+
+/** AWS Budget, an email backstop to the daily moderation cap (D-22). */
+export const MONTHLY_BUDGET_USD = 20;
+
+/** Email when actual spend passes this share of the budget, in percent. */
+export const BUDGET_ACTUAL_ALERT_PERCENT = 80;
+
+/** Email when the month's forecast passes this share of the budget, in percent. */
+export const BUDGET_FORECAST_ALERT_PERCENT = 100;

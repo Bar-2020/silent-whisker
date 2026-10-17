@@ -39,4 +39,5 @@ Feature-based. `src/features/<feature>/` owns its screens, components, hooks and
 @.claude/instructions/working-style.md
 
 ### Current state
-Phase 0: the verification harness only. No app code yet.
+Phase 1: AWS infra and deploy pipeline (CDK in `infra/`, one-time setup in
+[infra/README.md](infra/README.md)). No app screens yet.
