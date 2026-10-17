@@ -22,7 +22,8 @@ big decision.
 - Tel Aviv supports DetectLabels, DetectModerationLabels, DetectText and the face operations (S1).
   An earlier search snippet saying only DetectFaces and CompareFaces was wrong.
 - Cognito, Lambda, DynamoDB and S3 have endpoints in all seven Regions (S7). Budgets and CloudFront
-  are global.
+  are global, but CloudFormation has no `AWS::Budgets::Budget` in eu-north-1 (CDK's Region check,
+  2026-10-17), so the budget is made by hand.
 - Standard tier is required for Hebrew: it lists Hebrew as "Supported", not "Optimized". Classic
   tier covers only English, French and Spanish, and AWS warns that guardrails are ineffective in
   unsupported languages (S6).

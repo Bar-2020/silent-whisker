@@ -6,7 +6,8 @@ stored anywhere (D-02).
 
 | Stack | Region | Holds |
 |---|---|---|
-| `SilentWhiskerDeployRole` | eu-north-1 | The GitHub deploy role, the $20 a month AWS Budget (D-22) |
+| `SilentWhiskerDeployRole` | eu-north-1 | The GitHub deploy role |
+| `SilentWhiskerHosting` | eu-north-1 | The private bucket and CloudFront for the app and `/locales/` (D-36) |
 
 ## One-time setup
 
@@ -17,22 +18,31 @@ AWS CLI; check `node --version` is 22.18 or newer. If it is older, run
 
 ```bash
 git clone https://github.com/Bar-2020/silent-whisker.git && cd silent-whisker
-npm ci
+npm ci && npm run build
 ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
 npx cdk bootstrap aws://$ACCOUNT/eu-north-1
-BUDGET_EMAIL=you@example.com npx cdk deploy SilentWhiskerDeployRole
+npx cdk deploy SilentWhiskerDeployRole
 ```
 
 `cdk bootstrap` creates the roles and bucket CDK deploys through. The last command prints
-`DeployRoleArn` and AWS emails the budget address to confirm it.
+`DeployRoleArn`. The first merge to `main` after the GitHub step below deploys the rest; the
+hosting stack prints the app address as `SiteUrl`.
 
 Then in GitHub, Settings, Environments: create `production`, limit it to the `main` branch, and
-add two variables: `AWS_DEPLOY_ROLE_ARN` (the printed ARN) and `BUDGET_EMAIL`.
+add the variable `AWS_DEPLOY_ROLE_ARN` (the printed ARN).
+
+### AWS Budget, by hand
+
+CloudFormation cannot create a budget in eu-north-1, so make it once in the console (D-22):
+Billing and Cost Management, Budgets, Create budget, Customize (advanced), Cost budget. Monthly,
+fixed, $20. Under advanced options, untick **Credits**, so it counts usage before credits and
+warns while the Free plan credit is burning. Alerts: actual cost over 80%, and forecasted cost over
+100%, both to your email.
 
 Before the Free plan ends (about 2027-04-18): upgrade to the Paid plan and set the project's
 spend limit to $20 a month in AWS Settings, Billing (D-22).
 
 ## Local checks
 
-`npm run cdk -- synth` builds the templates without AWS access (set `BUDGET_EMAIL` to any
-address). The stacks' tests run in `npm run verify`.
+`npm run cdk -- synth` builds the templates without AWS access and runs CDK's checks, such as
+"this resource type does not exist in this Region". The stacks' tests run in `npm run verify`.

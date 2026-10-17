@@ -31,6 +31,40 @@ jobs:
       # the Stop hook and every phase's Verification section refer to.
       - run: npm run verify
 
+      # Builds the CloudFormation templates and runs CDK's checks (e.g. a resource type the
+      # Region does not offer), so they fail here, not in a deploy. The hosting stack needs dist/.
+      - run: npm run build
+      - run: npx cdk synth --quiet
+
+  # Every merge to main goes online (D-02). Skipped until the one-time setup in infra/README.md
+  # has set the role variable, so main stays green before AWS is ready.
+  deploy:
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.AWS_DEPLOY_ROLE_ARN != ''
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency: production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: voidzero-dev/setup-vp@68f39c78aaf39be468cabd2afb09c162574c84af # v1.21.2
+        with:
+          node-version: 24.22.0
+          cache: true
+          run-install: |
+            - args: ['--frozen-lockfile']
+
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: eu-north-1
+
+      - run: npm run build
+      - run: npx cdk deploy --all --require-approval never
+
   review:
     needs: verify
     # Disabled. To re-enable, restore:
