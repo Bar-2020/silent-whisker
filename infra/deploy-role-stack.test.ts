@@ -6,9 +6,7 @@ import { DeployRoleStack } from './deploy-role-stack';
 
 // The same feature flags `cdk deploy` uses, so the tested template is the deployed one.
 const app = new App({ context: cdkJson.context });
-const template = Template.fromStack(
-  new DeployRoleStack(app, 'Test', { budgetEmail: 'alerts@example.com' })
-);
+const template = Template.fromStack(new DeployRoleStack(app, 'Test'));
 
 describe('deploy role (D-02: GitHub deploys with OIDC, no stored keys)', () => {
   it('trusts only the production environment of this repository', () => {
@@ -42,28 +40,6 @@ describe('deploy role (D-02: GitHub deploys with OIDC, no stored keys)', () => {
           }),
         ],
       },
-    });
-  });
-});
-
-describe('AWS Budget (D-22)', () => {
-  it('is 20 USD a month before credits and emails at 80% actual and 100% forecast', () => {
-    template.hasResourceProperties('AWS::Budgets::Budget', {
-      Budget: {
-        BudgetLimit: { Amount: 20, Unit: 'USD' },
-        TimeUnit: 'MONTHLY',
-        BudgetType: 'COST',
-        CostTypes: { IncludeCredit: false },
-      },
-      NotificationsWithSubscribers: [
-        Match.objectLike({
-          Notification: Match.objectLike({ NotificationType: 'ACTUAL', Threshold: 80 }),
-          Subscribers: [{ SubscriptionType: 'EMAIL', Address: 'alerts@example.com' }],
-        }),
-        Match.objectLike({
-          Notification: Match.objectLike({ NotificationType: 'FORECASTED', Threshold: 100 }),
-        }),
-      ],
     });
   });
 });

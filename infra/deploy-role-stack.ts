@@ -1,34 +1,21 @@
-import { CfnOutput, Stack, type StackProps } from 'aws-cdk-lib';
-import { CfnBudget } from 'aws-cdk-lib/aws-budgets';
+import { CfnOutput, Stack } from 'aws-cdk-lib';
 import {
   OidcProviderNative,
   PolicyStatement,
   Role,
   WebIdentityPrincipal,
 } from 'aws-cdk-lib/aws-iam';
-import type { Construct } from 'constructs';
-import {
-  BUDGET_ACTUAL_ALERT_PERCENT,
-  BUDGET_FORECAST_ALERT_PERCENT,
-  GITHUB_DEPLOY_ENVIRONMENT,
-  GITHUB_REPOSITORY,
-  MONTHLY_BUDGET_USD,
-} from '../src/constants/aws';
+import { GITHUB_DEPLOY_ENVIRONMENT, GITHUB_REPOSITORY } from '../src/constants/aws';
 
 const GITHUB_OIDC_HOST = 'token.actions.githubusercontent.com';
 
-interface DeployRoleStackProps extends StackProps {
-  /** Where budget alerts go. Passed in at deploy time, never committed: the repo is public. */
-  readonly budgetEmail: string;
-}
-
 /**
- * The account-level pieces: the role GitHub Actions deploys with (no stored keys, D-02) and the
- * monthly AWS Budget (D-22). Both are global services; the stack sits in the home Region.
+ * The role GitHub Actions deploys with: no stored keys (D-02). The AWS Budget (D-22) is not here:
+ * CloudFormation cannot create one in eu-north-1, so it is made once by hand (infra/README.md).
  */
 export class DeployRoleStack extends Stack {
-  constructor(scope: Construct, id: string, props: DeployRoleStackProps) {
-    super(scope, id, props);
+  constructor(...args: ConstructorParameters<typeof Stack>) {
+    super(...args);
 
     const provider = new OidcProviderNative(this, 'GitHubOidc', {
       url: `https://${GITHUB_OIDC_HOST}`,
@@ -51,33 +38,6 @@ export class DeployRoleStack extends Stack {
         resources: [`arn:${this.partition}:iam::${this.account}:role/cdk-hnb659fds-*`],
       })
     );
-
-    const subscribers = [{ subscriptionType: 'EMAIL', address: props.budgetEmail }];
-    new CfnBudget(this, 'MonthlyBudget', {
-      budget: {
-        budgetName: 'silent-whisker-monthly',
-        budgetType: 'COST',
-        timeUnit: 'MONTHLY',
-        budgetLimit: { amount: MONTHLY_BUDGET_USD, unit: 'USD' },
-        // Count usage before credits: with credits netted out the Free plan always shows $0, and
-        // the alert exists to notice the credit burning fast (D-22).
-        costTypes: { includeCredit: false },
-      },
-      notificationsWithSubscribers: (
-        [
-          ['ACTUAL', BUDGET_ACTUAL_ALERT_PERCENT],
-          ['FORECASTED', BUDGET_FORECAST_ALERT_PERCENT],
-        ] as const
-      ).map(([notificationType, threshold]) => ({
-        notification: {
-          notificationType,
-          comparisonOperator: 'GREATER_THAN',
-          threshold,
-          thresholdType: 'PERCENTAGE',
-        },
-        subscribers,
-      })),
-    });
 
     new CfnOutput(this, 'DeployRoleArn', { value: role.roleArn });
   }
