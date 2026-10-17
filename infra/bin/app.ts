@@ -1,5 +1,5 @@
 import { App } from 'aws-cdk-lib';
-import { EDGE_REGION } from '../../src/constants/aws';
+import { HOME_REGION } from '../../src/constants/aws';
 import { DeployRoleStack } from '../deploy-role-stack';
 
 const budgetEmail = process.env.BUDGET_EMAIL;
@@ -11,6 +11,6 @@ const app = new App();
 const account = process.env.CDK_DEFAULT_ACCOUNT;
 
 new DeployRoleStack(app, 'SilentWhiskerDeployRole', {
-  env: { account, region: EDGE_REGION },
+  env: { account, region: HOME_REGION },
   budgetEmail,
 });

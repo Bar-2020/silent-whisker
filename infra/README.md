@@ -6,7 +6,7 @@ stored anywhere (D-02).
 
 | Stack | Region | Holds |
 |---|---|---|
-| `SilentWhiskerDeployRole` | us-east-1 (IAM and Budgets are global) | The GitHub deploy role, the $20 a month AWS Budget (D-22) |
+| `SilentWhiskerDeployRole` | il-central-1 | The GitHub deploy role, the $20 a month AWS Budget (D-22) |
 
 ## One-time setup
 

@@ -24,7 +24,7 @@ interface DeployRoleStackProps extends StackProps {
 
 /**
  * The account-level pieces: the role GitHub Actions deploys with (no stored keys, D-02) and the
- * monthly AWS Budget (D-22). IAM and Budgets are global, so this stack's Region does not matter.
+ * monthly AWS Budget (D-22). Both are global services; the stack sits in the home Region.
  */
 export class DeployRoleStack extends Stack {
   constructor(scope: Construct, id: string, props: DeployRoleStackProps) {
