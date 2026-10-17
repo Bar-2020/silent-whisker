@@ -53,8 +53,11 @@ big decision.
 - The Free plan ends after 6 months or when the credit is used, whichever comes first. Then the
   account closes and AWS keeps the data 90 days, unless upgraded to the Paid plan (S13).
 - The Free plan cannot be charged. Always-free offers stay on both plans (S12, S13).
-- The account was created about 2026-10-07, so the plan ends about 2027-04-07. Confirm the date and
-  the credit balance in the Billing console.
+- Use **Sign up for AWS (advanced)**, the standard account. AWS's new simplified sign-up makes a
+  "project" account locked to one Region picked from the contact address (Israel gets eu-north-1
+  Stockholm), with no opt-in Regions (so no Tel Aviv), no WAF on CloudFront, and no multi-Region
+  features (S23). Stockholm has no Rekognition (S1), so that account cannot run the app. The first
+  account (2026-10-07) was one; a standard account replaces it (2026-10-17).
 
 ## Monthly estimate
 
@@ -102,3 +105,5 @@ sign-up credit. The AWS Budget is only a backup: it alerts, and is not instant.
 - S21: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/flat-rate-pricing-plan.html
   (read 2026-10-14)
 - S22: https://aws.amazon.com/waf/pricing/ (worked examples, read 2026-10-14)
+- S23: https://docs.aws.amazon.com/accounts/latest/reference/project-regions.html and
+  https://docs.aws.amazon.com/accounts/latest/reference/sign-up-for-aws.html (read 2026-10-17)
