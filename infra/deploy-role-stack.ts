@@ -1,4 +1,4 @@
-import { CfnOutput, Duration, Stack, type StackProps } from 'aws-cdk-lib';
+import { CfnOutput, Stack, type StackProps } from 'aws-cdk-lib';
 import { CfnBudget } from 'aws-cdk-lib/aws-budgets';
 import {
   OidcProviderNative,
@@ -37,7 +37,6 @@ export class DeployRoleStack extends Stack {
 
     const role = new Role(this, 'GitHubDeployRole', {
       description: `Deploys ${GITHUB_REPOSITORY} from its ${GITHUB_DEPLOY_ENVIRONMENT} environment`,
-      maxSessionDuration: Duration.hours(1),
       assumedBy: new WebIdentityPrincipal(provider.oidcProviderArn, {
         StringEquals: {
           [`${GITHUB_OIDC_HOST}:aud`]: 'sts.amazonaws.com',
@@ -64,26 +63,20 @@ export class DeployRoleStack extends Stack {
         // the alert exists to notice the credit burning fast (D-22).
         costTypes: { includeCredit: false },
       },
-      notificationsWithSubscribers: [
-        {
-          notification: {
-            notificationType: 'ACTUAL',
-            comparisonOperator: 'GREATER_THAN',
-            threshold: BUDGET_ACTUAL_ALERT_PERCENT,
-            thresholdType: 'PERCENTAGE',
-          },
-          subscribers,
+      notificationsWithSubscribers: (
+        [
+          ['ACTUAL', BUDGET_ACTUAL_ALERT_PERCENT],
+          ['FORECASTED', BUDGET_FORECAST_ALERT_PERCENT],
+        ] as const
+      ).map(([notificationType, threshold]) => ({
+        notification: {
+          notificationType,
+          comparisonOperator: 'GREATER_THAN',
+          threshold,
+          thresholdType: 'PERCENTAGE',
         },
-        {
-          notification: {
-            notificationType: 'FORECASTED',
-            comparisonOperator: 'GREATER_THAN',
-            threshold: BUDGET_FORECAST_ALERT_PERCENT,
-            thresholdType: 'PERCENTAGE',
-          },
-          subscribers,
-        },
-      ],
+        subscribers,
+      })),
     });
 
     new CfnOutput(this, 'DeployRoleArn', { value: role.roleArn });
