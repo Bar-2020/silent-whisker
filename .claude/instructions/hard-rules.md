@@ -22,5 +22,6 @@
 - **A custom spot reaches a member only as R-03 allows**: phone within 150 m, the spot needing food
   or water, or its creator or an admin. Positions are exact; city stations and cat alerts go to all.
 - **Every metered AWS call goes through one function that checks the daily cap** (R-05).
-- **Every endpoint and every file served is rate limited** (R-21). A new endpoint ships with its
-  limit in `src/constants/` and a test that calls it past the limit and expects a refusal.
+- **Every endpoint is rate limited** (R-21). A new endpoint ships with its limit in
+  `src/constants/` and a test that calls it past the limit and expects a refusal. Static files
+  have no per-IP limit: the AWS account allows no WAF (D-38).

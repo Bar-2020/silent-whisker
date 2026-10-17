@@ -27,7 +27,7 @@ Draft. Lambda behind CloudFront. JSON. Errors are `{ "code": "SOME_CODE" }` with
 
 ## Static files
 
-Same CloudFront distribution as the app (no CORS). Not Lambdas. Rate limited per IP at the edge (R-21).
+Same CloudFront distribution as the app (no CORS). Not Lambdas. No per-IP limit: the account allows no WAF (R-21, D-38).
 
 | Path | Holds |
 |---|---|

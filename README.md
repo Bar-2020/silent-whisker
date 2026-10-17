@@ -50,8 +50,8 @@ there.
   Exact addresses go only to signed-in members, up to 30 lookups a day each.
 - **Your location stays yours.** Your phone's position is used once, to check the distance. Only
   the distance, rounded to 10 m, is kept.
-- **Moderated before public.** Photos are checked by Amazon Rekognition and text by Amazon Bedrock
-  Guardrails. Nothing is public until it passes, and if the check fails it stays hidden.
+- **Moderated before public.** Photos are checked by an AI model on Amazon Bedrock and text by
+  Bedrock Guardrails. Nothing is public until it passes, and if the check fails it stays hidden.
 - **The server decides.** Every rule is enforced in the backend, never only in the app. See
   [docs/RULES.md](docs/RULES.md).
 - **No surprise bills.** Every metered AWS call goes through one function that checks a daily cap.
@@ -68,7 +68,7 @@ flowchart LR
     edge --> api["Lambda API<br/>every rule enforced here"]
     api --> db[("DynamoDB")]
     api --> photos["S3 photos<br/>quarantine, then public"]
-    api --> mod["Rekognition and Bedrock Guardrails<br/>moderation"]
+    api --> mod["Bedrock photo check and Guardrails<br/>moderation"]
 ```
 
 | Layer | Choice |
