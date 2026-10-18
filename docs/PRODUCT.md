@@ -117,7 +117,7 @@ One phase, one PR or smaller. Do not start a phase while the previous one is hal
 
 0. Repo and harness: `npm run verify` green, CI, Stop hook.
 1. AWS infra and deploy pipeline in Stockholm (CDK, GitHub deploy key, the text and photo tests D-13 and
-   D-09, AWS Budget of $20 a month, daily cap function). CloudFront serves the app and `/locales/`
+   D-09, AWS Budget of $10 a month, daily cap function). CloudFront serves the app and `/locales/`
    (D-38, D-49).
 2. Google sign-in and profile, the public landing and legal pages, Hebrew/English shell,
    responsive shell, and `DESIGN.md` (UI and UX design). Sign-in is required (D-39), so it comes
