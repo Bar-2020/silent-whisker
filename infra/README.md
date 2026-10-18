@@ -51,9 +51,10 @@ NAME --access-key-id OLD_ID`. A user can hold two keys at once, so nothing break
 
 CloudFormation cannot create a budget in eu-north-1, so make it once in the console (D-22):
 Billing and Cost Management, Budgets, Create budget, Customize (advanced), Cost budget. Monthly,
-fixed, $20. Under advanced options, untick **Credits**, so it counts usage before credits and
-warns while the Free plan credit is burning. Alerts: actual cost over 80%, and forecasted cost over
-100%, both to your email.
+fixed, $10, aggregated by Unblended costs. Budget scope: filter Charge type to **Usage** only, so
+it counts usage before credits and warns while the Free plan credit is burning (a new account
+lists no Usage yet: add the filter once it does). Alerts: actual cost over 80%, and forecasted
+cost over 100%, both to your email.
 
 Before the Free plan ends (about 2027-04-18): upgrade to the Paid plan and set the project's
 spend limit to $20 a month in AWS Settings, Billing (D-22).
