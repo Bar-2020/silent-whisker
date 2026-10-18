@@ -13,7 +13,7 @@ web
 ## Stack
 
 React, Vite, TypeScript, react-leaflet, react-i18next. AWS: S3 + CloudFront, Lambda, DynamoDB,
-Cognito. CDK in TypeScript, deployed from GitHub Actions with OIDC (D-02).
+Cognito. CDK in TypeScript, deployed from GitHub Actions with a deploy-only key (D-02).
 
 ## Who uses it
 
@@ -116,7 +116,7 @@ Code first, no Figma (D-40). The tool is Impeccable (`.claude/skills/impeccable`
 One phase, one PR or smaller. Do not start a phase while the previous one is half built.
 
 0. Repo and harness: `npm run verify` green, CI, Stop hook.
-1. AWS infra and deploy pipeline in Stockholm (CDK, GitHub OIDC, the text and photo tests D-13 and
+1. AWS infra and deploy pipeline in Stockholm (CDK, GitHub deploy key, the text and photo tests D-13 and
    D-09, AWS Budget of $20 a month, daily cap function). CloudFront serves the app and `/locales/`
    (D-38, D-49).
 2. Google sign-in and profile, the public landing and legal pages, Hebrew/English shell,

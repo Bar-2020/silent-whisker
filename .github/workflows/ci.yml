@@ -37,17 +37,17 @@ jobs:
       - run: npx cdk synth --quiet
 
   # Every merge to main goes online (D-02). Skipped until the one-time setup in infra/README.md
-  # has set the role variable, so main stays green before AWS is ready. It must be a repository
-  # variable: a job's `if` runs before environment variables load.
+  # sets DEPLOY_ENABLED, so main stays green before AWS is ready. It must be a repository
+  # variable: a job's `if` runs before the environment's secrets and variables load.
   deploy:
     needs: verify
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.AWS_DEPLOY_ROLE_ARN != ''
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
     runs-on: ubuntu-latest
+    # The key is a secret of this environment, which only main may use.
     environment: production
     concurrency: production
     permissions:
       contents: read
-      id-token: write
     steps:
       - uses: actions/checkout@v6
 
@@ -60,7 +60,9 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
-          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          # The deploy-only user's key (infra/deploy-user-stack.ts); CDK then assumes its roles.
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           # Same as HOME_REGION in src/constants/aws.ts; YAML cannot import it.
           aws-region: eu-north-1
 
