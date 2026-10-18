@@ -6,7 +6,7 @@ Missing decision mid-phase: add the next free `D-nn` with a recommendation, then
 | ID | Decision | Status |
 |---|---|---|
 | D-01 | Web first: installable PWA. Capacitor can wrap it for the stores later. | proposed |
-| D-02 | Stack: React, Vite, TypeScript, react-leaflet, react-i18next. AWS: S3 + CloudFront, Lambda, DynamoDB, Cognito. CDK in TypeScript, deployed from GitHub Actions with OIDC (no stored keys). | accepted |
+| D-02 | Stack: React, Vite, TypeScript, react-leaflet, react-i18next. AWS: S3 + CloudFront, Lambda, DynamoDB, Cognito. CDK in TypeScript, deployed from GitHub Actions on every merge to `main`. The account forbids the OIDC provider a keyless login needs (D-49), so GitHub uses one access key of a deploy-only AWS user that may only assume the CDK bootstrap roles. The key lives only as a secret of the `production` environment (main only), is made by hand, never by code, and is replaced about every 90 days. | accepted (stored key, 2026-10-18) |
 | D-03 | License: MIT. | accepted |
 | D-04 | Sign-in: Google only at launch. Phone (SMS or WhatsApp) and Apple later, if cost and demand justify it. SMS needs a per-number, per-IP and daily cap. | accepted |
 | D-05 | Visitors see all spots, approximate only. Only members interact. | superseded by D-39 |
