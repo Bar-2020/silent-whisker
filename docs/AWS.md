@@ -64,6 +64,8 @@ big decision.
   in AWS Settings, when setting it, whether it counts usage before or after credits.
 - "Activate advanced features" lifts the limits, but needs the Paid plan first, deletes spend
   limits and cannot be undone (S25).
+- AWS-managed policies on the project deny `iam:*Provider*`, so no OIDC provider and no keyless
+  GitHub login; IAM users and access keys are allowed (S26, and a failed deploy on 2026-10-18).
 - The Free plan of the account in use ends about 2027-04-18 (183 days left on 2026-10-17).
 
 ## Monthly estimate
@@ -117,3 +119,4 @@ sign-up credit. The AWS Budget is only a backup: it alerts, and is not instant.
 - S24: https://docs.aws.amazon.com/accounts/latest/reference/create-spend-limit.html (read 2026-10-17)
 - S25: https://docs.aws.amazon.com/accounts/latest/reference/activate-advanced-features.html and
   https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier-plans.html (read 2026-10-17)
+- S26: https://docs.aws.amazon.com/accounts/latest/reference/scps-and-rcps-for-projects.html (read 2026-10-18)
