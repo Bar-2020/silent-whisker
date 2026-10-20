@@ -75,7 +75,7 @@ jobs:
           role-duration-seconds: 3600
           # Session tags would need sts:TagSession in the role's trust policy; nothing uses them.
           role-skip-session-tagging: true
-          # Same as home_region in src/constants/aws.json; YAML cannot read it.
+          # Same as selected_region in src/constants/aws.json; YAML cannot read it.
           aws-region: eu-north-1
 
       - run: npm run build
