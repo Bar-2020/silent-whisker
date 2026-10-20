@@ -34,10 +34,10 @@ and one counted water log per spot per member per 3 hours)". A human does not re
 ### Folder structure
 Feature-based. `src/features/<feature>/` owns its screens, components, hooks and data access.
 `src/shared/` only when a second feature needs it. **Features never import from each other.**
-`infra/` is the AWS CDK app, `functions/` the Lambda handlers.
+`infra/` is Terraform (`bootstrap/` by hand, `app/` by CI), `functions/` the Lambda handlers.
 
 @.claude/instructions/working-style.md
 
 ### Current state
-Phase 1: AWS infra and deploy pipeline (CDK in `infra/`, one-time setup in
+Phase 1: AWS infra and deploy pipeline (Terraform in `infra/`, one-time setup in
 [infra/README.md](infra/README.md)). No app screens yet.

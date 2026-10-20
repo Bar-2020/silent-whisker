@@ -16,7 +16,8 @@
 - **TypeScript strict.** No `any`, no `@ts-ignore` to get past a real type error.
 - **Constants live in `src/constants/`** (limits, thresholds, caps, timeouts, sizes, counts, radii).
   No magic numbers in logic: a numeric literal other than 0, 1 or -1 is a lint error. Visual values
-  (spacing, colours) live in `src/styles/`.
+  (spacing, colours) live in `src/styles/`. A value Terraform also needs lives in a `.json` file
+  there, which Terraform reads with `jsondecode(file(...))`.
 - **Nothing user-supplied is public until moderation approves it.** Photos and text. If the
   moderation call fails, the content stays hidden.
 - **A custom spot reaches a member only as R-03 allows**: phone within 150 m, the spot needing food
