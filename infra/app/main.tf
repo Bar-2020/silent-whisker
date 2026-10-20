@@ -15,7 +15,7 @@ terraform {
   # (-backend-config); a backend block cannot read variables or files.
   backend "s3" {
     key          = "app.tfstate"
-    region       = "eu-north-1" # = home_region in src/constants/aws.json
+    region       = "eu-north-1" # = selected_region in src/constants/aws.json
     use_lockfile = true
   }
 }
@@ -25,5 +25,5 @@ locals {
 }
 
 provider "aws" {
-  region = local.constants.home_region
+  region = local.constants.selected_region
 }
