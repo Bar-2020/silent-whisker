@@ -75,7 +75,7 @@ flowchart LR
 |---|---|
 | App | React, Vite, TypeScript, react-leaflet, react-i18next, installable PWA |
 | Backend | AWS Lambda behind CloudFront, DynamoDB, Cognito, S3 |
-| Infrastructure | AWS CDK in TypeScript, deployed from GitHub Actions on every merge |
+| Infrastructure | Terraform, deployed from GitHub Actions on every merge |
 | Quality | `npm run verify`: typecheck, Vite+ (Oxlint and Oxfmt), Vitest, fallow audit |
 
 ## Roadmap
