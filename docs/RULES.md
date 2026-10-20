@@ -60,6 +60,6 @@ fake them.
 - **Profile pictures**: not uploaded in v1. The member's own Google account photo is shown as
   Google supplies it, only if the member chose to (D-21, D-27).
 - **Text**: checked by Bedrock Guardrails before the write is accepted. Comprehend toxicity is
-  English only, so it is not used. Standard tier may process the text in another EU Region (D-13).
+  English only, so it is not used. Standard tier may process the text in another EU Region (D-49).
 - Every public item has a report button. Reports hide the item from the reporter immediately and
   queue it for an admin.
