@@ -116,8 +116,8 @@ Code first, no Figma (D-40). The tool is Impeccable (`.claude/skills/impeccable`
 One phase, one PR or smaller. Do not start a phase while the previous one is half built.
 
 0. Repo and harness: `npm run verify` green, CI, Stop hook.
-1. AWS infra and deploy pipeline in Stockholm (Terraform, GitHub deploy key, the text and photo tests D-13 and
-   D-09, AWS Budget of $10 a month, daily cap function). CloudFront serves the app and `/locales/`
+1. AWS infra and deploy pipeline in Stockholm (Terraform, GitHub deploy key, the text and photo tests D-49 and
+   D-50, AWS Budget of $10 a month, daily cap function). CloudFront serves the app and `/locales/`
    (D-38, D-49).
 2. Google sign-in and profile, the public landing and legal pages, Hebrew/English shell,
    responsive shell, and `DESIGN.md` (UI and UX design). Sign-in is required (D-39), so it comes
