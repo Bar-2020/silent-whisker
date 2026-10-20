@@ -27,14 +27,16 @@ jobs:
           run-install: |
             - args: ['--frozen-lockfile']
 
-      # typecheck · vp check (oxfmt + oxlint) · vp test · fallow audit. The same command
-      # the Stop hook and every phase's Verification section refer to.
-      - run: npm run verify
+      # Terraform for `npm run infra` (fmt, validate, test against a mock AWS). Pinned by commit
+      # SHA; the version matches the one used locally, bumped by hand.
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: 1.16.6
+          terraform_wrapper: false
 
-      # Builds the CloudFormation templates and runs CDK's checks (e.g. a resource type the
-      # Region does not offer), so they fail here, not in a deploy. The hosting stack needs dist/.
-      - run: npm run build
-      - run: npx cdk synth --quiet
+      # typecheck · vp check (oxfmt + oxlint) · vp test · fallow audit · Terraform checks. The
+      # same command the Stop hook and every phase's Verification section refer to.
+      - run: npm run verify
 
   # Every merge to main goes online (D-02). Skipped until the one-time setup in infra/README.md
   # sets DEPLOY_ENABLED, so main stays green before AWS is ready. It must be a repository
@@ -58,16 +60,41 @@ jobs:
           run-install: |
             - args: ['--frozen-lockfile']
 
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: 1.16.6
+          terraform_wrapper: false
+
+      # Log in as the deploy user (infra/bootstrap/), then switch into the deployer role for at
+      # most an hour. The user's key can do nothing else.
       - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
-          # The deploy-only user's key (infra/deploy-user-stack.ts); CDK then assumes its roles.
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          # Same as HOME_REGION in src/constants/aws.ts; YAML cannot import it.
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          role-duration-seconds: 3600
+          # Session tags would need sts:TagSession in the role's trust policy; nothing uses them.
+          role-skip-session-tagging: true
+          # Same as home_region in src/constants/aws.json; YAML cannot read it.
           aws-region: eu-north-1
 
       - run: npm run build
-      - run: npx cdk deploy --all --require-approval never
+
+      - name: Terraform apply (infra/app)
+        working-directory: infra/app
+        run: |
+          ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
+          terraform init -input=false -backend-config="bucket=silent-whisker-tfstate-$ACCOUNT"
+          terraform apply -input=false -auto-approve
+
+      # Terraform builds the place; these two commands put the site in it and clear CloudFront's
+      # cache, so new wording shows at once.
+      - name: Upload the site
+        working-directory: infra/app
+        run: |
+          aws s3 sync ../../dist "s3://$(terraform output -raw site_bucket)" --delete
+          aws cloudfront create-invalidation --distribution-id "$(terraform output -raw distribution_id)" --paths "/*"
+          echo "Live at $(terraform output -raw site_url)"
 
   review:
     needs: verify

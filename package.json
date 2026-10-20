@@ -14,21 +14,15 @@
     "lint:fix": "vp check --fix",
     "test": "vp test run",
     "fallow": "fallow audit",
-    "verify": "npm run typecheck && npm run lint && npm run test && npm run fallow",
-    "cdk": "cdk",
+    "verify": "npm run typecheck && npm run lint && npm run test && npm run fallow && npm run infra",
+    "infra": "bash scripts/check-infra.sh",
     "build": "vp build"
   },
   "devDependencies": {
     "@types/node": "^22.20.1",
-    "aws-cdk": "^2.1145.0",
-    "constructs": "^10.8.1",
     "eslint-plugin-sonarjs": "^4.2.1",
     "fallow": "^3.28.0",
-    "tsx": "^4.23.15",
     "typescript": "~6.0.3",
     "vite-plus": "1.2.0"
-  },
-  "dependencies": {
-    "aws-cdk-lib": "^2.273.0"
   }
 }

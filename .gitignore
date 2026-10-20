@@ -1,6 +1,9 @@
 node_modules/
 dist/
-cdk.out/
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.tfstate.lock.info
 coverage/
 *.tsbuildinfo
 .DS_Store
