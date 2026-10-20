@@ -16,6 +16,7 @@ start the work it covers. The hard rules and working style are imported below, s
 | [design-docs.md](.claude/instructions/design-docs.md) | The specs in `docs/` and which to read first. Before a task that touches behavior or specs |
 | [extensibility.md](.claude/instructions/extensibility.md) | How to build so future change stays cheap. Before adding a feature, folder or shared module |
 | [pre-pr-review.md](.claude/instructions/pre-pr-review.md) | Numbered `[R1]...` review with `/ponytail-review` and `/code-review`. Before opening a PR |
+| [aws-rules.md](.claude/instructions/aws-rules.md) | AWS Region, service and wording limits of the project, from AWS. Before any AWS work: `infra/`, `functions/`, the AWS CLI, deploys. Where the specs disagree with it, it wins (D-49) |
 
 ## Project: Silent Whisker
 
