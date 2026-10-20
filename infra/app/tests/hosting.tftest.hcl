@@ -1,0 +1,66 @@
+# The hosting setup against a mock AWS: no account, no cost (see infra/README.md).
+
+mock_provider "aws" {
+  mock_data "aws_cloudfront_cache_policy" {
+    defaults = { id = "658327ea-f89d-4fab-a63d-7e88639e58f6" }
+  }
+}
+
+run "bucket_is_private" {
+  command = apply
+
+  assert {
+    condition = alltrue([
+      aws_s3_bucket_public_access_block.site.block_public_acls,
+      aws_s3_bucket_public_access_block.site.block_public_policy,
+      aws_s3_bucket_public_access_block.site.ignore_public_acls,
+      aws_s3_bucket_public_access_block.site.restrict_public_buckets,
+    ])
+    error_message = "Every public access setting must be blocked."
+  }
+}
+
+run "only_this_cloudfront_may_read_and_only_over_https" {
+  command = apply
+
+  assert {
+    condition = anytrue([
+      for s in jsondecode(aws_s3_bucket_policy.site.policy).Statement :
+      s.Effect == "Allow" && s.Principal == { Service = "cloudfront.amazonaws.com" } &&
+      s.Condition.StringEquals["AWS:SourceArn"] == aws_cloudfront_distribution.site.arn
+    ])
+    error_message = "The bucket must let only this distribution read it."
+  }
+
+  assert {
+    condition = anytrue([
+      for s in jsondecode(aws_s3_bucket_policy.site.policy).Statement :
+      s.Effect == "Deny" && s.Condition.Bool["aws:SecureTransport"] == "false"
+    ])
+    error_message = "The bucket must refuse anything but HTTPS."
+  }
+
+  assert {
+    condition     = aws_cloudfront_origin_access_control.site.signing_behavior == "always"
+    error_message = "CloudFront must sign every request to the bucket."
+  }
+}
+
+run "cloudfront_serves_index_over_https_at_the_cheapest_class" {
+  command = apply
+
+  assert {
+    condition     = aws_cloudfront_distribution.site.default_root_object == "index.html"
+    error_message = "The root must serve index.html."
+  }
+
+  assert {
+    condition     = one(aws_cloudfront_distribution.site.default_cache_behavior).viewer_protocol_policy == "redirect-to-https"
+    error_message = "Plain HTTP must redirect to HTTPS."
+  }
+
+  assert {
+    condition     = aws_cloudfront_distribution.site.price_class == "PriceClass_100"
+    error_message = "Price Class 100: cheapest, and still covers Israel."
+  }
+}
