@@ -17,34 +17,38 @@ You need Terraform (`winget install Hashicorp.Terraform`) and the AWS CLI 2.32 o
 (`winget install Amazon.AWSCLI`). Sign in with short-lived credentials (they renew every
 15 minutes and expire after 12 hours, so no key is stored):
 
-```bash
+```powershell
 aws login --profile silent-whisker
 ```
 
 The `silent-whisker` profile points at the project (D-49) in eu-north-1. Every command below
-uses it: set `AWS_PROFILE=silent-whisker` in the shell (PowerShell: `$env:AWS_PROFILE =
-'silent-whisker'`), and check `aws sts get-caller-identity` shows the project's account first.
+uses it. The commands are PowerShell (Windows); in each new PowerShell window run:
+
+```powershell
+$env:AWS_PROFILE = 'silent-whisker'
+aws sts get-caller-identity   # must show the project's account before anything else
+```
 
 ## One-time setup
 
 **1. The state bucket**, where Terraform keeps its record of what exists. Terraform cannot make
 the bucket it stores itself in, so it is made by hand. Versioning keeps every old record.
 
-```bash
-BUCKET=silent-whisker-tfstate-$(aws sts get-caller-identity --query Account --output text)
-aws s3api create-bucket --bucket $BUCKET --region eu-north-1 \
+```powershell
+$BUCKET = "silent-whisker-tfstate-$(aws sts get-caller-identity --query Account --output text)"
+aws s3api create-bucket --bucket $BUCKET --region eu-north-1 `
   --create-bucket-configuration LocationConstraint=eu-north-1
 aws s3api put-bucket-versioning --bucket $BUCKET --versioning-configuration Status=Enabled
-aws s3api put-public-access-block --bucket $BUCKET --public-access-block-configuration \
+aws s3api put-public-access-block --bucket $BUCKET --public-access-block-configuration `
   BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
 ```
 
 **2. The bootstrap module**, from an up-to-date `main`:
 
-```bash
+```powershell
 cd infra/bootstrap
-terraform init -backend-config="bucket=$BUCKET"
-terraform plan -out=bootstrap.tfplan
+terraform init "-backend-config=bucket=$BUCKET"
+terraform plan "-out=bootstrap.tfplan"   # quoted: PowerShell splits -out=... at the dot
 terraform apply bootstrap.tfplan
 ```
 
@@ -55,8 +59,8 @@ nothing. `apply` with the saved plan does exactly what you read, nothing else. I
 **3. The deploy key.** Make it by hand in your own terminal, so it never sits in Terraform's state
 or in a chat:
 
-```bash
-aws iam create-access-key --user-name silent-whisker-deploy \
+```powershell
+aws iam create-access-key --user-name silent-whisker-deploy `
   --query 'AccessKey.[AccessKeyId,SecretAccessKey]' --output text
 ```
 
@@ -73,8 +77,9 @@ clear the terminal.
 ## Every merge to `main`
 
 The CI deploy job logs in as the deploy user, switches into the deployer role, builds the app,
-runs `terraform apply` in `app/`, uploads `dist/` with `aws s3 sync`, clears CloudFront's cache,
-and prints the address as `Live at https://...`.
+runs `terraform apply` in `app/` (today: the private bucket and CloudFront, D-36), uploads `dist/`
+with `aws s3 sync`, clears CloudFront's cache, removes old files, and prints the address as
+`Live at https://...`.
 
 ## Replacing the key (about every 90 days)
 

@@ -38,6 +38,72 @@ jobs:
       # same command the Stop hook and every phase's Verification section refer to.
       - run: npm run verify
 
+      # The deploy builds too; failing here keeps a broken build out of main.
+      - run: npm run build
+
+  # Every merge to main goes online (D-02). The repository variable DEPLOY_ENABLED switches it
+  # on (set in the one-time setup, infra/README.md); set it to anything but true to pause deploys.
+  # It must be a repository variable: a job's `if` runs before the environment's secrets load.
+  deploy:
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    # The key is a secret of this environment, which only main may use.
+    environment: production
+    concurrency: production
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: voidzero-dev/setup-vp@68f39c78aaf39be468cabd2afb09c162574c84af # v1.21.2
+        with:
+          node-version: 24.22.0
+          cache: true
+          run-install: |
+            - args: ['--frozen-lockfile']
+
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: 1.16.6
+          terraform_wrapper: false
+
+      # Log in as the deploy user (infra/bootstrap/), then switch into the deployer role for at
+      # most an hour. The user's key can do nothing else.
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          role-duration-seconds: 3600
+          # Session tags would need sts:TagSession in the role's trust policy; nothing uses them.
+          role-skip-session-tagging: true
+          # Same as selected_region in src/constants/aws.json; YAML cannot read it.
+          aws-region: eu-north-1
+
+      - run: npm run build
+
+      - name: Terraform apply (infra/app)
+        working-directory: infra/app
+        run: |
+          ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
+          terraform init -input=false -backend-config="bucket=silent-whisker-tfstate-$ACCOUNT"
+          terraform apply -input=false -auto-approve
+
+      # Terraform builds the place; this puts the site in it. Order matters: add the new files,
+      # clear CloudFront's cache and wait until it is clear, and only then remove old files, so a
+      # page still cached never points at a file that is already gone.
+      - name: Upload the site
+        working-directory: infra/app
+        run: |
+          SITE="s3://$(terraform output -raw site_bucket)"
+          DIST="$(terraform output -raw distribution_id)"
+          aws s3 sync ../../dist "$SITE"
+          ID=$(aws cloudfront create-invalidation --distribution-id "$DIST" --paths "/*" --query Invalidation.Id --output text)
+          aws cloudfront wait invalidation-completed --distribution-id "$DIST" --id "$ID"
+          aws s3 sync ../../dist "$SITE" --delete
+          echo "Live at $(terraform output -raw site_url)"
+
   review:
     needs: verify
     # Disabled. To re-enable, restore:
