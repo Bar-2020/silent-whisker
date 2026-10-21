@@ -38,6 +38,9 @@ jobs:
       # same command the Stop hook and every phase's Verification section refer to.
       - run: npm run verify
 
+      # The deploy builds too; failing here keeps a broken build out of main.
+      - run: npm run build
+
   # Every merge to main goes online (D-02). Skipped until the one-time setup in infra/README.md
   # sets DEPLOY_ENABLED, so main stays green before AWS is ready. It must be a repository
   # variable: a job's `if` runs before the environment's secrets and variables load.
@@ -87,13 +90,18 @@ jobs:
           terraform init -input=false -backend-config="bucket=silent-whisker-tfstate-$ACCOUNT"
           terraform apply -input=false -auto-approve
 
-      # Terraform builds the place; these two commands put the site in it and clear CloudFront's
-      # cache, so new wording shows at once.
+      # Terraform builds the place; this puts the site in it. Order matters: add the new files,
+      # clear CloudFront's cache and wait until it is clear, and only then remove old files, so a
+      # page still cached never points at a file that is already gone.
       - name: Upload the site
         working-directory: infra/app
         run: |
-          aws s3 sync ../../dist "s3://$(terraform output -raw site_bucket)" --delete
-          aws cloudfront create-invalidation --distribution-id "$(terraform output -raw distribution_id)" --paths "/*"
+          SITE="s3://$(terraform output -raw site_bucket)"
+          DIST="$(terraform output -raw distribution_id)"
+          aws s3 sync ../../dist "$SITE"
+          ID=$(aws cloudfront create-invalidation --distribution-id "$DIST" --paths "/*" --query Invalidation.Id --output text)
+          aws cloudfront wait invalidation-completed --distribution-id "$DIST" --id "$ID"
+          aws s3 sync ../../dist "$SITE" --delete
           echo "Live at $(terraform output -raw site_url)"
 
   review:
