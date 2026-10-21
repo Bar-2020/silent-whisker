@@ -4,7 +4,6 @@ dist/
 .terraform-check/
 *.tfstate
 *.tfstate.*
-.terraform.tfstate.lock.info
 coverage/
 *.tsbuildinfo
 .DS_Store

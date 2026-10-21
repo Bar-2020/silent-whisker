@@ -75,6 +75,13 @@ resource "aws_iam_role_policy" "deployer_lock" {
         ]
         Resource = local.state_bucket_arn
       },
+      {
+        # This module's own record: rewriting it could steer the next hand-run apply.
+        Sid      = "KeepBootstrapState"
+        Effect   = "Deny"
+        Action   = ["s3:PutObject", "s3:DeleteObject", "s3:DeleteObjectVersion"]
+        Resource = "${local.state_bucket_arn}/bootstrap.tfstate*"
+      },
     ]
   })
 }
