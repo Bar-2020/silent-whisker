@@ -43,7 +43,7 @@ cells the app asks the member to zoom in.
 
 Capacity (D-26): each table and each index needs at least 1 read and 1 write unit, so these 11
 tables and 7 indexes take 18 of the 25 free units, leaving 7 for the busiest (`logs`, `spots`,
-`daily_counters`). That holds about one counted log a second, plus DynamoDB's short burst
+`daily_counters`); `daily_counters` takes 2 of them (3 write units, `src/constants/capacity.json`), because every paid call and every member write counts there (D-51). That holds about one counted log a second, plus DynamoDB's short burst
 allowance.
 
 ## Queries

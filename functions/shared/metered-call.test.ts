@@ -1,8 +1,13 @@
 import { ConditionalCheckFailedException, DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
-import { DynamoDBDocumentClient, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import {
+  DeleteCommand,
+  DynamoDBDocumentClient,
+  PutCommand,
+  UpdateCommand,
+} from '@aws-sdk/lib-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock';
-import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { BREAKER_DAILY_MICRO_USD, COUNTER_TTL_SECONDS } from '../../src/constants/cost';
 import { type CostGuard, meteredCall, takeDailyAllowance } from './metered-call';
 
@@ -12,13 +17,9 @@ const dbMock = mockClient(db);
 const snsMock = mockClient(sns);
 
 const NOW = new Date('2026-10-21T12:00:00Z');
-const guard: CostGuard = {
-  db,
-  sns,
-  tableName: 'daily_counters',
-  alertTopicArn: 'arn:aws:sns:eu-north-1:123456789012:silent-whisker-cost-alerts',
-  now: () => NOW,
-};
+
+// A fresh guard per test, like a fresh Lambda instance: the once-a-day alert cache is per guard.
+let guard: CostGuard;
 
 const conditionFailed = () =>
   new ConditionalCheckFailedException({ message: 'The conditional request failed', $metadata: {} });
@@ -26,6 +27,19 @@ const conditionFailed = () =>
 beforeEach(() => {
   dbMock.reset();
   snsMock.reset();
+  vi.useFakeTimers({ toFake: ['Date'] });
+  vi.setSystemTime(NOW);
+  guard = {
+    db,
+    sns,
+    tableName: 'daily_counters',
+    alertTopicArn: 'arn:aws:sns:eu-north-1:123456789012:silent-whisker-cost-alerts',
+  };
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+  vi.restoreAllMocks();
 });
 
 describe('meteredCall (R-05: every paid call passes the global circuit breaker)', () => {
@@ -76,7 +90,7 @@ describe('meteredCall (R-05: every paid call passes the global circuit breaker)'
     );
   });
 
-  it('does not email again once today has been alerted', async () => {
+  it('does not email again once another instance has alerted today', async () => {
     dbMock.on(UpdateCommand).rejects(conditionFailed());
     dbMock.on(PutCommand).rejects(conditionFailed());
 
@@ -86,13 +100,33 @@ describe('meteredCall (R-05: every paid call passes the global circuit breaker)'
     expect(snsMock.commandCalls(PublishCommand)).toHaveLength(0);
   });
 
-  it('still defers when the email itself fails', async () => {
+  it('writes the marker only once per instance while tripped, sparing write capacity', async () => {
     dbMock.on(UpdateCommand).rejects(conditionFailed());
     dbMock.on(PutCommand).resolves({});
-    snsMock.on(PublishCommand).rejects(new Error('SNS is down'));
+    snsMock.on(PublishCommand).resolves({});
+
+    await meteredCall(guard, 1500, vi.fn());
+    await meteredCall(guard, 1500, vi.fn());
+    await meteredCall(guard, 1500, vi.fn());
+
+    expect(dbMock.commandCalls(PutCommand)).toHaveLength(1);
+    expect(snsMock.commandCalls(PublishCommand)).toHaveLength(1);
+  });
+
+  it('frees the marker when the email fails, so the next deferral retries it', async () => {
+    dbMock.on(UpdateCommand).rejects(conditionFailed());
+    dbMock.on(PutCommand).resolves({});
+    dbMock.on(DeleteCommand).resolves({});
+    snsMock.on(PublishCommand).rejectsOnce(new Error('SNS is down')).resolves({});
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
     await expect(meteredCall(guard, 1500, vi.fn())).resolves.toEqual({ outcome: 'deferred' });
+    expect(dbMock.commandCalls(DeleteCommand)[0].args[0].input.Key).toEqual({
+      key: 'breaker_alert#2026-10-21',
+    });
+
+    await meteredCall(guard, 1500, vi.fn());
+    expect(snsMock.commandCalls(PublishCommand)).toHaveLength(2);
   });
 
   it('still defers when the once-a-day marker cannot be written', async () => {
@@ -148,9 +182,9 @@ describe('takeDailyAllowance (R-05: per-member limits and the breaker share one 
 
   it('keys the counter by the UTC day (R-06), not the local one', async () => {
     dbMock.on(UpdateCommand).resolves({});
-    const lateEvening = { ...guard, now: () => new Date('2026-10-21T23:30:00-03:00') };
+    vi.setSystemTime(new Date('2026-10-21T23:30:00-03:00'));
 
-    await takeDailyAllowance(lateEvening, 'breaker', 1, 2);
+    await takeDailyAllowance(guard, 'breaker', 1, 2);
 
     const [update] = dbMock.commandCalls(UpdateCommand);
     expect(update.args[0].input.Key).toEqual({ key: 'breaker#2026-10-22' });

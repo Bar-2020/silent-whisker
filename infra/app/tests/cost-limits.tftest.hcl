@@ -18,9 +18,9 @@ run "counters_table_is_free_and_cleans_itself" {
     condition = (
       aws_dynamodb_table.daily_counters.billing_mode == "PROVISIONED" &&
       aws_dynamodb_table.daily_counters.read_capacity == 1 &&
-      aws_dynamodb_table.daily_counters.write_capacity == 1
+      aws_dynamodb_table.daily_counters.write_capacity == 3
     )
-    error_message = "Provisioned 1/1 keeps the table in the always-free allowance (D-26)."
+    error_message = "Provisioned 1 read and 3 write units, from src/constants/capacity.json (D-26)."
   }
 
   assert {
