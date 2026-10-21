@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .terraform/
+.terraform-check/
 *.tfstate
 *.tfstate.*
 .terraform.tfstate.lock.info
