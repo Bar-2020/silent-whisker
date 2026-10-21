@@ -74,8 +74,9 @@ export async function takeDailyAllowance(
 }
 
 /**
- * Emails the owner the first time the breaker trips on a UTC day. A failed email is logged, never
- * thrown: the content still waits pending, and the AWS Budget remains as a backup alarm.
+ * Emails the owner the first time the breaker trips on a UTC day. Any failure here is logged, never
+ * thrown: the content still waits pending (never refused for cost), and the AWS Budget remains as
+ * a backup alarm.
  */
 async function alertOncePerDay(guard: CostGuard): Promise<void> {
   const now = guard.now?.() ?? new Date();
@@ -91,7 +92,8 @@ async function alertOncePerDay(guard: CostGuard): Promise<void> {
     );
   } catch (error) {
     if (isConditionFailure(error)) return; // already sent today
-    throw error;
+    console.error('cost alert marker failed', error);
+    return;
   }
   const limitUsd = BREAKER_DAILY_MICRO_USD / MICRO_USD_PER_USD;
   try {
