@@ -10,6 +10,10 @@ cd "$(dirname "$0")/../infra"
 export TF_PLUGIN_CACHE_DIR="${TF_PLUGIN_CACHE_DIR:-$HOME/.terraform.d/plugin-cache}"
 mkdir -p "$TF_PLUGIN_CACHE_DIR"
 
+# A working folder of its own (relative to each module), so a real `terraform init` against the
+# S3 state in .terraform/ never makes these offline checks reach for AWS credentials.
+export TF_DATA_DIR=.terraform-check
+
 terraform fmt -check -recursive
 
 for module in */; do
