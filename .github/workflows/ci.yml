@@ -27,8 +27,8 @@ jobs:
           run-install: |
             - args: ['--frozen-lockfile']
 
-      # Terraform for `npm run infra` (fmt, validate, test against a mock AWS). Pinned by commit
-      # SHA; the version matches the one used locally, bumped by hand.
+      # Terraform for `npm run lint:iac` and `test:iac` (offline: fmt, validate, mock-AWS tests).
+      # Pinned by commit SHA; the version matches the one used locally, bumped by hand.
       - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
         with:
           terraform_version: 1.16.6
