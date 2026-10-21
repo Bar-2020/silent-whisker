@@ -37,7 +37,7 @@ big decision.
 | Item | Figure | Source |
 |---|---|---|
 | CloudFront, pay-as-you-go (the default) | always free: 1 TB out and 10,000,000 requests a month | S10 |
-| CloudFront flat-rate Free plan | $0. Includes WAF (5 rules) and IP-based rate limiting (block an IP over a set number of requests in 5 minutes). 1M requests and 100 GB a month are not hard limits: no overage charge, delivery may be adjusted above them. Pro is $15 a month for 10M requests. Not possible in this project: its managed policies deny the plan's API in us-east-1 (D-38, D-49). 5 cache behaviors, 3 Free plans per account | S10, S21 |
+| CloudFront flat-rate Free plan | $0. Includes WAF (5 rules) and IP-based rate limiting (block an IP over a set number of requests in 5 minutes). 1M requests and 100 GB a month are not hard limits: no overage charge, delivery may be adjusted above them. Pro is $15 a month for 10M requests. Appears impossible in this project: its API is not on the list its managed policies allow in us-east-1 (untested, D-38, D-49). 5 cache behaviors, 3 Free plans per account | S10, S21 |
 | AWS WAF, pay-as-you-go | $5 per web ACL and $1 per rule a month, $0.60 per million requests, on top of CloudFront. A rate-based rule is an ordinary rule | S22 |
 | Rekognition DetectLabels, DetectModerationLabels | first 1M images a month: $1.00 per 1,000 in us-east-1 and Ireland, $1.20 in Tel Aviv and Frankfurt | S8 |
 | Rekognition free tier | the page still shows 12 months of 1,000 images a month; new accounts get credits instead, plan on none | S8, S12 |

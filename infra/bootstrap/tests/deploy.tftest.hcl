@@ -53,4 +53,13 @@ run "deployer_cannot_change_itself_or_delete_the_state" {
     ])
     error_message = "The lock must protect the state bucket."
   }
+
+  assert {
+    condition = anytrue([
+      for s in jsondecode(aws_iam_role_policy.deployer_lock.policy).Statement :
+      s.Effect == "Deny" && contains(s.Action, "s3:PutObject") &&
+      s.Resource == "arn:aws:s3:::silent-whisker-tfstate-123456789012/bootstrap.tfstate*"
+    ])
+    error_message = "The lock must stop deploys rewriting the bootstrap state."
+  }
 }
