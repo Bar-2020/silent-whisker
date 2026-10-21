@@ -22,8 +22,8 @@ big decision.
 - Tel Aviv supports DetectLabels, DetectModerationLabels, DetectText and the face operations (S1).
   An earlier search snippet saying only DetectFaces and CompareFaces was wrong.
 - Cognito, Lambda, DynamoDB and S3 have endpoints in all seven Regions (S7). Budgets and CloudFront
-  are global, but CloudFormation has no `AWS::Budgets::Budget` in eu-north-1 (CDK's Region check,
-  2026-10-17), so the budget is made by hand.
+  are global, but CloudFormation has no `AWS::Budgets::Budget` in eu-north-1 (found by a deploy
+  attempt, 2026-10-17), so the budget is made by hand.
 - Standard tier is required for Hebrew: it lists Hebrew as "Supported", not "Optimized". Classic
   tier covers only English, French and Spanish, and AWS warns that guardrails are ineffective in
   unsupported languages (S6).
@@ -37,7 +37,7 @@ big decision.
 | Item | Figure | Source |
 |---|---|---|
 | CloudFront, pay-as-you-go (the default) | always free: 1 TB out and 10,000,000 requests a month | S10 |
-| CloudFront flat-rate Free plan | $0. Includes WAF (5 rules) and IP-based rate limiting (block an IP over a set number of requests in 5 minutes). 1M requests and 100 GB a month are not hard limits: no overage charge, delivery may be adjusted above them. Pro is $15 a month for 10M requests. Needs a WAF web ACL, so not possible in this account (D-38, D-49). 5 cache behaviors, 3 Free plans per account | S10, S21 |
+| CloudFront flat-rate Free plan | $0. Includes WAF (5 rules) and IP-based rate limiting (block an IP over a set number of requests in 5 minutes). 1M requests and 100 GB a month are not hard limits: no overage charge, delivery may be adjusted above them. Pro is $15 a month for 10M requests. Not possible in this project: its managed policies deny the plan's API in us-east-1 (D-38, D-49). 5 cache behaviors, 3 Free plans per account | S10, S21 |
 | AWS WAF, pay-as-you-go | $5 per web ACL and $1 per rule a month, $0.60 per million requests, on top of CloudFront. A rate-based rule is an ordinary rule | S22 |
 | Rekognition DetectLabels, DetectModerationLabels | first 1M images a month: $1.00 per 1,000 in us-east-1 and Ireland, $1.20 in Tel Aviv and Frankfurt | S8 |
 | Rekognition free tier | the page still shows 12 months of 1,000 images a month; new accounts get credits instead, plan on none | S8, S12 |
@@ -57,7 +57,8 @@ big decision.
 - The Free plan cannot be charged. Always-free offers stay on both plans (S12, S13).
 - The account is a "project" from AWS's new simplified sign-up (D-49). It is locked to one Region
   picked from the contact address (Israel gets eu-north-1 Stockholm), with no opt-in Regions (so
-  no Tel Aviv), no WAF on CloudFront and no multi-Region features. Bedrock calls that create no
+  no Tel Aviv), no WAF on CloudFront by AWS's docs (its policies do allow WAF in us-east-1:
+  untested, D-38) and no multi-Region features. Bedrock calls that create no
   resource still work in every Region enabled by default (S23). Stockholm has no Rekognition (S1).
 - A project on the Paid plan can have a spend limit, at least $20 a month: at the limit AWS pauses
   the project and keeps the data for 90 days. AWS says spend limits "exclude credits" (S24); check

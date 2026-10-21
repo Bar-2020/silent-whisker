@@ -1,5 +1,5 @@
-# The bootstrap module: the identity GitHub deploys with. It is applied by hand, once, from
-# CloudShell (infra/README.md), never by CI, so a deploy can never change its own permissions.
+# The bootstrap module: the identity GitHub deploys with. It is applied by hand from your PC
+# (infra/README.md), never by CI, so a deploy can never change its own permissions.
 
 terraform {
   required_version = ">= 1.10"

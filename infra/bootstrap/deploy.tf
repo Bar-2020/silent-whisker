@@ -43,7 +43,7 @@ resource "aws_iam_role" "deployer" {
 }
 
 # What a deploy may do: everything, because it creates buckets, CloudFront, and later Lambdas,
-# tables and their roles. CDK's deploy role had the same power.
+# tables and their roles; the lock below keeps it from changing itself.
 resource "aws_iam_role_policy_attachment" "deployer_admin" {
   role       = aws_iam_role.deployer.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
