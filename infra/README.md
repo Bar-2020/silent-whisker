@@ -101,9 +101,12 @@ cost over 100%, both to your email.
 Before the Free plan ends (about 2027-04-18): upgrade to the Paid plan and set the project's
 spend limit to $20 a month in AWS Settings, Billing (D-22).
 
-## Local checks
+## Offline checks
 
-`npm run infra` (part of `npm run verify`, so CI and the Stop hook run it) checks every module
-without AWS: `terraform fmt`, `validate`, and `terraform test`, which runs the `tests/` files
-against a mock AWS. It uses its own working folder (`.terraform-check/`), so it never touches the
-real state.
+Two commands check every module without AWS, using `scripts/iac-offline-checks.sh`. Both are part of
+`npm run verify`, so CI and the Stop hook run them:
+
+- `npm run lint:iac`: `terraform fmt` (layout) and `terraform validate` (typos, references, types).
+- `npm run test:iac`: `terraform test`, which runs the `tests/` files against a mock AWS.
+
+They use their own working folder (`.terraform-check/`), so they never touch the real state.
