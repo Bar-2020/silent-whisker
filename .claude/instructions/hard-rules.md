@@ -25,4 +25,4 @@
 - **Every metered AWS call goes through one function that checks the daily cap** (R-05).
 - **Every endpoint is rate limited** (R-21). A new endpoint ships with its limit in
   `src/constants/` and a test that calls it past the limit and expects a refusal. Static files
-  have no per-IP limit: the AWS account allows no WAF (D-38).
+  have no per-IP limit: there is no WAF for now (D-38).
