@@ -1,6 +1,6 @@
 # The app's files: a private S3 bucket that only CloudFront may read, on CloudFront's default
 # `*.cloudfront.net` address (D-36). The deploy job uploads `dist/` after `terraform apply`.
-# No WAF: the account allows none, so files have no per-IP limit (D-38, D-49).
+# No WAF for now (untested whether the project allows it, D-38), so files have no per-IP limit.
 
 # Build output only: every deploy rewrites it from git, so it has no versioning.
 resource "aws_s3_bucket" "site" {
