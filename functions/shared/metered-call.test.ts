@@ -95,6 +95,24 @@ describe('meteredCall (R-05: every paid call passes the global circuit breaker)'
     await expect(meteredCall(guard, 1500, vi.fn())).resolves.toEqual({ outcome: 'deferred' });
   });
 
+  it('still defers when the once-a-day marker cannot be written', async () => {
+    dbMock.on(UpdateCommand).rejects(conditionFailed());
+    dbMock.on(PutCommand).rejects(new Error('DynamoDB is down'));
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    await expect(meteredCall(guard, 1500, vi.fn())).resolves.toEqual({ outcome: 'deferred' });
+    expect(snsMock.commandCalls(PublishCommand)).toHaveLength(0);
+  });
+
+  it('counts the cost before the call, so a failed paid call is still counted', async () => {
+    dbMock.on(UpdateCommand).resolves({});
+
+    await expect(
+      meteredCall(guard, 1500, () => Promise.reject(new Error('Bedrock failed')))
+    ).rejects.toThrow('Bedrock failed');
+    expect(dbMock.commandCalls(UpdateCommand)).toHaveLength(1);
+  });
+
   it('fails closed: if the counter cannot be written, the paid call never runs', async () => {
     dbMock.on(UpdateCommand).rejects(new Error('DynamoDB is down'));
     const call = vi.fn();
