@@ -14,7 +14,9 @@
     "lint:fix": "vp check --fix",
     "test": "vp test run",
     "fallow": "fallow audit",
-    "verify": "npm run typecheck && npm run lint && npm run test && npm run fallow"
+    "verify": "npm run typecheck && npm run lint && npm run test && npm run fallow && npm run lint:iac && npm run test:iac",
+    "lint:iac": "bash scripts/iac-offline-checks.sh lint",
+    "test:iac": "bash scripts/iac-offline-checks.sh test"
   },
   "devDependencies": {
     "@types/node": "^22.20.1",

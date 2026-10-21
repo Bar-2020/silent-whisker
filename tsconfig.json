@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["src", "infra", "functions", "__tests__"]
+  "include": ["src", "functions", "__tests__"]
 }
