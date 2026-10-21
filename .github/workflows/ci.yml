@@ -41,9 +41,9 @@ jobs:
       # The deploy builds too; failing here keeps a broken build out of main.
       - run: npm run build
 
-  # Every merge to main goes online (D-02). Skipped until the one-time setup in infra/README.md
-  # sets DEPLOY_ENABLED, so main stays green before AWS is ready. It must be a repository
-  # variable: a job's `if` runs before the environment's secrets and variables load.
+  # Every merge to main goes online (D-02). The repository variable DEPLOY_ENABLED switches it
+  # on (set in the one-time setup, infra/README.md); set it to anything but true to pause deploys.
+  # It must be a repository variable: a job's `if` runs before the environment's secrets load.
   deploy:
     needs: verify
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
