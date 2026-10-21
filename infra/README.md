@@ -68,8 +68,10 @@ It prints the key id, then the secret. Copy them straight into GitHub, never any
 clear the terminal.
 
 **4. GitHub**, Settings:
-1. Environments: create `production`, limit it to the `main` branch, and add two environment
-   secrets: `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+1. Environments: create `production`, limit it to the `main` branch, and add three environment
+   secrets: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `ALERT_EMAIL`, where the cost
+   circuit breaker's alert goes (D-51). After the first deploy AWS emails that address a link to
+   confirm the subscription; click it, or no alert arrives.
 2. Secrets and variables, Actions, Variables tab: add two repository variables:
    `AWS_DEPLOY_ROLE_ARN` (the printed `deployer_role_arn`) and `DEPLOY_ENABLED` with the value
    `true`. The deploy job checks `DEPLOY_ENABLED` before the environment loads, so set it last.
