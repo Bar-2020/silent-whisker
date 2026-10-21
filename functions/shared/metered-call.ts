@@ -1,33 +1,15 @@
-import { PublishCommand, type SNSClient } from '@aws-sdk/client-sns';
-import {
-  DeleteCommand,
-  PutCommand,
-  UpdateCommand,
-  type DynamoDBDocumentClient,
-} from '@aws-sdk/lib-dynamodb';
+import { PublishCommand } from '@aws-sdk/client-sns';
+import { DeleteCommand, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import {
   BREAKER_DAILY_MICRO_USD,
   COUNTER_TTL_SECONDS,
   MICRO_USD_PER_USD,
   MS_PER_SECOND,
 } from '../../src/constants/cost';
+import type { CostGuard, Metered } from './metered-call.types';
 
 // The cost limits of D-51. Every paid AWS call goes through `meteredCall` (R-05); every paid
 // action also takes a per-member allowance with `takeDailyAllowance` when it starts.
-
-export interface CostGuard {
-  readonly db: DynamoDBDocumentClient;
-  readonly sns: SNSClient;
-  /** The `daily_counters` table (DATA.md). */
-  readonly tableName: string;
-  /** Where the breaker's alert goes (infra/app/cost-limits.tf). */
-  readonly alertTopicArn: string;
-}
-
-/** `deferred`: the breaker has tripped, so save the content pending and check it after the reset. */
-export type Metered<T> =
-  | { readonly outcome: 'done'; readonly value: T }
-  | { readonly outcome: 'deferred' };
 
 /** Counters reset at midnight UTC, whatever the member's time zone (R-06). */
 const utcDay = (now: Date): string => now.toISOString().split('T')[0];
