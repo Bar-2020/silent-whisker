@@ -71,7 +71,9 @@ clear the terminal.
 1. Environments: create `production`, limit it to the `main` branch, and add three environment
    secrets: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `ALERT_EMAIL`, where the cost
    circuit breaker's alert goes (D-51). After the first deploy AWS emails that address a link to
-   confirm the subscription; click it, or no alert arrives.
+   confirm the subscription; click it, or no alert arrives. Confirm before ever changing the
+   address: Terraform cannot remove a subscription still pending confirmation (AWS drops an
+   unconfirmed one after 3 days, after which the next deploy goes through).
 2. Secrets and variables, Actions, Variables tab: add two repository variables:
    `AWS_DEPLOY_ROLE_ARN` (the printed `deployer_role_arn`) and `DEPLOY_ENABLED` with the value
    `true`. The deploy job checks `DEPLOY_ENABLED` before the environment loads, so set it last.

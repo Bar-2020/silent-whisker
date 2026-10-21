@@ -1,13 +1,19 @@
 # The cost limits (D-51): the day's counters, and the email that goes out when the global circuit
 # breaker trips. The logic lives in functions/shared/metered-call.ts.
 
-# One row per limit per UTC day (DATA.md). Provisioned 1 read and 1 write unit: inside the
-# always-free allowance, which on-demand tables do not get (D-26).
+locals {
+  # Capacity units, shared with DATA.md's budget of the 25 free units (src/constants/).
+  capacity = jsondecode(file("${path.module}/../../src/constants/capacity.json"))
+}
+
+# One row per limit per UTC day (DATA.md). Provisioned, inside the always-free allowance, which
+# on-demand tables do not get (D-26). Every paid call and every member write hits this table, so
+# it gets more write units than the 1 a table needs at least: each unit is about one write a second.
 resource "aws_dynamodb_table" "daily_counters" {
   name           = "daily_counters"
   billing_mode   = "PROVISIONED"
-  read_capacity  = 1
-  write_capacity = 1
+  read_capacity  = local.capacity.daily_counters.read
+  write_capacity = local.capacity.daily_counters.write
   hash_key       = "key"
 
   attribute {
