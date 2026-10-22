@@ -22,39 +22,42 @@ No national dataset exists. Full coverage of Israel cannot come from public data
 1. **API sources** (ArcGIS REST), automatic. Query `where=1=1&outSR=4326&f=geojson`, page with
    `resultOffset` while `exceededTransferLimit` is true. A new ArcGIS city is one registry entry.
 2. **Published lists** (HTML or PDF). Fetch the page, extract addresses, geocode once (below), cache
-   the result by address, mark `precision: geocoded`. A human reviews every point in the diff. Where a city blocks bots
+   the result by address, mark `precision: geocoded`. Where a city blocks bots
    or has no list, ask for the data instead (a Freedom of Information request to the vet department).
-3. **Manual and members.** `data/municipal/manual.csv` by pull request, and members add the rest
-   as custom spots in the app from Phase 3 (D-43).
+3. **Manual and members.** A `manual.csv` the owner uploads to the bucket by hand (assumed), and
+   members add the rest as custom spots in the app from Phase 3 (D-43).
 
-Sources live in a registry (`pipelines/municipal/sources.json`): `id`, municipality (he, en), `kind`
-(`arcgis`, `html_list`, `manual_csv`), `url`, field mapping, permission and `last_checked`. Cities
-with no usable source are recorded as `none`, so nobody checks them twice.
+Sources live in a registry (`functions/municipal-import/sources.json`, code, not data): `id`,
+municipality (he, en), `kind` (`arcgis`, `html_list`, `manual_csv`), `url`, field mapping, permission
+and `last_checked`. Cities with no usable source are recorded as `none`, so nobody checks them twice.
 
 ## Pipeline
 
-A GitHub Actions workflow, scheduled and manually triggerable (limits in `src/constants/`):
+One Lambda, started by an EventBridge schedule and by hand (cadence in `src/constants/`):
 
 1. Fetch each source, normalise to the schema below.
 2. Validate: inside Israel's bounds, required fields present, and a source's count has not dropped
-   by more than the allowed share against the previous run (an outage must not empty the map).
-3. Diff against `data/municipal/municipal-spots.geojson`. No change, no pull request.
-4. Open a pull request with the new file. Merging runs the deploy job, which loads the file into
-   the `spots` table (upsert by `source` and `source_id`; a station missing from the file becomes
-   `removed`).
+   by more than the allowed share against the previous run (an outage must not empty the map). A
+   source that fails is skipped and its previous rows stay.
+3. Write `municipal-spots.geojson` to a private S3 bucket.
+4. Upsert into the `spots` table by `source` and `source_id`; a station missing from the file becomes
+   `removed`.
 
-Why a pull request and not a Lambda: the diff is reviewed before it goes live, a revert is the
-rollback, nothing runs in AWS between releases (the deploy job's role may only write municipal rows),
-and no metered call exists to cap (R-05). Risk: GitHub
-pauses scheduled workflows in a repo with no activity for 60 days.
+No one approves an import: a station a municipality published belongs on the map (D-34).
 
-## Output: a GeoJSON file in git, rows in `spots`
+Why a scheduled Lambda and not GitHub Actions: the data is runtime data, not code, so it lives in a
+bucket, not in git, and GitHub pauses scheduled workflows in a repo with no activity for 60 days.
+The role may write only that bucket and the `spots` table. No metered AWS call exists to cap (R-05).
+Before building: confirm EventBridge Scheduler is on the project's supported services
+([aws-rules.md](../.claude/instructions/aws-rules.md)) and its cost in [AWS.md](AWS.md#costs).
 
-`data/municipal/municipal-spots.geojson`, RFC 7946 (WGS84), all of Israel. It is the reviewed artifact,
-not a public file. Sign-in is required (D-39), so stations reach members through
-the member-only API, at their exact point and address (D-47). A public copy on the CDN was
-rejected: cheap and cached, but it would hand exact points to people who are not signed in. Names and addresses
-are shown as the city publishes them (Hebrew, no machine translation in v1).
+## Output: a GeoJSON file in S3, rows in `spots`
+
+`municipal-spots.geojson` in a private bucket, RFC 7946 (WGS84), all of Israel. It is the record of
+the last import and the baseline for the count check, not a public file. Sign-in is required (D-39), so
+stations reach members through the member-only API, at their exact point and address (D-47). A public
+copy on the CDN was rejected: cheap and cached, but it would hand exact points to people who are not
+signed in. Names and addresses are shown as the city publishes them (Hebrew, no machine translation in v1).
 
 Per feature, `snake_case`: `id`, `name`, `address`, `city`, `source`, `precision`
 (`source_point`, `geocoded`, `manual`), `status` (`active`, `removed`). Top level: a `sources` map
@@ -79,7 +82,8 @@ error 23 m, worst 350 m. 5 found nothing (gardens, a car park, an odd spelling):
 hand. Rules for the import job:
 
 - One thread, an identifying User-Agent, at most 4 requests a minute for a recurring script (a one-off
-  small batch may go at 1 a second), and every result cached in git so no address is asked twice.
+  small batch may go at 1 a second), and every result cached in the bucket so no address is asked
+  twice. A run stops geocoding before the Lambda time limit and the next run continues.
 - Reject a result that falls outside its city (a wrong answer would be confident, not empty).
 - Data is ODbL: credit OpenStreetMap next to the other sources.
 - 50 m is the proof radius for a log (D-18) and a geocoded point can be 100 m or more off, so a
@@ -93,6 +97,11 @@ R-05 cap, and storing results costs more), GovMap (could not reach it from here)
 No licence text was found for any source. Treat each as unlicensed until a municipality confirms in
 writing. Before launch (Phase 6 checklist): write to each source's vet department, record the answer
 in `permission`, and show "Data: <municipality>" on the map. If a municipality asks, remove it.
+
+## Later: admin report
+
+Not in v1. An admin can report a station as non-existent, which sets it `removed`. The import must
+not bring a reported station back. Until then R-20 holds: only the import changes stations.
 
 ## Order of work
 
