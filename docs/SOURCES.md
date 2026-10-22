@@ -1,7 +1,7 @@
 # Sources: municipal feeding stations
 
 Seed data for the map: the feeding stations municipalities have already installed. Not user
-content, so moderation (R-04) does not apply, but nothing is trusted blindly. Decisions: D-34, D-35.
+content, so moderation (R-04) does not apply, but nothing is trusted blindly. Decisions: D-34, D-35, D-51.
 
 ## What exists (checked 2026-10-14)
 
@@ -27,29 +27,33 @@ No national dataset exists. Full coverage of Israel cannot come from public data
 3. **Manual and members.** A `manual.csv` the owner uploads to the bucket by hand (assumed), and
    members add the rest as custom spots in the app from Phase 3 (D-43).
 
-Sources live in a registry (`functions/municipal-import/sources.json`, code, not data): `id`,
+Sources live in a registry (`functions/municipal-import/sources.json`, a data file): `id`,
 municipality (he, en), `kind` (`arcgis`, `html_list`, `manual_csv`), `url`, field mapping, permission
-and `last_checked`. Cities with no usable source are recorded as `none`, so nobody checks them twice.
+and `last_checked` (the date a person last looked, set by hand). Cities with no usable source are
+recorded as `none`, so nobody checks them twice.
 
 ## Pipeline
 
-One Lambda, started by an EventBridge schedule and by hand (cadence in `src/constants/`):
+One Lambda, started by an EventBridge schedule (monthly, D-51) and by hand with `aws lambda invoke`,
+never by an HTTP route (the interval is a `.json` file in `src/constants/`):
 
 1. Fetch each source, normalise to the schema below.
 2. Validate: inside Israel's bounds, required fields present, and a source's count has not dropped
    by more than the allowed share against the previous run (an outage must not empty the map). A
-   source that fails is skipped and its previous rows stay.
-3. Write `municipal-spots.geojson` to a private S3 bucket.
-4. Upsert into the `spots` table by `source` and `source_id`; a station missing from the file becomes
-   `removed`.
+   source that fails is skipped and named in the run result, and its stations from the previous
+   file are carried into the new one. A hand run can accept a real drop for one source.
+3. Upsert into the `spots` table by `spot_id` (the stable id below), updating only name, address,
+   lat, lng, `geo_cell` and the import status, so log state is kept. A station in the previous file
+   but missing from a source fetched this run becomes `removed`.
+4. Write `municipal-spots.geojson` to a private S3 bucket, last, so the baseline never gets ahead
+   of the table. The bucket is versioned, so an earlier file can be restored.
 
-No one approves an import: a station a municipality published belongs on the map (D-34).
-
-Why a scheduled Lambda and not GitHub Actions: the data is runtime data, not code, so it lives in a
-bucket, not in git, and GitHub pauses scheduled workflows in a repo with no activity for 60 days.
-The role may write only that bucket and the `spots` table. No metered AWS call exists to cap (R-05).
-Before building: confirm EventBridge Scheduler is on the project's supported services
-([aws-rules.md](../.claude/instructions/aws-rules.md)) and its cost in [AWS.md](AWS.md#costs).
+The data is runtime data, so it lives in a bucket, not in git, and GitHub pauses scheduled workflows
+in a repo with no activity for 60 days. A municipal `spot_id` starts with its source id, so the role
+may write only those keys and that bucket. The import makes a few S3 and DynamoDB writes a month,
+so there is nothing to cap (R-05). Before building: confirm EventBridge Scheduler is on the
+project's supported services ([aws-rules.md](../.claude/instructions/aws-rules.md)) and its cost
+([AWS.md](AWS.md#costs)); D-34 holds only if it is.
 
 ## Output: a GeoJSON file in S3, rows in `spots`
 
@@ -68,8 +72,9 @@ with `url`, `permission` and `fetched_at` (UTC) per source, so attribution is on
 Members will log against these, so ids must survive a refresh. Tel Aviv's `oid` is a plain
 sequence next to a `date_import` stamp, so it is probably renumbered on each import. Id =
 `source` + hash of the coordinates rounded to 5 decimals. A point that moves less than the match
-distance (constant) between runs keeps its old id. A station that disappears becomes `removed`,
-never deleted.
+distance (constant) between runs keeps its old id. It is the `spot_id` of the municipal row, so a
+refresh updates by key and needs no index on `source`. A station that disappears becomes
+`removed`, never deleted.
 
 ## Geocoding
 
@@ -82,8 +87,9 @@ error 23 m, worst 350 m. 5 found nothing (gardens, a car park, an odd spelling):
 hand. Rules for the import job:
 
 - One thread, an identifying User-Agent, at most 4 requests a minute for a recurring script (a one-off
-  small batch may go at 1 a second), and every result cached in the bucket so no address is asked
-  twice. A run stops geocoding before the Lambda time limit and the next run continues.
+  small batch may go at 1 a second), and every result cached in the `geocode_cache` table (D-29) so
+  no address is asked twice. A run stops geocoding before the Lambda time limit and the next run
+  continues.
 - Reject a result that falls outside its city (a wrong answer would be confident, not empty).
 - Data is ODbL: credit OpenStreetMap next to the other sources.
 - 50 m is the proof radius for a log (D-18) and a geocoded point can be 100 m or more off. Whether a
@@ -99,11 +105,6 @@ No licence text was found for any source. Treat each as unlicensed until a munic
 writing. Before launch (Phase 6 checklist): write to each source's vet department, record the answer
 in `permission`, and show "Data: <municipality>" on the map. If a municipality asks, remove it.
 
-## Later: admin report
-
-Not in v1. An admin can report a station as non-existent, which sets it `removed`. The import must
-not bring a reported station back. Until then R-20 holds: only the import changes stations.
-
 ## Order of work
 
 1. Tel Aviv: source known, build the adapter.
@@ -112,4 +113,4 @@ not bring a reported station back. Until then R-20 holds: only the import change
    and record every result in the registry.
 3. Lists: Ramat HaSharon, then Jerusalem once access is sorted out.
 4. Freedom of Information requests for the rest. Retry OSM when Overpass answers. OSM data is ODbL
-   share-alike, so decide before merging it.
+   share-alike, so decide before adding it.
