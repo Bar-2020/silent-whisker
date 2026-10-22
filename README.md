@@ -28,7 +28,7 @@ A group or a shared spreadsheet can list feeding spots. Neither can tell you whe
 showed up. Here, a red pin means a spot needs help, and a green pin means a volunteer really was
 there.
 
-![How Silent Whisker works: find a spot in need, feed the cats, then log it at the spot and the pin turns green for everyone](.github/assets/how-it-works.png)
+![How Silent Whisker works: find a spot in need, feed the cats, then log it at the spot, and once food and water are covered the pin goes green](.github/assets/how-it-works.png)
 
 ## What v1 does
 
