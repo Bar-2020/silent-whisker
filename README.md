@@ -11,11 +11,10 @@
 
 </div>
 
-Volunteers pin the spots where stray cats are fed, log every feeding and water refill, flag cats in
-danger, and chat. A log counts only when the volunteer's phone is within 50 m of the spot, so the
-map shows what really happened, not what people say.
+Volunteers can pin the spots where stray cats are fed, log every feeding and water refill, flag cats in
+danger, and chat.
 
-Free and open source. Hebrew first, English second. Israel first. Built by a cat lover.
+Free and open source. Built by a cat lover.
 
 > [!NOTE]
 > Silent Whisker is early. Phase 0 is done: the verification harness and CI are in place. The app
@@ -34,15 +33,15 @@ there.
 
 | | |
 |---|---|
-| 🗺️ **Map** | Every feeding spot on an OpenStreetMap map. Pins go green, orange or red by the time since the last verified feeding or water. |
-| 🥣 **Feeding and water logs** | Pick a full or partial bowl. No photo needed. Anyone at the spot can report it empty. |
-| 🚨 **Alerts** | Flag a cat that is in danger or sick. It stays on the map until someone resolves it. |
-| 🐈 **Cats** | Photograph a cat you know at a spot. Others can like and comment. |
-| 💬 **Chat** | Small chats per spot or per cat, moderated automatically. |
-| 🏥 **Places** | Vets and organisations that help strays, on the same map. |
+| 🗺️ **Map** | Every feeding spot is located on the map. Pins go green, orange or red depending on it's condition. |
+| 🥣 **Feeding and water logs** | Pick a full or partial bowl or report it empty if needed. |
+| 🚨 **Alerts** | Flag a cat that is in danger or sick. |
+| 🐈 **Cats** | Photograph a cat you love at a spot. Others can like and comment. |
+| 💬 **Chat** | Each spot has a chat, moderated automatically. |
+| 🏥 **Places** | Vets and organisations that help strays, are located on the map for convenience. |
 | 🏙️ **Municipal stations** | Feeding stations that cities already installed, imported from public sources. |
 | 📈 **Profile** | Your stats: cats helped, feedings and water given. |
-| 🌍 **Hebrew and English** | Hebrew by default, right to left. Every string is translated, none are hardcoded. |
+| 🌍 **Hebrew and English** | Hebrew and English support, with more langauges coming in the future. |
 
 ## Privacy and trust
 
