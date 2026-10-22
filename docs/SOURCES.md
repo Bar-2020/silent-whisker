@@ -86,8 +86,9 @@ hand. Rules for the import job:
   twice. A run stops geocoding before the Lambda time limit and the next run continues.
 - Reject a result that falls outside its city (a wrong answer would be confident, not empty).
 - Data is ODbL: credit OpenStreetMap next to the other sources.
-- 50 m is the proof radius for a log (D-18) and a geocoded point can be 100 m or more off, so a
-  person checks it on the map before the station becomes loggable (D-35).
+- 50 m is the proof radius for a log (D-18) and a geocoded point can be 100 m or more off. Whether a
+  source's points need a check on the map before they become loggable is decided per source, from its
+  measured accuracy (D-35).
 
 Not chosen: Google (its terms limit storing results), Amazon Location (metered, so it would need the
 R-05 cap, and storing results costs more), GovMap (could not reach it from here).
