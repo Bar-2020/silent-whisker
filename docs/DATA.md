@@ -15,14 +15,15 @@ fields `snake_case`. All times UTC ISO 8601. Every item except `daily_counters` 
 | `cat_alerts` | `cat_alert_id`, `kind` (`danger`/`sick`), `lat`, `lng`, `geo_cell`, `photo_key`, `note`, `status`, `expires_at`, `resolved_at`, `created_by` | `photo_key` (must contain a cat, R-25) and `note` are required. The pin is the phone's location at submit, shown exactly to members (D-47). `status` is the moderation status (below), nothing is shown until `approved`. `expires_at` is `created_at` + 6 h, +12 h per extension; `resolved_at` is set by an admin. Shown only per R-24 |
 | `reports` | `reporter_id`, `target_type`, `target_id`, `status` (`open`/`closed`) | Admin queue. `target_id` is the reported item's id; ids never repeat across tables (ULIDs) |
 | `daily_counters` | `key`, `count`, `expires_at` | One row per limit per UTC day: `moderation#2026-10-13` for the shared cap (R-05), `<limit>#<user_id>#2026-10-13` for a member's limits: new spots (R-12), log and empty-report attempts (R-17), cat alerts (R-23), cat photos and comments (R-25), uploads (R-30) and the write budget (R-21). The request adds 1 only if the count is under the limit, in the same write, so two requests at once cannot both pass. Limits over a rolling window (R-10, R-13, R-16) are counted from `logs` instead. `expires_at` lets DynamoDB remove old rows on its own. No `status` or `created_at` |
-| `geocode_cache` | `query`, `lat`, `lng`, `place` | Saved Nominatim answers, so no question is sent twice (D-29): the profile city, a typed spot address, and the place name for a "my location" pin or a cat post's `area`. `query` is the typed text, normalised, or a point rounded to a constant number of decimals. No `status` or `created_at` |
+| `geocode_cache` | `query`, `lat`, `lng`, `place` | Saved Nominatim answers, so no question is sent twice (D-29): the profile city, a typed spot address, a municipal list address, and the place name for a "my location" pin or a cat post's `area`. `query` is the typed text, normalised, or a point rounded to a constant number of decimals. No `status` or `created_at` |
 
 `status` values for moderated content: `pending`, `approved`, `rejected`, `removed`.
 
 ## Keys
 
 Every id the app makes is a ULID, which starts with the time: sorting by id sorts by time, and two
-items never share a sort key. Index sort keys may repeat, so they use `created_at`. `geo_cell` is
+items never share a sort key. The exception is a municipal station's `spot_id`, which is its stable id
+(it starts with its source id, [SOURCES.md](SOURCES.md#stable-ids)), so the import updates by key. Index sort keys may repeat, so they use `created_at`. `geo_cell` is
 the geohash cut to a constant length (one for the map, a coarser one for the feed). A map or feed
 request queries each cell it covers and filters the rest in Lambda; above a constant number of
 cells the app asks the member to zoom in.
