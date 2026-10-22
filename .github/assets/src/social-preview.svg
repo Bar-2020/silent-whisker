@@ -1,4 +1,4 @@
-<!-- Source of ../social-preview.png (1280x640 px). Text is set in Rubik (SIL OFL); install it before re-rendering. -->
+<!-- Source of ../social-preview.png (1280x640 px). Text is set in Rubik 500 and 800 (SIL OFL); install those weights before re-rendering, or the title and tagline come out lighter than the committed PNG. The nested logo is copied from logo.svg by scripts/inline-logo.mjs. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" role="img" aria-labelledby="t d">
   <title id="t">Silent Whisker</title>
   <desc id="d">A ginger cat shaped like a map pin. A cat-head signal shines into the night sky over a city where three map pins mark feeding spots, and a black cat watches it from a rooftop.</desc>
@@ -50,7 +50,6 @@
 </g>
   <g transform="translate(526 568)"><ellipse cx="0" cy="1" rx="20.9" ry="5.5" fill="#05061a" opacity=".55"/><ellipse cx="0" cy="1" rx="33.2" ry="8.6" fill="none" stroke="#4ade80" stroke-opacity=".65" stroke-width="2" stroke-dasharray="1 5" stroke-linecap="round"/><g transform="scale(1.2)"><circle cx="0" cy="-20" r="21" fill="#4ade80" opacity=".2"/><path d="M0 0 L-9 -14 A11 11 0 1 1 9 -14 Z" fill="#4ade80"/><circle cx="0" cy="-20" r="4.2" fill="#0b0d28"/></g></g><g transform="translate(727 536)"><ellipse cx="0" cy="1" rx="20.9" ry="5.5" fill="#05061a" opacity=".55"/><ellipse cx="0" cy="1" rx="33.2" ry="8.6" fill="none" stroke="#fb923c" stroke-opacity=".65" stroke-width="2" stroke-dasharray="1 5" stroke-linecap="round"/><g transform="scale(1.2)"><circle cx="0" cy="-20" r="21" fill="#fb923c" opacity=".2"/><path d="M0 0 L-9 -14 A11 11 0 1 1 9 -14 Z" fill="#fb923c"/><circle cx="0" cy="-20" r="4.2" fill="#0b0d28"/></g></g><g transform="translate(834 535)"><ellipse cx="0" cy="1" rx="20.9" ry="5.5" fill="#05061a" opacity=".55"/><ellipse cx="0" cy="1" rx="33.2" ry="8.6" fill="none" stroke="#f87171" stroke-opacity=".65" stroke-width="2" stroke-dasharray="1 5" stroke-linecap="round"/><g transform="scale(1.2)"><circle cx="0" cy="-20" r="21" fill="#f87171" opacity=".2"/><path d="M0 0 L-9 -14 A11 11 0 1 1 9 -14 Z" fill="#f87171"/><circle cx="0" cy="-20" r="4.2" fill="#0b0d28"/></g></g>
   <svg x="60" y="245" width="160" height="160" viewBox="0 0 512 512">
-  
   <defs>
     <linearGradient id="logo-sky" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#2b3170"/>
@@ -84,8 +83,8 @@
   <!-- head, ears and pin: one silhouette, so the ears grow out of the head -->
   <path d="M256.0 440.0 L356.9 310.8 A128 128 0 0 0 361.4 159.4 A10 10 0 0 1 359.6 153.4 L361.7 77.0 Q362.0 64.0 351.7 71.9 L305.7 107.2 A14 14 0 0 1 293.1 109.5 A128 128 0 0 0 218.9 109.5 A14 14 0 0 1 206.3 107.2 L160.3 71.9 Q150.0 64.0 150.3 77.0 L152.4 153.4 A10 10 0 0 1 150.6 159.4 A128 128 0 0 0 155.1 310.8 Z" fill="url(#logo-fur)"/>
   <!-- inner ears -->
-  <path id="logo-inner-ear" d="M162.3 149.3 L160.8 93.7 Q160.5 84.7 167.7 90.2 L204.3 118.2 A125 125 0 0 0 162.3 149.3 Z" fill="#ff9fb4"/>
-  <use href="#logo-inner-ear" transform="matrix(-1 0 0 1 512 0)"/>
+  <path d="M162.3 149.3 L160.8 93.7 Q160.5 84.7 167.7 90.2 L204.3 118.2 A125 125 0 0 0 162.3 149.3 Z" fill="#ff9fb4"/>
+  <path d="M162.3 149.3 L160.8 93.7 Q160.5 84.7 167.7 90.2 L204.3 118.2 A125 125 0 0 0 162.3 149.3 Z" fill="#ff9fb4" transform="matrix(-1 0 0 1 512 0)"/>
   <g clip-path="url(#logo-pin)">
     <ellipse cx="256" cy="400" rx="150" ry="120" fill="#fff4e2"/>
     <ellipse cx="256" cy="304" rx="64" ry="46" fill="#fff4e2"/>
