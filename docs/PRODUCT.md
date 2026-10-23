@@ -90,7 +90,7 @@ for the proof radius checks (R-09, R-16) and is not stored; only a log's distanc
 ## Money
 
 Cost target: free for the first 6 months, then a few dollars a month at most (D-15, D-22,
-[AWS.md](AWS.md#costs)). Moderation is pay per call, so a daily cap bounds it (R-05). Income: a
+[AWS.md](AWS.md#costs)). Moderation is pay per call, so layered limits bound it (R-05). Income: a
 donation link to a hosted page, and ads only on the public landing page (AdSense cannot see pages
 behind sign-in without a crawler login, D-39), with a consent banner for EU visitors. No payment
 code in this repo.
@@ -117,7 +117,7 @@ One phase, one PR or smaller. Do not start a phase while the previous one is hal
 
 0. Repo and harness: `npm run verify` green, CI, Stop hook.
 1. AWS infra and deploy pipeline in Stockholm (Terraform, GitHub deploy key, the text and photo tests D-49 and
-   D-50, AWS Budget of $10 a month, daily cap function). CloudFront serves the app and `/locales/`
+   D-50, AWS Budget of $10 a month, cost limits, D-52). CloudFront serves the app and `/locales/`
    (D-38, D-49).
 2. Google sign-in and profile, the public landing and legal pages, Hebrew/English shell,
    responsive shell, and `DESIGN.md` (UI and UX design). Sign-in is required (D-39), so it comes
@@ -143,7 +143,7 @@ system: Phase 2 picks the look and writes DESIGN.md. No reference apps yet; do n
 2. Every rule is enforced server-side; a client-only check is not an implemented rule.
 3. Trust through verification: a counted log proves the volunteer was physically at the spot,
    rather than relying on self-reported claims.
-4. Cost-bounded by design: every metered call runs through a daily cap, so growth in usage can
+4. Cost-bounded by design: every metered call runs through per-member limits and a daily circuit breaker, so growth in usage can
    never produce a surprise bill.
 5. Hebrew and Israel first: RTL and Hebrew moderation are launch requirements, not a later
    localisation pass.

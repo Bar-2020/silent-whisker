@@ -85,6 +85,9 @@ jobs:
 
       - name: Terraform apply (infra/app)
         working-directory: infra/app
+        env:
+          # Where cost alerts go (D-52); a secret because the repository is public.
+          TF_VAR_alert_email: ${{ secrets.ALERT_EMAIL }}
         run: |
           ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
           terraform init -input=false -backend-config="bucket=silent-whisker-tfstate-$ACCOUNT"

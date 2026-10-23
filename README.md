@@ -53,7 +53,7 @@ there.
   Bedrock Guardrails. Nothing is public until it passes, and if the check fails it stays hidden.
 - **The server decides.** Every rule is enforced in the backend, never only in the app. See
   [docs/RULES.md](docs/RULES.md).
-- **No surprise bills.** Every metered AWS call goes through one function that checks a daily cap.
+- **No surprise bills.** Every metered AWS call goes through one function that checks per-member limits and a daily circuit breaker.
 
 ## Under the hood
 
