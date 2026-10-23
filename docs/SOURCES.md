@@ -1,7 +1,7 @@
 # Sources: municipal feeding stations
 
 Seed data for the map: the feeding stations municipalities have already installed. Not user
-content, so moderation (R-04) does not apply, but nothing is trusted blindly. Decisions: D-34, D-35.
+content, so moderation (R-04) does not apply, but nothing is trusted blindly. Decisions: D-34, D-35, D-51.
 
 ## What exists (checked 2026-10-14)
 
@@ -22,39 +22,46 @@ No national dataset exists. Full coverage of Israel cannot come from public data
 1. **API sources** (ArcGIS REST), automatic. Query `where=1=1&outSR=4326&f=geojson`, page with
    `resultOffset` while `exceededTransferLimit` is true. A new ArcGIS city is one registry entry.
 2. **Published lists** (HTML or PDF). Fetch the page, extract addresses, geocode once (below), cache
-   the result by address, mark `precision: geocoded`. A human reviews every point in the diff. Where a city blocks bots
+   the result by address, mark `precision: geocoded`. Where a city blocks bots
    or has no list, ask for the data instead (a Freedom of Information request to the vet department).
-3. **Manual and members.** `data/municipal/manual.csv` by pull request, and members add the rest
-   as custom spots in the app from Phase 3 (D-43).
+3. **Manual and members.** A `manual.csv` the owner uploads to the bucket by hand (assumed), and
+   members add the rest as custom spots in the app from Phase 3 (D-43).
 
-Sources live in a registry (`pipelines/municipal/sources.json`): `id`, municipality (he, en), `kind`
-(`arcgis`, `html_list`, `manual_csv`), `url`, field mapping, permission and `last_checked`. Cities
-with no usable source are recorded as `none`, so nobody checks them twice.
+Sources live in a registry (`functions/municipal-import/sources.json`, a data file): `id`,
+municipality (he, en), `kind` (`arcgis`, `html_list`, `manual_csv`), `url`, field mapping, permission
+and `last_checked` (the date a person last looked, set by hand). Cities with no usable source are
+recorded as `none`, so nobody checks them twice.
 
 ## Pipeline
 
-A GitHub Actions workflow, scheduled and manually triggerable (limits in `src/constants/`):
+One Lambda, started by an EventBridge schedule (monthly, D-51) and by hand with `aws lambda invoke`,
+never by an HTTP route (the interval is a `.json` file in `src/constants/`):
 
 1. Fetch each source, normalise to the schema below.
 2. Validate: inside Israel's bounds, required fields present, and a source's count has not dropped
-   by more than the allowed share against the previous run (an outage must not empty the map).
-3. Diff against `data/municipal/municipal-spots.geojson`. No change, no pull request.
-4. Open a pull request with the new file. Merging runs the deploy job, which loads the file into
-   the `spots` table (upsert by `source` and `source_id`; a station missing from the file becomes
-   `removed`).
+   by more than the allowed share against the previous run (an outage must not empty the map). A
+   source that fails is skipped and named in the run result, and its stations from the previous
+   file are carried into the new one. A hand run can accept a real drop for one source.
+3. Upsert into the `spots` table by `spot_id` (the stable id below), updating only name, address,
+   lat, lng, `geo_cell` and the import status, so log state is kept. A station in the previous file
+   but missing from a source fetched this run becomes `removed`.
+4. Write `municipal-spots.geojson` to a private S3 bucket, last, so the baseline never gets ahead
+   of the table. The bucket is versioned, so an earlier file can be restored.
 
-Why a pull request and not a Lambda: the diff is reviewed before it goes live, a revert is the
-rollback, nothing runs in AWS between releases (the deploy job's role may only write municipal rows),
-and no metered call exists to cap (R-05). Risk: GitHub
-pauses scheduled workflows in a repo with no activity for 60 days.
+The data is runtime data, so it lives in a bucket, not in git, and GitHub pauses scheduled workflows
+in a repo with no activity for 60 days. A municipal `spot_id` starts with its source id, so the role
+may write only those keys and that bucket. The import makes a few S3 and DynamoDB writes a month,
+so there is nothing to cap (R-05). Before building: confirm EventBridge Scheduler is on the
+project's supported services ([aws-rules.md](../.claude/instructions/aws-rules.md)) and its cost
+([AWS.md](AWS.md#costs)); D-34 holds only if it is.
 
-## Output: a GeoJSON file in git, rows in `spots`
+## Output: a GeoJSON file in S3, rows in `spots`
 
-`data/municipal/municipal-spots.geojson`, RFC 7946 (WGS84), all of Israel. It is the reviewed artifact,
-not a public file. Sign-in is required (D-39), so stations reach members through
-the member-only API, at their exact point and address (D-47). A public copy on the CDN was
-rejected: cheap and cached, but it would hand exact points to people who are not signed in. Names and addresses
-are shown as the city publishes them (Hebrew, no machine translation in v1).
+`municipal-spots.geojson` in a private bucket, RFC 7946 (WGS84), all of Israel. It is the record of
+the last import and the baseline for the count check, not a public file. Sign-in is required (D-39), so
+stations reach members through the member-only API, at their exact point and address (D-47). A public
+copy on the CDN was rejected: cheap and cached, but it would hand exact points to people who are not
+signed in. Names and addresses are shown as the city publishes them (Hebrew, no machine translation in v1).
 
 Per feature, `snake_case`: `id`, `name`, `address`, `city`, `source`, `precision`
 (`source_point`, `geocoded`, `manual`), `status` (`active`, `removed`). Top level: a `sources` map
@@ -65,8 +72,9 @@ with `url`, `permission` and `fetched_at` (UTC) per source, so attribution is on
 Members will log against these, so ids must survive a refresh. Tel Aviv's `oid` is a plain
 sequence next to a `date_import` stamp, so it is probably renumbered on each import. Id =
 `source` + hash of the coordinates rounded to 5 decimals. A point that moves less than the match
-distance (constant) between runs keeps its old id. A station that disappears becomes `removed`,
-never deleted.
+distance (constant) between runs keeps its old id. It is the `spot_id` of the municipal row, so a
+refresh updates by key and needs no index on `source`. A station that disappears becomes
+`removed`, never deleted.
 
 ## Geocoding
 
@@ -79,11 +87,14 @@ error 23 m, worst 350 m. 5 found nothing (gardens, a car park, an odd spelling):
 hand. Rules for the import job:
 
 - One thread, an identifying User-Agent, at most 4 requests a minute for a recurring script (a one-off
-  small batch may go at 1 a second), and every result cached in git so no address is asked twice.
+  small batch may go at 1 a second), and every result cached in the `geocode_cache` table (D-29) so
+  no address is asked twice. A run stops geocoding before the Lambda time limit and the next run
+  continues.
 - Reject a result that falls outside its city (a wrong answer would be confident, not empty).
 - Data is ODbL: credit OpenStreetMap next to the other sources.
-- 50 m is the proof radius for a log (D-18) and a geocoded point can be 100 m or more off, so a
-  person checks it on the map before the station becomes loggable (D-35).
+- 50 m is the proof radius for a log (D-18) and a geocoded point can be 100 m or more off. Whether a
+  source's points need a check on the map before they become loggable is decided per source, from its
+  measured accuracy (D-35).
 
 Not chosen: Google (its terms limit storing results), Amazon Location (metered, so it would need the
 R-05 cap, and storing results costs more), GovMap (could not reach it from here).
@@ -102,4 +113,4 @@ in `permission`, and show "Data: <municipality>" on the map. If a municipality a
    and record every result in the registry.
 3. Lists: Ramat HaSharon, then Jerusalem once access is sorted out.
 4. Freedom of Information requests for the rest. Retry OSM when Overpass answers. OSM data is ODbL
-   share-alike, so decide before merging it.
+   share-alike, so decide before adding it.

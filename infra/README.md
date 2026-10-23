@@ -70,7 +70,7 @@ clear the terminal.
 **4. GitHub**, Settings:
 1. Environments: create `production`, limit it to the `main` branch, and add three environment
    secrets: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `ALERT_EMAIL`, where the cost
-   circuit breaker's alert goes (D-51). After the first deploy AWS emails that address a link to
+   circuit breaker's alert goes (D-52). After the first deploy AWS emails that address a link to
    confirm the subscription; click it, or no alert arrives. Confirm before ever changing the
    address: Terraform cannot remove a subscription still pending confirmation (AWS drops an
    unconfirmed one after 3 days, after which the next deploy goes through).

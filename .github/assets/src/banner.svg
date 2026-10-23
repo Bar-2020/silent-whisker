@@ -1,4 +1,4 @@
-<!-- Source of ../banner.png (1280x500 px). Text is set in Rubik (SIL OFL); install it before re-rendering. -->
+<!-- Source of ../banner.png (1280x500 px). Text is set in Rubik 500 and 800 (SIL OFL); install those weights before re-rendering, or the title and tagline come out lighter than the committed PNG. The nested logo is copied from logo.svg by scripts/inline-logo.mjs. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 500" width="1280" height="500" role="img" aria-labelledby="t d">
   <title id="t">Silent Whisker</title>
   <desc id="d">A ginger cat shaped like a map pin. A cat-head signal shines into the night sky over a city where three map pins mark feeding spots, and a black cat watches it from a rooftop.</desc>
@@ -22,10 +22,8 @@
 <path d="M1031 363 L904.7 92.3 L1045.3 92.3 L1049 363 Z" fill="url(#beam)"/>
 <ellipse cx="975" cy="72" rx="74" ry="58" fill="url(#sigdisc)"/>
 <g transform="translate(975 75.5) scale(1.3)">
-  <g fill="#1b2063" stroke="#1b2063" stroke-linejoin="round" stroke-width="4">
-    <ellipse cx="0" cy="8" rx="31" ry="25" stroke="none"/>
-    <path d="M-30 2 L-28 -36 L-5 -14 Z"/><path d="M30 2 L28 -36 L5 -14 Z"/>
-  </g>
+  <!-- head and ears in one outline, so the ears flow out of the head -->
+  <path d="M0 33 C17 33 31 22 31 8 C31 -8 29 -22 25 -34 L9 -15 Q0 -18 -9 -15 L-25 -34 C-29 -22 -31 -8 -31 8 C-31 22 -17 33 0 33 Z" fill="#1b2063" stroke="#1b2063" stroke-linejoin="round" stroke-width="3"/>
   <g stroke="#1b2063" stroke-width="1.8" stroke-linecap="round" fill="none">
     <path d="M-27 10 Q-45 6 -58 9"/><path d="M-27 17 Q-45 18 -57 24"/><path d="M-24 23 Q-38 29 -48 38"/>
     <path d="M27 10 Q45 6 58 9"/><path d="M27 17 Q45 18 57 24"/><path d="M24 23 Q38 29 48 38"/>
@@ -39,9 +37,7 @@
   <g transform="translate(1140 380) scale(1)">
   <g fill="#06071a" stroke="#06071a" stroke-linejoin="round">
     <path d="M-52 0 C-66 -30 -58 -80 -34 -104 L-30 -118 L30 -118 L34 -104 C58 -80 66 -30 52 0 Z" stroke-width="2"/>
-    <ellipse cx="0" cy="-146" rx="43" ry="36" stroke="none"/>
-    <path d="M-38 -158 L-34 -206 L-6 -176 Z" stroke-width="6"/>
-    <path d="M38 -158 L34 -206 L6 -176 Z" stroke-width="6"/>
+    <path d="M0 -110 C24 -110 43 -126 43 -146 C43 -168 40 -190 34 -208 L10 -178 Q0 -182 -10 -178 L-34 -208 C-40 -190 -43 -168 -43 -146 C-43 -126 -24 -110 0 -110 Z" stroke-width="3"/>
   </g>
   <path d="M44 -5 C100 2 118 -42 102 -80" fill="none" stroke="#06071a" stroke-width="15" stroke-linecap="round"/>
   <g opacity=".5" filter="url(#blur)"><circle cx="-16" cy="-148" r="17" fill="#ffc766"/><circle cx="16" cy="-148" r="17" fill="#ffc766"/></g>
@@ -54,13 +50,12 @@
 </g>
   <g transform="translate(581 399)"><ellipse cx="0" cy="1" rx="20.9" ry="5.5" fill="#05061a" opacity=".55"/><ellipse cx="0" cy="1" rx="33.2" ry="8.6" fill="none" stroke="#4ade80" stroke-opacity=".65" stroke-width="2" stroke-dasharray="1 5" stroke-linecap="round"/><g transform="scale(1.2)"><circle cx="0" cy="-20" r="21" fill="#4ade80" opacity=".2"/><path d="M0 0 L-9 -14 A11 11 0 1 1 9 -14 Z" fill="#4ade80"/><circle cx="0" cy="-20" r="4.2" fill="#0b0d28"/></g></g><g transform="translate(666 398)"><ellipse cx="0" cy="1" rx="20.9" ry="5.5" fill="#05061a" opacity=".55"/><ellipse cx="0" cy="1" rx="33.2" ry="8.6" fill="none" stroke="#fb923c" stroke-opacity=".65" stroke-width="2" stroke-dasharray="1 5" stroke-linecap="round"/><g transform="scale(1.2)"><circle cx="0" cy="-20" r="21" fill="#fb923c" opacity=".2"/><path d="M0 0 L-9 -14 A11 11 0 1 1 9 -14 Z" fill="#fb923c"/><circle cx="0" cy="-20" r="4.2" fill="#0b0d28"/></g></g><g transform="translate(868.5 431)"><ellipse cx="0" cy="1" rx="20.9" ry="5.5" fill="#05061a" opacity=".55"/><ellipse cx="0" cy="1" rx="33.2" ry="8.6" fill="none" stroke="#f87171" stroke-opacity=".65" stroke-width="2" stroke-dasharray="1 5" stroke-linecap="round"/><g transform="scale(1.2)"><circle cx="0" cy="-20" r="21" fill="#f87171" opacity=".2"/><path d="M0 0 L-9 -14 A11 11 0 1 1 9 -14 Z" fill="#f87171"/><circle cx="0" cy="-20" r="4.2" fill="#0b0d28"/></g></g>
   <svg x="60" y="104" width="160" height="160" viewBox="0 0 512 512">
-  
   <defs>
     <linearGradient id="logo-sky" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#2b3170"/>
       <stop offset="1" stop-color="#0e1131"/>
     </linearGradient>
-    <linearGradient id="logo-fur" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="logo-fur" gradientUnits="userSpaceOnUse" x1="0" y1="104" x2="0" y2="440">
       <stop offset="0" stop-color="#ffbe62"/>
       <stop offset="1" stop-color="#f28f33"/>
     </linearGradient>
@@ -85,16 +80,11 @@
   <ellipse cx="256" cy="446" rx="150" ry="26" fill="none" stroke="#ffc766" stroke-opacity="0.45" stroke-width="4" stroke-dasharray="3 12" stroke-linecap="round"/>
   <ellipse cx="256" cy="446" rx="84" ry="15" fill="#080a22" fill-opacity="0.55"/>
 
-  <!-- ears -->
-  <g stroke-linejoin="round" stroke-width="18" stroke="#f6a04d">
-    <path d="M138 200 L152 72 L238 114 Z" fill="#f6a04d"/>
-    <path d="M374 200 L360 72 L274 114 Z" fill="#f6a04d"/>
-  </g>
-  <path d="M160 176 L162 106 L212 130 Z" fill="#ff9fb4" stroke="#ff9fb4" stroke-width="10" stroke-linejoin="round"/>
-  <path d="M352 176 L350 106 L300 130 Z" fill="#ff9fb4" stroke="#ff9fb4" stroke-width="10" stroke-linejoin="round"/>
-
-  <!-- head + pin -->
-  <path d="M256 440 L356.9 310.8 A128 128 0 1 0 155.1 310.8 Z" fill="url(#logo-fur)"/>
+  <!-- head, ears and pin: one silhouette, so the ears grow out of the head -->
+  <path d="M256.0 440.0 L356.9 310.8 A128 128 0 0 0 361.4 159.4 A10 10 0 0 1 359.6 153.4 L361.7 77.0 Q362.0 64.0 351.7 71.9 L305.7 107.2 A14 14 0 0 1 293.1 109.5 A128 128 0 0 0 218.9 109.5 A14 14 0 0 1 206.3 107.2 L160.3 71.9 Q150.0 64.0 150.3 77.0 L152.4 153.4 A10 10 0 0 1 150.6 159.4 A128 128 0 0 0 155.1 310.8 Z" fill="url(#logo-fur)"/>
+  <!-- inner ears -->
+  <path d="M162.3 149.3 L160.8 93.7 Q160.5 84.7 167.7 90.2 L204.3 118.2 A125 125 0 0 0 162.3 149.3 Z" fill="#ff9fb4"/>
+  <path d="M162.3 149.3 L160.8 93.7 Q160.5 84.7 167.7 90.2 L204.3 118.2 A125 125 0 0 0 162.3 149.3 Z" fill="#ff9fb4" transform="matrix(-1 0 0 1 512 0)"/>
   <g clip-path="url(#logo-pin)">
     <ellipse cx="256" cy="400" rx="150" ry="120" fill="#fff4e2"/>
     <ellipse cx="256" cy="304" rx="64" ry="46" fill="#fff4e2"/>

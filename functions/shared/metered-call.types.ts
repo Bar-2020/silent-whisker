@@ -1,7 +1,7 @@
 import type { SNSClient } from '@aws-sdk/client-sns';
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 
-// Types for the cost limits of D-51 (metered-call.ts).
+// Types for the cost limits of D-52 (metered-call.ts).
 
 export interface CostGuard {
   readonly db: DynamoDBDocumentClient;

@@ -1,4 +1,4 @@
-# The cost limits (D-51): the day's counters, and the email that goes out when the global circuit
+# The cost limits (D-52): the day's counters, and the email that goes out when the global circuit
 # breaker trips. The logic lives in functions/shared/metered-call.ts.
 
 locals {
@@ -28,7 +28,7 @@ resource "aws_dynamodb_table" "daily_counters" {
   }
 }
 
-# The breaker's alarm bell: the first trip of a day publishes here (D-51).
+# The breaker's alarm bell: the first trip of a day publishes here (D-52).
 resource "aws_sns_topic" "cost_alerts" {
   name = "silent-whisker-cost-alerts"
 }
