@@ -1,4 +1,4 @@
-// Cost limits for paid checks (D-51). Money is counted in millionths of a dollar (micro-USD), so
+// Cost limits for paid checks (D-52). Money is counted in millionths of a dollar (micro-USD), so
 // every cost is a whole number and adding them up never rounds.
 
 export const MICRO_USD_PER_USD = 1_000_000;

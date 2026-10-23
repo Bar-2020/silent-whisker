@@ -9,7 +9,7 @@ This does not override [simplicity-first.md](simplicity-first.md).
    setting with a `feature-sliced` preset: configure it in Phase 2, when `src/` first exists. A
    cross-feature import then fails the build. `src/shared/` is for code a second feature needs.
 2. **What will grow is data, not code.** Languages (`src/constants/`), municipal sources
-   (`pipelines/municipal/sources.json`), thresholds, limits, breakpoints, locale files. Adding a
+   (`functions/municipal-import/sources.json`), thresholds, limits, breakpoints, locale files. Adding a
    language or a city is an edit to data plus a test, not a new code path.
 3. **A second use earns an abstraction.** The first use stays inline. No plugin systems, no
    interfaces with one implementation.

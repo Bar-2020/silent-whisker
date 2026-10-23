@@ -8,7 +8,7 @@ import {
 } from '../../src/constants/cost';
 import type { CostGuard, Metered } from './metered-call.types';
 
-// The cost limits of D-51. Every paid AWS call goes through `meteredCall` (R-05); every paid
+// The cost limits of D-52. Every paid AWS call goes through `meteredCall` (R-05); every paid
 // action also takes a per-member allowance with `takeDailyAllowance` when it starts.
 
 /** Counters reset at midnight UTC, whatever the member's time zone (R-06). */
@@ -95,7 +95,7 @@ async function alertOncePerDay(guard: CostGuard): Promise<void> {
         Subject: 'Silent Whisker: cost circuit breaker tripped',
         Message:
           `Paid checks passed $${String(limitUsd)} on ${day} (UTC). New photos and messages now ` +
-          'wait, hidden, and are checked after midnight UTC. Look for abuse or a bug (D-51).',
+          'wait, hidden, and are checked after midnight UTC. Look for abuse or a bug (D-52).',
       })
     );
     alertHandledDay.set(guard, day);
@@ -112,7 +112,7 @@ async function alertOncePerDay(guard: CostGuard): Promise<void> {
 
 /**
  * Runs a paid AWS call if today's spending leaves room for its cost, after adding the cost to
- * the day's total (R-05, D-51). Once the breaker has tripped, it does not run the call and answers
+ * the day's total (R-05, D-52). Once the breaker has tripped, it does not run the call and answers
  * `deferred`: the caller saves the content pending, hidden (R-04), for the check after the reset.
  */
 export async function meteredCall<T>(

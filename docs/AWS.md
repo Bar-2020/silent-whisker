@@ -82,7 +82,7 @@ writes per member per day of 1 text unit each, 30 days.
 | Moderation total | about $0.90 plus photos | about $9 plus photos |
 | S3, DynamoDB on-demand, Lambda, CloudFront, Cognito | under $1 | under $1 |
 
-Per-member limits keep one person from driving this up. The circuit breaker at $2 a day (D-51) caps
+Per-member limits keep one person from driving this up. The circuit breaker at $2 a day (D-52) caps
 a bad day; tripped every day it would burn the $100 credit in about 50 days, so its email is there to
 act on. The AWS Budget is only a backup: it alerts, and is not instant.
 
