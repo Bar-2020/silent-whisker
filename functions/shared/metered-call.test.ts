@@ -19,8 +19,10 @@ const snsMock = mockClient(sns);
 
 const NOW = new Date('2026-10-21T12:00:00Z');
 
-// A fresh guard per test, like a fresh Lambda instance: the once-a-day alert cache is per guard.
+// A fresh alert topic per test, like a fresh Lambda instance: the once-a-day alert cache lives in
+// the module, keyed by topic.
 let guard: CostGuard;
+let topicCount = 0;
 
 const conditionFailed = () =>
   new ConditionalCheckFailedException({ message: 'The conditional request failed', $metadata: {} });
@@ -30,11 +32,12 @@ beforeEach(() => {
   snsMock.reset();
   vi.useFakeTimers({ toFake: ['Date'] });
   vi.setSystemTime(NOW);
+  topicCount += 1;
   guard = {
     db,
     sns,
     tableName: 'daily_counters',
-    alertTopicArn: 'arn:aws:sns:eu-north-1:123456789012:silent-whisker-cost-alerts',
+    alertTopicArn: `arn:aws:sns:eu-north-1:123456789012:cost-alerts-${String(topicCount)}`,
   };
 });
 
@@ -109,6 +112,18 @@ describe('meteredCall (R-05: every paid call passes the global circuit breaker)'
     await meteredCall(guard, 1500, vi.fn());
     await meteredCall(guard, 1500, vi.fn());
     await meteredCall(guard, 1500, vi.fn());
+
+    expect(dbMock.commandCalls(PutCommand)).toHaveLength(1);
+    expect(snsMock.commandCalls(PublishCommand)).toHaveLength(1);
+  });
+
+  it('remembers the alert per topic, so a guard built on every request still writes the marker once', async () => {
+    dbMock.on(UpdateCommand).rejects(conditionFailed());
+    dbMock.on(PutCommand).resolves({});
+    snsMock.on(PublishCommand).resolves({});
+
+    await meteredCall({ ...guard }, 1500, vi.fn());
+    await meteredCall({ ...guard }, 1500, vi.fn());
 
     expect(dbMock.commandCalls(PutCommand)).toHaveLength(1);
     expect(snsMock.commandCalls(PublishCommand)).toHaveLength(1);

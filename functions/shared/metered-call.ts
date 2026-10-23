@@ -21,11 +21,12 @@ const isConditionFailure = (error: unknown): boolean =>
   error instanceof Error && error.name === 'ConditionalCheckFailedException';
 
 /**
- * The UTC day this Lambda instance already knows the alert is handled for, per guard. While the
- * breaker is tripped every deferred call would otherwise write the marker again, and a failed
- * conditional write still uses write capacity, just when traffic peaks.
+ * The UTC day this Lambda instance already knows the alert is handled for, per alert topic. While
+ * the breaker is tripped every deferred call would otherwise write the marker again, and a failed
+ * conditional write still uses write capacity, just when traffic peaks. Keyed by the topic, not
+ * the guard object, so a handler that builds a new guard on every request still hits it.
  */
-const alertHandledDay = new WeakMap<CostGuard, string>();
+const alertHandledDay = new Map<string, string>();
 
 /**
  * Adds `amount` to today's `name` counter only if the total stays within `max`, in one
@@ -70,7 +71,7 @@ export async function takeDailyAllowance(
 async function alertOncePerDay(guard: CostGuard): Promise<void> {
   const now = new Date();
   const day = utcDay(now);
-  if (alertHandledDay.get(guard) === day) return;
+  if (alertHandledDay.get(guard.alertTopicArn) === day) return;
   const marker = { key: `breaker_alert#${day}` };
   try {
     await guard.db.send(
@@ -82,7 +83,7 @@ async function alertOncePerDay(guard: CostGuard): Promise<void> {
       })
     );
   } catch (error) {
-    if (isConditionFailure(error)) alertHandledDay.set(guard, day); // another instance sent it
+    if (isConditionFailure(error)) alertHandledDay.set(guard.alertTopicArn, day); // another instance sent it
     else console.error('cost alert marker failed', error);
     return;
   }
@@ -98,7 +99,7 @@ async function alertOncePerDay(guard: CostGuard): Promise<void> {
           'wait, hidden, and are checked after midnight UTC. Look for abuse or a bug (D-52).',
       })
     );
-    alertHandledDay.set(guard, day);
+    alertHandledDay.set(guard.alertTopicArn, day);
   } catch (error) {
     console.error('cost alert email failed', error);
     // Free the marker so the next deferred call retries the email.
