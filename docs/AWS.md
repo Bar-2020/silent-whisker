@@ -86,6 +86,11 @@ Per-member limits keep one person from driving this up. The circuit breaker at $
 a bad day; tripped every day it would burn the $100 credit in about 50 days, so its email is there to
 act on. The AWS Budget is only a backup: it alerts, and is not instant.
 
+Phase 1 builds the cost limits, but no phase 1 code calls them. The first phase that moderates
+anything, text or photo (the profile name in phase 2, or the photo upload in phase 3), wraps its
+paid check in `meteredCall` ([metered-call.ts](../functions/shared/metered-call.ts)), takes the
+member's daily allowance first, and builds the re-check of deferred content (D-53, proposed).
+
 ## Sources
 
 - S1: https://docs.aws.amazon.com/general/latest/gr/rekognition.html
