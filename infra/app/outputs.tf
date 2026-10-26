@@ -12,11 +12,3 @@ output "site_bucket" {
 output "distribution_id" {
   value = aws_cloudfront_distribution.site.id
 }
-
-output "daily_counters_table" {
-  value = aws_dynamodb_table.daily_counters.name
-}
-
-output "cost_alerts_topic_arn" {
-  value = aws_sns_topic.cost_alerts.arn
-}
