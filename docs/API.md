@@ -8,7 +8,7 @@ Draft. Lambda behind CloudFront. JSON. Errors are `{ "code": "SOME_CODE" }` with
 |---|---|---|---|
 | `GET /spots?bbox=` | member | Approved spots in the viewport at their exact point: every city station, and the custom spots R-03 allows, using the optional `lat`, `lng`, `accuracy_m` (not stored); plus the caller's own pending ones (R-27) | |
 | `POST /spots` | member | Create a custom spot, saved as `pending` (R-27), from either `address` (looked up) or `lat`, `lng`, `accuracy_m` ("my location"), plus optional `name` and `photo_key` (D-43) | `DAILY_LIMIT` (R-12), `ADDRESS_NOT_FOUND` (D-43), `LOCATION_REQUIRED` (D-43), `BANNED`, `MODERATION_REJECTED` |
-| `POST /uploads` | member | Presigned URL to the quarantine prefix | `BANNED`, `UPLOAD_LIMIT` (R-30), `CAP_REACHED` (R-05) |
+| `POST /uploads` | member | Presigned URL to the quarantine prefix | `BANNED`, `UPLOAD_LIMIT` (R-30) |
 | `POST /spots/{id}/logs` | member | Create a feeding or water log from `kind`, `amount`, `lat`, `lng`, `accuracy_m`. The answer is only counted or unverified, never the distance | `BANNED`, `ATTEMPT_LIMIT` (R-17), `TOO_SOON` (R-10), `LOG_LIMIT` (R-13) |
 | `POST /spots/{id}/empty` | member | Report the food or the water as empty (D-19) | `BANNED`, `ATTEMPT_LIMIT` (R-17), `REFUSED` (R-16, one answer for every failed check) |
 | `GET /spots/{id}` | member | Spot detail with the exact address, approved logs, approved cats with their like counts; a custom spot only as R-03 allows, from the same optional `lat`, `lng`, `accuracy_m` | `NOT_FOUND` (also when R-03 hides it, so a hidden spot looks like a missing one) |

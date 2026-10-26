@@ -9,7 +9,7 @@ proposed values that live in `src/constants/` (see [DECISIONS.md](DECISIONS.md))
 | R-02 | Replaced by R-22 (it let visitors read spots, approximate only). | |
 | R-03 | Every position is exact. City stations and cat alerts go to every signed-in member. A custom spot goes to a member in any one of three cases: the member's phone is within 150 m of it with an accuracy of 50 m or better; the spot is active and its food or water is not green; or the member is its creator or an admin (D-47). | Lambda |
 | R-04 | Nothing user-supplied is public until moderation approves it. If the check fails, it stays hidden. | Lambda, S3 quarantine |
-| R-05 | Every metered AWS call goes through one function that checks the daily cap. At the cap, uploads are refused until the cap resets. | Lambda |
+| R-05 | Every metered AWS call goes through one function, `meteredCall` in `functions/shared/metered-call.ts`, that checks the global circuit breaker (a lint rule fails a file that imports a paid AWS client without it), and every paid action is also under a per-member daily limit, counted when the action starts (D-52). Once the breaker has tripped, new content is saved pending and checked after the UTC day resets (D-53); nothing is refused for it and nothing is shown before it passes. | Lambda |
 | R-06 | Timestamps are stored in UTC. | Lambda |
 | R-07 | User content is never hard deleted. Status changes only. | Lambda |
 | R-08 | Banned users cannot write. Chat-restricted users cannot post chat messages or comments. | Lambda |
@@ -33,6 +33,7 @@ proposed values that live in `src/constants/` (see [DECISIONS.md](DECISIONS.md))
 | R-28 | A cat photo keeps no exact position, only its neighbourhood cell and a place tag, and the feed rounds the member's own position to a cell too, so nothing filters on a precise point. Cat photos are never returned by the map routes. | Lambda |
 | R-29 | The feed returns the cat photos that are not on the seen list the app sends before any that are. The list is kept on the member's phone, not on the server. | Lambda |
 | R-30 | A member can upload at most 20 photos a day, counted when the upload starts, whether or not the photo is approved later. | Lambda |
+| R-31 | A member can post at most 100 chat messages a day (D-52). | Lambda |
 
 ## Proof checks (R-09)
 

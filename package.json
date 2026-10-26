@@ -21,9 +21,15 @@
   },
   "devDependencies": {
     "@types/node": "^22.20.1",
+    "aws-sdk-client-mock": "4.1.0",
     "eslint-plugin-sonarjs": "^4.2.1",
     "fallow": "^3.28.0",
     "typescript": "~6.0.3",
     "vite-plus": "1.2.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.1147.0",
+    "@aws-sdk/client-sns": "3.1147.0",
+    "@aws-sdk/lib-dynamodb": "3.1147.0"
   }
 }

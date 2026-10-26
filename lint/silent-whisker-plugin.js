@@ -81,11 +81,60 @@ const numericConstantsLiveInConstants = restrictSyntax(
     }))
 );
 
+// Every metered AWS call goes through `meteredCall` (R-05). The paid call is written as a function
+// handed to it, so the paid client is imported where that function is written. A file that imports
+// a paid client must therefore also import metered-call. A reminder, not a proof: it cannot see
+// that every call is wrapped, and only static imports are checked. Add a client here when a new
+// paid service is chosen.
+const PAID_AWS_CLIENTS = [
+  '@aws-sdk/client-bedrock-runtime',
+  '@aws-sdk/client-bedrock-agent-runtime',
+  '@aws-sdk/client-rekognition',
+  '@aws-sdk/client-comprehend',
+  '@aws-sdk/client-textract',
+  '@aws-sdk/client-location',
+];
+
+const isPaidClient = (source) =>
+  PAID_AWS_CLIENTS.some((client) => source === client || source.startsWith(`${client}/`));
+
+// './metered-call', './metered-call.js' and an alias path all count.
+const isMeteredCall = (source) =>
+  source
+    .replace(/\.[cm]?[jt]s$/, '')
+    .split('/')
+    .at(-1) === 'metered-call';
+
+const paidCallsGoThroughMeteredCall = {
+  create(context) {
+    const paidImports = [];
+    let importsMeteredCall = false;
+    return {
+      ImportDeclaration(node) {
+        if (node.importKind === 'type') return; // types alone make no call
+        const source = node.source.value;
+        if (isPaidClient(source)) paidImports.push(node);
+        else if (isMeteredCall(source)) importsMeteredCall = true;
+      },
+      'Program:exit'() {
+        if (importsMeteredCall) return;
+        for (const node of paidImports) {
+          context.report({
+            node,
+            message: `"${node.source.value}" is a paid AWS client. Wrap every call in meteredCall (functions/shared/metered-call.ts) so the daily cap counts it. .claude/instructions/hard-rules.md, metered AWS calls.`,
+          });
+        }
+      },
+    };
+  },
+};
+
 export default {
   meta: { name: 'silent-whisker' },
   rules: {
     'rtl-logical-properties': rtlLogicalProperties,
     'no-inline-styles': noInlineStyles,
     'numeric-constants-live-in-constants': numericConstantsLiveInConstants,
+    'paid-calls-go-through-metered-call': paidCallsGoThroughMeteredCall,
   },
 };

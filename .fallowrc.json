@@ -1,6 +1,11 @@
 {
   "$schema": "./node_modules/fallow/schema.json",
-  "entry": ["__tests__/**/*.test.ts", "src/**/*.test.{ts,tsx}", "scripts/*.mjs"],
+  "entry": [
+    "__tests__/**/*.test.ts",
+    "src/**/*.test.{ts,tsx}",
+    "functions/**/*.test.ts",
+    "scripts/*.mjs"
+  ],
   "dynamicallyLoaded": ["lint/silent-whisker-plugin.js"],
   "duplicates": {
     "mode": "strict"
