@@ -9,6 +9,5 @@
   "dynamicallyLoaded": ["lint/silent-whisker-plugin.js"],
   "duplicates": {
     "mode": "strict"
-  },
-  "ignoreDependencies": ["@aws-sdk/client-dynamodb"]
+  }
 }

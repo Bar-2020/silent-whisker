@@ -12,6 +12,15 @@ export interface CostGuard {
   readonly alertTopicArn: string;
 }
 
+/** What one Lambda instance knows about the breaker on one UTC day, to spare the database. */
+export interface BreakerMemory {
+  readonly day: string;
+  /** The smallest cost the breaker refused today: today's total only grows, so a cost this big or bigger is refused too. */
+  readonly smallestRefused: number;
+  /** The owner's alert is handled for today, sent by this instance or another. */
+  readonly alerted: boolean;
+}
+
 /** `deferred`: the breaker has tripped, so save the content pending and check it after the reset. */
 export type Metered<T> =
   | { readonly outcome: 'done'; readonly value: T }
