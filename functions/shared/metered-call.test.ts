@@ -1,11 +1,6 @@
 import { ConditionalCheckFailedException, DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
-import {
-  DeleteCommand,
-  DynamoDBDocumentClient,
-  PutCommand,
-  UpdateCommand,
-} from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { BREAKER_DAILY_MICRO_USD, COUNTER_TTL_SECONDS } from '../../src/constants/cost';
@@ -104,46 +99,83 @@ describe('meteredCall (R-05: every paid call passes the global circuit breaker)'
     expect(snsMock.commandCalls(PublishCommand)).toHaveLength(0);
   });
 
+  // A new guard on every call, like a handler that builds one per request: the memory is by topic.
   it('writes the marker only once per instance while tripped, sparing write capacity', async () => {
     dbMock.on(UpdateCommand).rejects(conditionFailed());
     dbMock.on(PutCommand).resolves({});
     snsMock.on(PublishCommand).resolves({});
 
-    await meteredCall(guard, 1500, vi.fn());
-    await meteredCall(guard, 1500, vi.fn());
-    await meteredCall(guard, 1500, vi.fn());
+    await meteredCall({ ...guard }, 1500, vi.fn());
+    await meteredCall({ ...guard }, 1500, vi.fn());
+    await meteredCall({ ...guard }, 1500, vi.fn());
 
     expect(dbMock.commandCalls(PutCommand)).toHaveLength(1);
     expect(snsMock.commandCalls(PublishCommand)).toHaveLength(1);
   });
 
-  it('remembers the alert per topic, so a guard built on every request still writes the marker once', async () => {
+  it('skips the counter for a cost the breaker already refused today, or a bigger one', async () => {
     dbMock.on(UpdateCommand).rejects(conditionFailed());
     dbMock.on(PutCommand).resolves({});
     snsMock.on(PublishCommand).resolves({});
 
-    await meteredCall({ ...guard }, 1500, vi.fn());
-    await meteredCall({ ...guard }, 1500, vi.fn());
+    await meteredCall(guard, 1500, vi.fn()); // refused by the database
+    await meteredCall(guard, 1500, vi.fn()); // same cost: known refused
+    await meteredCall(guard, 2000, vi.fn()); // bigger: known refused
+    await meteredCall(guard, 1000, vi.fn()); // smaller: might still fit, so it asks
+    await meteredCall(guard, 1200, vi.fn()); // refused at 1000 already, so skipped
 
-    expect(dbMock.commandCalls(PutCommand)).toHaveLength(1);
-    expect(snsMock.commandCalls(PublishCommand)).toHaveLength(1);
+    expect(dbMock.commandCalls(UpdateCommand)).toHaveLength(2);
   });
 
-  it('frees the marker when the email fails, so the next deferral retries it', async () => {
+  it('forgets a refusal on the next UTC day', async () => {
+    dbMock.on(UpdateCommand).rejectsOnce(conditionFailed()).resolves({});
+    dbMock.on(PutCommand).resolves({});
+    snsMock.on(PublishCommand).resolves({});
+    const call = vi.fn().mockResolvedValue('checked');
+
+    await meteredCall(guard, 1500, vi.fn());
+    vi.setSystemTime(new Date('2026-10-22T00:00:01Z'));
+
+    await expect(meteredCall(guard, 1500, call)).resolves.toEqual({
+      outcome: 'done',
+      value: 'checked',
+    });
+  });
+
+  it('still defers when the alert email cannot be sent', async () => {
     dbMock.on(UpdateCommand).rejects(conditionFailed());
     dbMock.on(PutCommand).resolves({});
-    dbMock.on(DeleteCommand).resolves({});
-    snsMock.on(PublishCommand).rejectsOnce(new Error('SNS is down')).resolves({});
+    snsMock.on(PublishCommand).rejects(new Error('SNS is down'));
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
     await expect(meteredCall(guard, 1500, vi.fn())).resolves.toEqual({ outcome: 'deferred' });
-    expect(dbMock.commandCalls(DeleteCommand)[0].args[0].input.Key).toEqual({
-      key: 'breaker_alert#2026-10-21',
+  });
+
+  it('reads the clock once, so a refusal just before midnight alerts for the day it refused', async () => {
+    vi.setSystemTime(new Date('2026-10-21T23:59:59.999Z'));
+    dbMock.on(UpdateCommand).callsFake(() => {
+      vi.setSystemTime(new Date('2026-10-22T00:00:00.001Z'));
+      return Promise.reject(conditionFailed());
     });
+    dbMock.on(PutCommand).resolves({});
+    snsMock.on(PublishCommand).resolves({});
 
     await meteredCall(guard, 1500, vi.fn());
-    expect(snsMock.commandCalls(PublishCommand)).toHaveLength(2);
+
+    const [marker] = dbMock.commandCalls(PutCommand);
+    expect(marker.args[0].input.Item?.key).toBe('breaker_alert#2026-10-21');
   });
+
+  it.each([0, -5, 1.5, Number.NaN, Number.MAX_SAFE_INTEGER + 1])(
+    'rejects a cost of %s without asking the database or running the call',
+    async (cost) => {
+      const call = vi.fn();
+
+      await expect(meteredCall(guard, cost, call)).rejects.toThrow(RangeError);
+      expect(dbMock.commandCalls(UpdateCommand)).toHaveLength(0);
+      expect(call).not.toHaveBeenCalled();
+    }
+  );
 
   it('still defers when the once-a-day marker cannot be written', async () => {
     dbMock.on(UpdateCommand).rejects(conditionFailed());
@@ -195,6 +227,14 @@ describe('takeDailyAllowance (R-05: per-member limits and the breaker share one 
     await expect(takeDailyAllowance(guard, 'breaker', 3, 2)).resolves.toBe(false);
     expect(dbMock.commandCalls(UpdateCommand)).toHaveLength(0);
   });
+
+  it.each([0, -5, 1.5, Number.NaN, Number.MAX_SAFE_INTEGER + 1])(
+    'rejects an amount of %s: it would un-count spending or break the exact sums',
+    async (amount) => {
+      await expect(takeDailyAllowance(guard, 'breaker', amount, 2)).rejects.toThrow(RangeError);
+      expect(dbMock.commandCalls(UpdateCommand)).toHaveLength(0);
+    }
+  );
 
   it('keys the counter by the UTC day (R-06), not the local one', async () => {
     dbMock.on(UpdateCommand).resolves({});

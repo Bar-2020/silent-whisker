@@ -1,12 +1,13 @@
+import { ConditionalCheckFailedException } from '@aws-sdk/client-dynamodb';
 import { PublishCommand } from '@aws-sdk/client-sns';
-import { DeleteCommand, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import {
   BREAKER_DAILY_MICRO_USD,
   COUNTER_TTL_SECONDS,
   MICRO_USD_PER_USD,
   MS_PER_SECOND,
 } from '../../src/constants/cost';
-import type { CostGuard, Metered } from './metered-call.types';
+import type { BreakerMemory, CostGuard, Metered } from './metered-call.types';
 
 // The cost limits of D-52. Every paid AWS call goes through `meteredCall` (R-05); every paid
 // action also takes a per-member allowance with `takeDailyAllowance` when it starts.
@@ -17,16 +18,29 @@ const utcDay = (now: Date): string => now.toISOString().split('T')[0];
 const expiresAt = (now: Date): number =>
   Math.floor(now.getTime() / MS_PER_SECOND) + COUNTER_TTL_SECONDS;
 
-const isConditionFailure = (error: unknown): boolean =>
-  error instanceof Error && error.name === 'ConditionalCheckFailedException';
+/**
+ * What this Lambda instance knows about today's breaker, per alert topic. While the breaker is
+ * tripped every deferred call would otherwise write to the database again (a refused conditional
+ * write still uses write capacity, just when traffic peaks): once for the counter, once for the
+ * alert marker. Keyed by the topic, not the guard object, so a handler that builds a new guard on
+ * every request still hits it.
+ */
+const breakerMemory = new Map<string, BreakerMemory>();
+
+const memoryOf = (guard: CostGuard, today: string): BreakerMemory => {
+  const known = breakerMemory.get(guard.alertTopicArn);
+  return known?.day === today ? known : { day: today, smallestRefused: Infinity, alerted: false };
+};
 
 /**
- * The UTC day this Lambda instance already knows the alert is handled for, per alert topic. While
- * the breaker is tripped every deferred call would otherwise write the marker again, and a failed
- * conditional write still uses write capacity, just when traffic peaks. Keyed by the topic, not
- * the guard object, so a handler that builds a new guard on every request still hits it.
+ * Costs are whole micro-dollars, so sums stay exact (a safe integer is whole and small enough to
+ * add without rounding); zero or less would un-count spending.
  */
-const alertHandledDay = new Map<string, string>();
+function assertPositiveWhole(amount: number): void {
+  if (!Number.isSafeInteger(amount) || amount < 1) {
+    throw new RangeError(`An amount must be a positive whole number, got ${String(amount)}`);
+  }
+}
 
 /**
  * Adds `amount` to today's `name` counter only if the total stays within `max`, in one
@@ -37,10 +51,11 @@ export async function takeDailyAllowance(
   guard: CostGuard,
   name: string,
   amount: number,
-  max: number
+  max: number,
+  now = new Date()
 ): Promise<boolean> {
+  assertPositiveWhole(amount);
   if (amount > max) return false;
-  const now = new Date();
   try {
     await guard.db.send(
       new UpdateCommand({
@@ -58,7 +73,7 @@ export async function takeDailyAllowance(
     );
     return true;
   } catch (error) {
-    if (isConditionFailure(error)) return false;
+    if (error instanceof ConditionalCheckFailedException) return false;
     throw error;
   }
 }
@@ -66,27 +81,31 @@ export async function takeDailyAllowance(
 /**
  * Emails the owner the first time the breaker trips on a UTC day. A marker row makes it once a
  * day across all Lambda instances. Any failure here is logged, never thrown: the content still
- * waits pending (never refused for cost), and the AWS Budget remains as a backup alarm.
+ * waits pending (never refused for cost), and the AWS Budget remains as a backup alarm. If the
+ * email itself fails, that day's alert is lost: retrying would need every instance to retry.
  */
-async function alertOncePerDay(guard: CostGuard): Promise<void> {
-  const now = new Date();
-  const day = utcDay(now);
-  if (alertHandledDay.get(guard.alertTopicArn) === day) return;
-  const marker = { key: `breaker_alert#${day}` };
+async function alertOncePerDay(guard: CostGuard, now: Date): Promise<void> {
+  const today = utcDay(now);
+  if (memoryOf(guard, today).alerted) return;
+  let sentElsewhere = false;
   try {
     await guard.db.send(
       new PutCommand({
         TableName: guard.tableName,
-        Item: { ...marker, expires_at: expiresAt(now) },
+        Item: { key: `breaker_alert#${today}`, expires_at: expiresAt(now) },
         ConditionExpression: 'attribute_not_exists(#key)',
         ExpressionAttributeNames: { '#key': 'key' },
       })
     );
   } catch (error) {
-    if (isConditionFailure(error)) alertHandledDay.set(guard.alertTopicArn, day); // another instance sent it
-    else console.error('cost alert marker failed', error);
-    return;
+    if (!(error instanceof ConditionalCheckFailedException)) {
+      console.error('cost alert marker failed', error);
+      return;
+    }
+    sentElsewhere = true;
   }
+  breakerMemory.set(guard.alertTopicArn, { ...memoryOf(guard, today), alerted: true });
+  if (sentElsewhere) return;
   const limitUsd = BREAKER_DAILY_MICRO_USD / MICRO_USD_PER_USD;
   try {
     // An operator email, not app UI, so it is plain English rather than a t() string.
@@ -95,19 +114,12 @@ async function alertOncePerDay(guard: CostGuard): Promise<void> {
         TopicArn: guard.alertTopicArn,
         Subject: 'Silent Whisker: cost circuit breaker tripped',
         Message:
-          `Paid checks passed $${String(limitUsd)} on ${day} (UTC). New photos and messages now ` +
+          `Paid checks passed $${String(limitUsd)} on ${today} (UTC). New photos and messages now ` +
           'wait, hidden, and are checked after midnight UTC. Look for abuse or a bug (D-52).',
       })
     );
-    alertHandledDay.set(guard.alertTopicArn, day);
   } catch (error) {
     console.error('cost alert email failed', error);
-    // Free the marker so the next deferred call retries the email.
-    await guard.db
-      .send(new DeleteCommand({ TableName: guard.tableName, Key: marker }))
-      .catch((deleteError: unknown) => {
-        console.error('cost alert marker cleanup failed', deleteError);
-      });
   }
 }
 
@@ -121,8 +133,20 @@ export async function meteredCall<T>(
   costMicroUsd: number,
   call: () => Promise<T>
 ): Promise<Metered<T>> {
-  if (!(await takeDailyAllowance(guard, 'breaker', costMicroUsd, BREAKER_DAILY_MICRO_USD))) {
-    await alertOncePerDay(guard);
+  assertPositiveWhole(costMicroUsd);
+  const now = new Date(); // one reading, so the refusal and the alert are about the same UTC day
+  const today = utcDay(now);
+  const refusedBefore = costMicroUsd >= memoryOf(guard, today).smallestRefused;
+  if (
+    refusedBefore ||
+    !(await takeDailyAllowance(guard, 'breaker', costMicroUsd, BREAKER_DAILY_MICRO_USD, now))
+  ) {
+    const memory = memoryOf(guard, today);
+    breakerMemory.set(guard.alertTopicArn, {
+      ...memory,
+      smallestRefused: Math.min(memory.smallestRefused, costMicroUsd),
+    });
+    await alertOncePerDay(guard, now);
     return { outcome: 'deferred' };
   }
   return { outcome: 'done', value: await call() };
