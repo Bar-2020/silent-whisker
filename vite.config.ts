@@ -191,6 +191,7 @@ export default defineConfig({
             },
           ],
           'silent-whisker/numeric-constants-live-in-constants': 'error',
+          'silent-whisker/paid-calls-go-through-metered-call': 'error',
         },
       },
       {

@@ -22,7 +22,11 @@
   moderation call fails, the content stays hidden.
 - **A custom spot reaches a member only as R-03 allows**: phone within 150 m, the spot needing food
   or water, or its creator or an admin. Positions are exact; city stations and cat alerts go to all.
-- **Every metered AWS call goes through one function that checks the daily cap** (R-05).
+- **Every metered AWS call goes through one function**, `meteredCall` in
+  `functions/shared/metered-call.ts` (a lint rule fails a file that imports a paid AWS client
+  without it), that checks the global circuit breaker,
+  and every paid action has a per-member daily limit (R-05, D-52). Past the breaker, content waits pending; it is never
+  refused for cost and never shown before moderation passes.
 - **Every endpoint is rate limited** (R-21). A new endpoint ships with its limit in
   `src/constants/` and a test that calls it past the limit and expects a refusal. Static files
   have no per-IP limit: there is no WAF for now (D-38).

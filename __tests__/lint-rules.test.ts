@@ -56,3 +56,41 @@ tester.run(
     ],
   }
 );
+
+// R-05 (every metered AWS call goes through one function that checks the daily cap).
+tester.run(
+  'paid-calls-go-through-metered-call',
+  plugin.rules['paid-calls-go-through-metered-call'],
+  {
+    valid: [
+      "import { PublishCommand } from '@aws-sdk/client-sns';",
+      "import { InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';\nimport { meteredCall } from './metered-call';",
+      "import { meteredCall } from '../shared/metered-call';\nimport { ConverseCommand } from '@aws-sdk/client-bedrock-runtime';",
+      "import type { InvokeModelCommandInput } from '@aws-sdk/client-bedrock-runtime';",
+      "import { InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';\nimport { meteredCall } from './metered-call.js';",
+      "import { DetectLabelsCommand } from '@aws-sdk/client-rekognition';\nimport { meteredCall } from '@/functions/shared/metered-call';",
+    ],
+    invalid: [
+      {
+        code: "import { InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';",
+        errors: [{ message: /meteredCall/ }],
+      },
+      {
+        code: "import { SearchPlaceIndexForTextCommand } from '@aws-sdk/client-location';",
+        errors: [{ message: /meteredCall/ }],
+      },
+      {
+        code: "import { DetectLabelsCommand } from '@aws-sdk/client-rekognition';",
+        errors: [{ message: /meteredCall/ }],
+      },
+      {
+        code: "import { InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime/dist-types/commands';",
+        errors: [{ message: /meteredCall/ }],
+      },
+      {
+        code: "import { InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';\nimport { takeDailyAllowance } from './metered-call.types';",
+        errors: [{ message: /meteredCall/ }],
+      },
+    ],
+  }
+);
