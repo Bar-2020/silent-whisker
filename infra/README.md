@@ -81,7 +81,7 @@ clear the terminal.
 ## Every merge to `main`
 
 The CI deploy job logs in as the deploy user, switches into the deployer role, builds the app,
-runs `terraform apply` in `app/` (today: the private bucket and CloudFront, D-36), uploads `dist/`
+runs `terraform apply` in `app/` (today: the private bucket and CloudFront, D-36), uploads `frontend/dist/`
 with `aws s3 sync`, clears CloudFront's cache, removes old files, and prints the address as
 `Live at https://...`.
 
@@ -106,7 +106,7 @@ spend limit to $20 a month in AWS Settings, Billing (D-22).
 
 ## Offline checks
 
-Two commands check every module without AWS, using `scripts/iac-offline-checks.sh`. Both are part of
+Two commands check every module without AWS, using `infra/iac-offline-checks.sh`. Both are part of
 `npm run verify`, so CI and the Stop hook run them:
 
 - `npm run lint:iac`: `terraform fmt` (layout) and `terraform validate` (typos, references, types).

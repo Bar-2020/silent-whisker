@@ -78,7 +78,7 @@ jobs:
           role-duration-seconds: 3600
           # Session tags would need sts:TagSession in the role's trust policy; nothing uses them.
           role-skip-session-tagging: true
-          # Same as selected_region in src/constants/aws.json; YAML cannot read it.
+          # Same as selected_region in shared/constants/aws.json; YAML cannot read it.
           aws-region: eu-north-1
 
       - run: npm run build
@@ -101,10 +101,10 @@ jobs:
         run: |
           SITE="s3://$(terraform output -raw site_bucket)"
           DIST="$(terraform output -raw distribution_id)"
-          aws s3 sync ../../dist "$SITE"
+          aws s3 sync ../../frontend/dist "$SITE"
           ID=$(aws cloudfront create-invalidation --distribution-id "$DIST" --paths "/*" --query Invalidation.Id --output text)
           aws cloudfront wait invalidation-completed --distribution-id "$DIST" --id "$ID"
-          aws s3 sync ../../dist "$SITE" --delete
+          aws s3 sync ../../frontend/dist "$SITE" --delete
           echo "Live at $(terraform output -raw site_url)"
 
   review:

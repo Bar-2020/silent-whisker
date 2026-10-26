@@ -88,7 +88,7 @@ act on. The AWS Budget is only a backup: it alerts, and is not instant.
 
 Phase 1 builds the cost limits, but no phase 1 code calls them. The first phase that moderates
 anything, text or photo (the profile name in phase 2, or the photo upload in phase 3), wraps its
-paid check in `meteredCall` ([metered-call.ts](../functions/shared/metered-call.ts)), takes the
+paid check in `meteredCall` ([metered-call.ts](../backend/shared/metered-call.ts)), takes the
 member's daily allowance first, and builds the re-check of deferred content (D-53, proposed).
 
 ## Sources

@@ -1,5 +1,5 @@
 # The app's files: a private S3 bucket that only CloudFront may read, on CloudFront's default
-# `*.cloudfront.net` address (D-36). The deploy job uploads `dist/` after `terraform apply`.
+# `*.cloudfront.net` address (D-36). The deploy job uploads `frontend/dist/` after `terraform apply`.
 # No WAF for now (untested whether the project allows it, D-38), so files have no per-IP limit.
 
 # Build output only: every deploy rewrites it from git, so it has no versioning.

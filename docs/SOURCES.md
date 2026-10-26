@@ -27,7 +27,7 @@ No national dataset exists. Full coverage of Israel cannot come from public data
 3. **Manual and members.** A `manual.csv` the owner uploads to the bucket by hand (assumed), and
    members add the rest as custom spots in the app from Phase 3 (D-43).
 
-Sources live in a registry (`functions/municipal-import/sources.json`, a data file): `id`,
+Sources live in a registry (`backend/municipal-import/sources.json`, a data file): `id`,
 municipality (he, en), `kind` (`arcgis`, `html_list`, `manual_csv`), `url`, field mapping, permission
 and `last_checked` (the date a person last looked, set by hand). Cities with no usable source are
 recorded as `none`, so nobody checks them twice.
@@ -35,7 +35,7 @@ recorded as `none`, so nobody checks them twice.
 ## Pipeline
 
 One Lambda, started by an EventBridge schedule (monthly, D-51) and by hand with `aws lambda invoke`,
-never by an HTTP route (the interval is a `.json` file in `src/constants/`):
+never by an HTTP route (the interval is a `.json` file in `shared/constants/`):
 
 1. Fetch each source, normalise to the schema below.
 2. Validate: inside Israel's bounds, required fields present, and a source's count has not dropped

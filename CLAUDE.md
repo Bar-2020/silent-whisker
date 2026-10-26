@@ -16,7 +16,7 @@ start the work it covers. The hard rules and working style are imported below, s
 | [design-docs.md](.claude/instructions/design-docs.md) | The specs in `docs/` and which to read first. Before a task that touches behavior or specs |
 | [extensibility.md](.claude/instructions/extensibility.md) | How to build so future change stays cheap. Before adding a feature, folder or shared module |
 | [pre-pr-review.md](.claude/instructions/pre-pr-review.md) | Numbered `[R1]...` review in plain words, with `/ponytail-review` and `/code-review`. Before opening a PR |
-| [aws-rules.md](.claude/instructions/aws-rules.md) | AWS Region, service and wording limits of the project, from AWS. Before any AWS work: `infra/`, `functions/`, the AWS CLI, deploys. Where the specs disagree with it, it wins (D-49) |
+| [aws-rules.md](.claude/instructions/aws-rules.md) | AWS Region, service and wording limits of the project, from AWS. Before any AWS work: `infra/`, `backend/`, the AWS CLI, deploys. Where the specs disagree with it, it wins (D-49) |
 
 ## Project: Silent Whisker
 
@@ -33,9 +33,15 @@ number on its own (`R-10`, `D-17`): always say what it is, for example "R-10 (on
 and one counted water log per spot per member per 3 hours)". A human does not remember the numbers.
 
 ### Folder structure
-Feature-based. `src/features/<feature>/` owns its screens, components, hooks and data access.
-`src/shared/` only when a second feature needs it. **Features never import from each other.**
-`infra/` is Terraform (`bootstrap/` by hand, `app/` by CI), `functions/` the Lambda handlers.
+Three areas, one folder each: `frontend/` the web app, `backend/` the Lambda handlers, `infra/`
+Terraform (`bootstrap/` by hand, `app/` by CI). **The areas never import from each other.** They
+meet only in `shared/`, which holds what more than one of them reads: `shared/constants/` (limits,
+caps, intervals; a `.json` file when Terraform reads it too). `frontend/` and `backend/` each have
+their own `package.json` for their dependencies; the root one holds tooling only.
+
+The frontend is feature-based. `frontend/src/features/<feature>/` owns its screens, components,
+hooks and data access. `frontend/src/shared/` only when a second feature needs it. **Features never
+import from each other.**
 
 @.claude/instructions/working-style.md
 

@@ -1,4 +1,4 @@
-<!-- Source of ../logo.png (512x512 px). banner.svg and social-preview.svg embed this file: after editing it, run `node scripts/inline-logo.mjs`. -->
+<!-- Source of ../../../frontend/public/logo.png (512x512 px). banner.svg and social-preview.svg embed this file: after editing it, run `node scripts/inline-logo.mjs`. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="logo-title">
   <title id="logo-title">Silent Whisker</title>
   <defs>

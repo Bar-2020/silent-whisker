@@ -103,6 +103,13 @@ npm run verify   # typecheck, lint, tests, fallow audit
 Development is spec driven. [docs/](docs/PRODUCT.md) is the source of truth, and
 [CLAUDE.md](CLAUDE.md) indexes the rules in `.claude/instructions/`.
 
+| Folder | What it holds |
+|---|---|
+| `frontend/` | The web app: React, Vite, the Hebrew and English strings |
+| `backend/` | The Lambda handlers that enforce every rule |
+| `infra/` | Terraform, see [infra/README.md](infra/README.md) |
+| `shared/` | What more than one of them reads, such as the limits in `shared/constants/` |
+
 | Spec | What it holds |
 |---|---|
 | [PRODUCT](docs/PRODUCT.md) | What the app is, v1 scope, non-goals, money |

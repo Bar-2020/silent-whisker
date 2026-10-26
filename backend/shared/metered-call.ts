@@ -6,7 +6,7 @@ import {
   COUNTER_TTL_SECONDS,
   MICRO_USD_PER_USD,
   MS_PER_SECOND,
-} from '../../src/constants/cost';
+} from '../../shared/constants/cost';
 import type { BreakerMemory, CostGuard, Metered } from './metered-call.types';
 
 // The cost limits of D-52. Every paid AWS call goes through `meteredCall` (R-05); every paid

@@ -8,28 +8,26 @@
   "engines": {
     "node": "^22.18.0 || ^24.11.0 || >=26.0.0"
   },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p backend",
     "lint": "vp check",
     "lint:fix": "vp check --fix",
     "test": "vp test run",
     "fallow": "fallow audit",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run fallow && npm run lint:iac && npm run test:iac",
-    "lint:iac": "bash scripts/iac-offline-checks.sh lint",
-    "test:iac": "bash scripts/iac-offline-checks.sh test",
-    "build": "vp build"
+    "lint:iac": "bash infra/iac-offline-checks.sh lint",
+    "test:iac": "bash infra/iac-offline-checks.sh test",
+    "build": "npm run build -w silent-whisker-frontend"
   },
   "devDependencies": {
     "@types/node": "^22.20.1",
-    "aws-sdk-client-mock": "4.1.0",
     "eslint-plugin-sonarjs": "^4.2.1",
     "fallow": "^3.28.0",
     "typescript": "~6.0.3",
     "vite-plus": "1.2.0"
-  },
-  "dependencies": {
-    "@aws-sdk/client-dynamodb": "3.1147.0",
-    "@aws-sdk/client-sns": "3.1147.0",
-    "@aws-sdk/lib-dynamodb": "3.1147.0"
   }
 }

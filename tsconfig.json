@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["src", "functions", "__tests__"]
+  "include": ["frontend", "backend", "shared", "__tests__"]
 }

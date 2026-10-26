@@ -1,9 +1,9 @@
 # The cost limits (D-52): the day's counters, and the email that goes out when the global circuit
-# breaker trips. The logic lives in functions/shared/metered-call.ts.
+# breaker trips. The logic lives in backend/shared/metered-call.ts.
 
 locals {
-  # Capacity units, shared with DATA.md's budget of the 25 free units (src/constants/).
-  capacity = jsondecode(file("${path.module}/../../src/constants/capacity.json"))
+  # Capacity units, shared with DATA.md's budget of the 25 free units (shared/constants/).
+  capacity = jsondecode(file("${path.module}/../../shared/constants/capacity.json"))
 }
 
 # One row per limit per UTC day (DATA.md). Provisioned, inside the always-free allowance, which

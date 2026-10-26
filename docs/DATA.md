@@ -44,7 +44,7 @@ cells the app asks the member to zoom in.
 
 Capacity (D-26): each table and each index needs at least 1 read and 1 write unit, so these 11
 tables and 7 indexes take 18 of the 25 free units, leaving 7 for the busiest (`care_logs`, `spots`,
-`daily_usage_counters`); `daily_usage_counters` takes 2 of them (3 write units, `src/constants/capacity.json`), because every paid call and every member write counts there (D-52). That holds about one counted log a second, plus DynamoDB's short burst
+`daily_usage_counters`); `daily_usage_counters` takes 2 of them (3 write units, `shared/constants/capacity.json`), because every paid call and every member write counts there (D-52). That holds about one counted log a second, plus DynamoDB's short burst
 allowance.
 
 ## Queries
@@ -54,7 +54,7 @@ allowance.
   by the API to signed-in members, so CloudFront cannot cache it for everyone (D-39).
 - Needs-food/water layer: computed in the client from `last_fed_at`, `last_fed_amount`,
   `last_watered_at`, `food_empty_at`, `water_empty_at`, `active` and the thresholds in
-  `src/constants/`. The server computes the same colours at request time for R-03. No server job.
+  `shared/constants/`. The server computes the same colours at request time for R-03. No server job.
 - Feed: approved cats by `geo_cell` around the member's cell, from the last 7 days, minus the photo ids the app sends as already seen, sorted by `like_count` then newest, 20 a page; when nothing unseen is left, the seen ones again (D-45, R-29). Never part of the map answers.
 - Cat alerts: by `geo_cell` for the viewport, filtered by R-24, exact point (D-47).
 - Spot page: `care_logs`, `cat_posts`, `spot_chat_messages` by `spot_id`, newest first. Cat page: `cat_post_comments` by `cat_id`.

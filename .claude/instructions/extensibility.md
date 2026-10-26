@@ -6,10 +6,11 @@ This does not override [simplicity-first.md](simplicity-first.md).
 
 1. **Boundaries are checks, not advice.** A feature owns its screens, hooks and data access and is
    used only through its `index.ts`. `fallow` (already in `npm run verify`) has a `boundaries`
-   setting with a `feature-sliced` preset: configure it in Phase 2, when `src/` first exists. A
-   cross-feature import then fails the build. `src/shared/` is for code a second feature needs.
-2. **What will grow is data, not code.** Languages (`src/constants/`), municipal sources
-   (`functions/municipal-import/sources.json`), thresholds, limits, breakpoints, locale files. Adding a
+   setting with a `feature-sliced` preset: configure it in Phase 2, when `frontend/src/` first
+   exists. A cross-feature import then fails the build. `frontend/src/shared/` is for code a second
+   feature needs.
+2. **What will grow is data, not code.** Languages (`shared/constants/`), municipal sources
+   (`backend/municipal-import/sources.json`), thresholds, limits, breakpoints, locale files. Adding a
    language or a city is an edit to data plus a test, not a new code path.
 3. **A second use earns an abstraction.** The first use stays inline. No plugin systems, no
    interfaces with one implementation.
