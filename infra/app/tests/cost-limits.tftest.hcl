@@ -16,17 +16,17 @@ run "counters_table_is_free_and_cleans_itself" {
 
   assert {
     condition = (
-      aws_dynamodb_table.daily_counters.billing_mode == "PROVISIONED" &&
-      aws_dynamodb_table.daily_counters.read_capacity == 1 &&
-      aws_dynamodb_table.daily_counters.write_capacity == 3
+      aws_dynamodb_table.daily_usage_counters.billing_mode == "PROVISIONED" &&
+      aws_dynamodb_table.daily_usage_counters.read_capacity == 1 &&
+      aws_dynamodb_table.daily_usage_counters.write_capacity == 3
     )
     error_message = "Provisioned 1 read and 3 write units, from src/constants/capacity.json (D-26)."
   }
 
   assert {
     condition = (
-      one(aws_dynamodb_table.daily_counters.ttl).enabled &&
-      one(aws_dynamodb_table.daily_counters.ttl).attribute_name == "expires_at"
+      one(aws_dynamodb_table.daily_usage_counters.ttl).enabled &&
+      one(aws_dynamodb_table.daily_usage_counters.ttl).attribute_name == "expires_at"
     )
     error_message = "Old counter rows must expire on their own through expires_at."
   }

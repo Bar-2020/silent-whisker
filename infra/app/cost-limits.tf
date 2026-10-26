@@ -9,11 +9,11 @@ locals {
 # One row per limit per UTC day (DATA.md). Provisioned, inside the always-free allowance, which
 # on-demand tables do not get (D-26). Every paid call and every member write hits this table, so
 # it gets more write units than the 1 a table needs at least: each unit is about one write a second.
-resource "aws_dynamodb_table" "daily_counters" {
-  name           = "daily_counters"
+resource "aws_dynamodb_table" "daily_usage_counters" {
+  name           = "daily_usage_counters"
   billing_mode   = "PROVISIONED"
-  read_capacity  = local.capacity.daily_counters.read
-  write_capacity = local.capacity.daily_counters.write
+  read_capacity  = local.capacity.daily_usage_counters.read
+  write_capacity = local.capacity.daily_usage_counters.write
   hash_key       = "key"
 
   attribute {
