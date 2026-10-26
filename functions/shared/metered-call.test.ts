@@ -31,7 +31,7 @@ beforeEach(() => {
   guard = {
     db,
     sns,
-    tableName: 'daily_counters',
+    tableName: 'daily_usage_counters',
     alertTopicArn: `arn:aws:sns:eu-north-1:123456789012:cost-alerts-${String(topicCount)}`,
   };
 });
@@ -52,7 +52,7 @@ describe('meteredCall (R-05: every paid call passes the global circuit breaker)'
     expect(call).toHaveBeenCalledOnce();
     const [update] = dbMock.commandCalls(UpdateCommand);
     expect(update.args[0].input).toMatchObject({
-      TableName: 'daily_counters',
+      TableName: 'daily_usage_counters',
       Key: { key: 'breaker#2026-10-21' },
       ConditionExpression: 'attribute_not_exists(#count) OR #count <= :room',
       ExpressionAttributeValues: { ':amount': 1500, ':room': BREAKER_DAILY_MICRO_USD - 1500 },
