@@ -86,7 +86,24 @@ const numericConstantsLiveInConstants = restrictSyntax(
 // a paid client must therefore also import metered-call. A reminder, not a proof: it cannot see
 // that every call is wrapped, and only static imports are checked. Add a client here when a new
 // paid service is chosen.
-const PAID_AWS_CLIENTS = new Set(['@aws-sdk/client-bedrock-runtime', '@aws-sdk/client-location']);
+const PAID_AWS_CLIENTS = [
+  '@aws-sdk/client-bedrock-runtime',
+  '@aws-sdk/client-bedrock-agent-runtime',
+  '@aws-sdk/client-rekognition',
+  '@aws-sdk/client-comprehend',
+  '@aws-sdk/client-textract',
+  '@aws-sdk/client-location',
+];
+
+const isPaidClient = (source) =>
+  PAID_AWS_CLIENTS.some((client) => source === client || source.startsWith(`${client}/`));
+
+// './metered-call', './metered-call.js' and an alias path all count.
+const isMeteredCall = (source) =>
+  source
+    .replace(/\.[cm]?[jt]s$/, '')
+    .split('/')
+    .at(-1) === 'metered-call';
 
 const paidCallsGoThroughMeteredCall = {
   create(context) {
@@ -96,8 +113,8 @@ const paidCallsGoThroughMeteredCall = {
       ImportDeclaration(node) {
         if (node.importKind === 'type') return; // types alone make no call
         const source = node.source.value;
-        if (PAID_AWS_CLIENTS.has(source)) paidImports.push(node);
-        else if (source.endsWith('/metered-call')) importsMeteredCall = true;
+        if (isPaidClient(source)) paidImports.push(node);
+        else if (isMeteredCall(source)) importsMeteredCall = true;
       },
       'Program:exit'() {
         if (importsMeteredCall) return;

@@ -67,6 +67,8 @@ tester.run(
       "import { InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';\nimport { meteredCall } from './metered-call';",
       "import { meteredCall } from '../shared/metered-call';\nimport { ConverseCommand } from '@aws-sdk/client-bedrock-runtime';",
       "import type { InvokeModelCommandInput } from '@aws-sdk/client-bedrock-runtime';",
+      "import { InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';\nimport { meteredCall } from './metered-call.js';",
+      "import { DetectLabelsCommand } from '@aws-sdk/client-rekognition';\nimport { meteredCall } from '@/functions/shared/metered-call';",
     ],
     invalid: [
       {
@@ -75,6 +77,14 @@ tester.run(
       },
       {
         code: "import { SearchPlaceIndexForTextCommand } from '@aws-sdk/client-location';",
+        errors: [{ message: /meteredCall/ }],
+      },
+      {
+        code: "import { DetectLabelsCommand } from '@aws-sdk/client-rekognition';",
+        errors: [{ message: /meteredCall/ }],
+      },
+      {
+        code: "import { InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime/dist-types/commands';",
         errors: [{ message: /meteredCall/ }],
       },
       {
