@@ -494,6 +494,7 @@
     ['city', 'C City'],
     ['trail', 'D Trail'],
     ['standard', 'E Standard'],
+    ['slate', 'F Slate on white'],
   ];
 
   const params = new URLSearchParams(window.location.hash.slice(1));

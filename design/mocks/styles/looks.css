@@ -100,3 +100,12 @@
   --r-m: 8px;
   --r-l: 16px;
 }
+
+/* F. Slate on white: the stairwell shell colour (A) on the street plate's white ground (B). */
+[data-look='slate'] {
+  --wall: #ffffff;
+  --surface: #ffffff;
+  --surface-sunk: #eef1f5;
+  --line: #d3d9e2;
+  --line-strong: #8e9bab;
+}

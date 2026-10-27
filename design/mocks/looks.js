@@ -10,6 +10,7 @@
       'Sand ground, teal-slate glass, an orange blaze for the divider line.',
     ],
     ['standard', 'E  Standard', 'The plain map-app look: white, grey and a blue action colour.'],
+    ['slate', 'F  Slate on white', 'A’s slate-blue glass on B’s pure white ground.'],
   ];
   const SCREENS = [
     ['Map with a spot selected', 'map.html?state=spot'],

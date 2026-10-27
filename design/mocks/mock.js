@@ -11,7 +11,7 @@
   const lang = Object.hasOwn(LANGS, params.get('lang')) ? params.get('lang') : DEFAULT_LANG;
   const strings = (window.MOCK_LOCALES && window.MOCK_LOCALES[lang]) || {};
 
-  const LOOKS = ['stairwell', 'plate', 'city', 'trail', 'standard'];
+  const LOOKS = ['stairwell', 'plate', 'city', 'trail', 'standard', 'slate'];
   const look = LOOKS.includes(params.get('look')) ? params.get('look') : LOOKS[0];
   document.documentElement.dataset.look = look;
   document.documentElement.lang = lang;
