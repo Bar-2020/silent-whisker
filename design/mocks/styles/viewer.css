@@ -281,3 +281,422 @@
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
+
+/* ---------- Design system page (tooling) ---------- */
+.ds {
+  background: var(--wall);
+  color: var(--ink);
+}
+
+.ds__head {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 800;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-4);
+  align-items: center;
+  padding: var(--s-3) var(--s-4);
+  background: var(--dado);
+}
+
+.ds__head a {
+  color: var(--dado-ink);
+  text-underline-offset: 3px;
+}
+
+.ds__head h1 {
+  margin-inline-end: auto;
+  font-size: var(--fs-l);
+  color: var(--dado-ink);
+}
+
+.ds__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  max-inline-size: 72rem;
+  margin-inline: auto;
+  padding: var(--s-6) var(--s-4) var(--s-8);
+}
+
+.ds__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  scroll-margin-block-start: 72px;
+}
+
+.ds__section > h2 {
+  padding-block-end: var(--s-2);
+  border-block-end: 2px solid var(--dado);
+}
+
+.ds__section h3 {
+  font-size: var(--fs-m);
+  color: var(--ink-2);
+}
+
+.ds__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: var(--s-4);
+}
+
+.ds__grid--wide {
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+}
+
+.ds__cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  margin: 0;
+}
+
+.ds__cell figcaption {
+  font-size: var(--fs-s);
+  color: var(--ink-2);
+}
+
+.ds__sample {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  align-items: center;
+  min-block-size: 64px;
+}
+
+.ds__scroll {
+  overflow-x: auto;
+}
+
+.ds__matrix {
+  display: grid;
+  grid-template-columns: 6rem repeat(6, minmax(9.5rem, 1fr));
+  gap: var(--s-3);
+  align-items: center;
+  min-inline-size: 62rem;
+}
+
+.ds__matrix > b {
+  font-size: var(--fs-s);
+  color: var(--ink-2);
+}
+
+.ds__matrix .btn {
+  inline-size: 100%;
+}
+
+.ds__stage {
+  padding: var(--s-5);
+  border: 1px solid var(--line);
+  border-radius: var(--r-l);
+  background:
+    linear-gradient(
+        135deg,
+        var(--ok-tint) 0 25%,
+        transparent 25% 50%,
+        var(--warn-tint) 50% 75%,
+        transparent 75%
+      )
+      0 0 / 48px 48px,
+    var(--surface);
+}
+
+.ds .footbar,
+.ds .nav {
+  position: static;
+  margin: 0;
+  inline-size: auto;
+}
+
+.ds .toast {
+  position: static;
+  inline-size: auto;
+}
+
+.ds .sheet {
+  position: static;
+  max-inline-size: 26rem;
+}
+
+.ds .pin,
+.ds .sign {
+  position: relative;
+  translate: none;
+  filter: none;
+}
+
+.sw {
+  display: flex;
+  align-items: flex-end;
+  block-size: 64px;
+  padding: var(--s-1) var(--s-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-s);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+.sw--dark {
+  color: #fff;
+}
+
+.sw--type {
+  align-items: center;
+  justify-content: flex-start;
+  block-size: auto;
+  padding: var(--s-2) 0;
+  border: 0;
+  border-radius: 0;
+  font-weight: 400;
+}
+.sw--wall {
+  background: var(--wall);
+}
+
+.sw--surface {
+  background: var(--surface);
+}
+
+.sw--surface-sunk {
+  background: var(--surface-sunk);
+}
+
+.sw--line {
+  background: var(--line);
+}
+
+.sw--line-strong {
+  background: var(--line-strong);
+}
+
+.sw--ink {
+  background: var(--ink);
+}
+
+.sw--ink-2 {
+  background: var(--ink-2);
+}
+
+.sw--ink-3 {
+  background: var(--ink-3);
+}
+
+.sw--dado {
+  background: var(--dado);
+}
+
+.sw--dado-deep {
+  background: var(--dado-deep);
+}
+
+.sw--dado-tint {
+  background: var(--dado-tint);
+}
+
+.sw--dado-ink {
+  background: var(--dado-ink);
+}
+
+.sw--ok {
+  background: var(--ok);
+}
+
+.sw--ok-ink {
+  background: var(--ok-ink);
+}
+
+.sw--ok-tint {
+  background: var(--ok-tint);
+}
+
+.sw--warn {
+  background: var(--warn);
+}
+
+.sw--warn-ink {
+  background: var(--warn-ink);
+}
+
+.sw--warn-tint {
+  background: var(--warn-tint);
+}
+
+.sw--bad {
+  background: var(--bad);
+}
+
+.sw--bad-ink {
+  background: var(--bad-ink);
+}
+
+.sw--bad-tint {
+  background: var(--bad-tint);
+}
+
+.sw--none {
+  background: var(--none);
+}
+
+.sw--none-ink {
+  background: var(--none-ink);
+}
+
+.sw--none-tint {
+  background: var(--none-tint);
+}
+
+.sw--alert {
+  background: var(--alert);
+}
+
+.sw--alert-ink {
+  background: var(--alert-ink);
+}
+
+.sw--alert-tint {
+  background: var(--alert-tint);
+}
+
+.sw--here {
+  background: var(--here);
+}
+
+.sw--focus {
+  background: var(--focus);
+}
+
+.ds__type--xs {
+  font-size: var(--fs-xs);
+}
+
+.ds__type--s {
+  font-size: var(--fs-s);
+}
+
+.ds__type--m {
+  font-size: var(--fs-m);
+}
+
+.ds__type--l {
+  font-size: var(--fs-l);
+}
+
+.ds__type--xl {
+  font-size: var(--fs-xl);
+}
+
+.ds__type--2xl {
+  font-size: var(--fs-2xl);
+}
+
+.ds__type--display {
+  font-size: var(--fs-display);
+  font-weight: 800;
+}
+
+.ds__box {
+  display: grid;
+  place-items: center;
+  inline-size: 96px;
+  block-size: 56px;
+  border: 1.5px solid var(--line-strong);
+  background: var(--surface);
+  font-size: var(--fs-s);
+}
+
+.ds__box--r-s {
+  border-radius: var(--r-s);
+}
+
+.ds__box--r-m {
+  border-radius: var(--r-m);
+}
+
+.ds__box--r-l {
+  border-radius: var(--r-l);
+}
+
+.ds__box--r-pill {
+  border-radius: var(--r-pill);
+}
+
+.ds__box--lift {
+  border-color: var(--line);
+  border-radius: var(--r-m);
+  box-shadow: var(--lift);
+}
+
+.ds__progress {
+  inline-size: 12rem;
+}
+
+.ds__skeleton {
+  inline-size: 12rem;
+  block-size: 20px;
+}
+
+.ds__process {
+  position: static;
+  max-inline-size: 30rem;
+  border: 1px solid var(--line);
+}
+
+.ds__photo {
+  inline-size: 96px;
+}
+
+.ds__scroll {
+  padding: var(--s-2);
+}
+
+.ds__sample--pad {
+  padding: var(--s-5);
+}
+
+.ds .footbar--glass {
+  min-inline-size: 14rem;
+  padding: var(--s-1);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--r-glass);
+  background: var(--glass);
+  box-shadow: var(--lift), var(--glass-shine);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+.ds .footbar--glass .btn {
+  min-inline-size: 0;
+  inline-size: 100%;
+  border-radius: var(--r-nav-item);
+}
+
+.ds .footbar--glass .btn--on-dado {
+  background: var(--surface);
+  color: var(--dado);
+}
+
+.ds .footbar--glass .btn:disabled {
+  border-color: rgb(255 255 255 / 0.3);
+  background: rgb(255 255 255 / 0.2);
+  color: rgb(255 255 255 / 0.85);
+}
+
+.ds__stage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  align-items: center;
+}
+
+.ds__stage--nav .nav {
+  block-size: auto;
+}
+
+.round:disabled,
+.iconbtn:disabled {
+  color: var(--ink-3);
+  cursor: not-allowed;
+}

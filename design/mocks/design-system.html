@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Silent Whisker: design system</title>
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/screens.css" />
+    <link rel="stylesheet" href="styles/responsive.css" />
+    <link rel="stylesheet" href="styles/viewer.css" />
+  </head>
+  <body class="ds">
+    <!-- Design tooling, not the app: English only, so its text is not part of the app's strings. Every
+         sample below uses the real classes of components.css; add ?lang=he to see it right to left. -->
+    <header class="ds__head on-dado">
+      <h1>Silent Whisker · design system</h1>
+      <a href="#colour">Colour</a>
+      <a href="#type">Type and space</a>
+      <a href="#buttons">Buttons</a>
+      <a href="#forms">Forms</a>
+      <a href="#feedback">Feedback</a>
+      <a href="#map">Map markers</a>
+      <a href="#glass">Glass and surfaces</a>
+      <a href="#lists">Lists and cards</a>
+      <a href="design-system.html?lang=he">עברית</a>
+      <a href="design-system.html?lang=en">English</a>
+    </header>
+    <main class="ds__main" id="root"></main>
+    <nav data-nav="map"></nav>
+
+    <script src="locales/he.js"></script>
+    <script src="locales/en.js"></script>
+    <script src="icons.js"></script>
+    <script src="mock.js"></script>
+    <script src="design-system.js"></script>
+  </body>
+</html>
