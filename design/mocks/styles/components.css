@@ -758,52 +758,37 @@ button.row {
   stroke-width: 3;
 }
 
-.pin__disc {
-  position: absolute;
-  inset-block-start: 7px;
-  inset-inline-start: 7px;
-  /* Leaflet gives every svg in its marker pane z-index 200; the disc and badge sit above that. */
-  z-index: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: 32px;
-  block-size: 32px;
-  border-radius: 50%;
-  background: #fff;
-}
-
 .pin__glyph {
-  inline-size: 21px;
-  block-size: 21px;
-  fill: currentColor;
+  position: absolute;
+  inset-block-start: 9px;
+  inset-inline-start: 11px;
+  /* Leaflet gives every svg in its marker pane z-index 200; the glyph and mark sit above that. */
+  z-index: 500;
+  inline-size: 24px;
+  block-size: 24px;
+  fill: #fff;
   stroke: none;
-}
-
-.pin[data-kind='both'] .pin__glyph {
-  inline-size: 14px;
-  block-size: 14px;
 }
 
 .pin__badge {
   position: absolute;
   inset-block-start: -4px;
-  inset-inline-end: -8px;
+  inset-inline-end: -7px;
   z-index: 501;
   display: grid;
   place-items: center;
-  inline-size: 22px;
-  block-size: 22px;
-  border: 2px solid var(--lvl);
+  inline-size: 18px;
+  block-size: 18px;
   border-radius: 50%;
   background: #fff;
   color: var(--lvl);
+  box-shadow: 0 1px 2px rgb(20 32 52 / 0.35);
 }
 
 .pin__badge .icon {
-  inline-size: 12px;
-  block-size: 12px;
-  stroke-width: 3.2;
+  inline-size: 11px;
+  block-size: 11px;
+  stroke-width: 3.4;
 }
 
 .pin[data-status='inactive'] {
@@ -820,8 +805,8 @@ button.row {
   stroke-dasharray: 4 3;
 }
 
-.pin[data-status='pending'] .pin__disc {
-  background: transparent;
+.pin[data-status='pending'] .pin__glyph {
+  fill: var(--dado);
 }
 
 .pin[data-status='pending'] .pin__badge {
@@ -1157,55 +1142,141 @@ button.row {
 
 /* ---------- Cats ---------- */
 .post {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--r-l);
   background: var(--surface);
-  border-block: 1px solid var(--line);
 }
 
-.post__head {
+.post__media {
+  position: relative;
+}
+
+.post__media a {
+  display: block;
+}
+
+.post__place {
+  position: absolute;
+  inset-block-end: var(--s-3);
+  inset-inline-start: var(--s-3);
   display: flex;
   align-items: center;
+  gap: var(--s-1);
+  max-inline-size: calc(100% - var(--s-5) * 2);
+  padding: var(--s-1) var(--s-3) var(--s-1) var(--s-2);
+  border: 1px solid var(--glass-light-edge);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-s);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.post__place .icon {
+  color: var(--dado);
+}
+
+.post__more {
+  position: absolute;
+  inset-block-start: var(--s-3);
+  inset-inline-end: var(--s-3);
+  inline-size: var(--tap);
+  block-size: var(--tap);
+  border: 1px solid var(--glass-light-edge);
+  border-radius: 50%;
+  color: var(--ink);
+}
+
+.post__menu {
+  position: absolute;
+  inset-block-start: calc(var(--s-3) + var(--tap) + var(--s-1));
+  inset-inline-end: var(--s-3);
+  z-index: 20;
+}
+
+.post__body {
+  display: flex;
+  flex-direction: column;
   gap: var(--s-3);
-  padding: var(--s-3) var(--s-4);
+  padding: var(--s-4);
+}
+
+.post__title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.post__title h3 {
+  font-size: var(--fs-l);
 }
 
 .post__who {
-  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
   min-inline-size: 0;
-  line-height: 1.3;
+  font-size: var(--fs-s);
+  color: var(--ink-2);
+}
+
+.avatar--s {
+  inline-size: 28px;
+  block-size: 28px;
+  font-size: 0.75rem;
 }
 
 .post__actions {
   display: flex;
-  align-items: center;
-  gap: var(--s-1);
-  padding: var(--s-1) var(--s-2);
+  gap: var(--s-2);
 }
 
-.post__foot {
-  padding: 0 var(--s-4) var(--s-4);
-}
-
-.like {
+/* Like and comment: two clear pills, tinted so they do not melt into the white card. */
+.react {
   display: inline-flex;
   align-items: center;
   gap: var(--s-2);
   min-block-size: var(--tap);
-  padding-inline: var(--s-3);
-  border: 0;
-  border-radius: var(--r-m);
-  background: transparent;
-  color: var(--ink);
-  font-weight: 600;
+  padding-inline: var(--s-4);
+  border: 1.5px solid transparent;
+  border-radius: var(--r-pill);
+  background: var(--dado-tint);
+  color: var(--dado);
+  font-size: var(--fs-m);
+  font-weight: 700;
+  text-decoration: none;
   cursor: pointer;
 }
 
-.like .icon {
-  color: var(--ink-2);
+.react .icon {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
 }
 
-.like[aria-pressed='true'] .icon {
-  fill: var(--dado);
-  stroke: var(--dado);
+.react:hover {
+  background: var(--slate-mist-deep, #d3dcec);
+}
+
+.react[aria-pressed='true'] {
+  background: var(--dado);
+  color: var(--dado-ink);
+}
+
+.react[aria-pressed='true'] .icon {
+  fill: currentColor;
+}
+
+.meta-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1);
+}
+
+.meta-line .icon {
+  inline-size: 1rem;
+  block-size: 1rem;
 }
 
 .comment {

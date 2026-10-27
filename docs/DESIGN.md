@@ -249,15 +249,22 @@ depth.
 ### Shadow Vocabulary
 - **Lift** (`box-shadow: 0 1px 2px rgb(20 32 52 / 0.14), 0 6px 18px rgb(20 32 52 / 0.18)`): the
   map card and panel, the round map controls, toasts.
-- **Light glass** (`rgb(255 255 255 / 0.74)`, blur 14 px, saturate 1.6, a white edge): everything
+- **Light glass** (`rgb(255 255 255 / 0.64)`, blur 12 px, saturate 1.6, a white edge): everything
   else that floats over the map or the page with dark ink on it: the pin card and panel, the round
   map controls (all 52 px), menus, banners and the sticky top bar.
 - **Glass** (a tinted pane, see Components): the navigation and the form action bars. Fill
-  `rgb(36 60 103 / 0.62)` over a backdrop that is blurred 10 px, saturated 1.7 and dimmed to 66%
-  (`backdrop-filter: blur(10px) saturate(1.7) brightness(0.66)`), a 1 px edge `rgb(255 255 255 /
+  `rgb(36 60 103 / 0.5)` over a backdrop that is blurred 8 px, saturated 1.7 and dimmed to 60%
+  (`backdrop-filter: blur(8px) saturate(1.7) brightness(0.6)`), a 1 px edge `rgb(255 255 255 /
   0.42)`, and inner highlights: a bright top rim `inset 0 1.5px 0 rgb(255 255 255 / 0.55)`, a faint
   bottom rim and a soft inner glow. The map and the page show through it. It falls back to a solid
   slate blue #2d4467 when `backdrop-filter` is unsupported or `prefers-reduced-transparency` is set.
+
+**In the React app** the glass is the library `liquid-glass-react` (MIT): it adds the lens-like
+displacement and edge light the CSS cannot, in Chromium; Safari and Firefox get its blur and edge
+light without the displacement. Wrap the same content in it, keep the CSS glass above as the
+fallback, and keep the dim-then-tint rule so labels stay legible (the library's glass is clear on
+its own). Side by side over a live map: `design/mocks/glass-react.html`. The library sets inline
+styles itself, which the no-inline-styles rule forbids in our code: a question for the owner (Q35).
 
 ### Named Rules
 **The Float-Only Rule.** Depth means "this sits over the content". A resting card never has a
@@ -319,9 +326,10 @@ check on the current one: on the landing and legal headers and at the foot of th
 profile the language is a row that opens a choice dialog.
 
 ### Map markers (signature component)
-Every marker has the same 46 x 56 footprint. A teardrop pin: the colour is the worse of food and
-water; a white disc holds a solid bowl or drop of whichever drives it (both small when tied); a
-corner badge repeats the level as a mark. Inactive pins are
+Every marker has the same 46 x 56 footprint and the same minimal drawing everywhere (map, legend,
+landing, pickers). A teardrop pin: the colour is the worse of food and water; one solid white glyph
+sits straight on it (a bowl with a rim, a drop, or both together when tied); a small white badge
+(18 px) repeats the level as a mark. Inactive pins are
 62% opaque; a pin waiting for approval is white with a dashed slate outline. A cat alert is a plum
 rounded square on a stem with a solid cat head and a text label ("In danger", "Sick"). The member's position is
 a blue dot with a soft halo. Selected markers scale 1.2 and gain an ink outline.
@@ -343,6 +351,23 @@ Square photo, poster and place tag above it, like and comment counts below (a li
 slate blue, never red, because red means a need). Chat: others on the
 plain wall with an avatar, own messages tinted slate mist; a message in review has a dashed outline
 and a "in review" chip.
+
+### Explore (the feed)
+A **share card** at the top with two real 56 px buttons, "Take a photo" and "From the gallery": an
+action is never a line of text. Each **photo card** is a 20 px card: a square photo with a glass place
+chip (pin icon and name on one line) bottom-start and a glass round menu button top-end; below it the
+cat's name, the time, the poster with a small avatar, and two pills: a **paw** to like (slate mist, slate
+fill when liked) and a speech bubble for comments (slate mist). The menu holds "Report this photo";
+admins also see hide and restrict.
+
+### Share a photo, and where it was taken
+A large dashed drop zone with a 72 px camera button; the picked photo shows without any label. Name is
+optional. **Where** is one row (pin icon, then the place on the same line, a chevron) that opens a
+picker: "a cat not at a spot" first, then the nearest spots drawn with the same pins as the map.
+
+### Landing navigation
+A floating glass pill (brand, three anchors on wide screens, the language globe, a Sign in button), and
+a real phone frame (rounded bezel, island, side buttons, home indicator) around the live map.
 
 ### Photo placeholders
 In the mocks a photo is a pale placeholder in one of four tones (#dfe4ec, #e6e2d8, #d9e4de,

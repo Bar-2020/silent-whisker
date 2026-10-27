@@ -184,7 +184,7 @@
       ],
     },
     {
-      area: 'Cats',
+      area: 'Explore',
       items: [
         {
           title: 'Feed',
@@ -436,6 +436,85 @@
       ],
     },
   ];
+
+  /* Extra entries so every screen has its own line, not only a state pill. */
+  const group = (name) => CATALOGUE.find((entry) => entry.area === name);
+  group('Map').items.push(
+    {
+      title: 'Map: legend (the "?" button)',
+      page: 'map.html',
+      screen: 'map',
+      states: [['legend', 'Legend']],
+      q: [],
+      note: 'Opens from the round "?" at the top.',
+    },
+    {
+      title: 'Map: add menu (the "+" button)',
+      page: 'map.html',
+      screen: 'map',
+      states: [['plus', 'Menu open']],
+      q: [5],
+      note: 'New spot, or raise a cat alert.',
+    }
+  );
+  const feed = group('Explore').items.find((item) => item.screen === 'feed');
+  feed.states.push(['menu', 'Photo menu'], ['menu-admin', 'Photo menu (admin)']);
+  const post = group('Explore').items.find((item) => item.screen === 'post');
+  post.states = post.states.filter(([id]) => id !== 'picker');
+  group('Explore').items.push({
+    title: 'Pick a place for the photo',
+    page: 'cats.html',
+    screen: 'post',
+    states: [
+      ['picker', 'A spot is picked'],
+      ['picker-general', 'Not at a spot'],
+    ],
+    q: [16],
+    note: 'A feeding spot, or a cat that is not at one.',
+  });
+  CATALOGUE.splice(1, 0, {
+    area: 'Onboarding (a new member)',
+    items: [
+      {
+        title: '1. Landing page',
+        page: 'landing.html',
+        screen: 'home',
+        states: [['default', 'Default']],
+        q: [7, 8],
+        note: 'Then the hosted Google sign-in, which is not our screen (Q7).',
+      },
+      {
+        title: '2. Profile questions',
+        page: 'first-run.html',
+        screen: 'profile',
+        states: [
+          ['empty', 'Empty'],
+          ['filled', 'Filled'],
+        ],
+        q: [12],
+        note: '',
+      },
+      {
+        title: '3. Location',
+        page: 'first-run.html',
+        screen: 'location',
+        states: [['ask', 'Ask']],
+        q: [9],
+        note: '',
+      },
+      {
+        title: '4. The first map',
+        page: 'map.html',
+        screen: 'map',
+        states: [
+          ['default', 'Location on'],
+          ['locdenied', 'Location refused'],
+        ],
+        q: [],
+        note: '',
+      },
+    ],
+  });
 
   const QUESTIONS = {
     1: 'Light theme only in v1',

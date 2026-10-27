@@ -568,25 +568,6 @@
   margin: 0;
 }
 
-.device {
-  --device-zoom: 0.78;
-  inline-size: calc(360px * var(--device-zoom) + 16px);
-  border: 8px solid var(--ink);
-  border-radius: 38px;
-  background: var(--ink);
-  overflow: hidden;
-  box-shadow: var(--lift);
-}
-
-.device__screen {
-  display: block;
-  inline-size: 360px;
-  block-size: 700px;
-  border: 0;
-  background: #fff;
-  zoom: var(--device-zoom);
-}
-
 .trust {
   padding: var(--s-7) var(--s-4);
   background: var(--dado);
@@ -636,87 +617,29 @@
   color: var(--dado);
 }
 
-/* ---------- Feed composer prompt ---------- */
-.compose {
+.hero__cta .btn {
+  align-self: stretch;
+}
+
+/* ---------- Share a photo: two real buttons, never a line of text ---------- */
+.share {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: var(--s-3);
-  min-block-size: var(--tap-l);
-  padding: var(--s-2) var(--s-3);
+  padding: var(--s-4);
   border: 1px solid var(--line);
-  border-radius: var(--r-m);
+  border-radius: var(--r-l);
   background: var(--surface);
-  color: var(--ink-2);
-  text-decoration: none;
 }
 
-.compose:hover {
-  background: var(--dado-tint);
-}
-
-.compose__text {
-  flex: 1;
-  min-inline-size: 0;
-}
-
-.compose__icon {
-  display: grid;
-  place-items: center;
-  inline-size: var(--tap);
-  block-size: var(--tap);
-  border-radius: 50%;
-  background: var(--dado);
-  color: var(--dado-ink);
-}
-
-/* ---------- Segmented control (two real radios) ---------- */
-.segmented {
+.share__actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--s-1);
-  padding: var(--s-1);
-  border: 1.5px solid var(--line-strong);
-  border-radius: var(--r-m);
-  background: var(--surface-sunk);
+  gap: var(--s-3);
 }
 
-.segmented__item {
-  position: relative;
-  display: flex;
-}
-
-.segmented__item input {
-  position: absolute;
-  inset: 0;
-  inline-size: 100%;
-  block-size: 100%;
-  margin: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.segmented__label {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  gap: var(--s-2);
-  min-block-size: var(--tap);
-  padding-inline: var(--s-2);
-  border-radius: var(--r-s);
-  font-weight: 600;
-  text-align: center;
-  line-height: 1.2;
-}
-
-.segmented__item input:checked + .segmented__label {
-  background: var(--dado);
-  color: var(--dado-ink);
-}
-
-.segmented__item input:focus-visible + .segmented__label {
-  outline: 3px solid var(--focus);
-  outline-offset: 2px;
+.share__actions .btn {
+  min-block-size: var(--tap-l);
 }
 
 /* ---------- Post a photo ---------- */
@@ -724,13 +647,16 @@
   position: relative;
   display: grid;
   place-items: center;
+  inline-size: 100%;
   aspect-ratio: 4 / 3;
-  border: 1.5px dashed var(--dado);
-  border-radius: var(--r-m);
+  border: 2px dashed var(--dado);
+  border-radius: var(--r-l);
   background: var(--dado-tint);
   color: var(--dado);
-  font-weight: 600;
+  font: inherit;
+  font-weight: 700;
   text-align: center;
+  cursor: pointer;
   overflow: hidden;
 }
 
@@ -738,45 +664,28 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--s-2);
+  gap: var(--s-3);
 }
 
-.dropzone .icon--l {
-  inline-size: 2.5rem;
-  block-size: 2.5rem;
+.dropzone__camera {
+  display: grid;
+  place-items: center;
+  inline-size: 72px;
+  block-size: 72px;
+  border-radius: 50%;
+  background: var(--dado);
+  color: var(--dado-ink);
+}
+
+.dropzone__camera .icon {
+  inline-size: 2rem;
+  block-size: 2rem;
 }
 
 .dropzone--filled {
-  border-style: solid;
-  border-color: var(--line);
-  background: var(--surface-sunk);
-}
-
-.dropzone__change {
-  position: absolute;
-  inset-block-end: var(--s-3);
-  inset-inline-end: var(--s-3);
-}
-
-.where-row {
-  display: flex;
-  align-items: center;
-  gap: var(--s-3);
-  min-block-size: var(--tap-l);
-  padding: var(--s-2) var(--s-3);
+  cursor: default;
   border: 1px solid var(--line);
-  border-radius: var(--r-m);
-  background: var(--surface);
-}
-
-.where-row .icon {
-  color: var(--dado);
-}
-
-.where-row__name {
-  flex: 1;
-  min-inline-size: 0;
-  font-weight: 600;
+  background: var(--surface-sunk);
 }
 
 .dropzone .photo {
@@ -785,6 +694,208 @@
   aspect-ratio: auto;
 }
 
-.hero__cta .btn {
-  align-self: stretch;
+.dropzone__change {
+  position: absolute;
+  inset-block-end: var(--s-3);
+  inset-inline-end: var(--s-3);
+  z-index: 1;
+}
+
+.where-pick {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  inline-size: 100%;
+  min-block-size: var(--tap-l);
+  padding: var(--s-2) var(--s-4);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--r-m);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.where-pick:hover {
+  background: var(--dado-tint);
+}
+
+.where-pick .icon {
+  color: var(--dado);
+}
+
+.where-pick__text {
+  flex: 1;
+  min-inline-size: 0;
+  font-weight: 600;
+}
+
+.where-pick__hint {
+  display: block;
+  font-size: var(--fs-s);
+  font-weight: 400;
+  color: var(--ink-2);
+}
+
+.pick-option {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.pick-option .legend__swatch {
+  flex: none;
+}
+
+/* ---------- Brand mark in the rail ---------- */
+.brand-glyph {
+  --cut: var(--glass-solid);
+  inline-size: 30px;
+  block-size: 30px;
+  fill: var(--glass-ink);
+}
+
+/* ---------- Landing navigation: the same glass as the app ---------- */
+.sitenav {
+  position: sticky;
+  inset-block-start: var(--nav-gap);
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin: var(--nav-gap);
+  padding: var(--s-1) var(--s-2);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--r-glass);
+  background: var(--glass);
+  color: var(--glass-ink);
+  box-shadow: var(--lift), var(--glass-shine);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+.sitenav .brandmark {
+  flex: 1;
+  color: var(--dado-ink);
+}
+
+.sitenav__links {
+  display: none;
+}
+
+.sitenav__links a {
+  display: grid;
+  place-items: center;
+  min-block-size: var(--tap);
+  padding-inline: var(--s-3);
+  border-radius: var(--r-nav-item);
+  color: var(--glass-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.sitenav__links a:hover {
+  background: var(--glass-hover);
+}
+
+.sitenav__end {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+
+.sitenav .langmenu__btn {
+  color: var(--glass-ink);
+}
+
+.sitenav .btn--on-dado {
+  min-block-size: var(--tap);
+  border-radius: var(--r-nav-item);
+}
+
+/* ---------- A phone, not a rectangle ---------- */
+.device {
+  --device-zoom: 0.78;
+  position: relative;
+  inline-size: calc(360px * var(--device-zoom) + 24px);
+  padding: 12px;
+  border-radius: 48px;
+  background: #11161d;
+  box-shadow:
+    inset 0 0 0 2px #394353,
+    0 0 0 1.5px #0b0f14,
+    var(--lift),
+    0 18px 40px rgb(20 32 52 / 0.25);
+}
+
+.device::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 22px;
+  inset-inline: 0;
+  inline-size: 84px;
+  block-size: 24px;
+  margin-inline: auto;
+  border-radius: 14px;
+  background: #000;
+  z-index: 3;
+}
+
+.device::after {
+  content: '';
+  position: absolute;
+  inset-block-start: 120px;
+  inset-inline-end: -4px;
+  inline-size: 4px;
+  block-size: 64px;
+  border-radius: 2px;
+  background: #2a323d;
+  box-shadow: 0 -88px 0 #2a323d;
+}
+
+.device__glass {
+  position: relative;
+  border-radius: 36px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.device__glass::after {
+  content: '';
+  position: absolute;
+  inset-block-end: 6px;
+  inset-inline: 0;
+  inline-size: 96px;
+  block-size: 4px;
+  margin-inline: auto;
+  border-radius: 2px;
+  background: rgb(255 255 255 / 0.85);
+  box-shadow: 0 0 0 0.5px rgb(20 32 52 / 0.3);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.device__screen {
+  display: block;
+  inline-size: 360px;
+  block-size: 700px;
+  border: 0;
+  background: #fff;
+  zoom: var(--device-zoom);
+}
+
+.hero h1,
+.hero .lead {
+  text-wrap: balance;
+}
+
+[data-bare] .nav,
+[data-bare] .mapctl,
+[data-bare] .sheet {
+  display: none;
+}
+
+h2[id] {
+  scroll-margin-block-start: 96px;
 }

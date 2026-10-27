@@ -300,3 +300,16 @@
     min-inline-size: 18rem;
   }
 }
+
+@media (min-width: 768px) {
+  .sitenav {
+    inline-size: min(100% - var(--s-5), 70rem);
+    margin-inline: auto;
+    padding-inline: var(--s-4);
+  }
+
+  .sitenav__links {
+    display: flex;
+    gap: var(--s-1);
+  }
+}

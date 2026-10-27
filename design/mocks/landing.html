@@ -12,15 +12,20 @@
   </head>
   <body data-title="landing.title" data-chrome="public">
     <section data-screen="home" data-default-state="default">
-      <header class="sitebar">
+      <header class="sitenav on-dado">
         <a class="brandmark" href="landing.html">
           <img src="../../frontend/public/logo.png" alt="" />
           <span>Silent Whisker</span>
         </a>
-        <div class="sitebar__end">
+        <nav class="sitenav__links" data-t-attr="aria-label:landing.nav.label">
+          <a href="#how-h" data-t="landing.nav.how"></a>
+          <a href="#privacy-h" data-t="landing.nav.privacy"></a>
+          <a href="#free-h" data-t="landing.nav.support"></a>
+        </nav>
+        <div class="sitenav__end">
           <span data-langmenu></span>
           <a
-            class="btn btn--small btn--secondary"
+            class="btn btn--small btn--on-dado"
             href="first-run.html?screen=profile"
             data-t="landing.signInShort"
           ></a>
@@ -43,12 +48,14 @@
           </div>
           <figure class="hero__visual">
             <div class="device">
-              <iframe
-                class="device__screen"
-                id="hero-map"
-                tabindex="-1"
-                data-t-attr="title:landing.hero.visualLabel"
-              ></iframe>
+              <div class="device__glass">
+                <iframe
+                  class="device__screen"
+                  id="hero-map"
+                  tabindex="-1"
+                  data-t-attr="title:landing.hero.visualLabel"
+                ></iframe>
+              </div>
             </div>
             <figcaption class="small muted" data-t="landing.hero.caption"></figcaption>
           </figure>

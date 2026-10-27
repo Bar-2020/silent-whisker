@@ -189,7 +189,7 @@ bdi,
 
 /* Details cut out of the solid cat head in the sprite. */
 .cut {
-  fill: var(--alert);
+  fill: var(--cut, var(--alert));
 }
 
 .cut-line {

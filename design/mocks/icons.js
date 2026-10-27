@@ -50,7 +50,10 @@
     upload: '<path d="M12 16V4M7 9l5-5 5 5M4 20h16"/>',
     compass: '<circle cx="12" cy="12" r="9"/><path d="M15.8 8.2l-2 5.6-5.6 2 2-5.6z"/>',
     'bowl-fill':
-      '<path d="M3 11.5h18a9 9 0 0 1-18 0z"/><circle cx="8" cy="8" r="1.8"/><circle cx="12" cy="6.2" r="1.8"/><circle cx="16" cy="8" r="1.8"/>',
+      '<rect x="2.5" y="8.5" width="19" height="2.8" rx="1.4"/><path d="M4.5 13h15a7.5 7.5 0 0 1-15 0z"/>',
+    'both-fill':
+      '<path d="M12 1.8s3.1 3.3 3.1 5.4a3.1 3.1 0 0 1-6.2 0C8.9 5.1 12 1.8 12 1.8z"/><rect x="3.5" y="11.5" width="17" height="2.4" rx="1.2"/><path d="M5.2 15h13.6a6.8 6.8 0 0 1-13.6 0z"/>',
+    paw: '<ellipse cx="12" cy="16.2" rx="4.6" ry="3.8"/><circle cx="5.4" cy="11" r="2"/><circle cx="9" cy="6.6" r="2.1"/><circle cx="15" cy="6.6" r="2.1"/><circle cx="18.6" cy="11" r="2"/>',
     'drop-fill': '<path d="M12 2.5s6.5 7 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 9.5 12 2.5 12 2.5z"/>',
     'cat-fill':
       '<path d="M4 3.5l4.8 3.3h6.4L20 3.5V13a8 8 0 0 1-16 0z"/><circle class="cut" cx="9" cy="12.5" r="1.4"/><circle class="cut" cx="15" cy="12.5" r="1.4"/><path class="cut-line" d="M10.3 16c.5.6 1 .8 1.7.8s1.2-.2 1.7-.8"/>',

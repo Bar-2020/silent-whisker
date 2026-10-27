@@ -11,6 +11,7 @@
   const lang = Object.hasOwn(LANGS, params.get('lang')) ? params.get('lang') : DEFAULT_LANG;
   const strings = (window.MOCK_LOCALES && window.MOCK_LOCALES[lang]) || {};
 
+  if (params.has('bare')) document.documentElement.dataset.bare = 'true';
   document.documentElement.lang = lang;
   document.documentElement.dir = LANGS[lang].dir;
 
@@ -89,7 +90,7 @@
     host.className = 'nav on-dado';
     host.setAttribute('aria-label', t('nav.label'));
     host.innerHTML =
-      `<a class="nav__brand" href="${withLang('landing.html')}" aria-label="${t('nav.home')}"><img src="../../frontend/public/logo.png" alt="" /></a>` +
+      `<a class="nav__brand" href="${withLang('landing.html')}" aria-label="${t('nav.home')}"><svg class="brand-glyph" aria-hidden="true"><use href="#i-cat-fill"></use></svg></a>` +
       items +
       '<div class="nav__lang" data-langmenu></div>';
   }
@@ -228,16 +229,14 @@
     return `<svg class="pin__glyph" aria-hidden="true"><use href="#i-${name}-fill"></use></svg>`;
   }
 
+  /* One minimal pin everywhere: a state-coloured teardrop, one solid white glyph, one small mark. */
   function pinHtml(spot) {
-    const glyphs =
-      spot.kind === 'both'
-        ? glyph('bowl') + glyph('drop')
-        : glyph(spot.kind === 'water' ? 'drop' : 'bowl');
+    const name = spot.kind === 'both' ? 'both' : spot.kind === 'water' ? 'drop' : 'bowl';
     const selected = spot.selected ? ' is-selected' : '';
     return (
       `<div class="pin${selected}" data-level="${spot.level}" data-kind="${spot.kind}" data-status="${spot.status || 'active'}">` +
       '<svg class="pin__body" viewBox="0 0 46 56" aria-hidden="true"><path d="M23 54S5 37 5 22a18 18 0 1 1 36 0c0 15-18 32-18 32z"/></svg>' +
-      `<span class="pin__disc">${glyphs}</span>` +
+      glyph(name) +
       `<span class="pin__badge"><svg class="icon" aria-hidden="true"><use href="#i-${LEVEL_MARK[spot.level]}"></use></svg></span></div>`
     );
   }

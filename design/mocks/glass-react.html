@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Silent Whisker: glass study</title>
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/viewer.css" />
+  </head>
+  <body class="glassdemo">
+    <!-- Design tooling, not the app. The same navigation twice over a live map: the app's CSS glass,
+         and the React library liquid-glass-react (MIT) that the app is meant to use, loaded from a CDN. -->
+    <iframe class="glassdemo__map" src="map.html?bare=1" title="Map behind the glass"></iframe>
+
+    <header class="glassdemo__head">
+      <h1>Glass study</h1>
+      <p id="note" class="muted">Loading the React library from esm.sh (needs a network)…</p>
+    </header>
+
+    <div class="glassdemo__bar glassdemo__bar--css">
+      <span class="glassdemo__label">CSS glass (what the mocks use)</span>
+      <nav
+        class="nav on-dado glassdemo__static"
+        aria-label="CSS glass navigation"
+        id="css-nav"
+      ></nav>
+    </div>
+
+    <div class="glassdemo__bar glassdemo__bar--react">
+      <span class="glassdemo__label">liquid-glass-react (displacement, blur, edge light)</span>
+      <div id="root"></div>
+    </div>
+
+    <script src="locales/he.js"></script>
+    <script src="locales/en.js"></script>
+    <script src="icons.js"></script>
+    <script src="glass-react.js"></script>
+    <script type="module" src="glass-react.mjs"></script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-27T13:35:21.992231+00:00",
+  "generatedAt": "2026-10-27T13:57:01.782356+00:00",
   "title": "Design System: Silent Whisker",
   "extensions": {
     "colorMeta": {
@@ -152,7 +152,7 @@
       {
         "name": "glass",
         "value": "0 1px 2px rgb(20 32 52 / 0.14), 0 6px 18px rgb(20 32 52 / 0.18), inset 0 1.5px 0 rgb(255 255 255 / 0.55), inset 0 -1px 0 rgb(255 255 255 / 0.14), inset 0 0 14px rgb(255 255 255 / 0.07)",
-        "purpose": "The navigation and form action bars, with fill rgb(36 60 103 / 0.62) over a backdrop blurred 10px and dimmed to 66%."
+        "purpose": "The navigation and form action bars, with fill rgb(36 60 103 / 0.5) over a backdrop blurred 8px and dimmed to 60%."
       }
     ],
     "motion": [
@@ -220,7 +220,7 @@
       "refersTo": "nav-glass-item-active",
       "description": "The floating tinted-glass tab bar; the active item is a lighter pill.",
       "html": "<nav class=\"ds-nav\"><a>Profile</a><a>Alerts</a><a>Cats</a><a aria-current=\"page\">Map</a></nav>",
-      "css": ".ds-nav{display:flex;gap:4px;padding:4px;border:1px solid rgb(255 255 255/.3);border-radius:28px;background:rgb(36 60 103/.62);backdrop-filter:blur(10px) saturate(1.7) brightness(.66);box-shadow:0 1px 2px rgb(20 32 52/.14),0 6px 18px rgb(20 32 52/.18),inset 0 1.5px 0 rgb(255 255 255/.55);font:600 .875rem/1.2 system-ui,'Segoe UI',Roboto,sans-serif}.ds-nav a{flex:1;display:grid;place-items:center;min-height:56px;border-radius:24px;color:#eef3fa}.ds-nav a[aria-current]{background:rgb(255 255 255/.14);color:#fff}"
+      "css": ".ds-nav{display:flex;gap:4px;padding:4px;border:1px solid rgb(255 255 255/.3);border-radius:28px;background:rgb(36 60 103/.5);backdrop-filter:blur(8px) saturate(1.7) brightness(.6);box-shadow:0 1px 2px rgb(20 32 52/.14),0 6px 18px rgb(20 32 52/.18),inset 0 1.5px 0 rgb(255 255 255/.55);font:600 .875rem/1.2 system-ui,'Segoe UI',Roboto,sans-serif}.ds-nav a{flex:1;display:grid;place-items:center;min-height:56px;border-radius:24px;color:#eef3fa}.ds-nav a[aria-current]{background:rgb(255 255 255/.14);color:#fff}"
     },
     {
       "name": "Map Pin",

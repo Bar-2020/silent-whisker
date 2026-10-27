@@ -102,5 +102,13 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
   languages on that one screen as a documented exception; otherwise it stays unlabelled.*
 - **Q33. A Hebrew name for the app.** The mocks keep "Silent Whisker" in Latin letters in both
   languages. *Recommend: decide before launch; a Hebrew name changes the landing header only.*
+- **Q34. Which side the map's "+" and locate buttons sit on in Hebrew.** They sit at the inline-end
+  (the left in Hebrew), the hardest reach for a right thumb, because the rules forbid `left` and `right`.
+  *Recommend: keep them logical now and ask a few right-handed volunteers; a user setting for the side is the
+  fallback.*
+- **Q35. `liquid-glass-react` sets inline styles.** The library (MIT) is the way to get the real glass
+  in React, but it styles itself with the `style` attribute, which the hard rules forbid in our code.
+  *Recommend: allow it as the one documented exception, in one wrapper component, and keep the CSS glass
+  as the fallback.*
 - **Accessibility target (not a question):** WCAG 2.2 AA, with 48 px touch targets and visible
   focus. Israeli web accessibility rules point to the same level.
