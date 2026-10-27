@@ -627,3 +627,12 @@
 .btn--on-band:active {
   background: var(--dado-tint);
 }
+
+/* Fixes from the second review pass. */
+.profile-grid .page + .page {
+  padding-block-start: 0;
+}
+
+.hero__dado .btn {
+  align-self: stretch;
+}

@@ -11,9 +11,6 @@
   const lang = Object.hasOwn(LANGS, params.get('lang')) ? params.get('lang') : DEFAULT_LANG;
   const strings = (window.MOCK_LOCALES && window.MOCK_LOCALES[lang]) || {};
 
-  const LOOKS = ['stairwell', 'plate', 'city', 'trail', 'standard', 'slate'];
-  const look = LOOKS.includes(params.get('look')) ? params.get('look') : LOOKS[0];
-  document.documentElement.dataset.look = look;
   document.documentElement.lang = lang;
   document.documentElement.dir = LANGS[lang].dir;
 
@@ -24,9 +21,15 @@
       return `⚠ ${key}`;
     }
     return Object.entries(vars || {}).reduce(
-      (text, [name, value]) => text.replaceAll(`{${name}}`, value),
+      (text, [name, value]) => text.replaceAll(`{${name}}`, isolate(value)),
       raw
     );
+  }
+
+  /* Words typed by people (a name) are isolated, so their punctuation cannot jump across the
+     sentence's direction. Numbers are left alone. */
+  function isolate(value) {
+    return typeof value === 'string' && /\p{L}/u.test(value) ? `⁨${value}⁩` : value;
   }
 
   function parseVars(el) {
@@ -69,13 +72,9 @@
     { id: 'me', icon: 'user', href: 'profile.html' },
   ];
 
-  /* Moving between mock pages keeps the language and the look. */
+  /* Moving between mock pages keeps the language. */
   function withLang(href) {
-    const extra = [
-      lang === DEFAULT_LANG ? '' : `lang=${lang}`,
-      look === LOOKS[0] ? '' : `look=${look}`,
-    ].filter(Boolean);
-    return extra.length ? `${href}${href.includes('?') ? '&' : '?'}${extra.join('&')}` : href;
+    return lang === DEFAULT_LANG ? href : `${href}${href.includes('?') ? '&' : '?'}lang=${lang}`;
   }
 
   function drawNav() {

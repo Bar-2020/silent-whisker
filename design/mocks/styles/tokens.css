@@ -2,11 +2,11 @@
    Breakpoints are 768px (tablet) and 1024px (desktop); they are written once, in responsive.css. */
 :root {
   /* The wall: where content lives. */
-  --wall: #f4f5f3;
+  --wall: #ffffff;
   --surface: #ffffff;
-  --surface-sunk: #eceee9;
-  --line: #d5d9d3;
-  --line-strong: #98a198;
+  --surface-sunk: #eef1f5;
+  --line: #d3d9e2;
+  --line-strong: #8e9bab;
 
   /* Ink. */
   --ink: #1b2430;
@@ -85,8 +85,6 @@
   --glass-hover: rgb(255 255 255 / 0.12);
   --glass-active: rgb(255 255 255 / 0.22);
   --glass-active-ink: #ffffff;
-  --onglass-bg: var(--surface);
-  --onglass-ink: var(--dado);
   --nav-gap: 12px;
   --nav-total: calc(var(--nav-size) + var(--nav-gap) * 2);
   --rail-offset: calc(var(--rail-size) + var(--nav-gap) * 2);

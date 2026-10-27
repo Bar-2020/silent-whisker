@@ -292,8 +292,8 @@ body[data-chrome='tabs'] .main {
 }
 
 .btn--on-dado {
-  background: var(--onglass-bg);
-  color: var(--onglass-ink);
+  background: var(--surface);
+  color: var(--dado);
 }
 
 .btn--on-dado:hover,

@@ -26,7 +26,7 @@ banned. Message length 1 to 500 characters.
 
 ## Interaction and layout
 Phone: full screen with back to the spot; the composer sticks above the keyboard. Desktop: the
-chat is a column next to the spot details, not a modal.
+chat is a centred column beside the rail, not a modal.
 
 ## Boundaries
 No images, reactions, read receipts, typing indicators or live updates (not in v1). Refresh is a

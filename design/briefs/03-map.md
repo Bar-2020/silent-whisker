@@ -20,7 +20,7 @@ alert is, then pick one and go. Used in glare, one-handed, often while moving.
   the full page.
 
 ## Selected direction
-Full-bleed OpenStreetMap tiles softened by a CSS filter (Q4), the band nav, two round controls.
+Full-bleed OpenStreetMap tiles softened by a CSS filter (Q4), the glass nav, two round controls.
 Markers are the loudest thing on the screen; chrome stays quiet.
 
 ## States and ranges
@@ -31,10 +31,10 @@ yet"); admin view (pending spots dashed, with approve and reject in the sheet). 
 60 markers in view.
 
 ## Interaction and layout
-Phone: bottom sheet that peeks above the band, drag up for details is replaced by one explicit
+Phone: a card that floats above the glass bar, drag up for details is replaced by one explicit
 "details" button (drag gestures fight map panning). Controls: locate (round, white), "+" (round,
-band colour, opens a two-item menu: new spot, cat alert), legend "?" (small, top). Tablet and
-desktop: side rail replaces the bottom band; the sheet becomes a 400 px panel at the inline-start
+slate blue, opens a two-item menu: new spot, cat alert), legend "?" (small, top). Tablet and
+desktop: a side rail replaces the bottom bar; the sheet becomes a 400 px panel at the inline-start
 of the map area.
 
 ## Boundaries

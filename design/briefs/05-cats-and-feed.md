@@ -8,7 +8,7 @@ This is the warm part of the app and the reward for the volunteering; it must st
 from the map (cat photos are never on the map).
 
 ## Outcome and proof
-- **Feed**: a single column of cards: photo (4:5), optional cat name, place tag (a spot's name or
+- **Feed**: a single column of cards: photo (square), optional cat name, place tag (a spot's name or
   a coarse area, never coordinates), poster, time, like (with count), comments (with count), a
   menu with report. Infinite scroll, 20 at a time. Unseen photos first, then repeats; no divider
   is required (Q20).

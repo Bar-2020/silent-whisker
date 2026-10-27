@@ -32,7 +32,7 @@ one paragraph of why, form, one primary button pinned to the thumb zone.
 
 ## Interaction and layout
 Single column, 480 px max on wide screens, centred on the white wall. The primary button sits in
-the lower part of the viewport on phones, on the painted band edge, so a thumb finds it.
+a floating glass bar at the bottom on phones, so a thumb finds it.
 Inline errors under the field with an icon and words, never a toast.
 
 ## Boundaries

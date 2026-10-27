@@ -10,11 +10,11 @@ map visible while the member reads or logs.
 - **Four destinations**: Map, Cats (feed), Alerts, Me. Chat has no tab: it lives inside a spot
   (chat is per spot only). New things are made from "+" on the map, "post a cat" in Cats, "raise
   an alert" in Alerts, and "new spot" in the "+" menu.
-- **Phone** (up to 767 px): the painted band along the bottom holds the four tabs, 64 px tall,
-  icon above a word. Inner pages (spot, chat, forms) replace the tabs with a top bar: back arrow
+- **Phone** (up to 767 px): a floating pane of slate-blue glass, 12 px in from the screen edges,
+  holds the four tabs, 64 px tall, icon above a word. The map and pages scroll behind it. Inner pages (spot, chat, forms) replace the tabs with a top bar: back arrow
   at the inline-start, title, and a menu at the inline-end.
-- **Tablet and desktop** (768 px and up): the band becomes a rail at the inline-start (80 px, icon
-  above a word, the logo at the top, the language switch at the bottom). The map area keeps a
+- **Tablet and desktop** (768 px and up): the glass becomes a floating rail at the inline-start (72
+  px, icon above a word, the logo at the top, the language switch at the bottom). The map area keeps a
   400 px side panel at the inline-start of the map; content pages sit in a centred column.
 - **Global states**: loading skeleton; no connection (offline mode is not v1, so a clear message
   and a retry); rate limit (429: how long to wait); session expired (back to sign-in); the
@@ -22,9 +22,10 @@ map visible while the member reads or logs.
   not found; banned (writes refused with a plain message).
 
 ## Selected direction
-The band and the chair-rail line are the system's signature: the line is also reused as the
-divider above the bottom sheet and between the rail and content. Active tab: white icon and word
-on a deeper band tone; inactive: pale blue.
+The glass pane is the system's signature: tinted slate-blue (86% opaque, blurred, with a light
+edge and a top highlight) so white labels stay readable over any map. The same glass carries the
+form action bars. Active tab: a lighter pill; inactive: pale. Solid blue where blur is unavailable
+or reduced transparency is on.
 
 ## Responsive and RTL
 360 px is the floor (also the iPhone XS at 375 px). Breakpoints: 768 px and 1024 px, written once.

@@ -488,14 +488,6 @@
     ['he', 'עברית'],
     ['en', 'English'],
   ];
-  const LOOKS = [
-    ['stairwell', 'A Stairwell'],
-    ['plate', 'B Plate'],
-    ['city', 'C City'],
-    ['trail', 'D Trail'],
-    ['standard', 'E Standard'],
-    ['slate', 'F Slate on white'],
-  ];
 
   const params = new URLSearchParams(window.location.hash.slice(1));
   const view = {
@@ -504,7 +496,6 @@
     device: params.get('device') || 'phone',
     zoom: params.get('zoom') || '100',
     lang: params.get('lang') || 'he',
-    look: params.get('look') || 'stairwell',
   };
 
   const flat = CATALOGUE.flatMap((group) => group.items);
@@ -533,7 +524,6 @@
     url.searchParams.set('state', state);
     if (sub) url.searchParams.set('sub', sub);
     if (view.lang !== 'he') url.searchParams.set('lang', view.lang);
-    if (view.look !== 'stairwell') url.searchParams.set('look', view.look);
     return url;
   }
 
@@ -601,7 +591,6 @@
     segment(el('seg-device'), DEVICES, 'device');
     segment(el('seg-zoom'), ZOOMS, 'zoom');
     segment(el('seg-lang'), LANGS, 'lang');
-    segment(el('seg-look'), LOOKS, 'look');
     renderList();
     window.location.hash = new URLSearchParams(
       Object.entries(view).map(([k, v]) => [k, String(v)])
