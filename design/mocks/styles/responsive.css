@@ -1,0 +1,289 @@
+/* Every width rule, in one place. Phone is the base; 768px adds the rail, 1024px adds panels. */
+
+@media (min-width: 768px) {
+  /* The bar becomes a rail of the same glass, floating at the inline-start. */
+  body[data-chrome='tabs'] .main {
+    padding-block-end: 0;
+  }
+
+  .shell .main {
+    padding-inline-start: var(--rail-offset);
+  }
+
+  .nav {
+    inset-inline: var(--nav-gap) auto;
+    inset-block: var(--nav-gap);
+    inline-size: var(--rail-size);
+    flex-direction: column;
+    align-items: stretch;
+    padding-block: var(--s-3);
+    border-radius: 32px;
+  }
+
+  .nav__item {
+    flex: none;
+    min-block-size: 68px;
+  }
+
+  .nav__brand {
+    display: grid;
+    place-items: center;
+    margin-block-end: var(--s-3);
+  }
+
+  .nav__brand img {
+    inline-size: 40px;
+    block-size: 40px;
+    border-radius: var(--r-s);
+  }
+
+  .nav__lang {
+    display: grid;
+    place-items: center;
+    margin-block-start: auto;
+    min-block-size: var(--tap);
+    color: var(--glass-ink);
+    font-size: var(--fs-nav);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .nav__lang:hover {
+    color: var(--dado-ink);
+  }
+
+  /* On a wide screen inner pages keep the rail, so the top bar loses its back-only job. */
+  body[data-chrome='page'] .nav {
+    display: flex;
+  }
+
+  .page {
+    padding: var(--s-6) var(--s-5) var(--s-8);
+  }
+
+  .stage {
+    block-size: 100dvh;
+  }
+
+  /* The sheet becomes a panel at the inline-start of the map, beside the rail. */
+  .stage .sheet {
+    inset-block: var(--s-4);
+    inset-inline: calc(var(--rail-offset) + var(--s-2)) auto;
+    inline-size: var(--panel-size);
+    border-radius: var(--r-l);
+    padding: var(--s-5);
+    overflow-y: auto;
+  }
+
+  .stage .sheet::before {
+    display: none;
+  }
+
+  .stage .sheet--peek {
+    inset-block-end: auto;
+  }
+
+  .mapctl,
+  .stage[data-sheet='spot'] .mapctl,
+  .stage[data-sheet='alert'] .mapctl {
+    inset-block-end: var(--s-4);
+  }
+
+  .map .leaflet-bottom {
+    inset-block-end: 0;
+  }
+
+  .mapbanner {
+    inset-inline: calc(var(--rail-offset) + var(--s-2)) var(--s-4);
+  }
+
+  .sheet--modal {
+    inset-block: auto var(--s-5);
+    inset-inline: 0;
+    margin-inline: auto;
+    inline-size: min(30rem, 100% - var(--s-5));
+    border-radius: var(--r-l);
+  }
+
+  .toast {
+    inset-inline: auto var(--s-5);
+    inset-block-end: var(--s-5);
+    inline-size: 24rem;
+  }
+
+  .footbar {
+    position: static;
+    inline-size: 100%;
+    max-inline-size: 30rem;
+    margin: 0 auto;
+    padding: var(--s-2) var(--s-5) var(--s-8);
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .footbar .btn--on-dado {
+    background: var(--dado);
+    color: var(--dado-ink);
+  }
+
+  .footbar .btn--outline-on-dado {
+    background: var(--surface);
+    color: var(--dado);
+    border-color: var(--dado);
+  }
+
+  .footbar .btn {
+    flex: 0 1 auto;
+    min-inline-size: 12rem;
+  }
+
+  .firstrun__body {
+    padding-block-start: var(--s-8);
+  }
+
+  .steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .step {
+    flex-direction: column;
+  }
+
+  .sitebar {
+    padding: var(--s-4) var(--s-6);
+  }
+
+  .hero__wall,
+  .hero__dado-inner {
+    padding-inline: var(--s-5);
+  }
+
+  .consent {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: var(--s-6);
+  }
+
+  .feed {
+    gap: var(--s-5);
+  }
+
+  .feed .post {
+    border-radius: var(--r-m);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+
+  .thread {
+    padding-inline: var(--s-5);
+  }
+}
+
+@media (min-width: 1024px) {
+  .topbar__cta {
+    display: none;
+  }
+
+  .split-view {
+    display: grid;
+    grid-template-columns: minmax(24rem, 30rem) minmax(0, 1fr);
+    min-block-size: 100dvh;
+  }
+
+  .split-view__panel {
+    min-inline-size: 0;
+    border-inline-end: 1px solid var(--line);
+    background: var(--surface);
+  }
+
+  .split-view__map {
+    display: block;
+    position: sticky;
+    inset-block-start: 0;
+    block-size: 100dvh;
+  }
+
+  .split-view__panel .page {
+    padding-inline: var(--s-5);
+  }
+
+  .hero {
+    min-block-size: calc(100dvh - 72px);
+  }
+
+  .hero h1 {
+    max-inline-size: 18ch;
+  }
+
+  .toc {
+    display: block;
+    position: sticky;
+    inset-block-start: var(--s-5);
+    align-self: start;
+    inline-size: 14rem;
+    font-size: var(--fs-s);
+  }
+
+  .toc ol {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+  }
+
+  .readwrap {
+    display: flex;
+    justify-content: center;
+    gap: var(--s-6);
+    padding-inline: var(--s-5);
+  }
+
+  .readwrap .read {
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  .layout-2 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18rem;
+    gap: var(--s-6);
+    align-items: start;
+    max-inline-size: 64rem;
+    margin-inline: auto;
+    padding: var(--s-6) var(--s-5);
+  }
+
+  .layout-2 .page {
+    padding: 0;
+    margin: 0;
+    max-inline-size: none;
+  }
+
+  .context {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-4);
+    position: sticky;
+    inset-block-start: var(--s-6);
+  }
+
+  .profile-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+    gap: var(--s-6);
+    max-inline-size: 64rem;
+    margin-inline: auto;
+    padding: var(--s-6) var(--s-5);
+    align-items: start;
+  }
+
+  .profile-grid .page {
+    padding: 0;
+    margin: 0;
+    max-inline-size: none;
+  }
+}

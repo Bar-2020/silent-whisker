@@ -1,0 +1,629 @@
+/* Page-level layout. Components live in components.css; widths in responsive.css. */
+
+/* ---------- The form footbar: primary actions live on the painted band ---------- */
+.footbar {
+  position: sticky;
+  inset-block-end: var(--nav-gap);
+  z-index: 700;
+  display: flex;
+  gap: var(--s-2);
+  margin: var(--nav-gap);
+  padding: var(--s-1);
+  border: 1px solid var(--glass-edge);
+  border-radius: 28px;
+  background: var(--glass);
+  box-shadow: var(--lift), var(--glass-shine);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+.footbar .btn {
+  flex: 1;
+  border-radius: 24px;
+}
+
+.btn--outline-on-dado {
+  background: transparent;
+  color: var(--glass-ink);
+  border-color: var(--glass-ink);
+}
+
+.btn--outline-on-dado:hover,
+.btn--outline-on-dado:active {
+  background: var(--dado-deep);
+}
+
+.page--narrow {
+  max-inline-size: 30rem;
+}
+
+.page--wide {
+  max-inline-size: 64rem;
+}
+
+.lead {
+  font-size: var(--fs-l);
+  color: var(--ink-2);
+}
+
+.brandmark {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.brandmark img {
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: var(--r-s);
+}
+
+.langswitch {
+  display: inline-flex;
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.langswitch a {
+  display: grid;
+  place-items: center;
+  min-inline-size: 48px;
+  min-block-size: 40px;
+  padding-inline: var(--s-3);
+  color: var(--ink);
+  font-size: var(--fs-s);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.langswitch a[aria-current='true'] {
+  background: var(--dado);
+  color: var(--dado-ink);
+}
+
+/* ---------- Public site: landing and legal ---------- */
+.sitebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+}
+
+.sitebar__end {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  min-block-size: calc(100dvh - 64px);
+}
+
+.hero__wall {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--s-4);
+  max-inline-size: 44rem;
+  margin-inline: auto;
+  padding: var(--s-5) var(--s-4);
+}
+
+.hero h1 {
+  font-size: var(--fs-display);
+  line-height: 1.15;
+}
+
+.hero__dado {
+  padding: var(--s-5) var(--s-4) var(--s-6);
+  background: var(--dado);
+  color: var(--dado-quiet);
+  border-block-start: 2px solid var(--rail-line);
+}
+
+.hero__dado-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  max-inline-size: 44rem;
+  margin-inline: auto;
+}
+
+.hero__dado a:not(.btn) {
+  color: var(--dado-ink);
+}
+
+.hero__dado .btn {
+  min-block-size: var(--tap-l);
+  font-size: var(--fs-l);
+}
+
+.btn--google {
+  gap: var(--s-3);
+}
+
+.glogo {
+  inline-size: 22px;
+  block-size: 22px;
+}
+
+.band-section {
+  padding: var(--s-7) var(--s-4);
+}
+
+.band-section__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  max-inline-size: 64rem;
+  margin-inline: auto;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-5);
+}
+
+.step {
+  display: flex;
+  gap: var(--s-4);
+  align-items: flex-start;
+}
+
+.step__visual {
+  display: grid;
+  place-items: center;
+  inline-size: 64px;
+  block-size: 72px;
+  flex: none;
+  border-radius: var(--r-m);
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.step__visual .pin {
+  translate: none;
+  filter: none;
+}
+
+.step__visual .icon {
+  inline-size: 2rem;
+  block-size: 2rem;
+  color: var(--dado);
+}
+
+.promise {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.promise li {
+  display: flex;
+  gap: var(--s-3);
+  align-items: flex-start;
+}
+
+.promise .icon {
+  color: var(--dado);
+  margin-block-start: 2px;
+}
+
+.adslot {
+  display: grid;
+  place-items: center;
+  min-block-size: 250px;
+  max-inline-size: 336px;
+  margin-inline: auto;
+  inline-size: 100%;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-s);
+  color: var(--ink-3);
+  font-size: var(--fs-s);
+  text-align: center;
+  padding: var(--s-3);
+}
+
+.consent {
+  position: sticky;
+  inset-block-end: 0;
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  background: var(--surface);
+  border-block-start: 1px solid var(--line-strong);
+  box-shadow: var(--lift);
+}
+
+.sitefoot {
+  padding: var(--s-6) var(--s-4);
+  border-block-start: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.sitefoot__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  max-inline-size: 64rem;
+  margin-inline: auto;
+}
+
+.sitefoot ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-5);
+}
+
+.read {
+  max-inline-size: var(--measure);
+  margin-inline: auto;
+  padding: var(--s-5) var(--s-4) var(--s-8);
+}
+
+.read h1 {
+  font-size: var(--fs-2xl);
+  margin-block-end: var(--s-2);
+}
+
+.read h2 {
+  margin-block: var(--s-6) var(--s-2);
+}
+
+.read p + p,
+.read ul + p,
+.read p + ul {
+  margin-block-start: var(--s-3);
+}
+
+.read ul {
+  list-style: disc;
+  padding-inline-start: var(--s-5);
+}
+
+.read li + li {
+  margin-block-start: var(--s-2);
+}
+
+.sample-note {
+  margin-block: var(--s-4);
+}
+
+.toc {
+  display: none;
+}
+
+/* ---------- First run ---------- */
+.firstrun {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100dvh;
+}
+
+.firstrun__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  inline-size: 100%;
+  max-inline-size: 30rem;
+  margin-inline: auto;
+  padding: var(--s-6) var(--s-4) var(--s-5);
+}
+
+.firstrun__body .illus {
+  display: grid;
+  place-items: center;
+  inline-size: 72px;
+  block-size: 72px;
+  border-radius: 50%;
+  background: var(--dado-tint);
+  color: var(--dado);
+}
+
+.firstrun__body .illus .icon {
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+}
+
+.why {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.why li {
+  display: flex;
+  gap: var(--s-3);
+  align-items: flex-start;
+}
+
+.why .icon {
+  color: var(--dado);
+  margin-block-start: 2px;
+}
+
+/* ---------- Map page extras ---------- */
+.split-view {
+  display: block;
+}
+
+.split-view__map {
+  display: none;
+}
+
+.sheet--peek {
+  --sheet-h: 236px;
+}
+
+.stage[data-sheet='spot'] .mapctl {
+  inset-block-end: calc(var(--nav-total) + var(--sheet-h) + var(--s-3));
+}
+
+.stage[data-sheet='alert'] .mapctl {
+  inset-block-end: calc(var(--nav-total) + 280px + var(--s-3));
+}
+
+.adminrow {
+  display: flex;
+  gap: var(--s-2);
+}
+
+.adminrow .btn {
+  flex: 1;
+}
+
+/* ---------- Content pages ---------- */
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.context {
+  display: none;
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.identity__text {
+  min-inline-size: 0;
+}
+
+.alertrow {
+  display: flex;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  background: var(--surface);
+  border-block-end: 1px solid var(--line);
+}
+
+.alertrow .photo {
+  inline-size: 88px;
+  flex: none;
+  border-radius: var(--r-s);
+}
+
+.alertrow__main {
+  flex: 1;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.statusline {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--fs-s);
+  font-weight: 600;
+}
+
+.statusline .icon {
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+}
+
+.photo-pick {
+  display: grid;
+  place-items: center;
+  gap: var(--s-2);
+  min-block-size: 160px;
+  border: 1.5px dashed var(--dado);
+  border-radius: var(--r-m);
+  background: var(--dado-tint);
+  color: var(--dado);
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+}
+
+.photo-pick .icon {
+  inline-size: 2rem;
+  block-size: 2rem;
+}
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-4);
+  min-block-size: 100dvh;
+  padding: var(--s-5) var(--s-4);
+  text-align: center;
+}
+
+.centered .illus {
+  display: grid;
+  place-items: center;
+  inline-size: 88px;
+  block-size: 88px;
+  border-radius: 50%;
+  background: var(--surface-sunk);
+  color: var(--ink-2);
+}
+
+.centered .illus .icon {
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+}
+
+/* ---------- Cats, chat, profile extras ---------- */
+.page--feed {
+  max-inline-size: 34rem;
+  padding-inline: 0;
+}
+
+.post--solo {
+  border-radius: var(--r-m);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.skeleton--post {
+  block-size: 24rem;
+  border-radius: var(--r-m);
+}
+
+.skeleton--msg {
+  block-size: 3.5rem;
+  inline-size: 70%;
+}
+
+.skeleton--msg:nth-child(2) {
+  inline-size: 55%;
+  margin-inline-start: auto;
+}
+
+.composer__field {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.composer__input {
+  min-block-size: var(--tap);
+  resize: none;
+}
+
+.chat-page {
+  padding-inline: 0;
+  padding-block: 0;
+  min-block-size: 50dvh;
+}
+
+.chat-title {
+  font-size: var(--fs-l);
+  line-height: 1.2;
+}
+
+.iconbtn--small {
+  inline-size: 40px;
+  block-size: 40px;
+  color: var(--ink-3);
+}
+
+.howto {
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  background: var(--surface);
+}
+
+.howto summary {
+  min-block-size: var(--tap);
+  padding: var(--s-3) var(--s-4);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.steps-list {
+  list-style: decimal;
+  padding: 0 var(--s-6) var(--s-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.row--bad,
+.row--bad .row__icon {
+  color: var(--bad-ink);
+}
+
+.boot-logo {
+  inline-size: 96px;
+  block-size: 96px;
+  border-radius: var(--r-l);
+}
+
+/* A read-only sample of a real spot, so the first screen shows the mechanism. */
+.sample {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  background: var(--surface);
+}
+
+.sample__pin {
+  display: grid;
+  place-items: center;
+  inline-size: 48px;
+  flex: none;
+}
+
+.sample__pin .pin {
+  translate: none;
+  filter: none;
+}
+
+.sample__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-inline-size: 0;
+}
+
+.sample__tag {
+  margin-inline-start: auto;
+  align-self: flex-start;
+  flex: none;
+  white-space: nowrap;
+}
+
+.footbar--stack {
+  flex-direction: column;
+}
+
+.sheet__pad {
+  padding-block-end: var(--s-5);
+}
+
+/* The landing page's painted band is a section, not glass: its button is always the wall colour. */
+.btn--on-band {
+  background: var(--surface);
+  color: var(--dado);
+}
+
+.btn--on-band:hover,
+.btn--on-band:active {
+  background: var(--dado-tint);
+}

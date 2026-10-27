@@ -1,0 +1,101 @@
+/* Design tokens. The only place a colour, size or timing is chosen.
+   Breakpoints are 768px (tablet) and 1024px (desktop); they are written once, in responsive.css. */
+:root {
+  /* The wall: where content lives. */
+  --wall: #f4f5f3;
+  --surface: #ffffff;
+  --surface-sunk: #eceee9;
+  --line: #d5d9d3;
+  --line-strong: #98a198;
+
+  /* Ink. */
+  --ink: #1b2430;
+  --ink-2: #4a5563;
+  --ink-3: #5f6b79;
+
+  /* The dado: the painted band. Every tappable thing is this colour. */
+  --dado: #2d4467;
+  --dado-deep: #213553;
+  --dado-tint: #e3e9f3;
+  --dado-ink: #ffffff;
+  --dado-quiet: #c6d2e6;
+  --rail-line: #8fa5c8;
+
+  /* State colours. Each also has an ink for text on its tint, and always travels with an icon. */
+  --ok: #2d7a49;
+  --ok-ink: #1f5c36;
+  --ok-tint: #e0f0e5;
+  --warn: #b4540a;
+  --warn-ink: #8f4107;
+  --warn-tint: #fbe8d4;
+  --bad: #c0282d;
+  --bad-ink: #9a1f24;
+  --bad-tint: #fbe0e0;
+  --none: #66707c;
+  --none-ink: #4d5762;
+  --none-tint: #e9ebee;
+  --alert: #8a2a73;
+  --alert-ink: #6d2159;
+  --alert-tint: #f5e2ef;
+  --here: #1c6fd1;
+  --focus: #0b57d0;
+
+  /* Type: the phone's own sans, one scale. */
+  --font:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Hebrew', 'Arial Hebrew', Arial,
+    sans-serif;
+  --fs-s: 0.875rem;
+  --fs-m: 1rem;
+  --fs-l: 1.125rem;
+  --fs-xl: 1.375rem;
+  --fs-2xl: 1.75rem;
+  --fs-display: clamp(1.875rem, 6.2vw, 2.875rem);
+  --fs-nav: 0.8125rem;
+
+  /* Space: a 4px step. */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 72px;
+
+  /* Shape. */
+  --r-s: 8px;
+  --r-m: 12px;
+  --r-l: 20px;
+  --r-pill: 999px;
+  --tap: 48px;
+  --tap-l: 56px;
+  --nav-size: 64px;
+  --rail-size: 72px;
+  --panel-size: 400px;
+  --column: 40rem;
+  --measure: 65ch;
+
+  /* Liquid glass: the shell's tinted, blurred pane. It is solid where blur is unavailable. */
+  --glass: rgb(33 53 83 / 0.86);
+  --glass-solid: #213553;
+  --glass-edge: rgb(255 255 255 / 0.3);
+  --glass-shine: inset 0 1px 0 rgb(255 255 255 / 0.42), inset 0 -1px 0 rgb(0 0 0 / 0.16);
+  --glass-blur: blur(20px) saturate(1.6);
+  --glass-ink: #e3eaf5;
+  --glass-hover: rgb(255 255 255 / 0.12);
+  --glass-active: rgb(255 255 255 / 0.22);
+  --glass-active-ink: #ffffff;
+  --onglass-bg: var(--surface);
+  --onglass-ink: var(--dado);
+  --nav-gap: 12px;
+  --nav-total: calc(var(--nav-size) + var(--nav-gap) * 2);
+  --rail-offset: calc(var(--rail-size) + var(--nav-gap) * 2);
+
+  /* Depth: flat, with one lift for things that float over the map. */
+  --lift: 0 1px 2px rgb(20 32 52 / 0.14), 0 6px 18px rgb(20 32 52 / 0.18);
+
+  /* Motion: one ease, two durations. */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-1: 120ms;
+  --dur-2: 240ms;
+}

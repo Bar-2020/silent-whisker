@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Silent Whisker: one frame</title>
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/looks.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/viewer.css" />
+  </head>
+  <body class="bare">
+    <!-- One screen in a frame of an exact width, nothing else: for screenshots and quick checks.
+         Usage: frame.html?device=phone|phone-xs|tablet|laptop|desktop&src=map.html%3Fstate%3Dspot -->
+    <div class="viewer__stage" id="stage" data-zoom="100">
+      <iframe class="frame frame--bare" id="frame" title="Screen preview"></iframe>
+    </div>
+    <script src="frame.js"></script>
+  </body>
+</html>
