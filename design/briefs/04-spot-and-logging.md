@@ -11,11 +11,13 @@ that is not on a city list, and the admin who approves it.
 **Spot page** (phone: full screen with back; desktop: the panel): name, optional photo, exact
 address, tags (city station, inactive, waiting for approval), two state rows (food, water) each
 with a level chip (icon plus word), "last counted log 14 h ago, full bowl" in tabular figures, and
-a "bowl is empty" button per row; then the **log form**; cats at the spot; chat entry; recent
-history (unverified logs shown muted, Q17).
+a "bowl is empty" button per row (disabled and reading "Already reported" once the row is red); then
+the **log form**. On a phone these are four tabs (Log, Cats, Chat, History) and the Log tab fits one
+screen (360 x 740) with no scrolling. A **Navigate** button starts Google Maps directions to the
+spot (navigation in the app on a phone, the route on the website otherwise, D-57).
 
 **Log form** (inline, not a modal): three large choices (full bowl, partial bowl, water), one
-confirm button. A short note under it says the log counts only when the phone is at the spot and
+confirm button (the glass bar, pending while it sends, so a double tap cannot log twice). A short note under it says the log counts only when the phone is at the spot and
 that the location is not stored. The answer is only **counted** or **saved as unverified**, never
 a distance. Refusals have their own plain messages: too soon (one counted feeding and one water
 log per spot per 3 hours), daily log cap, daily attempt cap, rate limit, banned.

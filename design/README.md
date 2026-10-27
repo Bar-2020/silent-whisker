@@ -24,6 +24,7 @@ Needs a network connection for the map tiles. A page also works on its own, for 
 | `mocks/styles/` | `tokens.css` (the only place a colour, size or timing is chosen), `base.css`, `components.css`, `screens.css`, `responsive.css` (every width rule, breakpoints 768 and 1024 px) |
 | `mocks/locales/` | Every string of the mocks, keyed, Hebrew and English with the same keys. `demo.*` keys are sample data that the API will supply |
 | `mocks/icons.js` | The icon set: one 24 px grid, 2 px stroke |
+| `mocks/design-system.html` | The design system on one page: every token and every component with its states (buttons: default, hover, pressed, focus, disabled, pending). English by default; `?lang=he` for right to left |
 | `mocks/index.html`, `viewer.js`, `frame.html`, `serve.mjs` | Design tooling only: the viewer and a no-cache static server |
 | `previews/` | Screenshots made while choosing the look; not tracked |
 

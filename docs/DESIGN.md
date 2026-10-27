@@ -285,6 +285,8 @@ and a check mark, never a coloured side stripe.
 
 ## Components
 
+Every component below, with its states, is drawn in `design/mocks/design-system.html`.
+
 ### Buttons
 - **Shape:** 12 px radius, 48 px tall (56 px for the primary action of a screen, 44 px for a
   small button inside a row or a card), 24 px side padding, label weight 600.
@@ -293,7 +295,18 @@ and a check mark, never a coloured side stripe.
 - **Quiet:** no fill, slate label (back, cancel, "more").
 - **Danger:** need-red fill, only for delete account.
 - **On the glass:** a white button with a slate label, because slate on slate would vanish.
-- **Disabled:** sunk fill, quiet ink, no pointer; the reason is stated nearby.
+- **Six states, every variant:** default, hover, pressed (darker fill, 1 px down), focus (3 px
+  focus-blue ring with a 2 px gap), disabled and pending. Each one is drawn in
+  `design/mocks/design-system.html`.
+- **Disabled:** sunk fill (#eef1f5), grey ink, no pointer, no hover. On the glass bar it is a
+  translucent white fill with a white label. The reason is always on the page: a hint nearby, or
+  the label itself ("Already reported"). A dull button with no clue is a bug.
+- **Pending:** every button that sends something to the server keeps its size and colour, shows an
+  18 px spinner before the label, and the label becomes the verb in progress ("Saving...",
+  "Uploading..."). It takes no taps (`aria-busy="true"`) and still shows focus. In the app the
+  pending state is the `isPending` flag of that action's TanStack Query mutation, never a flag kept
+  by hand; the same mutation then drives the success and the error. A round button shows the
+  spinner alone.
 
 ### Chips and tags
 - **Chip:** pill, 28 px, state tint with state ink, an icon then a word ("Food: needed"). Used for
@@ -328,18 +341,34 @@ profile the language is a row that opens a choice dialog.
 
 ### Map markers (signature component)
 Every marker has the same 46 x 56 footprint and the same minimal drawing everywhere (map, legend,
-landing, pickers). A teardrop pin: the colour is the worse of food and water; one solid white glyph
-sits straight on it (a bowl with a rim, a drop, or both together when tied); a small white badge
-(18 px) repeats the level as a mark. Inactive pins are
-62% opaque; a pin waiting for approval is white with a dashed slate outline. A cat alert is a plum
-rounded square on a stem with a solid cat head and a text label ("In danger", "Sick"). The member's position is
-a blue dot with a soft halo. Selected markers scale 1.2 and gain an ink outline.
+landing, pickers). A spot is a plain teardrop in the state colour (the worse of food and water), with
+no glyph and no badge: the card that opens, the legend and the marker's accessible name carry the
+words (colour alone, see Q36). Inactive pins are 62% opaque; a pin waiting for approval is white with
+a dashed slate outline. A cat alert is a plum rounded square on a stem with a solid cat head and a
+text label ("In danger", "Sick"). The member's position is a blue dot with a soft halo. **Selected:**
+the pin scales 1.2 and gets a 2.5 px dark slate outline, and the card shows that spot.
 
 ### State row, log tiles, history
-Each of food and water is a row: icon in a tinted circle, label, level chip, "last log 14 h ago,
-full bowl" in tabular figures, and a quiet "the bowl is empty" button. The log form is three
-large tiles (full bowl, partial bowl, water) and one button; the result is a notice, never a
-distance.
+Each of food and water is a two-line row: icon in a tinted circle, label and level chip; then "14
+hours ago, full bowl" in tabular figures and a small "the bowl is empty" button. When the level is
+already red the button is disabled and reads "Already reported". The log form is three tiles (full
+bowl, partial bowl, water) and the Save button on the glass bar, which turns pending ("Saving...")
+while it sends; the result is a notice, never a distance.
+
+### Spot page
+One screen on a phone: a top bar (back, name, menu), a head row (photo, address, **Navigate**), four
+tabs (Log, Cats, Chat, History) and one panel. The Log tab fits 360 x 740 with no scrolling: two
+state rows, three tiles, a line of proof text and the glass bar. The other tabs scroll inside their
+panel and hide the bar. **Navigate** is a small secondary button, a plain link to Google Maps
+directions to the spot (`https://www.google.com/maps/dir/?api=1&destination=lat,lng`, new tab): on a
+phone with the Google Maps app it starts navigation, otherwise it shows the route on the Google Maps
+site (D-57). No key, no SDK, nothing stored. Cat alerts get the same button.
+
+### Map card
+Opens when a pin is tapped: name and address, a 72 px photo at the inline-start (the spot's most
+liked approved cat photo with its paw count, a placeholder when it has none, Q37), two state chips,
+the time of the last log and one primary button to the spot page. The close X is a 44 px quiet
+button at the inline-end corner of the title row, never over the photo.
 
 ### Notices and toasts
 A tinted block with an icon and a title plus one sentence (what happened, what to do). Toasts are
@@ -365,6 +394,10 @@ admins also see hide and restrict.
 A large dashed drop zone with a 72 px camera button; the picked photo shows without any label. Name is
 optional. **Where** is one row (pin icon, then the place on the same line, a chevron) that opens a
 picker: "a cat not at a spot" first, then the nearest spots drawn with the same pins as the map.
+While the photo uploads, a **process strip** under the top bar says so for the whole step (a spinner,
+"Uploading the photo", a progress bar) and the submit button is pending ("Uploading..."). On a wide
+screen the page is two columns, the photo then the name and place, with the button under the
+details, 64 rem at most.
 
 ### Landing navigation
 A floating glass pill (brand, three anchors on wide screens, the language globe, a Sign in button), and
@@ -379,7 +412,8 @@ sunk grey (#eef1f5) while one loads.
 
 ### Do:
 - **Do** keep slate blue for things that can be tapped or chosen (The Tap Rule).
-- **Do** pair every state colour with an icon and a word, in markers, chips and notices.
+- **Do** pair every state colour with an icon and a word, in chips and notices (map pins are the
+  one exception: the card and the legend carry the words).
 - **Do** use gender-neutral Hebrew: nouns, infinitives and plurals, never a "you" verb.
 - **Do** write errors as what happened and what to do next, in one or two plain sentences.
 - **Do** keep targets at 48 px or more (44 px for small buttons) and primary actions inside the
@@ -391,10 +425,12 @@ sunk grey (#eef1f5) while one loads.
 ### Don't:
 - **Don't** use cream, terracotta, neon-on-dark or a gamified look (badges, streaks, levels). Stats
   carry no prize.
-- **Don't** use a state colour on its own, or plum for anything but a cat alert.
+- **Don't** use a state colour on its own (except the colour of a map pin), or plum for anything but
+  a cat alert.
 - **Don't** show the distance to a spot or the result of the location check beyond "counted" or
   "saved as unverified".
-- **Don't** put cat photos or any user photo on the map.
+- **Don't** put cat photos or any user photo on the map itself (pins, layers). The card that opens
+  from a spot may show its most liked approved cat photo (Q37).
 - **Don't** add a coloured side stripe to a card or notice, a gradient text, or a shadow on a
   resting card.
 - **Don't** load a web font or a third-party script for chrome.

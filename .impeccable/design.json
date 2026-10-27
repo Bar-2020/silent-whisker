@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-27T14:00:45.029737+00:00",
+  "generatedAt": "2026-10-27T14:33:30.917191+00:00",
   "title": "Design System: Silent Whisker",
   "extensions": {
     "colorMeta": {
@@ -280,7 +280,7 @@
     ],
     "dos": [
       "**Do** keep slate blue for things that can be tapped or chosen (The Tap Rule).",
-      "**Do** pair every state colour with an icon and a word, in markers, chips and notices.",
+      "**Do** pair every state colour with an icon and a word, in chips and notices (map pins are the one exception: the card and the legend carry the words).",
       "**Do** use gender-neutral Hebrew: nouns, infinitives and plurals, never a \"you\" verb.",
       "**Do** write errors as what happened and what to do next, in one or two plain sentences.",
       "**Do** keep targets at 48 px or more (44 px for small buttons) and primary actions inside the glass bar's thumb reach.",
@@ -289,9 +289,9 @@
     ],
     "donts": [
       "**Don't** use cream, terracotta, neon-on-dark or a gamified look (badges, streaks, levels). Stats carry no prize.",
-      "**Don't** use a state colour on its own, or plum for anything but a cat alert.",
+      "**Don't** use a state colour on its own (except the colour of a map pin), or plum for anything but a cat alert.",
       "**Don't** show the distance to a spot or the result of the location check beyond \"counted\" or \"saved as unverified\".",
-      "**Don't** put cat photos or any user photo on the map.",
+      "**Don't** put cat photos or any user photo on the map itself (pins, layers). The card that opens from a spot may show its most liked approved cat photo (Q37).",
       "**Don't** add a coloured side stripe to a card or notice, a gradient text, or a shadow on a resting card.",
       "**Don't** load a web font or a third-party script for chrome.",
       "**Don't** let the glass fall below 4.5:1 for its labels (dim the backdrop rather than raise the tint), or put text smaller than 14 px on it. "

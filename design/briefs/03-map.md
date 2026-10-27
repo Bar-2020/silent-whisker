@@ -9,15 +9,17 @@ alert is, then pick one and go. Used in glare, one-handed, often while moving.
 ## Outcome and proof
 - Opens centred on the member's profile city (their phone position once granted).
 - **Spot markers**: one per spot, a pin whose tip is the exact point. Colour = the worse of food
-  and water (red, orange, green; grey only when the spot has no data at all). The glyph is the
-  bowl or the drop of whichever drives the colour (both when tied). A corner badge repeats the
-  level as a mark (cross, half, tick, dash) so colour is never the only signal. Inactive spots are
-  drawn quiet, pending spots (creator and admins only) dashed.
+  and water (red, orange, green; grey only when the spot has no data at all). The pin is colour only (D-57, Q36):
+  no glyph, no badge; the card and the legend carry the words. The selected pin is larger with a dark
+  outline. Inactive spots are drawn quiet, pending spots (creator and admins only) dashed.
 - **Cat alert markers**: a different silhouette (a rounded sign on a stem, plum) with a cat-and-!
   glyph and a text label ("danger" or "sick") next to it. Never shown as a spot.
 - Cat photos are never on the map.
-- Tapping a marker opens a sheet (phone) or a panel (desktop) with the essentials and one button to
-  the full page.
+- Tapping a marker opens a sheet (phone) or a panel (desktop) with the essentials (a small photo, the
+  spot's most liked approved one, Q37; two state chips; the last log) and one button to the full
+  page. The close X sits at the inline-end corner of the title row.
+- The "+" button opens a menu: "New feeding spot" (the new spot form) and "Report a cat in danger"
+  (the cat alert form); both screens are in the mocks.
 
 ## Selected direction
 Full-bleed OpenStreetMap tiles softened by a CSS filter (Q4), the glass nav, two round controls.

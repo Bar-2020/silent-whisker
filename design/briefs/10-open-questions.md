@@ -53,7 +53,7 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
   the proof check needs them to be, and the spec says the answer shows only counted or
   unverified.*
 - **Q14. A "navigate" link (Waze, Google Maps) on spots and cat alerts?** Costs nothing, reveals
-  nothing a member does not already see, and is how Israeli volunteers move. *Recommend: add.*
+  nothing a member does not already see, and is how Israeli volunteers move. *Recommend: add.* Decided for Google Maps (D-57).
 - **Q15. Reason shown when a spot or photo is rejected?** The API has none. *Recommend: no
   reason, a plain "was not approved"; avoids arguments and leaks about the checks.*
 - **Q16. How is a spot chosen for a cat photo?** *Recommend: a cat post starts from a spot page
@@ -110,5 +110,15 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
   in React, but it styles itself with the `style` attribute, which the hard rules forbid in our code.
   *Recommend: allow it as the one documented exception, in one wrapper component, and keep the CSS glass
   as the fallback.*
+- **Q36. Map pins with colour only.** The owner asked to drop the glyph and the badge, so a pin is a
+  coloured teardrop. Red, orange, green and grey differ in lightness too, but a member with colour
+  blindness may still confuse green and orange. *Recommend: keep it (the card, the legend and the marker's
+  name carry the words); if a colour-blind volunteer reports trouble, add a second cue such as a
+  different outline shape for red.*
+- **Q37. A photo on the map card.** The card shows the spot's most liked approved cat photo. The spec
+  says cat photos are never on the map; this is a card, not a layer, but it needs the spot's top photo
+  from the server (one more field on the spot, and an index of photos by spot, D-26). *Recommend: allow,
+  loaded when the card opens (not with the pins), approved photos only, hidden when the spot is a custom
+  spot the member may not see (R-03).*
 - **Accessibility target (not a question):** WCAG 2.2 AA, with 48 px touch targets and visible
   focus. Israeli web accessibility rules point to the same level.

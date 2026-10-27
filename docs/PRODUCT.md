@@ -12,7 +12,7 @@ web
 
 ## Stack
 
-React, Vite, TypeScript, react-leaflet, react-i18next. AWS: S3 + CloudFront, Lambda, DynamoDB,
+React, Vite, TypeScript, TanStack Query, react-leaflet, react-i18next. AWS: S3 + CloudFront, Lambda, DynamoDB,
 Cognito. Terraform, deployed from GitHub Actions with a deploy-only key (D-02).
 
 ## Who uses it
