@@ -6,6 +6,7 @@
     "backend/**/*.test.ts",
     "scripts/*.mjs"
   ],
+  "ignorePatterns": ["design/**"],
   "dynamicallyLoaded": ["lint/silent-whisker-plugin.js"],
   "duplicates": {
     "mode": "strict"

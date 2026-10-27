@@ -20,3 +20,6 @@ coverage/
 .impeccable/hook.pending.json
 .claude/settings.local.json
 *.tfplan
+
+# Impeccable question-page state (machine-local).
+.impeccable/questions/
