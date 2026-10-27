@@ -1,0 +1,300 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-27T09:54:44.438768+00:00",
+  "title": "Design System: Silent Whisker",
+  "extensions": {
+    "colorMeta": {
+      "slate-blue": {
+        "role": "primary",
+        "displayName": "Slate Blue",
+        "canonical": "#2d4467",
+        "tonalRamp": [
+          "#141f2e",
+          "#1b293f",
+          "#22344f",
+          "#293f5f",
+          "#485c7b",
+          "#7e8ca2",
+          "#b4bcc9",
+          "#eaecf0"
+        ]
+      },
+      "wall": {
+        "role": "neutral",
+        "displayName": "Wall White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#737373",
+          "#9b9b9b",
+          "#c3c3c3",
+          "#ebebeb",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff",
+          "#ffffff"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#1b2430",
+        "tonalRamp": [
+          "#0c1016",
+          "#10161d",
+          "#151c25",
+          "#19212c",
+          "#38404b",
+          "#737880",
+          "#aeb1b5",
+          "#e8e9ea"
+        ]
+      },
+      "need-green": {
+        "role": "secondary",
+        "displayName": "Need Green",
+        "canonical": "#2d7a49",
+        "tonalRamp": [
+          "#143721",
+          "#1b4a2c",
+          "#225d38",
+          "#297043",
+          "#488b60",
+          "#7ead8f",
+          "#b4d0be",
+          "#eaf2ed"
+        ]
+      },
+      "need-orange": {
+        "role": "secondary",
+        "displayName": "Need Orange",
+        "canonical": "#b4540a",
+        "tonalRamp": [
+          "#512604",
+          "#6d3306",
+          "#8a4008",
+          "#a64d09",
+          "#be6a29",
+          "#d19668",
+          "#e4c2a7",
+          "#f8eee6"
+        ]
+      },
+      "need-red": {
+        "role": "secondary",
+        "displayName": "Need Red",
+        "canonical": "#c0282d",
+        "tonalRamp": [
+          "#561214",
+          "#75181b",
+          "#931f22",
+          "#b12529",
+          "#c84448",
+          "#d87b7e",
+          "#e8b2b4",
+          "#f9eaea"
+        ]
+      },
+      "no-data-grey": {
+        "role": "secondary",
+        "displayName": "No-Data Grey",
+        "canonical": "#66707c",
+        "tonalRamp": [
+          "#2e3238",
+          "#3e444b",
+          "#4e565f",
+          "#5e6772",
+          "#7a828d",
+          "#a1a7af",
+          "#c8ccd0",
+          "#f0f1f2"
+        ]
+      },
+      "alert-plum": {
+        "role": "tertiary",
+        "displayName": "Alert Plum",
+        "canonical": "#8a2a73",
+        "tonalRamp": [
+          "#3e1334",
+          "#541946",
+          "#692058",
+          "#7f276a",
+          "#994585",
+          "#b77ca9",
+          "#d5b3cd",
+          "#f3eaf1"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The landing headline only."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Screen titles and first-run questions."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "All reading and form text."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Chips, hints, meta lines."
+      }
+    },
+    "shadows": [
+      {
+        "name": "lift",
+        "value": "0 1px 2px rgb(20 32 52 / 0.14), 0 6px 18px rgb(20 32 52 / 0.18)",
+        "purpose": "Things that float over the map: card, controls, toasts."
+      },
+      {
+        "name": "glass",
+        "value": "0 1px 2px rgb(20 32 52 / 0.14), 0 6px 18px rgb(20 32 52 / 0.18), inset 0 1px 0 rgb(255 255 255 / 0.42), inset 0 -1px 0 rgb(0 0 0 / 0.16)",
+        "purpose": "The navigation and form action bars, with fill rgb(33 53 83 / 0.86) and backdrop blur 20px."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "purpose": "Every transition; 120 ms for state changes, 240 ms for entrances."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "tablet",
+        "value": "768px"
+      },
+      {
+        "name": "desktop",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one main action of a screen.",
+      "html": "<button class=\"ds-btn\">Save the log</button>",
+      "css": ".ds-btn{min-height:48px;padding:0 24px;border:1.5px solid transparent;border-radius:12px;background:#2d4467;color:#fff;font:600 1rem/1.2 system-ui,'Segoe UI',Roboto,sans-serif;cursor:pointer}.ds-btn:hover{background:#213553}.ds-btn:focus-visible{outline:3px solid #0b57d0;outline-offset:2px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "A second action beside the primary.",
+      "html": "<button class=\"ds-btn-2\">Navigate</button>",
+      "css": ".ds-btn-2{min-height:48px;padding:0 24px;border:1.5px solid #2d4467;border-radius:12px;background:#fff;color:#2d4467;font:600 1rem/1.2 system-ui,'Segoe UI',Roboto,sans-serif;cursor:pointer}.ds-btn-2:hover{background:#e3e9f3}.ds-btn-2:focus-visible{outline:3px solid #0b57d0;outline-offset:2px}"
+    },
+    {
+      "name": "State Chip",
+      "kind": "chip",
+      "refersTo": "chip-state",
+      "description": "A level as an icon and a word, never colour alone.",
+      "html": "<span class=\"ds-chip\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M12 5v9M12 19h.01\"/></svg>Food needed</span>",
+      "css": ".ds-chip{display:inline-flex;align-items:center;gap:4px;min-height:28px;padding:4px 12px 4px 8px;border-radius:999px;background:#fbe0e0;color:#9a1f24;font:600 .875rem/1.2 system-ui,'Segoe UI',Roboto,sans-serif}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Label above, hint below, error as an icon and a sentence.",
+      "html": "<input class=\"ds-input\" placeholder=\"First and last name\"/>",
+      "css": ".ds-input{box-sizing:border-box;width:100%;min-height:48px;padding:12px 16px;border:1.5px solid #8e9bab;border-radius:8px;background:#fff;color:#1b2430;font:400 1rem/1.4 system-ui,'Segoe UI',Roboto,sans-serif}.ds-input:focus-visible{border-color:#2d4467;outline:3px solid #0b57d0}"
+    },
+    {
+      "name": "Choice Tile",
+      "kind": "custom",
+      "refersTo": "choice-tile",
+      "description": "A radio drawn as a large tile; chosen shows a slate ring and a check.",
+      "html": "<div class=\"ds-tile\">Full bowl<br><small>for 24 hours</small></div>",
+      "css": ".ds-tile{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:100px;min-height:88px;padding:12px 8px;border:1.5px solid #2d4467;border-radius:12px;background:#e3e9f3;box-shadow:inset 0 0 0 1px #2d4467;color:#1b2430;font:600 1rem/1.25 system-ui,'Segoe UI',Roboto,sans-serif;text-align:center}.ds-tile small{font-weight:400;font-size:.875rem;color:#4a5563}"
+    },
+    {
+      "name": "Glass Navigation",
+      "kind": "nav",
+      "refersTo": "nav-glass-item-active",
+      "description": "The floating tinted-glass tab bar; the active item is a lighter pill.",
+      "html": "<nav class=\"ds-nav\"><a>Profile</a><a>Alerts</a><a>Cats</a><a aria-current=\"page\">Map</a></nav>",
+      "css": ".ds-nav{display:flex;gap:4px;padding:4px;border:1px solid rgb(255 255 255/.3);border-radius:28px;background:rgb(33 53 83/.86);backdrop-filter:blur(20px) saturate(1.6);box-shadow:0 1px 2px rgb(20 32 52/.14),0 6px 18px rgb(20 32 52/.18),inset 0 1px 0 rgb(255 255 255/.42);font:600 .8125rem/1.2 system-ui,'Segoe UI',Roboto,sans-serif}.ds-nav a{flex:1;display:grid;place-items:center;min-height:56px;border-radius:24px;color:#e3eaf5}.ds-nav a[aria-current]{background:rgb(255 255 255/.22);color:#fff}"
+    },
+    {
+      "name": "Map Pin",
+      "kind": "custom",
+      "refersTo": "",
+      "description": "A teardrop whose tip is the exact point; colour is the worse of food and water, a corner mark repeats it.",
+      "html": "<svg width=\"40\" height=\"48\" viewBox=\"0 0 40 48\"><path d=\"M20 46S4 31 4 19a16 16 0 1 1 32 0c0 12-16 27-16 27z\" fill=\"#c0282d\" stroke=\"#fff\" stroke-width=\"2.5\"/></svg>",
+      "css": ".ds-pin{display:block}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The White Wall and the Blue Pane",
+    "overview": "**Creative North Star: \"The White Wall and the Blue Pane\"** Every Israeli volunteer knows the apartment stairwell: a white rendered wall above, an oil-painted band below, cats asleep on the steps. This system keeps the wall white and puts every control in one deep slate blue; the navigation is that blue turned into a floating pane of tinted glass, so the map and the feed stay visible through it. The look is quiet on purpose. The volunteer is outdoors, in glare, one-handed, often at dusk, with a bowl in the other hand. Markers are the loudest thing on any screen; chrome never competes with them. The system is Operate-first: plain controls, 48 px targets, a real type scale, state shown as colour **and** an icon **and** a word. It borrows from the stairwell only a palette (white, one slate blue), a density, and one signature move (the glass pane). Navigation, forms and lists stay the standard ones a member already knows. The landing page is the one place the painted band appears as a full-width section, where it frames the sign-in button.",
+    "keyCharacteristics": [
+      "White ground, one slate blue for everything tappable; the blue never appears on anything that is not a control or a selection.",
+      "Five state colours, never alone: each always has an icon and a word (green fine, orange running low, red needed, grey no data, plum for a cat alert).",
+      "Hebrew first and right to left; all layout in logical properties; the map canvas stays left to right because geography does not mirror.",
+      "The phone's own system sans: no font download, no third-party request.",
+      "Flat surfaces with 1 px lines; depth only for what floats (the lift) and the glass."
+    ],
+    "rules": [
+      {
+        "name": "The Tap Rule",
+        "body": "Slate blue means \"you can tap this\" or \"this is chosen\". Nothing else is that blue.",
+        "section": "colors"
+      },
+      {
+        "name": "The Never-Alone Rule",
+        "body": "A state colour is always paired with an icon and a word. A pin's colour is repeated by a corner mark (tick, clock, exclamation, dash); a chip carries its icon and label.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Plum Rule",
+        "body": "Plum is reserved for cat alerts so that an alert can never be mistaken for a spot.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Time Rule",
+        "body": "Times, counts and distances use tabular figures so a column of \"last log 14 h ago\" lines up.",
+        "section": "typography"
+      },
+      {
+        "name": "The Isolate Rule",
+        "body": "A name or a Latin word typed by a person sits in `<bdi>` (or an isolated value) inside Hebrew text so its punctuation cannot jump across the sentence.",
+        "section": "typography"
+      },
+      {
+        "name": "The Float-Only Rule",
+        "body": "Depth means \"this sits over the content\". A resting card never has a shadow.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Legible Glass Rule",
+        "body": "Glass is tinted dark enough (86%) that white labels keep at least 4.5:1 over a white map tile. Never make it clearer.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** keep slate blue for things that can be tapped or chosen (The Tap Rule).",
+      "**Do** pair every state colour with an icon and a word, in markers, chips and notices.",
+      "**Do** use gender-neutral Hebrew: nouns, infinitives and plurals, never a \"you\" verb.",
+      "**Do** write errors as what happened and what to do next, in one or two plain sentences.",
+      "**Do** keep targets at 48 px or more and primary actions inside the glass bar's thumb reach.",
+      "**Do** let the glass fall back to solid when blur is off or transparency is reduced.",
+      "**Do** run every string through `t('key')` and every style through a class or a `data-*` attribute; no inline styles."
+    ],
+    "donts": [
+      "**Don't** use cream, terracotta, neon-on-dark or a gamified look (badges, streaks, levels). Stats carry no prize.",
+      "**Don't** use a state colour on its own, or plum for anything but a cat alert.",
+      "**Don't** show the distance to a spot or the result of the location check beyond \"counted\" or \"saved as unverified\".",
+      "**Don't** put cat photos or any user photo on the map.",
+      "**Don't** add a coloured side stripe to a card or notice, a gradient text, or a shadow on a resting card.",
+      "**Don't** load a web font or a third-party script for chrome.",
+      "**Don't** make the glass lighter than 86% opaque, or put text smaller than 14 px (13 px only for the nav label) on it. "
+    ]
+  }
+}
