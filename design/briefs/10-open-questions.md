@@ -59,7 +59,7 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
 - **Q16. How is a spot chosen for a cat photo?** *Recommend: a cat post starts from a spot page
   ("post a cat here") or from the Cats tab, where a short list of the nearest visible spots
   appears, plus "a cat not at a spot".*
-- **Q17. Unverified logs in the spot's history?** *Recommend: show, muted and labelled "not
+- **Q17. Unverified logs in the spot's history?** *Decided: not shown (the owner asked to drop "not verified" from the history). Was: show, muted and labelled "not
   verified", so a volunteer who was refused can see their log was kept.*
 
 ## Cats and alerts
@@ -88,7 +88,7 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
   uses nouns, infinitives and plurals ("רישום האכלה", "לשמור"), never a "you" verb.*
 
 ## Shell and access
-- **Q28. Custom "install the app" banner?** *Recommend: none in v1; the browser offers its own.*
+- **Q28. Custom "install the app" banner?** *Decided: no banner; Profile has an "Install as an app" guide per browser.*
 - **Q29. A banned member.** The spec says banned members cannot write, and is silent on reading.
   *Recommend: they keep reading; every write refusal shows a plain message, and Me shows a
   permanent notice.*
@@ -102,10 +102,9 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
   languages on that one screen as a documented exception; otherwise it stays unlabelled.*
 - **Q33. A Hebrew name for the app.** The mocks keep "Silent Whisker" in Latin letters in both
   languages. *Recommend: decide before launch; a Hebrew name changes the landing header only.*
-- **Q34. Which side the map's "+" and locate buttons sit on in Hebrew.** They sit at the inline-end
-  (the left in Hebrew), the hardest reach for a right thumb, because the rules forbid `left` and `right`.
-  *Recommend: keep them logical now and ask a few right-handed volunteers; a user setting for the side is the
-  fallback.*
+- **Q34. Which side the map's "+" and locate buttons sit on in Hebrew.** *Decided by the owner: at the
+  right in both languages on a phone (most hands are right hands), written with logical properties and the
+  page direction; on wide screens they stay at the inline-end beside the side panel.*
 - **Q35. `liquid-glass-react` sets inline styles.** The library (MIT) is the way to get the real glass
   in React, but it styles itself with the `style` attribute, which the hard rules forbid in our code.
   *Recommend: allow it as the one documented exception, in one wrapper component, and keep the CSS glass
@@ -120,5 +119,21 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
   from the server (one more field on the spot, and an index of photos by spot, D-26). *Recommend: allow,
   loaded when the card opens (not with the pins), approved photos only, hidden when the spot is a custom
   spot the member may not see (R-03).*
+- **Q38. Map search.** The owner asked for a search by city, street, house address and spot name. The
+  geocoder (Nominatim, D-29) forbids autocomplete and allows 1 request a second. *Recommend: spots by name come
+  from our own table as the member types; places are searched when they press search, cached, with the same
+  limits; switch to Amazon Location Service if blocked.*
+- **Q39. The admin menu in a spot chat.** A three-dots menu at the end of the top bar, for admins. *Recommend:
+  "reported messages in this chat" and "pause the chat at this spot"; restrict and ban stay on a message's dialog.
+  "Pause the chat" is new and needs the spec's say.*
+- **Q40. A creator marking a spot inactive needs an admin.** The request waits in the admin list of waiting
+  spots, the spot stays active meanwhile, and an admin's own change applies at once. *Recommend: yes.*
+- **Q41. A cat photo has a required name (up to 40 characters) and an optional place.** The spec makes the name
+  optional. *Recommend: as the owner asked; the name is the title of the post.*
+- **Q42. Ended alerts stay visible to everyone for 7 days** (the spec shows them only to admins, for 24 hours),
+  and an alert says "reported N hours ago", not "N hours left". *Recommend: yes; extending is still admin only.*
+- **Q43. The map credit moved from the corner into the legend.** OpenStreetMap wants a visible credit;
+  one tap on "?" shows it. *Recommend: keep, and check it against the tile policy before launch. Also: with
+  location off the feed shows the member's profile city.*
 - **Accessibility target (not a question):** WCAG 2.2 AA, with 48 px touch targets and visible
   focus. Israeli web accessibility rules point to the same level.

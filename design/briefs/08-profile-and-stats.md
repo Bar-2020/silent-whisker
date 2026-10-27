@@ -7,11 +7,13 @@ A member checks their stats, edits their name, city or photo choice, turns locat
 switches language. An admin reaches the waiting list from here.
 
 ## Outcome and proof
-- Header: avatar (Google photo if chosen, initials otherwise), name, city, an "edit" action.
-- **Stats**: cats helped, feedings, water given, as three plain rows with an icon each. Stats
-  carry no prize: no badges, levels or streaks. (Q24: what "cats helped" counts.)
-- **Settings**: language (Hebrew, English), show my Google photo (switch), location permission
-  status with the steps to turn it back on, sign out, delete account (Q25).
+- Header: avatar (Google photo if chosen, initials otherwise), name, city; the edit action is a pencil
+  in the top bar.
+- **Stats** ("My activity"): cats helped, feedings, water given, as three plain rows on a tinted card with
+  no dividers. Stats carry no prize: no badges, levels or streaks. (Q24: what "cats helped" counts.)
+- **Settings**: one list: language (Hebrew, English), location permission status with the steps to allow it
+  permanently in each browser, **install as an app** (a guide per browser, Q28), sign out, delete
+  account (Q25). The Google photo choice lives in Edit, not here.
 - **Support**: donate link, source code, privacy, terms.
 - **Admin** (shown only to admins): "waiting for approval" with a count, and "reported content"
   (Q6).

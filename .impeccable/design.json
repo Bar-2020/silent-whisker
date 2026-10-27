@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-27T14:33:30.917191+00:00",
+  "generatedAt": "2026-10-27T21:01:29.706280+00:00",
   "title": "Design System: Silent Whisker",
   "extensions": {
     "colorMeta": {
@@ -283,7 +283,7 @@
       "**Do** pair every state colour with an icon and a word, in chips and notices (map pins are the one exception: the card and the legend carry the words).",
       "**Do** use gender-neutral Hebrew: nouns, infinitives and plurals, never a \"you\" verb.",
       "**Do** write errors as what happened and what to do next, in one or two plain sentences.",
-      "**Do** keep targets at 48 px or more (44 px for small buttons) and primary actions inside the glass bar's thumb reach.",
+      "**Do** keep targets at 48 px or more (44 px for small buttons) and primary actions on the pinned bar, inside the thumb's reach.",
       "**Do** let the glass fall back to solid when blur is off or transparency is reduced.",
       "**Do** run every string through `t('key')` and every style through a class or a `data-*` attribute; no inline styles."
     ],

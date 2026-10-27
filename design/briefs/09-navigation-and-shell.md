@@ -11,8 +11,8 @@ map visible while the member reads or logs.
   (chat is per spot only). New things are made from "+" on the map, "post a cat" in Cats, "raise
   an alert" in Alerts, and "new spot" in the "+" menu.
 - **Phone** (up to 767 px): a floating pane of slate-blue glass, 12 px in from the screen edges,
-  holds the four tabs, 64 px tall, icon above a word. The map and pages scroll behind it. Inner pages (spot, chat, forms) replace the tabs with a top bar: back arrow
-  at the inline-start, title, and a menu at the inline-end.
+  holds the four tabs, 64 px tall, icon above a word. The map and pages scroll behind it. Inner pages (spot, chat, forms) replace the tabs with a top bar: the brand mark, back arrow,
+  title, and at most two actions at the inline-end. A form's main button is on a flat pinned bar.
 - **Tablet and desktop** (768 px and up): the glass becomes a floating rail at the inline-start (72
   px, icon above a word, the logo at the top, the language switch at the bottom). The map area keeps a
   400 px side panel at the inline-start of the map; content pages sit in a centred column.
@@ -23,8 +23,7 @@ map visible while the member reads or logs.
 
 ## Selected direction
 The glass pane is the system's signature: tinted slate-blue (72% fill over a blurred, dimmed backdrop, with a light
-edge and a bright top rim) so the map shows through and white labels stay readable. The same glass carries the
-form action bars. Active tab: a lighter pill; inactive: pale. Solid blue where blur is unavailable
+edge and a bright top rim) so the map shows through and white labels stay readable. Form action bars are not glass: a flat white pinned bar. Active tab: a lighter pill; inactive: pale. Solid blue where blur is unavailable
 or reduced transparency is on.
 
 ## Responsive and RTL

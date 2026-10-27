@@ -8,17 +8,16 @@ This is the warm part of the app and the reward for the volunteering; it must st
 from the map (cat photos are never on the map).
 
 ## Outcome and proof
-- **Feed**: a share card first (two real buttons: take a photo, from the gallery), then a single column
-  of cards: photo (square) with a place chip and a menu, optional cat name, place tag (a spot's name or
-  a coarse area, never coordinates), poster, time, like (with count), comments (with count), a
-  menu with report. Infinite scroll, 20 at a time. Unseen photos first, then repeats; no divider
+- **Feed**: a plus button in the top bar starts a post (no banner), then a single column of posts with
+  no outline: photo (square) with a place chip, the photo's name and the three dots, poster, like and
+  comments pills, and the time last. With location off it shows the member's own city (Q43). Infinite scroll, 20 at a time. Unseen photos first, then repeats; no divider
   is required (Q20).
-- **Post a cat**: choose a photo from the phone's own picker, preview, optional name, where it was
-  seen (at a spot: choose one; a random cat: place tag taken from the phone's neighbourhood or the
-  profile city). Photo check outcomes: in review (hidden until approved), "no cat found" (the
+- **Post a cat**: choose a photo from the phone's own picker, preview, a required photo name (Q41), an
+  optional place: a picker with a map and a list, one choice (fixed when the post starts at a spot). Photo check outcomes: in review (hidden until approved), "no cat found" (the
   photo is rejected), refused, daily photo limit of 10, daily upload limit of 20.
-- **Cat page**: big photo, like, comments (newest first), comment box with the daily comment
-  limit and the chat-restricted state, report.
+- **Cat page**: full-width photo that opens full screen, like, comments (newest first, divided), a
+  comment box pinned at the bottom (a refusal is a toast), the daily comment limit and the
+  chat-restricted state, report.
 
 ## Selected direction
 Photos are the only large colour on these screens. Cards are the container here because each post

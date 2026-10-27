@@ -16,7 +16,9 @@ Three steps, each one screen, each skippable only where the spec says so:
    photo?" with two choices and **no pre-selected answer**. Without a Google photo the second
    question is hidden and initials are used.
 3. **Location screen** (once per device, skipped when the browser already granted it): one short
-   explanation, one button that starts the browser prompt. Refusing never blocks the app.
+   explanation, a notice telling the member to pick the lasting answer ("Always allow", not "this time"),
+   one button that starts the browser prompt. While the prompt is open, "continue without location" is
+   disabled. Refusing never blocks the app.
 
 ## Selected direction
 Inherit the stairwell wall. A progress hint ("1 of 2") is not needed: two screens. Large title,
@@ -33,7 +35,7 @@ one paragraph of why, form, one primary button pinned to the thumb zone.
 ## Interaction and layout
 Single column, 480 px max on wide screens, centred on the white wall. The primary button sits in
 a floating glass bar at the bottom on phones, so a thumb finds it.
-Inline errors under the field with an icon and words, never a toast.
+Inline errors under the field in words, with no icon and no exclamation mark, never a toast.
 
 ## Boundaries
 No notification permission (not in v1). No camera prompt. Never block on location. No marketing

@@ -232,6 +232,10 @@ is a 4 px step (4, 8, 12, 16, 24, 32, 48, 72). Pages are a single centred column
 edges and the bottom). From 768 px the bar becomes a floating rail at the inline-start (72 px).
 Inner pages (spot, chat, forms) swap the tabs for a top bar with a back arrow; the rail stays on
 wide screens. The map page is full-bleed, with a card (phone) or a 400 px panel (wide) over it.
+**Every top bar carries the brand mark** (below), first when the bar has no back arrow and right after
+it otherwise; on wide screens the rail carries it, so the bar does not repeat it. A form's main
+button is on a **pinned bar** at the bottom of the screen (Components). On a phone the scrollbar is an
+overlay, so it never runs up beside the top bar.
 
 **Rhythm.** Tight inside a group (4 to 12 px), generous between sections (24 to 48 px), a hairline
 between sections instead of a card around each. Cards are used only where one item is a
@@ -251,8 +255,8 @@ depth.
   map card and panel, the round map controls, toasts.
 - **Light glass** (`rgb(255 255 255 / 0.64)`, blur 12 px, saturate 1.6, a white edge): everything
   else that floats over the map or the page with dark ink on it: the pin card and panel, the round
-  map controls (all 52 px), menus, banners and the sticky top bar.
-- **Glass** (a tinted pane, see Components): the navigation and the form action bars. Fill
+  map controls (all 52 px), the map search, menus, banners and the sticky top bar.
+- **Glass** (a tinted pane, see Components): the navigation bar and rail only. Fill
   `rgb(36 60 103 / 0.58)` over a backdrop that is blurred 8 px, saturated 1.7 and dimmed to 56%
   (`backdrop-filter: blur(8px) saturate(1.7) brightness(0.56)`), a 1 px edge `rgb(255 255 255 /
   0.42)`, and inner highlights: a bright top rim `inset 0 1.5px 0 rgb(255 255 255 / 0.55)`, a faint
@@ -294,19 +298,18 @@ Every component below, with its states, is drawn in `design/mocks/design-system.
 - **Secondary:** white fill, 1.5 px slate border, slate label.
 - **Quiet:** no fill, slate label (back, cancel, "more").
 - **Danger:** need-red fill, only for delete account.
-- **On the glass:** a white button with a slate label, because slate on slate would vanish.
 - **Six states, every variant:** default, hover, pressed (darker fill, 1 px down), focus (3 px
   focus-blue ring with a 2 px gap), disabled and pending. Each one is drawn in
   `design/mocks/design-system.html`.
-- **Disabled:** sunk fill (#eef1f5), grey ink, no pointer, no hover. On the glass bar it is a
-  translucent white fill with a white label. The reason is always on the page: a hint nearby, or
-  the label itself ("Already reported"). A dull button with no clue is a bug.
-- **Pending:** every button that sends something to the server keeps its size and colour, shows an
-  18 px spinner before the label, and the label becomes the verb in progress ("Saving...",
-  "Uploading..."). It takes no taps (`aria-busy="true"`) and still shows focus. In the app the
-  pending state is the `isPending` flag of that action's TanStack Query mutation, never a flag kept
-  by hand; the same mutation then drives the success and the error. A round button shows the
-  spinner alone.
+- **Disabled:** sunk fill (#eef1f5), grey ink, no pointer, no hover; the same everywhere, on the
+  pinned bar too. The reason is always on the page: a hint nearby, or the label itself ("Already
+  reported"). A dull button with no clue is a bug. A form's main button is disabled while a required
+  part is missing (no photo, a refused photo, a daily limit reached).
+- **Pending:** every button that sends something to the server keeps its size and colour and shows
+  **only a 20 px spinner**; the label stays in the page, invisible, so the width does not change and a
+  screen reader still hears it. It takes no taps (`aria-busy="true"`) and still shows focus. In the
+  app the pending state is the `isPending` flag of that action's TanStack Query mutation, never a
+  flag kept by hand; the same mutation then drives the success and the error.
 
 ### Chips and tags
 - **Chip:** pill, 28 px, state tint with state ink, an icon then a word ("Food: needed"). Used for
@@ -315,24 +318,47 @@ Every component below, with its states, is drawn in `design/mocks/design-system.
 - **Tag:** 8 px radius, 1 px line, quiet ink; dashed slate for "waiting for approval".
 
 ### Cards and containers
-Used sparingly: a feed post (edge to edge on a phone, 12 px radius on wide screens), an alert row,
-the map card. White, 1 px line, no shadow except over the map.
+Used sparingly: the map card and a reported-content card in the admin list (white, 1 px line, no
+shadow except over the map). A feed post, a single cat and an alert row have **no outline**: they are
+separated by space (24 px between posts) or by a hairline between rows.
 
 ### Inputs and fields
 - **Style:** 48 px, 1.5 px strong line, white fill, 8 px radius; label above (600), hint below.
 - **Focus:** the border turns slate and a 3 px focus-blue ring appears.
-- **Error:** the border turns need-red on a red tint, and an icon plus a sentence says what to do;
-  never a toast for a field.
+- **Error:** the border turns need-red on a red tint and a plain sentence below the field says what
+  to do: **no icon and no exclamation mark**. A refusal of a comment or a chat message is not a field
+  error but a toast above the text box, so the box never moves.
+- **Placeholder:** follows the page direction (at the right in Hebrew); words typed in the box choose
+  their own direction.
 - **Choice tiles:** a real radio drawn as a large tile; chosen = slate mist fill, slate ring and a
   check mark. Used for log kind, alert kind, address or location.
 
 ### Navigation (the glass)
 - **Phone bar:** 4 items (Map, Explore, Alerts, Profile), icon over a 13 px label, active item on a lighter pill (`rgb(255 255 255
   / 0.12)` with a 1 px light edge and weight 800), inactive labels in #eef3fa, all 14 px. **Rail** (768 px up): the same pane vertical, the logo above, the
-  language switch below. **Top bar** on inner pages: white, a hairline below, back arrow at the
-  inline-start.
-- **Action bar:** on a phone, the primary action of a form sits in the same glass, floating above
-  the keyboard-safe area; on wide screens it is an ordinary inline button.
+  language switch below. **Top bar:** white, a hairline below, the brand mark, then back arrow, title
+  and at most two actions at the end (a plus to add, a pencil to edit, three dots for a menu).
+- **Pinned action bar:** the main button of a form (and a small group such as Navigate and Show on
+  map) is on a flat white bar at the bottom of the screen, always at the bottom even when the form is
+  short, with no glass, line or shadow, above the safe area. The screen is as tall as the viewport, so
+  the bar sits at the bottom of it. On wide screens it sits under the form instead. Two buttons share
+  the width (primary first); one button takes it all.
+
+### Brand mark
+An **outline cat head**: round-cornered ears, a wide face, two dot eyes and a small triangular nose,
+drawn in 2 px strokes (1.75 px at 32 px) with round caps and joins and no fill; it takes the colour of
+the bar it sits on (slate on white, pale on the glass). It is the one mark for the rail, the landing
+header, every top bar and the app-starting screen. The solid cat head is only for the plum alert sign
+on the map. All icons are in `design/mocks/icons.js` and listed in `design-system.html`.
+
+### Dialogs and menus
+- **Dialog:** a centred card (26 rem at most, 20 px radius) over a dark scrim, above everything. A
+  title, one or two lines, then choices or buttons: big option rows (icon in a circle, a bold title and
+  a line) or a primary button and a quiet Cancel. Used for the map "+" (new spot, or a cat alert),
+  confirming approve or reject, confirming a report, the actions on a chat message (copy, report; an
+  admin also restricts or bans) and the language.
+- **Menu:** a small floating card of 44 px rows (never more than three), for the three dots of a
+  top bar or of a photo. Anything that needs a confirmation or more than three rows is a dialog.
 
 ### Language menu
 A globe icon button (never a toggle, never the word "English") opens a short list of languages with a
@@ -346,20 +372,27 @@ no glyph and no badge: the card that opens, the legend and the marker's accessib
 words (colour alone, see Q36). Inactive pins are 62% opaque; a pin waiting for approval is white with
 a dashed slate outline. A cat alert is a plum rounded square on a stem with a solid cat head and a
 text label ("In danger", "Sick"). The member's position is a blue dot with a soft halo. **Selected:**
-the pin scales 1.2 and gets a 2.5 px dark slate outline, and the card shows that spot.
+the pin scales 1.2 and gets a 2.5 px dark slate outline, and the card shows that spot. Pins that
+explain steps (the landing page) and the pins in a picker's list are not buttons and do not act like
+one (no pointer).
 
 ### State row, log tiles, history
 Each of food and water is a two-line row: icon in a tinted circle, label and level chip; then "14
 hours ago, full bowl" in tabular figures and a small "the bowl is empty" button. When the level is
 already red the button is disabled and reads "Already reported". The log form is three tiles (full
-bowl, partial bowl, water) and the Save button on the glass bar, which turns pending ("Saving...")
-while it sends; the result is a notice, never a distance.
+bowl, partial bowl, water) and the Save button on the pinned bar, which turns pending while it
+sends; the result is a notice, never a distance.
 
 ### Spot page
 One screen on a phone: a top bar (back, name, menu), a head row (photo, address, **Navigate**), four
-tabs (Log, Cats, Chat, History) and one panel. The Log tab fits 360 x 740 with no scrolling: two
-state rows, three tiles, a line of proof text and the glass bar. The other tabs scroll inside their
-panel and hide the bar. **Navigate** is a small secondary button, a plain link to Google Maps
+tabs (Log, Cats, Chat, History) and one panel. The tabs are four equal columns of 14 px centred
+words. The Log tab fits 360 x 740 with no scrolling: two state rows, three tiles, a line of proof
+text and the pinned bar. **Cats:** a small "Share a photo here" button beside the title, then a
+three-column grid of square photos. **Chat:** the real thread right in the tab, with the composer
+pinned at the bottom: there is no button to another page. **History:** who logged what and when; a log
+that was not verified is not listed. The menu has Report; the creator and every admin also get Edit,
+and "Mark inactive": for a creator it is a request that needs an admin's approval (the spot stays
+active meanwhile), for an admin it applies at once. **Navigate** is a small secondary button, a plain link to Google Maps
 directions to the spot (`https://www.google.com/maps/dir/?api=1&destination=lat,lng`, new tab): on a
 phone with the Google Maps app it starts navigation, otherwise it shows the route on the Google Maps
 site (D-57). No key, no SDK, nothing stored. Cat alerts get the same button.
@@ -372,36 +405,67 @@ button at the inline-end corner of the title row, never over the photo.
 
 ### Notices and toasts
 A tinted block with an icon and a title plus one sentence (what happened, what to do). Toasts are
-ink-dark with white text, above the glass bar, one at a time. A gentle refusal ("already logged
+ink-dark with white text, above the pinned bar or the text box, one at a time: a refused comment or
+chat message, a sent report. A gentle refusal ("already logged
 here", "not verified") is grey; red is for a spot that needs food or water and for real errors.
 No coloured side stripes.
 
 ### Feed post, comment, chat message
-Square photo, poster and place tag above it, like and comment counts below (a liked heart fills
-slate blue, never red, because red means a need). Chat: others on the
-plain wall with an avatar, own messages tinted slate mist; a message in review has a dashed outline
-and a "in review" chip.
+Square photo with the place on it, then the name of the photo, who posted it, like and comment
+pills and the time as the last line. A liked paw fills slate blue, never red, because red means a need.
+Chat: others on the plain wall with an avatar, own messages tinted slate mist; a message in review has
+a dashed outline and an "in review" chip. A message is one tap target: it opens a dialog (copy, report),
+there is no three-dots button on a message. The comment box and the chat composer are pinned to the
+bottom of the screen in every state, including a limit, a restriction and a ban, where it is a notice.
 
 ### Explore (the feed)
-A **share card** at the top with two real 56 px buttons, "Take a photo" and "From the gallery": an
-action is never a line of text. Each **photo card** is a 20 px card: a square photo with a glass place
-chip (pin icon and name on one line) bottom-start and a glass round menu button top-end; below it the
-cat's name, the time, the poster with a small avatar, and two pills: a **paw** to like (slate mist, slate
-fill when liked) and a speech bubble for comments (slate mist). The menu holds "Report this photo";
-admins also see hide and restrict.
+Sharing starts from a **solid slate plus button at the end of the top bar** (like Instagram); there is
+no banner above the feed. Each **post** has no outline: a square photo (a glass place chip bottom-start,
+nothing else on it), then a title row with the photo's name (up to two lines) and the **three dots**
+(report; an admin also hides or restricts), who posted it, two pills and the time. The pills are
+outlined when off and solid when on, so they never melt into the page: a **paw** to like (toes drawn
+apart so none merge) and a speech bubble. With location off the feed shows cats from the member's own
+city, and says so in a notice with a link to turn location on. Loading shows solid skeleton posts
+(a photo block and two lines), never see-through ones.
 
 ### Share a photo, and where it was taken
-A large dashed drop zone with a 72 px camera button; the picked photo shows without any label. Name is
-optional. **Where** is one row (pin icon, then the place on the same line, a chevron) that opens a
-picker: "a cat not at a spot" first, then the nearest spots drawn with the same pins as the map.
-While the photo uploads, a **process strip** under the top bar says so for the whole step (a spinner,
-"Uploading the photo", a progress bar) and the submit button is pending ("Uploading..."). On a wide
-screen the page is two columns, the photo then the name and place, with the button under the
-details, 64 rem at most.
+A large dashed drop zone with a 72 px camera button; the picked photo shows without any label (and a
+rejected one, "no cat found", is removed, so the zone is empty again). The **photo name is required**
+(up to 40 characters, shown as a hint); **where it was taken is optional**: one row (pin icon, the
+place, a chevron) that opens a picker with a **map and a list that are one choice**: a search box, "a
+cat not at a spot", then nearby spots drawn with small pins, one selected at a time, picked on the map
+or in the list, confirmed with a pinned button. When the post starts from a spot's page the place is
+fixed and the row is disabled. The pinned **Share** button is disabled until there is a photo and a
+name, and while a limit or a refusal stands. While the photo uploads a **process strip** under the top
+bar says so (a spinner and words, no progress bar) and the button is pending. On a wide screen the page
+is two columns, the photo then the name and place, 64 rem at most. A single cat has a full-width
+photo (4:5, no outline) that opens full screen when tapped.
 
-### Landing navigation
-A floating glass pill (brand, three anchors on wide screens, the language globe, a Sign in button), and
-a real phone frame (rounded bezel, island, side buttons, home indicator) around the live map.
+### Landing
+A floating glass pill (the brand mark and name, three anchors on wide screens, the language globe, a
+Sign in button). On a phone the first screen is the pitch alone, with room around it (24 px gutters,
+72 px between sections), so the phone frame (rounded bezel, island, no side buttons) around the live
+map starts one scroll below. Then the three steps (their pins do not act like buttons), the privacy
+band, a tinted closing section of its own (centred, with the sign-in, donate and source buttons) and a
+slate footer with the legal links and "Made with a heart by Bar Almog".
+
+### Map search, alerts, profile
+- **Map search:** a pill field at the top of the map (the legend "?" beside it); typing lists feeding
+  spots by name, then places (cities, streets, house addresses), one row each with its kind; no results
+  says so and what to try. The two action buttons sit at the right in both languages on a phone, and
+  disappear while a spot or an alert is selected. Banners (zoom in, location off) sit under the top
+  row, and "location off" is a line of text with its button below it. The map credit is in the legend.
+- **Alert row:** photo and words on top (kind chip, "reported N hours ago", the note cut at two lines,
+  distance and area), then **Details** and **Show on map** side by side, full width. A countdown is
+  never shown for helping a cat; only a gentle "leaves the map in N minutes" when it is about to go.
+  Past alerts (the last 7 days) are one tap away, visible to everyone. In the raise form "sick" has a
+  thermometer; a vague or missing location offers **Try again**; a refused note says so under the box.
+  One alert: the admin actions sit right under it, **Navigate** and **Show on map** are on the pinned bar.
+- **Profile:** a pencil in the top bar edits; "My activity" is a tinted card with no dividers; one
+  list holds language, location, **Install as an app** (a guide per browser), sign out and delete.
+  Location help shows, per browser (Android Chrome, iPhone Safari, Chrome, Edge, Firefox, Safari on a
+  Mac), how to allow it **permanently**, not "this time". Lists in the admin screens use the same row
+  layout, and a reported-content card is a grid: decisions on one row, member actions on the next.
 
 ### Photo placeholders
 In the mocks a photo is a pale placeholder in one of four tones (#dfe4ec, #e6e2d8, #d9e4de,
@@ -416,8 +480,8 @@ sunk grey (#eef1f5) while one loads.
   one exception: the card and the legend carry the words).
 - **Do** use gender-neutral Hebrew: nouns, infinitives and plurals, never a "you" verb.
 - **Do** write errors as what happened and what to do next, in one or two plain sentences.
-- **Do** keep targets at 48 px or more (44 px for small buttons) and primary actions inside the
-  glass bar's thumb reach.
+- **Do** keep targets at 48 px or more (44 px for small buttons) and primary actions on the pinned
+  bar, inside the thumb's reach.
 - **Do** let the glass fall back to solid when blur is off or transparency is reduced.
 - **Do** run every string through `t('key')` and every style through a class or a `data-*`
   attribute; no inline styles.
