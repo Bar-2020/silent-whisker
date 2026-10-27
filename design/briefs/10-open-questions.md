@@ -94,5 +94,13 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
   permanent notice.*
 - **Q30. A list of spots for people who cannot use a map** (screen readers, keyboard only).
   *Recommend: a "spots near me" list after v1, and in v1 give markers real button semantics.*
+- **Q31. Logs at an inactive spot.** The spec says an inactive spot is never marked as needing
+  help and is silent on logging. *Recommend: logs are off while a spot is inactive; its creator can
+  switch it back on.*
+- **Q32. The language-failed screen.** With no strings loaded it is an icon and a retry button,
+  which a screen reader cannot name. *Recommend: allow one two-word built-in label in both
+  languages on that one screen as a documented exception; otherwise it stays unlabelled.*
+- **Q33. A Hebrew name for the app.** The mocks keep "Silent Whisker" in Latin letters in both
+  languages. *Recommend: decide before launch; a Hebrew name changes the landing header only.*
 - **Accessibility target (not a question):** WCAG 2.2 AA, with 48 px touch targets and visible
   focus. Israeli web accessibility rules point to the same level.
