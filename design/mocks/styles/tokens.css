@@ -22,13 +22,13 @@
   --rail-line: #8fa5c8;
 
   /* State colours. Each also has an ink for text on its tint, and always travels with an icon. */
-  --ok: #2d7a49;
+  --ok: #2a8f4f;
   --ok-ink: #1f5c36;
   --ok-tint: #e0f0e5;
-  --warn: #b4540a;
+  --warn: #d97706;
   --warn-ink: #8f4107;
   --warn-tint: #fbe8d4;
-  --bad: #c0282d;
+  --bad: #d32f2f;
   --bad-ink: #9a1f24;
   --bad-tint: #fbe0e0;
   --none: #66707c;
@@ -73,6 +73,9 @@
   --r-rail: 32px;
   --tap: 48px;
   --tap-l: 56px;
+  --round: 52px;
+  --pin-w: 46px;
+  --pin-h: 56px;
   --nav-size: 64px;
   --rail-size: 72px;
   --panel-size: 400px;
@@ -80,18 +83,21 @@
   --measure: 65ch;
 
   /* Liquid glass: the shell's tinted, blurred pane. It is solid where blur is unavailable. */
-  --glass: rgb(36 60 103 / 0.72);
+  --glass: rgb(36 60 103 / 0.62);
   --glass-solid: #2d4467;
   --glass-edge: rgb(255 255 255 / 0.42);
   --glass-shine:
     inset 0 1.5px 0 rgb(255 255 255 / 0.55), inset 0 -1px 0 rgb(255 255 255 / 0.14),
     inset 0 0 14px rgb(255 255 255 / 0.07);
   /* The backdrop is dimmed first so white labels keep 4.5:1 over a white map tile. */
-  --glass-blur: blur(18px) saturate(1.8) brightness(0.62);
+  --glass-blur: blur(10px) saturate(1.7) brightness(0.66);
   --glass-ink: #eef3fa;
   --glass-hover: rgb(255 255 255 / 0.12);
   --glass-active: rgb(255 255 255 / 0.14);
   --glass-active-ink: #ffffff;
+  --glass-light: rgb(255 255 255 / 0.74);
+  --glass-light-edge: rgb(255 255 255 / 0.8);
+  --glass-light-blur: blur(14px) saturate(1.6);
   --nav-gap: 12px;
   --nav-total: calc(var(--nav-size) + var(--nav-gap) * 2);
   --rail-offset: calc(var(--rail-size) + var(--nav-gap) * 2);

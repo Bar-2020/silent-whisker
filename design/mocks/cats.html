@@ -17,13 +17,15 @@
         <div data-screen="feed" data-chrome="tabs" data-default-state="default">
           <header class="topbar">
             <h1 class="topbar__title" data-t="cats.feed.title"></h1>
-            <a class="btn btn--small topbar__cta" href="cats.html?screen=post"
-              ><i data-icon="camera" data-class="icon--s"></i><span data-t="cats.post.cta"></span
-            ></a>
           </header>
           <div class="layout-2">
             <div class="page page--feed">
               <div class="feed">
+                <a class="compose" href="cats.html?screen=post">
+                  <span class="avatar" data-t="demo.me.initials"></span>
+                  <span class="compose__text" data-t="cats.compose.prompt"></span>
+                  <span class="compose__icon"><i data-icon="camera"></i></span>
+                </a>
                 <div class="notice" data-when="seen">
                   <i data-icon="info"></i>
                   <div class="notice__body"><span data-t="cats.feed.seenAll"></span></div>
@@ -65,9 +67,6 @@
               </div>
             </div>
             <aside class="context">
-              <a class="btn btn--lg" href="cats.html?screen=post"
-                ><i data-icon="camera"></i><span data-t="cats.post.cta"></span
-              ></a>
               <div class="notice">
                 <i data-icon="info"></i>
                 <div class="notice__body">
@@ -79,7 +78,7 @@
           </div>
         </div>
 
-        <!-- ============ Post a cat ============ -->
+        <!-- ============ Post a photo of a cat ============ -->
         <div data-screen="post" data-chrome="page" data-default-state="choose">
           <header class="topbar">
             <a class="iconbtn" href="cats.html" data-t-attr="aria-label:common.back"
@@ -109,7 +108,7 @@
                 ><span data-t="cats.post.noCat.text"></span>
               </div>
             </div>
-            <div class="notice" data-level="red" data-when="limit">
+            <div class="notice" data-level="none" data-when="limit">
               <i data-icon="clock"></i>
               <div class="notice__body">
                 <strong data-t="cats.post.limit.title"></strong
@@ -117,18 +116,22 @@
               </div>
             </div>
 
-            <div class="field">
-              <span class="field__label" data-t="cats.post.photo.label"></span>
-              <button class="photo-pick" type="button" data-when="choose limit">
-                <i data-icon="camera"></i><span data-t="cats.post.photo.add"></span>
+            <div class="stack stack--2">
+              <button class="dropzone" type="button" data-when="choose limit">
+                <span class="dropzone__inner"
+                  ><i data-icon="camera" data-class="icon--l"></i
+                  ><span data-t="cats.post.photo.add"></span
+                ></span>
               </button>
-              <div
-                class="photo photo--square photo--round"
-                data-tone="2"
-                data-unless="choose limit"
-              >
-                <i data-icon="cat"></i>
-                <span class="photo__caption" data-t="common.samplePhoto"></span>
+              <div class="dropzone dropzone--filled" data-unless="choose limit">
+                <div class="photo" data-tone="2">
+                  <i data-icon="cat"></i>
+                  <span class="photo__caption" data-t="common.samplePhoto"></span>
+                </div>
+                <button class="btn btn--small btn--secondary dropzone__change" type="button">
+                  <i data-icon="camera" data-class="icon--s"></i
+                  ><span data-t="cats.post.photo.change"></span>
+                </button>
               </div>
               <div class="progress" data-when="uploading">
                 <div class="progress__bar" data-p="60"></div>
@@ -150,33 +153,29 @@
 
             <fieldset class="field">
               <legend class="field__label" data-t="cats.post.where.label"></legend>
-              <div class="choices">
-                <label class="choice choice--row">
+              <div class="segmented">
+                <label class="segmented__item">
                   <input type="radio" name="where" value="spot" id="where-spot" />
-                  <span class="choice__tile"
+                  <span class="segmented__label"
                     ><i data-icon="pin"></i><span data-t="cats.post.where.spot"></span
-                    ><span class="choice__mark"><i data-icon="check"></i></span
                   ></span>
                 </label>
-                <label class="choice choice--row">
+                <label class="segmented__item">
                   <input type="radio" name="where" value="random" id="where-random" />
-                  <span class="choice__tile"
+                  <span class="segmented__label"
                     ><i data-icon="cat"></i><span data-t="cats.post.where.random"></span
-                    ><span class="choice__mark"><i data-icon="check"></i></span
                   ></span>
                 </label>
               </div>
-              <div class="rows" data-when="ready-spot uploading nocat">
-                <button class="row" type="button" data-go="picker">
-                  <i class="row__icon" data-icon="pin"></i>
-                  <span class="row__main"
-                    ><span class="row__title" data-t="demo.spot1.name"></span><br /><span
-                      class="row__value"
-                      data-t="cats.post.where.change"
-                    ></span
-                  ></span>
-                  <i class="row__chev" data-icon="chevron" data-class="icon--flip"></i>
-                </button>
+              <div class="where-row" data-when="ready-spot uploading nocat">
+                <i data-icon="pin"></i>
+                <span class="where-row__name" data-t="demo.spot1.name"></span>
+                <button
+                  class="btn btn--small btn--quiet"
+                  type="button"
+                  data-go="picker"
+                  data-t="cats.post.where.change"
+                ></button>
               </div>
               <p
                 class="field__hint"
@@ -303,7 +302,7 @@
           </div>
         </div>
       </main>
-      <nav data-nav="cats"></nav>
+      <nav data-nav="explore"></nav>
     </div>
 
     <script src="locales/he.js"></script>

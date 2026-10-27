@@ -76,10 +76,6 @@
     overflow-y: auto;
   }
 
-  .stage .sheet::before {
-    display: none;
-  }
-
   .stage .sheet--peek {
     inset-block-end: auto;
   }
@@ -158,11 +154,6 @@
     padding: var(--s-4) var(--s-6);
   }
 
-  .hero__wall,
-  .hero__dado-inner {
-    padding-inline: var(--s-5);
-  }
-
   .consent {
     flex-direction: row;
     align-items: center;
@@ -214,11 +205,19 @@
   }
 
   .hero {
-    min-block-size: calc(100dvh - 72px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--s-8);
+    padding-block: var(--s-7) var(--s-8);
   }
 
   .hero h1 {
-    max-inline-size: 18ch;
+    max-inline-size: 16ch;
+  }
+
+  .device {
+    --device-zoom: 0.9;
   }
 
   .toc {
@@ -286,13 +285,6 @@
     padding: 0;
     margin: 0;
     max-inline-size: none;
-  }
-}
-
-@media (min-width: 768px) {
-  .hero__dado .btn {
-    align-self: flex-start;
-    min-inline-size: 22rem;
   }
 }
 

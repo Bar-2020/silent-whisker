@@ -85,13 +85,14 @@
               <section>
                 <div class="heading-bar"><h2 data-t="profile.settings.title"></h2></div>
                 <div class="rows">
-                  <div class="row">
+                  <button class="row" type="button" data-go="/lang" aria-haspopup="dialog">
                     <i class="row__icon" data-icon="globe"></i>
                     <span class="row__main"
                       ><span class="row__title" data-t="profile.settings.language"></span
+                      ><br /><span class="row__value" data-t="lang.current"></span
                     ></span>
-                    <span data-langswitch></span>
-                  </div>
+                    <i class="row__chev" data-icon="chevron" data-class="icon--flip"></i>
+                  </button>
                   <a class="row" href="profile.html?screen=edit">
                     <i class="row__icon" data-icon="user"></i>
                     <span class="row__main"
@@ -476,6 +477,26 @@
             </div>
           </div>
         </div>
+
+        <div class="scrim" data-sub="lang"></div>
+        <aside
+          class="sheet sheet--modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="lang-title"
+          data-sub="lang"
+        >
+          <h2 class="sheet__title" id="lang-title" data-t="lang.choose"></h2>
+          <div class="rows">
+            <a class="row" href="?lang=he" lang="he" data-lang-option="he">
+              <span class="row__main"><span class="row__title" data-t="lang.he"></span></span>
+            </a>
+            <a class="row" href="?lang=en" lang="en" data-lang-option="en">
+              <span class="row__main"><span class="row__title" data-t="lang.en"></span></span>
+            </a>
+          </div>
+          <button class="btn btn--quiet" type="button" data-go="/" data-t="common.close"></button>
+        </aside>
       </main>
       <nav data-nav="me"></nav>
     </div>

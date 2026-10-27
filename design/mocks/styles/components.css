@@ -124,7 +124,6 @@ body[data-chrome='tabs'] .main {
   gap: var(--s-1);
   min-block-size: 56px;
   padding-inline: var(--s-2);
-  background: var(--surface);
   border-block-end: 1px solid var(--line);
 }
 
@@ -738,13 +737,14 @@ button.row {
   color: var(--ink-2);
 }
 
+/* One footprint for every marker (46 x 56): a pin for a spot, a sign for a cat alert. */
 .pin {
   position: relative;
-  inline-size: 40px;
-  block-size: 48px;
+  inline-size: var(--pin-w);
+  block-size: var(--pin-h);
   translate: -50% -100%;
-  color: #fff;
-  filter: drop-shadow(0 2px 2px rgb(20 32 52 / 0.35));
+  color: var(--lvl);
+  filter: drop-shadow(0 2px 3px rgb(20 32 52 / 0.4));
   cursor: pointer;
 }
 
@@ -755,42 +755,43 @@ button.row {
   block-size: 100%;
   fill: var(--lvl);
   stroke: #fff;
-  stroke-width: 2.5;
+  stroke-width: 3;
 }
 
-.pin .icon {
-  stroke-width: 2.25;
+.pin__disc {
+  position: absolute;
+  inset-block-start: 7px;
+  inset-inline-start: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: 50%;
+  background: #fff;
 }
 
 .pin__glyph {
-  position: absolute;
-  inset-block-start: 9px;
-  inset-inline-start: 8px;
+  inline-size: 21px;
+  block-size: 21px;
+  fill: currentColor;
+  stroke: none;
 }
 
 .pin[data-kind='both'] .pin__glyph {
-  inline-size: 15px;
-  block-size: 15px;
-  inset-block-start: 13px;
-}
-
-.pin[data-kind='both'] .pin__glyph--a {
-  inset-inline-start: 5px;
-}
-
-.pin[data-kind='both'] .pin__glyph--b {
-  inset-inline-start: 20px;
+  inline-size: 14px;
+  block-size: 14px;
 }
 
 .pin__badge {
   position: absolute;
-  inset-block-start: -5px;
-  inset-inline-end: -7px;
+  inset-block-start: -4px;
+  inset-inline-end: -8px;
   display: grid;
   place-items: center;
-  inline-size: 20px;
-  block-size: 20px;
-  border: 1.5px solid var(--lvl);
+  inline-size: 22px;
+  block-size: 22px;
+  border: 2px solid var(--lvl);
   border-radius: 50%;
   background: #fff;
   color: var(--lvl);
@@ -799,11 +800,15 @@ button.row {
 .pin__badge .icon {
   inline-size: 12px;
   block-size: 12px;
-  stroke-width: 3;
+  stroke-width: 3.2;
 }
 
 .pin[data-status='inactive'] {
-  opacity: 0.62;
+  opacity: 0.6;
+}
+
+.pin[data-status='pending'] {
+  color: var(--dado);
 }
 
 .pin[data-status='pending'] .pin__body {
@@ -812,8 +817,8 @@ button.row {
   stroke-dasharray: 4 3;
 }
 
-.pin[data-status='pending'] {
-  color: var(--dado);
+.pin[data-status='pending'] .pin__disc {
+  background: transparent;
 }
 
 .pin[data-status='pending'] .pin__badge {
@@ -821,7 +826,7 @@ button.row {
 }
 
 .pin.is-selected {
-  scale: 1.2;
+  scale: 1.15;
   transform-origin: 50% 100%;
 }
 
@@ -831,35 +836,45 @@ button.row {
 
 .sign {
   position: relative;
-  padding-block-end: 9px;
+  inline-size: var(--pin-w);
+  block-size: var(--pin-h);
   translate: -50% -100%;
+  color: #fff;
   cursor: pointer;
-  filter: drop-shadow(0 2px 2px rgb(20 32 52 / 0.35));
+  filter: drop-shadow(0 2px 3px rgb(20 32 52 / 0.4));
 }
 
 .sign__box {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
   display: grid;
   place-items: center;
-  inline-size: 44px;
-  block-size: 44px;
-  border: 2.5px solid #fff;
-  border-radius: var(--r-m);
+  block-size: var(--pin-w);
+  border: 3px solid #fff;
+  border-radius: 14px;
   background: var(--alert);
-  color: #fff;
+}
+
+.sign__glyph {
+  inline-size: 28px;
+  block-size: 28px;
+  fill: currentColor;
+  stroke: none;
 }
 
 .sign__stem {
   position: absolute;
   inset-block-end: 0;
-  inset-inline-start: calc(50% - 7px);
-  border: 7px solid transparent;
+  inset-inline-start: calc(50% - 8px);
+  border: 8px solid transparent;
   border-block-end: 0;
   border-block-start-color: var(--alert);
 }
 
 .sign__label {
   position: absolute;
-  inset-block-start: 8px;
+  inset-block-start: 10px;
   inset-inline-start: calc(100% + 6px);
   padding: 2px var(--s-2);
   border-radius: var(--r-pill);
@@ -876,8 +891,8 @@ button.row {
 }
 
 .here {
-  inline-size: 18px;
-  block-size: 18px;
+  inline-size: 20px;
+  block-size: 20px;
   translate: -50% -50%;
   border: 3px solid #fff;
   border-radius: 50%;
@@ -910,32 +925,73 @@ button.row {
   inset-block-start: var(--s-4);
 }
 
+/* Things that float over the map are clear glass too: light, with dark ink on it. */
+.round,
+.mapbanner,
+.menu,
+.stage .sheet,
+.topbar {
+  background: var(--glass-light);
+  -webkit-backdrop-filter: var(--glass-light-blur);
+  backdrop-filter: var(--glass-light-blur);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .round,
+  .mapbanner,
+  .menu,
+  .stage .sheet,
+  .topbar {
+    background: var(--surface);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .round,
+  .mapbanner,
+  .menu,
+  .stage .sheet,
+  .topbar {
+    background: var(--surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
 .round {
   display: grid;
   place-items: center;
-  inline-size: var(--tap);
-  block-size: var(--tap);
-  border: 0;
+  inline-size: var(--round);
+  block-size: var(--round);
+  border: 1px solid var(--glass-light-edge);
   border-radius: 50%;
-  background: var(--surface);
   color: var(--dado);
-  box-shadow: var(--lift);
+  box-shadow:
+    var(--lift),
+    inset 0 1.5px 0 rgb(255 255 255 / 0.9);
   cursor: pointer;
 }
 
+.round .icon {
+  inline-size: 1.625rem;
+  block-size: 1.625rem;
+}
+
 .round:hover {
-  background: var(--dado-tint);
+  background: var(--surface);
 }
 
 .round--primary {
-  inline-size: var(--tap-l);
-  block-size: var(--tap-l);
-  background: var(--dado);
-  color: var(--dado-ink);
+  border-color: var(--glass-edge);
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  color: var(--glass-active-ink);
+  box-shadow: var(--lift), var(--glass-shine);
 }
 
 .round--primary:hover {
-  background: var(--dado-deep);
+  background: var(--glass-solid);
 }
 
 .mapbanner {
@@ -947,8 +1003,8 @@ button.row {
   align-items: center;
   gap: var(--s-3);
   padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--glass-light-edge);
   border-radius: var(--r-m);
-  background: var(--surface);
   box-shadow: var(--lift);
   font-weight: 600;
 }
@@ -960,8 +1016,8 @@ button.row {
 .menu {
   min-inline-size: 15rem;
   padding: var(--s-2);
+  border: 1px solid var(--glass-light-edge);
   border-radius: var(--r-m);
-  background: var(--surface);
   box-shadow: var(--lift);
 }
 
@@ -990,12 +1046,16 @@ button.row {
   background: var(--dado-tint);
 }
 
+.menu__item[aria-current='true'] {
+  background: var(--dado-tint);
+}
+
 .menu__item--bad,
 .menu__item--bad .icon {
   color: var(--bad-ink);
 }
 
-/* ---------- Sheet (phone) and panel (wide): same content, two homes ---------- */
+/* ---------- Card (phone) and panel (wide): the same content, two homes. No drag handle: a web app. ---------- */
 .sheet {
   position: absolute;
   inset-inline: 0;
@@ -1004,21 +1064,11 @@ button.row {
   display: flex;
   flex-direction: column;
   gap: var(--s-3);
-  padding: var(--s-2) var(--s-4) var(--s-4);
+  padding: var(--s-4);
   border-start-start-radius: var(--r-l);
   border-start-end-radius: var(--r-l);
   background: var(--surface);
   box-shadow: var(--lift);
-}
-
-.sheet::before {
-  content: '';
-  align-self: center;
-  inline-size: 40px;
-  block-size: 4px;
-  margin-block-end: var(--s-1);
-  border-radius: var(--r-pill);
-  background: var(--line-strong);
 }
 
 .sheet__head {
@@ -1340,7 +1390,7 @@ button.row {
 }
 
 .legend__swatch {
-  inline-size: 40px;
+  inline-size: var(--pin-w);
   display: grid;
   place-items: center;
 }
@@ -1409,6 +1459,7 @@ body[data-chrome='page'] .nav {
 .stage .sheet {
   inset-inline: var(--nav-gap);
   inset-block-end: calc(var(--nav-total) - var(--s-1));
+  border: 1px solid var(--glass-light-edge);
   border-radius: var(--r-l);
 }
 

@@ -101,59 +101,9 @@
   gap: var(--s-2);
 }
 
-.hero {
-  display: flex;
-  flex-direction: column;
-  min-block-size: calc(100dvh - 64px);
-}
-
-.hero__wall {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: var(--s-4);
-  max-inline-size: 44rem;
-  margin-inline: auto;
-  padding: var(--s-5) var(--s-4);
-}
-
 .hero h1 {
   font-size: var(--fs-display);
   line-height: 1.15;
-}
-
-.hero__dado {
-  padding: var(--s-5) var(--s-4) var(--s-6);
-  background: var(--dado);
-  color: var(--dado-quiet);
-  border-block-start: 2px solid var(--rail-line);
-}
-
-.hero__dado-inner {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-3);
-  max-inline-size: 44rem;
-  margin-inline: auto;
-}
-
-.hero__dado a:not(.btn) {
-  color: var(--dado-ink);
-}
-
-.hero__dado .btn {
-  min-block-size: var(--tap-l);
-  font-size: var(--fs-l);
-}
-
-.btn--google {
-  gap: var(--s-3);
-}
-
-.glogo {
-  inline-size: 22px;
-  block-size: 22px;
 }
 
 .band-section {
@@ -572,43 +522,6 @@
   border-radius: var(--r-l);
 }
 
-/* A read-only sample of a real spot, so the first screen shows the mechanism. */
-.sample {
-  display: flex;
-  align-items: center;
-  gap: var(--s-4);
-  padding: var(--s-3) var(--s-4);
-  border: 1px solid var(--line);
-  border-radius: var(--r-m);
-  background: var(--surface);
-}
-
-.sample__pin {
-  display: grid;
-  place-items: center;
-  inline-size: 48px;
-  flex: none;
-}
-
-.sample__pin .pin {
-  translate: none;
-  filter: none;
-}
-
-.sample__body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-2);
-  min-inline-size: 0;
-}
-
-.sample__tag {
-  margin-inline-start: auto;
-  align-self: flex-start;
-  flex: none;
-  white-space: nowrap;
-}
-
 .footbar--stack {
   flex-direction: column;
 }
@@ -617,22 +530,257 @@
   padding-block-end: var(--s-5);
 }
 
-/* The landing page's painted band is a section, not glass: its button is always the wall colour. */
-.btn--on-band {
-  background: var(--surface);
-  color: var(--dado);
-}
-
-.btn--on-band:hover,
-.btn--on-band:active {
-  background: var(--dado-tint);
-}
-
 /* Fixes from the second review pass. */
 .profile-grid .page + .page {
   padding-block-start: 0;
 }
 
-.hero__dado .btn {
-  align-self: stretch;
+/* ---------- Landing: hero with the real product, steps, a painted trust band ---------- */
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+  max-inline-size: 64rem;
+  margin-inline: auto;
+  padding: var(--s-5) var(--s-4) var(--s-7);
+  min-block-size: 0;
+}
+
+.hero__copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  justify-content: center;
+}
+
+.hero__cta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  align-items: flex-start;
+}
+
+.hero__visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
+  margin: 0;
+}
+
+.device {
+  --device-zoom: 0.78;
+  inline-size: calc(360px * var(--device-zoom) + 16px);
+  border: 8px solid var(--ink);
+  border-radius: 38px;
+  background: var(--ink);
+  overflow: hidden;
+  box-shadow: var(--lift);
+}
+
+.device__screen {
+  display: block;
+  inline-size: 360px;
+  block-size: 700px;
+  border: 0;
+  background: #fff;
+  zoom: var(--device-zoom);
+}
+
+.trust {
+  padding: var(--s-7) var(--s-4);
+  background: var(--dado);
+  color: var(--dado-quiet);
+}
+
+.trust h2 {
+  color: var(--dado-ink);
+}
+
+.trust .promise .icon {
+  color: var(--dado-ink);
+}
+
+/* ---------- Language menu: a globe that opens a short list ---------- */
+.langmenu {
+  position: relative;
+}
+
+.langmenu__menu {
+  position: absolute;
+  inset-block-start: calc(100% + var(--s-1));
+  inset-inline-end: 0;
+  z-index: 900;
+  min-inline-size: 12rem;
+}
+
+.nav__lang .langmenu__menu {
+  inset-block: auto 0;
+  inset-inline: calc(100% + var(--s-3)) auto;
+}
+
+.langmenu__btn {
+  color: var(--dado);
+}
+
+.nav .langmenu__btn {
+  color: var(--glass-ink);
+}
+
+.nav .langmenu__btn:hover {
+  background: var(--glass-hover);
+}
+
+.check-end {
+  margin-inline-start: auto;
+  color: var(--dado);
+}
+
+/* ---------- Feed composer prompt ---------- */
+.compose {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-block-size: var(--tap-l);
+  padding: var(--s-2) var(--s-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  background: var(--surface);
+  color: var(--ink-2);
+  text-decoration: none;
+}
+
+.compose:hover {
+  background: var(--dado-tint);
+}
+
+.compose__text {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.compose__icon {
+  display: grid;
+  place-items: center;
+  inline-size: var(--tap);
+  block-size: var(--tap);
+  border-radius: 50%;
+  background: var(--dado);
+  color: var(--dado-ink);
+}
+
+/* ---------- Segmented control (two real radios) ---------- */
+.segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-1);
+  padding: var(--s-1);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--r-m);
+  background: var(--surface-sunk);
+}
+
+.segmented__item {
+  position: relative;
+  display: flex;
+}
+
+.segmented__item input {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.segmented__label {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  min-block-size: var(--tap);
+  padding-inline: var(--s-2);
+  border-radius: var(--r-s);
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.segmented__item input:checked + .segmented__label {
+  background: var(--dado);
+  color: var(--dado-ink);
+}
+
+.segmented__item input:focus-visible + .segmented__label {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ---------- Post a photo ---------- */
+.dropzone {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  border: 1.5px dashed var(--dado);
+  border-radius: var(--r-m);
+  background: var(--dado-tint);
+  color: var(--dado);
+  font-weight: 600;
+  text-align: center;
+  overflow: hidden;
+}
+
+.dropzone__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.dropzone .icon--l {
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+}
+
+.dropzone--filled {
+  border-style: solid;
+  border-color: var(--line);
+  background: var(--surface-sunk);
+}
+
+.dropzone__change {
+  position: absolute;
+  inset-block-end: var(--s-3);
+  inset-inline-end: var(--s-3);
+}
+
+.where-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-block-size: var(--tap-l);
+  padding: var(--s-2) var(--s-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  background: var(--surface);
+}
+
+.where-row .icon {
+  color: var(--dado);
+}
+
+.where-row__name {
+  flex: 1;
+  min-inline-size: 0;
+  font-weight: 600;
+}
+
+.dropzone .photo {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
 }

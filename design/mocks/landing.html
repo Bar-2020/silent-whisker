@@ -17,40 +17,42 @@
           <img src="../../frontend/public/logo.png" alt="" />
           <span>Silent Whisker</span>
         </a>
-        <div class="sitebar__end"><span data-langswitch></span></div>
+        <div class="sitebar__end">
+          <span data-langmenu></span>
+          <a
+            class="btn btn--small btn--secondary"
+            href="first-run.html?screen=profile"
+            data-t="landing.signInShort"
+          ></a>
+        </div>
       </header>
 
       <main>
         <section class="hero" aria-labelledby="landing-h1">
-          <div class="hero__wall">
+          <div class="hero__copy">
             <h1 id="landing-h1" data-t="landing.h1"></h1>
             <p class="lead" data-t="landing.lead"></p>
-            <div class="sample" role="img" data-t-attr="aria-label:landing.sample.label">
-              <span class="sample__pin" id="sample-pin"></span>
-              <div class="sample__body">
-                <strong data-t="demo.spot1.name"></strong>
-                <div class="cluster">
-                  <span class="chip" data-level="red"
-                    ><i data-icon="exclaim"></i><span data-t="map.chip.food.red"></span
-                  ></span>
-                  <span class="chip" data-level="green"
-                    ><i data-icon="check"></i><span data-t="map.chip.water.green"></span
-                  ></span>
-                </div>
-              </div>
-              <span class="tag sample__tag" data-t="landing.sample.tag"></span>
-            </div>
-          </div>
-          <div class="hero__dado on-dado">
-            <div class="hero__dado-inner">
+            <div class="hero__cta">
               <a
-                class="btn btn--on-band"
+                class="btn btn--lg"
                 href="first-run.html?screen=profile"
                 data-t="landing.signIn"
               ></a>
-              <p class="small" data-t-html="landing.consent"></p>
+              <p class="small muted" data-t-html="landing.consent"></p>
             </div>
           </div>
+          <figure class="hero__visual">
+            <div class="device">
+              <iframe
+                class="device__screen"
+                id="hero-map"
+                loading="lazy"
+                tabindex="-1"
+                data-t-attr="title:landing.hero.visualLabel"
+              ></iframe>
+            </div>
+            <figcaption class="small muted" data-t="landing.hero.caption"></figcaption>
+          </figure>
         </section>
 
         <section class="band-section" aria-labelledby="how-h">
@@ -82,7 +84,7 @@
           </div>
         </section>
 
-        <section class="band-section" aria-labelledby="privacy-h">
+        <section class="trust" aria-labelledby="privacy-h">
           <div class="band-section__inner">
             <h2 id="privacy-h" data-t="landing.privacy.title"></h2>
             <ul class="promise">
@@ -107,6 +109,11 @@
             <h2 id="free-h" data-t="landing.free.title"></h2>
             <p class="muted" data-t="landing.free.text"></p>
             <div class="cluster">
+              <a
+                class="btn btn--lg"
+                href="first-run.html?screen=profile"
+                data-t="landing.signIn"
+              ></a>
               <a class="btn btn--secondary" href="#"
                 ><i data-icon="heart"></i><span data-t="landing.donate"></span
               ></a>

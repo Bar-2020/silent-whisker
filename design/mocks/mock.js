@@ -67,7 +67,7 @@
 
   const NAV = [
     { id: 'map', icon: 'map', href: 'map.html' },
-    { id: 'cats', icon: 'cat', href: 'cats.html' },
+    { id: 'explore', icon: 'compass', href: 'cats.html' },
     { id: 'alerts', icon: 'alert', href: 'alerts.html' },
     { id: 'me', icon: 'user', href: 'profile.html' },
   ];
@@ -81,7 +81,6 @@
     const host = document.querySelector('[data-nav]');
     if (!host) return;
     const current = host.dataset.nav;
-    const otherLang = lang === 'he' ? 'en' : 'he';
     const items = NAV.map(
       (item) =>
         `<a class="nav__item" href="${withLang(item.href)}"${item.id === current ? ' aria-current="page"' : ''}>` +
@@ -92,7 +91,7 @@
     host.innerHTML =
       `<a class="nav__brand" href="${withLang('landing.html')}" aria-label="${t('nav.home')}"><img src="../../frontend/public/logo.png" alt="" /></a>` +
       items +
-      `<a class="nav__lang" href="?${otherQuery(otherLang)}" lang="${otherLang}" data-t="nav.otherLang"></a>`;
+      '<div class="nav__lang" data-langmenu></div>';
   }
 
   function otherQuery(nextLang) {
@@ -101,12 +100,31 @@
     return next.toString();
   }
 
-  function drawLangSwitch() {
-    document.querySelectorAll('[data-langswitch]').forEach((host) => {
-      const link = (code, label) =>
-        `<a href="?${otherQuery(code)}" lang="${code}"${code === lang ? ' aria-current="true"' : ''}>${label}</a>`;
-      host.className = 'langswitch';
-      host.innerHTML = link('he', 'עברית') + link('en', 'English');
+  /* A globe button that opens the list of languages. */
+  let menuCount = 0;
+  function drawLangMenu() {
+    document.querySelectorAll('[data-langmenu]').forEach((host) => {
+      menuCount += 1;
+      const id = `langmenu-${menuCount}`;
+      const items = Object.keys(LANGS)
+        .map(
+          (code) =>
+            `<a class="menu__item" role="menuitem" href="?${otherQuery(code)}" lang="${code}"${code === lang ? ' aria-current="true"' : ''}>` +
+            `${t(`lang.${code}`)}${code === lang ? '<i class="check-end" data-icon="check"></i>' : ''}</a>`
+        )
+        .join('');
+      host.classList.add('langmenu');
+      host.innerHTML =
+        `<button class="iconbtn langmenu__btn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="${id}" aria-label="${t('lang.label')}" data-toggle="${id}"><i data-icon="globe"></i></button>` +
+        `<div class="menu langmenu__menu" id="${id}" role="menu" hidden>${items}</div>`;
+    });
+  }
+
+  function closeLangMenus(except) {
+    document.querySelectorAll('.langmenu__menu:not([hidden])').forEach((menu) => {
+      if (except && menu.parentElement.contains(except)) return;
+      menu.hidden = true;
+      menu.previousElementSibling.setAttribute('aria-expanded', 'false');
     });
   }
 
@@ -180,9 +198,22 @@
     }
     const toggle = event.target.closest('[data-toggle]');
     if (toggle) {
-      const target = document.getElementById(toggle.dataset.toggle);
-      if (target) target.hidden = !target.hidden;
+      toggle.dataset.toggle.split(' ').forEach((id) => {
+        const target = document.getElementById(id);
+        if (target) target.hidden = !target.hidden;
+      });
+      const menu = document.getElementById(toggle.dataset.toggle);
+      if (menu && menu.classList.contains('langmenu__menu')) {
+        toggle.setAttribute('aria-expanded', String(!menu.hidden));
+        closeLangMenus(toggle.parentElement);
+      }
+      return;
     }
+    closeLangMenus(event.target);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeLangMenus();
   });
 
   /* Keep the language when moving between mock pages. */
@@ -193,28 +224,28 @@
   /* ----- map markers ----- */
   const LEVEL_MARK = { green: 'check', orange: 'clock', red: 'exclaim', none: 'dash' };
 
-  function glyph(kind, extra) {
-    const name = kind === 'water' ? 'drop' : 'bowl';
-    return `<svg class="icon pin__glyph ${extra || ''}" aria-hidden="true"><use href="#i-${name}"></use></svg>`;
+  function glyph(name) {
+    return `<svg class="pin__glyph" aria-hidden="true"><use href="#i-${name}-fill"></use></svg>`;
   }
 
   function pinHtml(spot) {
     const glyphs =
       spot.kind === 'both'
-        ? glyph('food', 'pin__glyph--a') + glyph('water', 'pin__glyph--b')
-        : glyph(spot.kind);
+        ? glyph('bowl') + glyph('drop')
+        : glyph(spot.kind === 'water' ? 'drop' : 'bowl');
     const selected = spot.selected ? ' is-selected' : '';
     return (
       `<div class="pin${selected}" data-level="${spot.level}" data-kind="${spot.kind}" data-status="${spot.status || 'active'}">` +
-      `<svg class="pin__body" viewBox="0 0 40 48" aria-hidden="true"><path d="M20 46S4 31 4 19a16 16 0 1 1 32 0c0 12-16 27-16 27z"/></svg>` +
-      `${glyphs}<span class="pin__badge"><svg class="icon" aria-hidden="true"><use href="#i-${LEVEL_MARK[spot.level]}"></use></svg></span></div>`
+      '<svg class="pin__body" viewBox="0 0 46 56" aria-hidden="true"><path d="M23 54S5 37 5 22a18 18 0 1 1 36 0c0 15-18 32-18 32z"/></svg>' +
+      `<span class="pin__disc">${glyphs}</span>` +
+      `<span class="pin__badge"><svg class="icon" aria-hidden="true"><use href="#i-${LEVEL_MARK[spot.level]}"></use></svg></span></div>`
     );
   }
 
   function signHtml(alertItem) {
     const selected = alertItem.selected ? ' is-selected' : '';
     return (
-      `<div class="sign${selected}" data-level="alert"><span class="sign__box"><svg class="icon icon--l" aria-hidden="true"><use href="#i-cat"></use></svg></span>` +
+      `<div class="sign${selected}" data-level="alert"><span class="sign__box"><svg class="sign__glyph" aria-hidden="true"><use href="#i-cat-fill"></use></svg></span>` +
       `<span class="sign__stem"></span><span class="sign__label">${t(`alerts.kind.${alertItem.kind}`)}</span></div>`
     );
   }
@@ -296,7 +327,7 @@
 
   /* ----- boot ----- */
   drawNav();
-  drawLangSwitch();
+  drawLangMenu();
   drawIcons(document);
   translate(document);
   applyState();

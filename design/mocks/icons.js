@@ -10,7 +10,8 @@
     user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>',
     plus: '<path d="M12 5v14M5 12h14"/>',
     minus: '<path d="M5 12h14"/>',
-    locate: '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
+    locate:
+      '<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"/>',
     bowl: '<path d="M3 12h18c0 4.5-3.5 7-9 7s-9-2.5-9-7z"/><path d="M8 8.5h.01M12 7h.01M16 8.5h.01"/>',
     drop: '<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>',
     check: '<path d="M5 12.5l4.5 4.5L19 7"/>',
@@ -47,6 +48,12 @@
     restrict: '<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
     list: '<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
     upload: '<path d="M12 16V4M7 9l5-5 5 5M4 20h16"/>',
+    compass: '<circle cx="12" cy="12" r="9"/><path d="M15.8 8.2l-2 5.6-5.6 2 2-5.6z"/>',
+    'bowl-fill':
+      '<path d="M3 11.5h18a9 9 0 0 1-18 0z"/><circle cx="8" cy="8" r="1.8"/><circle cx="12" cy="6.2" r="1.8"/><circle cx="16" cy="8" r="1.8"/>',
+    'drop-fill': '<path d="M12 2.5s6.5 7 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 9.5 12 2.5 12 2.5z"/>',
+    'cat-fill':
+      '<path d="M4 3.5l4.8 3.3h6.4L20 3.5V13a8 8 0 0 1-16 0z"/><circle class="cut" cx="9" cy="12.5" r="1.4"/><circle class="cut" cx="15" cy="12.5" r="1.4"/><path class="cut-line" d="M10.3 16c.5.6 1 .8 1.7.8s1.2-.2 1.7-.8"/>',
   };
 
   const symbols = Object.entries(ICONS)

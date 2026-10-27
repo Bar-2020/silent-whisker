@@ -186,3 +186,15 @@ bdi,
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Details cut out of the solid cat head in the sprite. */
+.cut {
+  fill: var(--alert);
+}
+
+.cut-line {
+  fill: none;
+  stroke: var(--alert);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
