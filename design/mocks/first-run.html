@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/looks.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/screens.css" />
+    <link rel="stylesheet" href="styles/responsive.css" />
+  </head>
+  <body data-title="firstrun.title" data-chrome="firstrun">
+    <!-- Screen 1 of 2: three questions. -->
+    <form class="firstrun" data-screen="profile" data-default-state="empty" novalidate>
+      <div class="firstrun__body">
+        <span class="illus"><i data-icon="user"></i></span>
+        <div class="stack stack--3">
+          <h1 data-t="firstrun.profile.h1"></h1>
+          <p class="muted" data-t="firstrun.profile.lead"></p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="fullname" data-t="firstrun.name.label"></label>
+          <input
+            class="input"
+            id="fullname"
+            name="fullname"
+            autocomplete="name"
+            data-t-attr="placeholder:firstrun.name.placeholder"
+          />
+          <p class="field__hint" data-t="firstrun.name.hint"></p>
+          <p class="field__error" data-when="errors">
+            <i data-icon="exclaim"></i><span data-t="firstrun.name.required"></span>
+          </p>
+          <p class="field__error" data-when="refused">
+            <i data-icon="exclaim"></i><span data-t="firstrun.name.refused"></span>
+          </p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="city" data-t="firstrun.city.label"></label>
+          <input
+            class="input"
+            id="city"
+            autocomplete="address-level2"
+            data-t-attr="placeholder:firstrun.city.placeholder"
+          />
+          <p class="field__hint" data-t="firstrun.city.hint"></p>
+          <p class="field__error" data-when="errors">
+            <i data-icon="exclaim"></i><span data-t="firstrun.city.required"></span>
+          </p>
+          <p class="field__error" data-when="citynotfound">
+            <i data-icon="exclaim"></i><span data-t="firstrun.city.notFound"></span>
+          </p>
+        </div>
+
+        <fieldset class="field" data-unless="nophoto">
+          <legend class="field__label" data-t="firstrun.photo.label"></legend>
+          <p class="field__hint" data-t="firstrun.photo.hint"></p>
+          <div class="choices">
+            <label class="choice choice--row">
+              <input type="radio" name="photo" value="yes" />
+              <span class="choice__tile">
+                <span class="avatar avatar--photo"><i data-icon="user"></i></span>
+                <span data-t="firstrun.photo.yes"></span>
+                <span class="choice__mark"><i data-icon="check"></i></span>
+              </span>
+            </label>
+            <label class="choice choice--row">
+              <input type="radio" name="photo" value="no" />
+              <span class="choice__tile">
+                <span class="avatar" data-t="demo.initials"></span>
+                <span data-t="firstrun.photo.no"></span>
+                <span class="choice__mark"><i data-icon="check"></i></span>
+              </span>
+            </label>
+          </div>
+          <p class="field__error" data-when="errors">
+            <i data-icon="exclaim"></i><span data-t="firstrun.photo.required"></span>
+          </p>
+        </fieldset>
+      </div>
+      <div class="footbar on-dado">
+        <button class="btn btn--on-dado btn--lg" type="button" data-unless="saving">
+          <span data-t="common.continue"></span>
+        </button>
+        <button
+          class="btn btn--on-dado btn--lg"
+          type="button"
+          data-when="saving"
+          aria-disabled="true"
+        >
+          <span class="spinner"></span><span data-t="firstrun.saving"></span>
+        </button>
+      </div>
+    </form>
+
+    <!-- Screen 2 of 2: why the browser is about to ask for the location. -->
+    <div class="firstrun" data-screen="location" data-default-state="ask">
+      <div class="firstrun__body">
+        <span class="illus"><i data-icon="locate"></i></span>
+        <div class="stack stack--3">
+          <h1 data-t="firstrun.location.h1"></h1>
+          <p class="muted" data-t="firstrun.location.lead"></p>
+        </div>
+        <ul class="why">
+          <li><i data-icon="checkcircle"></i><span data-t="firstrun.location.why1"></span></li>
+          <li><i data-icon="alert"></i><span data-t="firstrun.location.why2"></span></li>
+          <li><i data-icon="map"></i><span data-t="firstrun.location.why3"></span></li>
+        </ul>
+        <div class="notice">
+          <i data-icon="lock"></i>
+          <div class="notice__body"><span data-t="firstrun.location.privacy"></span></div>
+        </div>
+        <p class="small muted" data-t="firstrun.location.optional"></p>
+        <div class="notice" data-when="prompt">
+          <span class="spinner"></span>
+          <div class="notice__body"><span data-t="firstrun.location.waiting"></span></div>
+        </div>
+      </div>
+      <div class="footbar footbar--stack on-dado">
+        <button
+          class="btn btn--on-dado btn--lg"
+          type="button"
+          data-unless="prompt"
+          data-go="prompt"
+        >
+          <i data-icon="locate"></i><span data-t="firstrun.location.allow"></span>
+        </button>
+        <button
+          class="btn btn--on-dado btn--lg"
+          type="button"
+          data-when="prompt"
+          aria-disabled="true"
+        >
+          <span data-t="firstrun.location.allow"></span>
+        </button>
+        <a
+          class="btn btn--outline-on-dado btn--lg"
+          href="map.html?state=locdenied"
+          data-t="firstrun.location.skip"
+        ></a>
+      </div>
+    </div>
+
+    <script src="locales/he.js"></script>
+    <script src="locales/en.js"></script>
+    <script src="icons.js"></script>
+    <script src="mock.js"></script>
+    <script src="pages/first-run.js"></script>
+  </body>
+</html>

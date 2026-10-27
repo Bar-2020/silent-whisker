@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/looks.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/screens.css" />
+    <link rel="stylesheet" href="styles/responsive.css" />
+  </head>
+  <body data-title="landing.title" data-chrome="public">
+    <section data-screen="home" data-default-state="default">
+      <header class="sitebar">
+        <a class="brandmark" href="landing.html">
+          <img src="../../frontend/public/logo.png" alt="" />
+          <span>Silent Whisker</span>
+        </a>
+        <div class="sitebar__end"><span data-langswitch></span></div>
+      </header>
+
+      <main>
+        <section class="hero" aria-labelledby="landing-h1">
+          <div class="hero__wall">
+            <h1 id="landing-h1" data-t="landing.h1"></h1>
+            <p class="lead" data-t="landing.lead"></p>
+            <div class="sample" role="img" data-t-attr="aria-label:landing.sample.label">
+              <span class="sample__pin" id="sample-pin"></span>
+              <div class="sample__body">
+                <strong data-t="demo.spot1.name"></strong>
+                <div class="cluster">
+                  <span class="chip" data-level="red"
+                    ><i data-icon="exclaim"></i><span data-t="map.chip.food.red"></span
+                  ></span>
+                  <span class="chip" data-level="green"
+                    ><i data-icon="check"></i><span data-t="map.chip.water.green"></span
+                  ></span>
+                </div>
+              </div>
+              <span class="tag sample__tag" data-t="landing.sample.tag"></span>
+            </div>
+          </div>
+          <div class="hero__dado on-dado">
+            <div class="hero__dado-inner">
+              <a
+                class="btn btn--on-band"
+                href="first-run.html?screen=profile"
+                data-t="landing.signIn"
+              ></a>
+              <p class="small" data-t-html="landing.consent"></p>
+            </div>
+          </div>
+        </section>
+
+        <section class="band-section" aria-labelledby="how-h">
+          <div class="band-section__inner">
+            <h2 id="how-h" data-t="landing.how.title"></h2>
+            <ol class="steps">
+              <li class="step">
+                <span class="step__visual" id="step-pin-red"></span>
+                <div class="stack stack--2">
+                  <h3 data-t="landing.step1.title"></h3>
+                  <p class="muted" data-t="landing.step1.text"></p>
+                </div>
+              </li>
+              <li class="step">
+                <span class="step__visual"><i data-icon="bowl"></i></span>
+                <div class="stack stack--2">
+                  <h3 data-t="landing.step2.title"></h3>
+                  <p class="muted" data-t="landing.step2.text"></p>
+                </div>
+              </li>
+              <li class="step">
+                <span class="step__visual" id="step-pin-green"></span>
+                <div class="stack stack--2">
+                  <h3 data-t="landing.step3.title"></h3>
+                  <p class="muted" data-t="landing.step3.text"></p>
+                </div>
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        <section class="band-section" aria-labelledby="privacy-h">
+          <div class="band-section__inner">
+            <h2 id="privacy-h" data-t="landing.privacy.title"></h2>
+            <ul class="promise">
+              <li><i data-icon="locate"></i><span data-t="landing.privacy.1"></span></li>
+              <li><i data-icon="pin"></i><span data-t="landing.privacy.2"></span></li>
+              <li><i data-icon="shield"></i><span data-t="landing.privacy.3"></span></li>
+              <li><i data-icon="lock"></i><span data-t="landing.privacy.4"></span></li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="band-section">
+          <div class="band-section__inner">
+            <div class="adslot" role="complementary" data-t-attr="aria-label:landing.ad.label">
+              <span data-t="landing.ad.slot"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="band-section" aria-labelledby="free-h">
+          <div class="band-section__inner">
+            <h2 id="free-h" data-t="landing.free.title"></h2>
+            <p class="muted" data-t="landing.free.text"></p>
+            <div class="cluster">
+              <a class="btn btn--secondary" href="#"
+                ><i data-icon="heart"></i><span data-t="landing.donate"></span
+              ></a>
+              <a class="btn btn--quiet" href="#"
+                ><i data-icon="code"></i><span data-t="landing.source"></span
+              ></a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="sitefoot">
+        <div class="sitefoot__inner">
+          <ul>
+            <li><a href="legal.html?screen=terms" data-t="legal.terms.title"></a></li>
+            <li><a href="legal.html?screen=privacy" data-t="legal.privacy.title"></a></li>
+            <li><a href="#" data-t="landing.source"></a></li>
+          </ul>
+          <p class="small muted" data-t="landing.footer"></p>
+        </div>
+      </footer>
+
+      <!-- Visitors in the EU and UK see the consent tool of the ad provider; this bar only shows where it sits. -->
+      <div
+        class="consent"
+        role="region"
+        data-when="eu"
+        data-t-attr="aria-label:landing.consentBar.label"
+      >
+        <div class="stack stack--2">
+          <p data-t="landing.consentBar.text"></p>
+          <p class="small muted" data-t="landing.consentBar.sample"></p>
+        </div>
+        <div class="cluster">
+          <button
+            class="btn btn--secondary"
+            type="button"
+            data-t="landing.consentBar.decline"
+          ></button>
+          <button class="btn" type="button" data-t="landing.consentBar.accept"></button>
+        </div>
+      </div>
+    </section>
+
+    <script src="locales/he.js"></script>
+    <script src="locales/en.js"></script>
+    <script src="icons.js"></script>
+    <script src="mock.js"></script>
+    <script src="pages/landing.js"></script>
+  </body>
+</html>

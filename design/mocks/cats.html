@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/looks.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/screens.css" />
+    <link rel="stylesheet" href="styles/responsive.css" />
+  </head>
+  <body data-title="cats.title" data-chrome="tabs">
+    <div class="shell">
+      <main class="main">
+        <!-- ============ Feed ============ -->
+        <div data-screen="feed" data-chrome="tabs" data-default-state="default">
+          <header class="topbar">
+            <h1 class="topbar__title" data-t="cats.feed.title"></h1>
+            <a class="btn btn--small topbar__cta" href="cats.html?screen=post"
+              ><i data-icon="camera" data-class="icon--s"></i><span data-t="cats.post.cta"></span
+            ></a>
+          </header>
+          <div class="layout-2">
+            <div class="page page--feed">
+              <div class="feed">
+                <div class="notice" data-when="seen">
+                  <i data-icon="info"></i>
+                  <div class="notice__body"><span data-t="cats.feed.seenAll"></span></div>
+                </div>
+
+                <article class="post" data-when="ownreview">
+                  <header class="post__head">
+                    <span class="avatar" data-t="demo.me.initials"></span>
+                    <div class="post__who">
+                      <strong><bdi data-t="demo.me.name"></bdi></strong>
+                      <div class="small muted" data-t="cats.feed.now"></div>
+                    </div>
+                  </header>
+                  <div class="photo photo--square" data-tone="2">
+                    <i data-icon="cat"></i>
+                    <span class="photo__caption" data-t="common.samplePhoto"></span>
+                    <span class="chip photo__status" data-level="none"
+                      ><i data-icon="clock"></i><span data-t="common.inReview"></span
+                    ></span>
+                  </div>
+                  <div class="post__foot">
+                    <p class="small muted" data-t="cats.feed.reviewNote"></p>
+                  </div>
+                </article>
+
+                <div id="posts" data-unless="loading empty"></div>
+
+                <div class="stack stack--3" data-when="loading" aria-busy="true">
+                  <div class="skeleton skeleton--post"></div>
+                  <div class="skeleton skeleton--post"></div>
+                </div>
+
+                <div class="empty" data-when="empty">
+                  <i data-icon="cat" data-class="icon--l"></i>
+                  <h2 data-t="cats.feed.empty.title"></h2>
+                  <p data-t="cats.feed.empty.text"></p>
+                  <a class="btn" href="cats.html?screen=post" data-t="cats.post.cta"></a>
+                </div>
+              </div>
+            </div>
+            <aside class="context">
+              <a class="btn btn--lg" href="cats.html?screen=post"
+                ><i data-icon="camera"></i><span data-t="cats.post.cta"></span
+              ></a>
+              <div class="notice">
+                <i data-icon="info"></i>
+                <div class="notice__body">
+                  <strong data-t="cats.feed.how.title"></strong
+                  ><span data-t="cats.feed.how.text"></span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <!-- ============ Post a cat ============ -->
+        <div data-screen="post" data-chrome="page" data-default-state="choose">
+          <header class="topbar">
+            <a class="iconbtn" href="cats.html" data-t-attr="aria-label:common.back"
+              ><i data-icon="back" data-class="icon--flip"></i
+            ></a>
+            <h1 class="topbar__title" data-t="cats.post.title"></h1>
+          </header>
+
+          <div class="centered" data-when="inreview">
+            <span class="illus"><i data-icon="clock"></i></span>
+            <h2 data-t="cats.post.review.title"></h2>
+            <p class="muted" data-t="cats.post.review.text"></p>
+            <a class="btn" href="cats.html?state=ownreview" data-t="cats.post.review.back"></a>
+          </div>
+
+          <div class="page page--narrow stack stack--3" data-when="picker">
+            <h2 data-t="cats.picker.title"></h2>
+            <p class="muted small" data-t="cats.picker.hint"></p>
+            <div class="rows" id="picker-rows"></div>
+          </div>
+
+          <form class="page page--narrow stack stack--5" novalidate data-unless="inreview picker">
+            <div class="notice" data-level="red" data-when="nocat">
+              <i data-icon="exclaim"></i>
+              <div class="notice__body">
+                <strong data-t="cats.post.noCat.title"></strong
+                ><span data-t="cats.post.noCat.text"></span>
+              </div>
+            </div>
+            <div class="notice" data-level="red" data-when="limit">
+              <i data-icon="clock"></i>
+              <div class="notice__body">
+                <strong data-t="cats.post.limit.title"></strong
+                ><span data-t="cats.post.limit.text"></span>
+              </div>
+            </div>
+
+            <div class="field">
+              <span class="field__label" data-t="cats.post.photo.label"></span>
+              <button class="photo-pick" type="button" data-when="choose limit">
+                <i data-icon="camera"></i><span data-t="cats.post.photo.add"></span>
+              </button>
+              <div
+                class="photo photo--square photo--round"
+                data-tone="2"
+                data-unless="choose limit"
+              >
+                <i data-icon="cat"></i>
+                <span class="photo__caption" data-t="common.samplePhoto"></span>
+              </div>
+              <div class="progress" data-when="uploading">
+                <div class="progress__bar" data-p="60"></div>
+              </div>
+              <p class="field__hint" data-t="cats.post.photo.hint"></p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="cat-name"
+                ><span data-t="cats.post.name.label"></span>
+                <span class="muted small">(<span data-t="common.optional"></span>)</span></label
+              >
+              <input
+                class="input"
+                id="cat-name"
+                data-t-attr="placeholder:cats.post.name.placeholder"
+              />
+            </div>
+
+            <fieldset class="field">
+              <legend class="field__label" data-t="cats.post.where.label"></legend>
+              <div class="choices">
+                <label class="choice choice--row">
+                  <input type="radio" name="where" value="spot" id="where-spot" />
+                  <span class="choice__tile"
+                    ><i data-icon="pin"></i><span data-t="cats.post.where.spot"></span
+                    ><span class="choice__mark"><i data-icon="check"></i></span
+                  ></span>
+                </label>
+                <label class="choice choice--row">
+                  <input type="radio" name="where" value="random" id="where-random" />
+                  <span class="choice__tile"
+                    ><i data-icon="cat"></i><span data-t="cats.post.where.random"></span
+                    ><span class="choice__mark"><i data-icon="check"></i></span
+                  ></span>
+                </label>
+              </div>
+              <div class="rows" data-when="ready-spot uploading nocat">
+                <button class="row" type="button" data-go="picker">
+                  <i class="row__icon" data-icon="pin"></i>
+                  <span class="row__main"
+                    ><span class="row__title" data-t="demo.spot1.name"></span><br /><span
+                      class="row__value"
+                      data-t="cats.post.where.change"
+                    ></span
+                  ></span>
+                  <i class="row__chev" data-icon="chevron" data-class="icon--flip"></i>
+                </button>
+              </div>
+              <p
+                class="field__hint"
+                data-when="ready-random"
+                data-t="cats.post.where.randomHint"
+              ></p>
+            </fieldset>
+          </form>
+          <div class="footbar on-dado" data-unless="inreview picker">
+            <button
+              class="btn btn--on-dado btn--lg"
+              type="button"
+              data-go="inreview"
+              data-t="cats.post.submit"
+            ></button>
+          </div>
+        </div>
+
+        <!-- ============ One cat: photo and comments ============ -->
+        <div data-screen="cat" data-chrome="page" data-default-state="default">
+          <header class="topbar">
+            <a class="iconbtn" href="cats.html" data-t-attr="aria-label:common.back"
+              ><i data-icon="back" data-class="icon--flip"></i
+            ></a>
+            <h1 class="topbar__title" data-t="cats.cat.title"></h1>
+            <button class="iconbtn" type="button" data-t-attr="aria-label:common.report">
+              <i data-icon="flag"></i>
+            </button>
+          </header>
+          <div class="page page--narrow stack stack--5">
+            <article class="post post--solo">
+              <header class="post__head">
+                <span class="avatar" data-t="demo.user1.initials"></span>
+                <div class="post__who">
+                  <strong><bdi data-t="demo.user1.name"></bdi></strong>
+                  <div class="small muted">
+                    <i data-icon="pin" data-class="icon--s"></i>
+                    <span data-t="demo.spot1.name"></span> ·
+                    <span class="num" data-t="spot.ago.hours" data-v='{"n":2}'></span>
+                  </div>
+                </div>
+              </header>
+              <div class="photo photo--square" data-tone="1">
+                <i data-icon="cat"></i
+                ><span class="photo__caption" data-t="common.samplePhoto"></span>
+              </div>
+              <div class="post__actions">
+                <button class="like" type="button" aria-pressed="true">
+                  <i data-icon="heart"></i><span class="num">24</span>
+                </button>
+              </div>
+              <div class="post__foot"><strong data-t="demo.cat1.name"></strong></div>
+            </article>
+
+            <section>
+              <h2 data-t="cats.cat.comments" data-v='{"n":3}'></h2>
+              <div>
+                <div class="comment">
+                  <span class="avatar" data-t="demo.user2.initials"></span>
+                  <div class="comment__body">
+                    <div class="comment__meta">
+                      <strong><bdi data-t="demo.user2.name"></bdi></strong
+                      ><span class="num" data-t="spot.ago.hours" data-v='{"n":1}'></span>
+                    </div>
+                    <p data-t="demo.comment1"></p>
+                  </div>
+                </div>
+                <div class="comment">
+                  <span class="avatar" data-t="demo.user3.initials"></span>
+                  <div class="comment__body">
+                    <div class="comment__meta">
+                      <strong><bdi data-t="demo.user3.name"></bdi></strong
+                      ><span class="num" data-t="spot.ago.hours" data-v='{"n":2}'></span>
+                    </div>
+                    <p data-t="demo.comment2"></p>
+                  </div>
+                </div>
+                <div class="comment" data-when="review">
+                  <span class="avatar" data-t="demo.me.initials"></span>
+                  <div class="comment__body">
+                    <div class="comment__meta">
+                      <strong><bdi data-t="demo.me.name"></bdi></strong
+                      ><span class="chip" data-level="none"
+                        ><i data-icon="clock"></i><span data-t="common.inReview"></span
+                      ></span>
+                    </div>
+                    <p data-t="demo.comment3"></p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="composer" data-unless="restricted limit">
+            <div class="field composer__field">
+              <input
+                class="input"
+                data-t-attr="placeholder:cats.cat.comment.placeholder;aria-label:cats.cat.comment.placeholder"
+              />
+              <p class="field__error" data-when="refused">
+                <i data-icon="exclaim"></i><span data-t="common.refusedText"></span>
+              </p>
+            </div>
+            <button
+              class="iconbtn iconbtn--solid"
+              type="button"
+              data-t-attr="aria-label:common.send"
+            >
+              <i data-icon="send" data-class="icon--flip"></i>
+            </button>
+          </div>
+          <div class="composer" data-when="restricted limit">
+            <div class="notice" data-level="red">
+              <i data-icon="restrict"></i>
+              <div class="notice__body">
+                <span
+                  data-when="restricted"
+                  data-t="chat.restricted.text"
+                  data-v='{"date":"12.11"}'
+                ></span
+                ><span data-when="limit" data-t="cats.cat.comment.limit"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <nav data-nav="cats"></nav>
+    </div>
+
+    <script src="locales/he.js"></script>
+    <script src="locales/en.js"></script>
+    <script src="icons.js"></script>
+    <script src="mock.js"></script>
+    <script src="demo.js"></script>
+    <script src="pages/cats.js"></script>
+  </body>
+</html>

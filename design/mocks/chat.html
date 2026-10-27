@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/looks.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/screens.css" />
+    <link rel="stylesheet" href="styles/responsive.css" />
+  </head>
+  <body data-title="chat.title" data-chrome="page">
+    <div class="shell">
+      <main class="main">
+        <div data-screen="thread" data-default-state="default">
+          <header class="topbar">
+            <a class="iconbtn" href="spot.html" data-t-attr="aria-label:common.back"
+              ><i data-icon="back" data-class="icon--flip"></i
+            ></a>
+            <div class="topbar__title">
+              <h1 class="chat-title" data-t="chat.heading"></h1>
+              <p class="small muted" data-t="demo.spot1.name"></p>
+            </div>
+          </header>
+
+          <div class="page page--narrow chat-page">
+            <div class="thread" data-when="loading" aria-busy="true">
+              <div class="skeleton skeleton--msg"></div>
+              <div class="skeleton skeleton--msg"></div>
+              <div class="skeleton skeleton--msg"></div>
+            </div>
+
+            <div class="empty" data-when="empty">
+              <i data-icon="comment" data-class="icon--l"></i>
+              <h2 data-t="chat.empty.title"></h2>
+              <p data-t="chat.empty.text"></p>
+            </div>
+
+            <div class="thread" data-unless="loading empty">
+              <button
+                class="btn btn--quiet btn--small"
+                type="button"
+                data-t="chat.earlier"
+              ></button>
+
+              <div class="msg">
+                <span class="avatar" data-t="demo.user1.initials"></span>
+                <div class="msg__bubble">
+                  <div class="msg__meta">
+                    <strong><bdi data-t="demo.user1.name"></bdi></strong
+                    ><time class="num">07:10</time>
+                  </div>
+                  <p data-t="demo.msg1"></p>
+                </div>
+              </div>
+              <div class="msg">
+                <span class="avatar" data-t="demo.user2.initials"></span>
+                <div class="msg__bubble">
+                  <div class="msg__meta">
+                    <strong><bdi data-t="demo.user2.name"></bdi></strong
+                    ><time class="num">07:42</time>
+                  </div>
+                  <p data-t="demo.msg2"></p>
+                </div>
+                <button
+                  class="iconbtn iconbtn--small"
+                  type="button"
+                  data-t-attr="aria-label:common.more"
+                >
+                  <i data-icon="more"></i>
+                </button>
+              </div>
+              <div class="msg msg--own">
+                <span class="avatar" data-t="demo.me.initials"></span>
+                <div class="msg__bubble">
+                  <div class="msg__meta">
+                    <strong><bdi data-t="demo.me.name"></bdi></strong><time class="num">08:05</time>
+                  </div>
+                  <p data-t="demo.msg3"></p>
+                </div>
+              </div>
+              <div class="msg msg--own msg--review" data-when="review">
+                <span class="avatar" data-t="demo.me.initials"></span>
+                <div class="msg__bubble">
+                  <div class="msg__meta">
+                    <span class="chip" data-level="none"
+                      ><i data-icon="clock"></i><span data-t="common.inReview"></span
+                    ></span>
+                  </div>
+                  <p data-t="demo.msg4"></p>
+                  <p class="small" data-t="chat.review.note"></p>
+                </div>
+              </div>
+              <div class="menu" data-when="admin">
+                <button class="menu__item" type="button">
+                  <i data-icon="flag"></i><span data-t="common.report"></span>
+                </button>
+                <button class="menu__item menu__item--bad" type="button">
+                  <i data-icon="restrict"></i><span data-t="chat.admin.restrict"></span>
+                </button>
+                <button class="menu__item menu__item--bad" type="button">
+                  <i data-icon="lock"></i><span data-t="chat.admin.ban"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="composer" data-unless="restricted limit banned">
+            <div class="field composer__field">
+              <textarea
+                class="textarea composer__input"
+                rows="1"
+                data-t-attr="placeholder:chat.composer.placeholder;aria-label:chat.composer.placeholder"
+                aria-invalid="false"
+              ></textarea>
+              <p class="field__error" data-when="rejected">
+                <i data-icon="exclaim"></i><span data-t="chat.rejected"></span>
+              </p>
+            </div>
+            <button
+              class="iconbtn iconbtn--solid"
+              type="button"
+              data-t-attr="aria-label:common.send"
+            >
+              <i data-icon="send" data-class="icon--flip"></i>
+            </button>
+          </div>
+          <div class="composer" data-when="restricted limit banned">
+            <div class="notice" data-level="red">
+              <i data-icon="restrict"></i>
+              <div class="notice__body">
+                <span
+                  data-when="restricted"
+                  data-t="chat.restricted.text"
+                  data-v='{"date":"12.11"}'
+                ></span>
+                <span data-when="limit" data-t="chat.limit.text"></span>
+                <span data-when="banned" data-t="common.banned.text"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <nav data-nav="map"></nav>
+    </div>
+
+    <script src="locales/he.js"></script>
+    <script src="locales/en.js"></script>
+    <script src="icons.js"></script>
+    <script src="mock.js"></script>
+    <script src="pages/chat.js"></script>
+  </body>
+</html>

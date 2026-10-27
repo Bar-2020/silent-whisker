@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+    />
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/looks.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/screens.css" />
+    <link rel="stylesheet" href="styles/responsive.css" />
+  </head>
+  <body data-title="map.title" data-chrome="tabs">
+    <div class="shell shell--map">
+      <main class="main">
+        <section class="stage" data-screen="map" data-default-state="default" data-state-attr>
+          <div class="map" id="map" role="application" data-t-attr="aria-label:map.mapLabel"></div>
+
+          <div class="mapctl mapctl--top">
+            <button
+              class="round"
+              type="button"
+              data-go="legend"
+              data-t-attr="aria-label:map.legend"
+            >
+              <i data-icon="help"></i>
+            </button>
+          </div>
+
+          <div class="mapbanner" data-when="zoom">
+            <i data-icon="map"></i>
+            <span data-t="map.zoomIn"></span>
+          </div>
+          <div class="mapbanner" data-when="empty">
+            <i data-icon="info"></i>
+            <span data-t="map.empty"></span>
+          </div>
+          <div class="mapbanner" data-when="locdenied">
+            <i data-icon="locate"></i>
+            <span class="muted" data-t="map.locationOff"></span>
+            <a
+              class="btn btn--small btn--secondary"
+              href="profile.html?screen=location-help"
+              data-t="map.locationOn"
+            ></a>
+          </div>
+
+          <div class="mapctl">
+            <div class="menu" id="plus-menu" data-when="plus">
+              <a class="menu__item" href="spot.html?screen=new">
+                <i data-icon="pin"></i><span data-t="map.newSpot"></span>
+              </a>
+              <a class="menu__item" href="alerts.html?screen=raise">
+                <i data-icon="alert"></i><span data-t="map.raiseAlert"></span>
+              </a>
+            </div>
+            <button class="round" type="button" data-t-attr="aria-label:map.locate">
+              <i data-icon="locate"></i>
+            </button>
+            <button
+              class="round round--primary"
+              type="button"
+              data-go="plus"
+              data-t-attr="aria-label:map.add"
+              aria-haspopup="menu"
+            >
+              <i data-icon="plus"></i>
+            </button>
+          </div>
+
+          <!-- A spot is selected: sheet on the phone, panel from 768px. -->
+          <aside class="sheet sheet--peek" data-when="spot">
+            <div class="sheet__head">
+              <div class="stack stack--2">
+                <h2 class="sheet__title" data-t="demo.spot1.name"></h2>
+                <p class="muted small" data-t="demo.spot1.address"></p>
+              </div>
+              <button
+                class="iconbtn"
+                type="button"
+                data-go="default"
+                data-t-attr="aria-label:common.close"
+              >
+                <i data-icon="x"></i>
+              </button>
+            </div>
+            <div class="cluster">
+              <span class="chip" data-level="red">
+                <i data-icon="exclaim"></i><span data-t="map.chip.food.red"></span>
+              </span>
+              <span class="chip" data-level="green">
+                <i data-icon="check"></i><span data-t="map.chip.water.green"></span>
+              </span>
+            </div>
+            <p class="muted small num" data-t="map.lastLog" data-v='{"n":26}'></p>
+            <a
+              class="btn btn--block"
+              href="spot.html?screen=detail&state=red"
+              data-t="map.openSpot"
+            ></a>
+          </aside>
+
+          <!-- A pending custom spot, as an admin sees it. -->
+          <aside class="sheet sheet--peek" data-when="spot-pending">
+            <div class="sheet__head">
+              <div class="stack stack--2">
+                <span class="tag tag--pending"
+                  ><i data-icon="clock" data-class="icon--s"></i
+                  ><span data-t="spot.tag.pending"></span
+                ></span>
+                <h2 class="sheet__title" data-t="demo.spot2.name"></h2>
+                <p class="muted small" data-t="demo.spot2.address"></p>
+              </div>
+              <button
+                class="iconbtn"
+                type="button"
+                data-go="default"
+                data-t-attr="aria-label:common.close"
+              >
+                <i data-icon="x"></i>
+              </button>
+            </div>
+            <p class="small muted" data-t="map.pendingBy" data-v='{"name":"Dana K."}'></p>
+            <div class="adminrow">
+              <button class="btn" type="button" data-t="spot.admin.approve"></button>
+              <button class="btn btn--secondary" type="button" data-t="spot.admin.reject"></button>
+            </div>
+          </aside>
+
+          <!-- A cat alert is selected. -->
+          <aside class="sheet sheet--peek" data-when="alert">
+            <div class="sheet__head">
+              <div class="stack stack--2">
+                <span class="chip" data-level="alert">
+                  <i data-icon="exclaim"></i><span data-t="alerts.kind.danger"></span>
+                </span>
+                <h2 class="sheet__title" data-t="demo.alert1.note"></h2>
+              </div>
+              <button
+                class="iconbtn"
+                type="button"
+                data-go="default"
+                data-t-attr="aria-label:common.close"
+              >
+                <i data-icon="x"></i>
+              </button>
+            </div>
+            <p class="small muted num">
+              <span data-t="alerts.timeLeft" data-v='{"n":4}'></span> ·
+              <span data-t="alerts.distance.m" data-v='{"n":320}'></span>
+            </p>
+            <div class="cluster">
+              <a class="btn" href="alerts.html?screen=detail" data-t="alerts.openAlert"></a>
+              <a class="btn btn--secondary" href="#"
+                ><i data-icon="navigate"></i><span data-t="common.navigate"></span
+              ></a>
+            </div>
+          </aside>
+
+          <!-- The legend. -->
+          <aside class="sheet" data-when="legend">
+            <div class="sheet__head">
+              <h2 class="sheet__title" data-t="map.legend"></h2>
+              <button
+                class="iconbtn"
+                type="button"
+                data-go="default"
+                data-t-attr="aria-label:common.close"
+              >
+                <i data-icon="x"></i>
+              </button>
+            </div>
+            <div class="legend" id="legend"></div>
+            <p class="small muted" data-t="map.legendWorst"></p>
+          </aside>
+        </section>
+      </main>
+      <nav data-nav="map"></nav>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script src="locales/he.js"></script>
+    <script src="locales/en.js"></script>
+    <script src="icons.js"></script>
+    <script src="mock.js"></script>
+    <script src="demo.js"></script>
+    <script src="pages/map.js"></script>
+  </body>
+</html>
