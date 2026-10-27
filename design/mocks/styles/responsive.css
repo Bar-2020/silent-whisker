@@ -138,6 +138,14 @@
     min-inline-size: 12rem;
   }
 
+  /* Disabled keeps the plain look here: the glass look would vanish on the white page. */
+  .footbar .btn:disabled,
+  .footbar .btn[aria-disabled='true'] {
+    border-color: var(--line);
+    background: var(--surface-sunk);
+    color: var(--ink-3);
+  }
+
   .firstrun__body {
     padding-block-start: var(--s-8);
   }
@@ -306,5 +314,26 @@
     padding: 0;
     margin: 0;
     max-inline-size: none;
+  }
+  .post-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: var(--s-7);
+    align-items: start;
+  }
+
+  .page--post {
+    max-inline-size: 64rem;
+  }
+
+  .footbar--wide {
+    max-inline-size: 64rem;
+    justify-content: flex-end;
+    padding-inline: var(--s-5);
+  }
+
+  .footbar--wide .btn {
+    flex: 0 0 auto;
+    min-inline-size: 18rem;
   }
 }

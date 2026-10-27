@@ -428,10 +428,25 @@ body[data-chrome='tabs'] .main {
   outline-offset: 0;
 }
 
+.input.is-focus,
+.textarea.is-focus {
+  border-color: var(--dado);
+  outline: 3px solid var(--focus);
+  outline-offset: 0;
+}
+
 .input[aria-invalid='true'],
 .textarea[aria-invalid='true'] {
   border-color: var(--bad);
   background: var(--bad-tint);
+}
+
+.input:disabled,
+.textarea:disabled {
+  border-color: var(--line);
+  background: var(--surface-sunk);
+  color: var(--ink-3);
+  cursor: not-allowed;
 }
 
 .counter {
@@ -478,8 +493,8 @@ body[data-chrome='tabs'] .main {
   align-items: center;
   justify-content: center;
   gap: var(--s-2);
-  min-block-size: 88px;
-  padding: var(--s-3) var(--s-2);
+  min-block-size: 72px;
+  padding: var(--s-2);
   border: 1.5px solid var(--line-strong);
   border-radius: var(--r-m);
   background: var(--surface);
@@ -534,6 +549,18 @@ body[data-chrome='tabs'] .main {
 .choice input:focus-visible + .choice__tile {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
+}
+
+.choice input:disabled + .choice__tile {
+  border-color: var(--line);
+  background: var(--surface-sunk);
+  color: var(--ink-3);
+  cursor: not-allowed;
+}
+
+.choice input:disabled + .choice__tile .icon,
+.choice input:disabled + .choice__tile small {
+  color: var(--ink-3);
 }
 
 .choice--row .choice__tile {
@@ -710,7 +737,7 @@ button.row {
 
 /* ---------- Map and its markers ---------- */
 .stage {
-  --sheet-h: 236px;
+  --sheet-h: 268px;
   position: relative;
   block-size: 100dvh;
   overflow: hidden;
@@ -760,39 +787,6 @@ button.row {
   stroke-width: 3;
 }
 
-.pin__glyph {
-  position: absolute;
-  inset-block-start: 9px;
-  inset-inline-start: 11px;
-  /* Leaflet gives every svg in its marker pane z-index 200; the glyph and mark sit above that. */
-  z-index: 500;
-  inline-size: 24px;
-  block-size: 24px;
-  fill: #fff;
-  stroke: none;
-}
-
-.pin__badge {
-  position: absolute;
-  inset-block-start: -4px;
-  inset-inline-end: -7px;
-  z-index: 501;
-  display: grid;
-  place-items: center;
-  inline-size: 18px;
-  block-size: 18px;
-  border-radius: 50%;
-  background: #fff;
-  color: var(--lvl);
-  box-shadow: 0 1px 2px rgb(20 32 52 / 0.35);
-}
-
-.pin__badge .icon {
-  inline-size: 11px;
-  block-size: 11px;
-  stroke-width: 3.4;
-}
-
 .pin[data-status='inactive'] {
   opacity: 0.6;
 }
@@ -807,21 +801,15 @@ button.row {
   stroke-dasharray: 4 3;
 }
 
-.pin[data-status='pending'] .pin__glyph {
-  fill: var(--dado);
-}
-
-.pin[data-status='pending'] .pin__badge {
-  display: none;
-}
-
 .pin.is-selected {
   scale: 1.15;
   transform-origin: 50% 100%;
 }
 
 .pin.is-selected .pin__body {
-  stroke: var(--ink);
+  stroke: var(--dado);
+  stroke-width: 5;
+  paint-order: stroke;
 }
 
 .sign {
@@ -873,6 +861,11 @@ button.row {
   font-size: var(--fs-s);
   font-weight: 700;
   white-space: nowrap;
+}
+
+.sign.is-selected .sign__box {
+  border-color: var(--dado);
+  box-shadow: 0 0 0 3px var(--dado);
 }
 
 .sign.is-selected {
@@ -1062,10 +1055,52 @@ button.row {
 }
 
 .sheet__head {
+  position: relative;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--s-3);
+  padding-inline-end: var(--s-7);
+}
+
+.sheet__head > .iconbtn {
+  position: absolute;
+  inset-block-start: calc(var(--s-2) * -1);
+  inset-inline-end: calc(var(--s-2) * -1);
+}
+
+.sheet__top {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-inline-size: 0;
+}
+
+.sheet__photo {
+  position: relative;
+  inline-size: 72px;
+  flex: none;
+}
+
+.photo__likes {
+  position: absolute;
+  inset-block-end: var(--s-1);
+  inset-inline-end: var(--s-1);
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1px var(--s-2);
+  border-radius: var(--r-pill);
+  background: var(--glass-light);
+  color: var(--dado);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.photo__likes .icon {
+  inline-size: 0.875rem;
+  block-size: 0.875rem;
+  fill: currentColor;
 }
 
 .sheet__title {
@@ -1210,7 +1245,7 @@ button.row {
   gap: var(--s-3);
 }
 
-.post__title h3 {
+.post__title h2 {
   font-size: var(--fs-l);
 }
 
@@ -1606,4 +1641,86 @@ body[data-chrome='tabs'] .shell--map .main {
 .stage[data-sheet='empty'] .mapctl--top,
 .stage[data-sheet='locdenied'] .mapctl--top {
   inset-block-start: calc(var(--s-4) + 64px);
+}
+
+/* ---------- Button states: every variant has the same six ---------- */
+.btn.is-hover,
+.btn.is-pressed {
+  background: var(--dado-deep);
+}
+
+.btn--secondary.is-hover,
+.btn--secondary.is-pressed,
+.btn--quiet.is-hover,
+.btn--quiet.is-pressed,
+.btn--on-dado.is-hover,
+.btn--on-dado.is-pressed {
+  background: var(--dado-tint);
+}
+
+.btn--danger.is-hover,
+.btn--danger.is-pressed {
+  background: var(--bad-ink);
+}
+
+.btn.is-pressed {
+  transform: translateY(1px);
+}
+
+.btn.is-focus {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  box-shadow: none;
+  opacity: 1;
+}
+
+/* Pending: an asynchronous action is in flight. The label says what is happening, a spinner turns,
+   the button keeps its size and colour and takes no taps. */
+.btn[aria-busy='true'] {
+  cursor: progress;
+  pointer-events: none;
+}
+
+.spinner--btn {
+  inline-size: 18px;
+  block-size: 18px;
+  border: 2.5px solid color-mix(in srgb, currentColor 30%, transparent);
+  border-block-start-color: currentColor;
+}
+
+.footbar .btn:disabled,
+.footbar .btn[aria-disabled='true'] {
+  border-color: rgb(255 255 255 / 0.3);
+  background: rgb(255 255 255 / 0.2);
+  color: rgb(255 255 255 / 0.85);
+}
+
+/* The state row: icon, what and how bad on the first line; how long ago and the small "empty" report on the second. */
+.state {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-1) var(--s-3);
+  padding-block: calc(var(--s-1) * 1.5);
+}
+
+.state__icon {
+  grid-row: 1 / span 2;
+}
+
+.state > .cluster {
+  grid-column: 2 / span 2;
+}
+
+.state__when {
+  grid-column: 2;
+}
+
+.state__actions {
+  grid-column: 3;
+  grid-row: 2;
+  margin: 0;
 }

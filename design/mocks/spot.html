@@ -54,7 +54,7 @@
               <a class="btn" href="map.html" data-t="spot.notFound.back"></a>
             </div>
 
-            <div class="page stack stack--5" data-unless="notfound">
+            <div class="page page--spot stack stack--4" data-unless="notfound">
               <div class="notice" data-level="green" data-sub="counted">
                 <i data-icon="checkcircle"></i>
                 <div class="notice__body">
@@ -112,207 +112,250 @@
                 ></span>
               </div>
 
-              <div
-                class="photo photo--banner photo--round"
-                data-tone="3"
-                data-when="red orange green creator inactive pending-creator pending-admin"
-              >
-                <i data-icon="cat"></i>
-                <span class="photo__caption" data-t="common.samplePhoto"></span>
-                <span class="chip photo__status" data-level="none" data-when="pending-creator"
-                  ><i data-icon="clock"></i><span data-t="common.inReview"></span
-                ></span>
-              </div>
-
-              <div class="split">
-                <div class="cluster">
-                  <i data-icon="pin"></i>
-                  <span id="spot-address"></span>
+              <div class="spot-head" data-unless="notfound">
+                <div
+                  class="photo photo--square photo--round spot-head__photo"
+                  data-tone="3"
+                  data-when="red orange green creator inactive pending-creator pending-admin"
+                >
+                  <i data-icon="cat"></i>
                 </div>
-                <a class="btn btn--secondary btn--small" href="#"
-                  ><i data-icon="navigate"></i><span data-t="common.navigate"></span
-                ></a>
+                <div class="spot-head__text">
+                  <span class="meta-line"
+                    ><i data-icon="pin"></i><span id="spot-address"></span
+                  ></span>
+                  <a
+                    class="btn btn--secondary btn--small"
+                    href="https://www.google.com/maps/dir/?api=1&destination=32.0628,34.7691"
+                    target="_blank"
+                    rel="noopener"
+                    ><i data-icon="navigate"></i><span data-t="common.navigate"></span
+                  ></a>
+                </div>
               </div>
               <p class="small muted" data-when="station" data-t="spot.station.source"></p>
 
-              <section class="section" data-unless="pending-creator pending-admin">
-                <h2 class="visually-hidden" data-t="spot.state.title"></h2>
-                <div id="state-rows"></div>
-              </section>
-
-              <section
-                class="section"
-                id="log"
-                data-unless="pending-creator pending-admin inactive"
-              >
-                <form class="stack stack--4" novalidate>
-                  <h2 data-t="spot.log.title"></h2>
-                  <fieldset class="stack stack--3">
-                    <legend class="visually-hidden" data-t="spot.log.legend"></legend>
-                    <div class="choices choices--3">
-                      <label class="choice">
-                        <input type="radio" name="kind" value="full" />
-                        <span class="choice__tile">
-                          <i data-icon="bowl" data-class="icon--l"></i>
-                          <span data-t="spot.log.full"></span>
-                          <small data-t="spot.log.fullHint"></small>
-                          <span class="choice__mark"><i data-icon="check"></i></span>
-                        </span>
-                      </label>
-                      <label class="choice">
-                        <input type="radio" name="kind" value="partial" />
-                        <span class="choice__tile">
-                          <i data-icon="bowl" data-class="icon--l"></i>
-                          <span data-t="spot.log.partial"></span>
-                          <small data-t="spot.log.partialHint"></small>
-                          <span class="choice__mark"><i data-icon="check"></i></span>
-                        </span>
-                      </label>
-                      <label class="choice">
-                        <input type="radio" name="kind" value="water" />
-                        <span class="choice__tile">
-                          <i data-icon="drop" data-class="icon--l"></i>
-                          <span data-t="spot.log.water"></span>
-                          <small data-t="spot.log.waterHint"></small>
-                          <span class="choice__mark"><i data-icon="check"></i></span>
-                        </span>
-                      </label>
-                    </div>
-                  </fieldset>
-                  <p class="small muted" data-t="spot.log.proof"></p>
-
+              <div class="stack stack--4" data-unless="pending-creator pending-admin">
+                <div class="tabs" role="tablist">
                   <button
-                    class="btn btn--lg btn--block"
                     type="button"
-                    id="log-submit"
-                    data-go="/counted"
-                    disabled
-                    data-unless="sending"
-                  >
-                    <span data-t="spot.log.submit"></span>
-                  </button>
-
-                  <div class="notice" data-level="none" data-sub="toosoon">
-                    <i data-icon="clock"></i>
-                    <div class="notice__body">
-                      <strong data-t="spot.log.tooSoon.title"></strong
-                      ><span data-t="spot.log.tooSoon.text"></span>
-                    </div>
-                  </div>
-                  <div class="notice" data-level="none" data-sub="dailycap">
-                    <i data-icon="exclaim"></i>
-                    <div class="notice__body">
-                      <strong data-t="spot.log.dailyCap.title"></strong
-                      ><span data-t="spot.log.dailyCap.text" data-v='{"max":30}'></span>
-                    </div>
-                  </div>
-                  <div class="notice" data-level="none" data-sub="attempts">
-                    <i data-icon="exclaim"></i>
-                    <div class="notice__body">
-                      <strong data-t="spot.log.attempts.title"></strong
-                      ><span data-t="spot.log.attempts.text"></span>
-                    </div>
-                  </div>
-                  <div class="notice" data-level="none" data-sub="ratelimit">
-                    <i data-icon="clock"></i>
-                    <div class="notice__body">
-                      <strong data-t="common.rateLimit.title"></strong
-                      ><span data-t="common.rateLimit.text" data-v='{"n":30}'></span>
-                    </div>
-                  </div>
-                  <div class="notice" data-level="red" data-sub="banned">
-                    <i data-icon="restrict"></i>
-                    <div class="notice__body">
-                      <strong data-t="common.banned.title"></strong
-                      ><span data-t="common.banned.text"></span>
-                    </div>
-                  </div>
-                </form>
-              </section>
-
-              <section class="section" data-unless="pending-creator pending-admin">
-                <div class="stack stack--3">
-                  <h2 data-t="spot.cats.title"></h2>
-                  <div class="cluster">
-                    <div class="photo photo--square photo--round spot-thumb" data-tone="1">
-                      <i data-icon="cat"></i>
-                    </div>
-                    <div class="photo photo--square photo--round spot-thumb" data-tone="2">
-                      <i data-icon="cat"></i>
-                    </div>
-                    <div class="photo photo--square photo--round spot-thumb" data-tone="4">
-                      <i data-icon="cat"></i>
-                    </div>
-                  </div>
-                  <a class="btn btn--secondary" href="cats.html?screen=post&state=ready-spot"
-                    ><i data-icon="camera"></i><span data-t="spot.cats.post"></span
-                  ></a>
+                    role="tab"
+                    data-tab="log"
+                    data-go="/"
+                    data-t="spot.tab.log"
+                  ></button>
+                  <button
+                    type="button"
+                    role="tab"
+                    data-tab="cats"
+                    data-go="/tab-cats"
+                    data-t="spot.tab.cats"
+                  ></button>
+                  <button
+                    type="button"
+                    role="tab"
+                    data-tab="chat"
+                    data-go="/tab-chat"
+                    data-t="spot.tab.chat"
+                  ></button>
+                  <button
+                    type="button"
+                    role="tab"
+                    data-tab="history"
+                    data-go="/tab-history"
+                    data-t="spot.tab.history"
+                  ></button>
                 </div>
-              </section>
 
-              <section class="section" data-unless="pending-creator pending-admin">
-                <div class="rows">
-                  <a class="row" href="chat.html">
-                    <i class="row__icon" data-icon="comment"></i>
-                    <span class="row__main"
-                      ><span class="row__title" data-t="spot.chat.title"></span><br /><span
-                        class="row__value"
-                        data-t="spot.chat.text"
-                      ></span
-                    ></span>
-                    <i class="row__chev" data-icon="chevron" data-class="icon--flip"></i>
-                  </a>
-                </div>
-              </section>
+                <section class="stack stack--3" data-panel="log" id="log" role="tabpanel">
+                  <h2 class="visually-hidden" data-t="spot.state.title"></h2>
+                  <div id="state-rows"></div>
+                  <form class="stack stack--3" novalidate data-unless="inactive">
+                    <fieldset class="stack stack--3">
+                      <legend class="visually-hidden" data-t="spot.log.legend"></legend>
+                      <div class="choices choices--3">
+                        <label class="choice">
+                          <input type="radio" name="kind" value="full" />
+                          <span class="choice__tile">
+                            <i data-icon="bowl"></i>
+                            <span data-t="spot.log.full"></span>
+                            <small data-t="spot.log.fullHint"></small>
+                            <span class="choice__mark"><i data-icon="check"></i></span>
+                          </span>
+                        </label>
+                        <label class="choice">
+                          <input type="radio" name="kind" value="partial" />
+                          <span class="choice__tile">
+                            <i data-icon="bowl"></i>
+                            <span data-t="spot.log.partial"></span>
+                            <small data-t="spot.log.partialHint"></small>
+                            <span class="choice__mark"><i data-icon="check"></i></span>
+                          </span>
+                        </label>
+                        <label class="choice">
+                          <input type="radio" name="kind" value="water" />
+                          <span class="choice__tile">
+                            <i data-icon="drop"></i>
+                            <span data-t="spot.log.water"></span>
+                            <small data-t="spot.log.waterHint"></small>
+                            <span class="choice__mark"><i data-icon="check"></i></span>
+                          </span>
+                        </label>
+                      </div>
+                    </fieldset>
+                    <p class="small muted" data-t="spot.log.proof"></p>
+                    <div class="notice" data-level="none" data-sub="toosoon">
+                      <i data-icon="clock"></i>
+                      <div class="notice__body">
+                        <strong data-t="spot.log.tooSoon.title"></strong
+                        ><span data-t="spot.log.tooSoon.text"></span>
+                      </div>
+                    </div>
+                    <div class="notice" data-level="none" data-sub="dailycap">
+                      <i data-icon="exclaim"></i>
+                      <div class="notice__body">
+                        <strong data-t="spot.log.dailyCap.title"></strong
+                        ><span data-t="spot.log.dailyCap.text" data-v='{"max":30}'></span>
+                      </div>
+                    </div>
+                    <div class="notice" data-level="none" data-sub="attempts">
+                      <i data-icon="exclaim"></i>
+                      <div class="notice__body">
+                        <strong data-t="spot.log.attempts.title"></strong
+                        ><span data-t="spot.log.attempts.text"></span>
+                      </div>
+                    </div>
+                    <div class="notice" data-level="none" data-sub="ratelimit">
+                      <i data-icon="clock"></i>
+                      <div class="notice__body">
+                        <strong data-t="common.rateLimit.title"></strong
+                        ><span data-t="common.rateLimit.text" data-v='{"n":30}'></span>
+                      </div>
+                    </div>
+                    <div class="notice" data-level="red" data-sub="banned">
+                      <i data-icon="restrict"></i>
+                      <div class="notice__body">
+                        <strong data-t="common.banned.title"></strong
+                        ><span data-t="common.banned.text"></span>
+                      </div>
+                    </div>
+                  </form>
+                </section>
 
-              <section class="section" data-unless="pending-creator pending-admin">
-                <h2 data-t="spot.history.title"></h2>
-                <ul>
-                  <li class="log">
-                    <span class="avatar" data-t="demo.user1.initials"></span>
-                    <div class="log__main">
-                      <div>
-                        <bdi data-t="demo.user1.name"></bdi> ·
-                        <span data-t="spot.history.feedFull"></span>
+                <section class="section" data-panel="cats" role="tabpanel" hidden>
+                  <div class="stack stack--3">
+                    <h2 data-t="spot.cats.title"></h2>
+                    <div class="cluster">
+                      <div class="photo photo--square photo--round spot-thumb" data-tone="1">
+                        <i data-icon="cat"></i>
                       </div>
-                      <div class="small muted num" data-t="spot.ago.hours" data-v='{"n":2}'></div>
-                    </div>
-                  </li>
-                  <li class="log">
-                    <span class="avatar" data-t="demo.user2.initials"></span>
-                    <div class="log__main">
-                      <div>
-                        <bdi data-t="demo.user2.name"></bdi> ·
-                        <span data-t="spot.history.water"></span>
+                      <div class="photo photo--square photo--round spot-thumb" data-tone="2">
+                        <i data-icon="cat"></i>
                       </div>
-                      <div class="small muted num" data-t="spot.ago.hours" data-v='{"n":6}'></div>
-                    </div>
-                  </li>
-                  <li class="log log--unverified">
-                    <span class="avatar" data-t="demo.user3.initials"></span>
-                    <div class="log__main">
-                      <div>
-                        <bdi data-t="demo.user3.name"></bdi> ·
-                        <span data-t="spot.history.feedPartial"></span>
+                      <div class="photo photo--square photo--round spot-thumb" data-tone="4">
+                        <i data-icon="cat"></i>
                       </div>
-                      <div class="small muted num" data-t="spot.ago.hours" data-v='{"n":9}'></div>
                     </div>
-                    <span class="chip" data-level="none"
-                      ><i data-icon="dash"></i><span data-t="spot.history.unverified"></span
-                    ></span>
-                  </li>
-                  <li class="log">
-                    <span class="avatar" data-t="demo.user1.initials"></span>
-                    <div class="log__main">
-                      <div>
-                        <bdi data-t="demo.user1.name"></bdi> ·
-                        <span data-t="spot.history.emptyFood"></span>
+                    <a class="btn btn--secondary" href="cats.html?screen=post&state=ready-spot"
+                      ><i data-icon="camera"></i><span data-t="spot.cats.post"></span
+                    ></a>
+                  </div>
+                </section>
+
+                <section class="section" data-panel="chat" role="tabpanel" hidden>
+                  <div class="rows">
+                    <a class="row" href="chat.html">
+                      <i class="row__icon" data-icon="comment"></i>
+                      <span class="row__main"
+                        ><span class="row__title" data-t="spot.chat.title"></span><br /><span
+                          class="row__value"
+                          data-t="spot.chat.text"
+                        ></span
+                      ></span>
+                      <i class="row__chev" data-icon="chevron" data-class="icon--flip"></i>
+                    </a>
+                  </div>
+                </section>
+
+                <section class="section" data-panel="history" role="tabpanel" hidden>
+                  <h2 data-t="spot.history.title"></h2>
+                  <ul>
+                    <li class="log">
+                      <span class="avatar" data-t="demo.user1.initials"></span>
+                      <div class="log__main">
+                        <div>
+                          <bdi data-t="demo.user1.name"></bdi> ·
+                          <span data-t="spot.history.feedFull"></span>
+                        </div>
+                        <div class="small muted num" data-t="spot.ago.hours" data-v='{"n":2}'></div>
                       </div>
-                      <div class="small muted num" data-t="spot.ago.hours" data-v='{"n":26}'></div>
-                    </div>
-                  </li>
-                </ul>
-              </section>
+                    </li>
+                    <li class="log">
+                      <span class="avatar" data-t="demo.user2.initials"></span>
+                      <div class="log__main">
+                        <div>
+                          <bdi data-t="demo.user2.name"></bdi> ·
+                          <span data-t="spot.history.water"></span>
+                        </div>
+                        <div class="small muted num" data-t="spot.ago.hours" data-v='{"n":6}'></div>
+                      </div>
+                    </li>
+                    <li class="log log--unverified">
+                      <span class="avatar" data-t="demo.user3.initials"></span>
+                      <div class="log__main">
+                        <div>
+                          <bdi data-t="demo.user3.name"></bdi> ·
+                          <span data-t="spot.history.feedPartial"></span>
+                        </div>
+                        <div class="small muted num" data-t="spot.ago.hours" data-v='{"n":9}'></div>
+                      </div>
+                      <span class="chip" data-level="none"
+                        ><i data-icon="dash"></i><span data-t="spot.history.unverified"></span
+                      ></span>
+                    </li>
+                    <li class="log">
+                      <span class="avatar" data-t="demo.user1.initials"></span>
+                      <div class="log__main">
+                        <div>
+                          <bdi data-t="demo.user1.name"></bdi> ·
+                          <span data-t="spot.history.emptyFood"></span>
+                        </div>
+                        <div
+                          class="small muted num"
+                          data-t="spot.ago.hours"
+                          data-v='{"n":26}'
+                        ></div>
+                      </div>
+                    </li>
+                  </ul>
+                </section>
+              </div>
+            </div>
+
+            <div data-panel-footer="log">
+              <div
+                class="footbar on-dado"
+                data-unless="pending-creator pending-admin inactive notfound"
+              >
+                <button
+                  class="btn btn--on-dado btn--lg"
+                  type="button"
+                  id="log-submit"
+                  data-go="/sending"
+                  data-notsub="sending"
+                  disabled
+                >
+                  <span data-t="spot.log.submit"></span>
+                </button>
+                <button
+                  class="btn btn--on-dado btn--lg"
+                  type="button"
+                  aria-busy="true"
+                  data-sub="sending"
+                >
+                  <span class="spinner spinner--btn"></span><span data-t="spot.log.sending"></span>
+                </button>
+              </div>
             </div>
 
             <!-- Sheets: confirm an empty report, report content. -->

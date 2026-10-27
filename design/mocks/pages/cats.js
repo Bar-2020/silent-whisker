@@ -48,7 +48,7 @@
 
   function post(item, index) {
     const title = item.cat
-      ? `<div class="post__title"><h3 data-t="${item.cat}"></h3><span class="small muted num" data-t="spot.ago.hours" data-v='{"n":${item.hours}}'></span></div>`
+      ? `<div class="post__title"><h2 data-t="${item.cat}"></h2><span class="small muted num" data-t="spot.ago.hours" data-v='{"n":${item.hours}}'></span></div>`
       : `<div class="post__title"><span></span><span class="small muted num" data-t="spot.ago.hours" data-v='{"n":${item.hours}}'></span></div>`;
     return (
       '<article class="post">' +

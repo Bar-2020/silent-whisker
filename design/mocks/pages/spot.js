@@ -54,6 +54,7 @@
   const DETAIL_STATES = Object.keys(VIEWS);
   const PLACE_STATES = ['address', 'address-error', 'photo', 'uploading', 'refused'];
   const LOG_RESULTS = [
+    'sending',
     'counted',
     'unverified',
     'toosoon',
@@ -68,10 +69,12 @@
     let when = 'spot.last.none';
     if (level !== 'none') when = kind === 'water' ? 'spot.last.water' : `spot.last.${amount}`;
     if (hours === 0) when = 'spot.last.justNow';
+    /* A need that is already marked cannot be reported again: the button waits, and says why. */
+    const needed = level === 'red';
     const action =
       level === 'none'
         ? ''
-        : `<div class="state__actions"><button class="btn btn--secondary btn--small" type="button" data-go="/empty-${kind}" data-t="spot.empty.${kind}"></button></div>`;
+        : `<div class="state__actions"><button class="btn btn--secondary btn--small" type="button"${needed ? ' disabled' : ''} data-go="/empty-${kind}" data-t="${needed ? 'spot.empty.already' : `spot.empty.${kind}`}"></button></div>`;
     return (
       `<div class="state" data-level="${level}">` +
       `<span class="state__icon"><i data-icon="${icon}"></i></span>` +
@@ -172,8 +175,33 @@
   }
   new ResizeObserver(mountSideMap).observe(document.body);
 
+  /* The log, the cats, the chat and the history are four panels of one screen, so none scrolls long. */
+  function applyTabs() {
+    const sub = Mock.getSub();
+    const tab = sub.startsWith('tab-') ? sub.slice(4) : 'log';
+    document.querySelectorAll('[data-panel]').forEach((panel) => {
+      panel.hidden = panel.dataset.panel !== tab;
+    });
+    document.querySelectorAll('[data-panel-footer]').forEach((footer) => {
+      footer.hidden = footer.dataset.panelFooter !== tab;
+    });
+    document.querySelectorAll('[data-tab]').forEach((button) => {
+      button.setAttribute('aria-selected', String(button.dataset.tab === tab));
+    });
+  }
+
+  if (submit) {
+    submit.addEventListener('click', () => {
+      /* The save takes a moment; then the result comes back. */
+      window.setTimeout(() => {
+        if (Mock.getSub() === 'sending') Mock.setState('/counted');
+      }, 1600);
+    });
+  }
+
   Mock.onState = (state) => {
     if (DETAIL_STATES.includes(state)) renderDetail(state);
+    applyTabs();
     applyForms(state);
     applySub();
     mountSideMap();

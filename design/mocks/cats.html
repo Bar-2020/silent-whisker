@@ -92,6 +92,17 @@
             <h1 class="topbar__title" data-t="cats.post.title"></h1>
           </header>
 
+          <div class="process" role="status" data-when="uploading">
+            <div class="process__row">
+              <span class="spinner"></span>
+              <div>
+                <strong data-t="cats.post.uploading.title"></strong>
+                <span class="small" data-t="cats.post.uploading.text"></span>
+              </div>
+            </div>
+            <div class="progress"><div class="progress__bar" data-p="60"></div></div>
+          </div>
+
           <div class="centered" data-when="inreview">
             <span class="illus"><i data-icon="clock"></i></span>
             <h2 data-t="cats.post.review.title"></h2>
@@ -124,7 +135,7 @@
           </div>
 
           <form
-            class="page page--narrow stack stack--5"
+            class="page page--post stack stack--5"
             novalidate
             data-unless="inreview picker picker-general"
           >
@@ -143,68 +154,82 @@
               </div>
             </div>
 
-            <div class="stack stack--2">
-              <button class="dropzone" type="button" data-when="choose limit">
-                <span class="dropzone__inner"
-                  ><span class="dropzone__camera"><i data-icon="camera"></i></span
-                  ><span data-t="cats.post.photo.add"></span
-                ></span>
-              </button>
-              <div class="dropzone dropzone--filled" data-unless="choose limit">
-                <div class="photo" data-tone="2"><i data-icon="cat"></i></div>
-                <button class="btn btn--small btn--secondary dropzone__change" type="button">
-                  <i data-icon="camera" data-class="icon--s"></i
-                  ><span data-t="cats.post.photo.change"></span>
-                </button>
-              </div>
-              <div class="progress" data-when="uploading">
-                <div class="progress__bar" data-p="60"></div>
-              </div>
-              <p class="field__hint" data-t="cats.post.photo.hint"></p>
-            </div>
-
-            <div class="field">
-              <label class="field__label" for="cat-name"
-                ><span data-t="cats.post.name.label"></span>
-                <span class="muted small" data-t="common.optionalLabel"></span
-              ></label>
-              <input
-                class="input"
-                id="cat-name"
-                data-t-attr="placeholder:cats.post.name.placeholder"
-              />
-            </div>
-
-            <div class="field">
-              <span class="field__label" id="where-label" data-t="cats.post.where.label"></span>
-              <button
-                class="where-pick"
-                type="button"
-                data-go="picker"
-                aria-labelledby="where-label"
-              >
-                <i data-icon="pin"></i>
-                <span class="where-pick__text">
-                  <span data-when="choose limit" data-t="cats.post.where.choose"></span>
-                  <span data-when="ready-spot uploading nocat" data-t="demo.spot1.name"></span>
-                  <span data-when="ready-random" data-t="cats.post.where.random"></span>
-                  <span
-                    class="where-pick__hint"
-                    data-when="ready-random"
-                    data-t="cats.post.where.randomHint"
+            <div class="post-layout">
+              <div class="stack stack--2">
+                <button class="dropzone" type="button" data-when="choose limit">
+                  <span class="dropzone__inner"
+                    ><span class="dropzone__camera"><i data-icon="camera"></i></span
+                    ><span data-t="cats.post.photo.add"></span
                   ></span>
-                </span>
-                <i data-icon="chevron" data-class="icon--flip"></i>
-              </button>
+                </button>
+                <div class="dropzone dropzone--filled" data-unless="choose limit">
+                  <div class="photo" data-tone="2"><i data-icon="cat"></i></div>
+                  <button
+                    class="btn btn--small btn--secondary dropzone__change"
+                    type="button"
+                    data-unless="uploading"
+                  >
+                    <i data-icon="camera" data-class="icon--s"></i
+                    ><span data-t="cats.post.photo.change"></span>
+                  </button>
+                </div>
+                <p class="field__hint" data-t="cats.post.photo.hint"></p>
+              </div>
+
+              <div class="post-layout__fields">
+                <div class="field">
+                  <label class="field__label" for="cat-name"
+                    ><span data-t="cats.post.name.label"></span>
+                    <span class="muted small" data-t="common.optionalLabel"></span
+                  ></label>
+                  <input
+                    class="input"
+                    id="cat-name"
+                    data-t-attr="placeholder:cats.post.name.placeholder"
+                  />
+                </div>
+
+                <div class="field">
+                  <span class="field__label" id="where-label" data-t="cats.post.where.label"></span>
+                  <button
+                    class="where-pick"
+                    type="button"
+                    data-go="picker"
+                    aria-labelledby="where-label"
+                  >
+                    <i data-icon="pin"></i>
+                    <span class="where-pick__text">
+                      <span data-when="choose limit" data-t="cats.post.where.choose"></span>
+                      <span data-when="ready-spot uploading nocat" data-t="demo.spot1.name"></span>
+                      <span data-when="ready-random" data-t="cats.post.where.random"></span>
+                      <span
+                        class="where-pick__hint"
+                        data-when="ready-random"
+                        data-t="cats.post.where.randomHint"
+                      ></span>
+                    </span>
+                    <i data-icon="chevron" data-class="icon--flip"></i>
+                  </button>
+                </div>
+              </div>
             </div>
           </form>
-          <div class="footbar on-dado" data-unless="inreview picker picker-general">
+          <div class="footbar footbar--wide on-dado" data-unless="inreview picker picker-general">
             <button
               class="btn btn--on-dado btn--lg"
               type="button"
               data-go="inreview"
+              data-unless="uploading"
               data-t="cats.post.submit"
             ></button>
+            <button
+              class="btn btn--on-dado btn--lg"
+              type="button"
+              aria-busy="true"
+              data-when="uploading"
+            >
+              <span class="spinner spinner--btn"></span><span data-t="cats.post.sending"></span>
+            </button>
           </div>
         </div>
 
@@ -229,7 +254,7 @@
               </div>
               <div class="post__body">
                 <div class="post__title">
-                  <h3 data-t="demo.cat1.name"></h3>
+                  <h2 data-t="demo.cat1.name"></h2>
                   <span class="small muted num" data-t="spot.ago.hours" data-v='{"n":2}'></span>
                 </div>
                 <div class="post__who">

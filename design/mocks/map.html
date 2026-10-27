@@ -76,9 +76,22 @@
           <!-- A spot is selected: sheet on the phone, panel from 768px. -->
           <aside class="sheet sheet--peek" data-when="spot">
             <div class="sheet__head">
-              <div class="stack stack--2">
-                <h2 class="sheet__title" data-t="demo.spot1.name"></h2>
-                <p class="muted small" data-t="demo.spot1.address"></p>
+              <div class="sheet__top">
+                <div
+                  class="photo photo--square photo--round sheet__photo"
+                  data-tone="1"
+                  role="img"
+                  data-t-attr="aria-label:map.topPhoto"
+                >
+                  <i data-icon="cat"></i>
+                  <span class="photo__likes"
+                    ><i data-icon="paw"></i><span class="num">24</span></span
+                  >
+                </div>
+                <div class="stack stack--2">
+                  <h2 class="sheet__title" data-t="demo.spot1.name"></h2>
+                  <p class="muted small" data-t="demo.spot1.address"></p>
+                </div>
               </div>
               <button
                 class="iconbtn"
@@ -90,12 +103,12 @@
               </button>
             </div>
             <div class="cluster">
-              <span class="chip" data-level="red">
-                <i data-icon="exclaim"></i><span data-t="map.chip.food.red"></span>
-              </span>
-              <span class="chip" data-level="green">
-                <i data-icon="check"></i><span data-t="map.chip.water.green"></span>
-              </span>
+              <span class="chip" data-level="red"
+                ><i data-icon="exclaim"></i><span data-t="map.chip.food.red"></span
+              ></span>
+              <span class="chip" data-level="green"
+                ><i data-icon="check"></i><span data-t="map.chip.water.green"></span
+              ></span>
             </div>
             <p class="muted small num" data-t="map.lastLog" data-v='{"n":26}'></p>
             <a
@@ -156,7 +169,11 @@
             </p>
             <div class="cluster">
               <a class="btn" href="alerts.html?screen=detail" data-t="alerts.openAlert"></a>
-              <a class="btn btn--secondary" href="#"
+              <a
+                class="btn btn--secondary"
+                href="https://www.google.com/maps/dir/?api=1&destination=32.0628,34.7691"
+                target="_blank"
+                rel="noopener"
                 ><i data-icon="navigate"></i><span data-t="common.navigate"></span
               ></a>
             </div>

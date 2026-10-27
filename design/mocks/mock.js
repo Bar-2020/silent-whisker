@@ -147,6 +147,9 @@
     document.querySelectorAll('[data-sub]').forEach((el) => {
       el.hidden = !el.dataset.sub.split(' ').includes(sub);
     });
+    document.querySelectorAll('[data-notsub]').forEach((el) => {
+      el.hidden = el.dataset.notsub.split(' ').includes(sub);
+    });
     document.querySelectorAll('[data-nosub]').forEach((el) => {
       el.hidden = sub !== '';
     });
@@ -259,21 +262,17 @@
   });
 
   /* ----- map markers ----- */
-  const LEVEL_MARK = { green: 'check', orange: 'clock', red: 'exclaim', none: 'dash' };
-
   function glyph(name) {
     return `<svg class="pin__glyph" aria-hidden="true"><use href="#i-${name}-fill"></use></svg>`;
   }
 
-  /* One minimal pin everywhere: a state-coloured teardrop, one solid white glyph, one small mark. */
+  /* One pin everywhere: a teardrop in the state colour and nothing else. The card, the legend and the
+     name of the marker carry the words. */
   function pinHtml(spot) {
-    const name = spot.kind === 'both' ? 'both' : spot.kind === 'water' ? 'drop' : 'bowl';
     const selected = spot.selected ? ' is-selected' : '';
     return (
       `<div class="pin${selected}" data-level="${spot.level}" data-kind="${spot.kind}" data-status="${spot.status || 'active'}">` +
-      '<svg class="pin__body" viewBox="0 0 46 56" aria-hidden="true"><path d="M23 54S5 37 5 22a18 18 0 1 1 36 0c0 15-18 32-18 32z"/></svg>' +
-      glyph(name) +
-      `<span class="pin__badge"><svg class="icon" aria-hidden="true"><use href="#i-${LEVEL_MARK[spot.level]}"></use></svg></span></div>`
+      '<svg class="pin__body" viewBox="0 0 46 56" aria-hidden="true"><path d="M23 54S5 37 5 22a18 18 0 1 1 36 0c0 15-18 32-18 32z"/></svg></div>'
     );
   }
 

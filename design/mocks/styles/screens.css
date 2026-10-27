@@ -266,38 +266,47 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--s-5);
+  gap: var(--s-4);
   inline-size: 100%;
   max-inline-size: 30rem;
   margin-inline: auto;
-  padding: var(--s-6) var(--s-4) var(--s-5);
+  padding: var(--s-4) var(--s-4) var(--s-5);
 }
 
 .firstrun__body .illus {
   display: grid;
   place-items: center;
-  inline-size: 72px;
-  block-size: 72px;
+  inline-size: 56px;
+  block-size: 56px;
   border-radius: 50%;
   background: var(--dado-tint);
   color: var(--dado);
 }
 
 .firstrun__body .illus .icon {
-  inline-size: 2.25rem;
-  block-size: 2.25rem;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
 }
 
 .why {
   display: flex;
   flex-direction: column;
-  gap: var(--s-3);
 }
 
 .why li {
   display: flex;
   gap: var(--s-3);
   align-items: flex-start;
+  padding-block: var(--s-2);
+  border-block-end: 1px solid var(--line);
+}
+
+.why li:first-child {
+  padding-block-start: 0;
+}
+
+.why li:last-child {
+  border-block-end: 0;
 }
 
 .why .icon {
@@ -539,10 +548,10 @@
 .hero {
   display: flex;
   flex-direction: column;
-  gap: var(--s-6);
+  gap: var(--s-7);
   max-inline-size: 64rem;
   margin-inline: auto;
-  padding: var(--s-5) var(--s-4) var(--s-7);
+  padding: var(--s-6) var(--s-4) var(--s-7);
   min-block-size: 0;
 }
 
@@ -765,7 +774,7 @@
   align-items: center;
   gap: var(--s-3);
   margin: var(--nav-gap);
-  padding: var(--s-1) var(--s-2);
+  padding: var(--s-2) var(--s-3);
   border: 1px solid var(--glass-edge);
   border-radius: var(--r-glass);
   background: var(--glass);
@@ -810,8 +819,8 @@
 }
 
 .sitenav .btn--on-dado {
-  min-block-size: var(--tap);
-  border-radius: var(--r-nav-item);
+  padding-inline: var(--s-4);
+  border-radius: var(--r-pill);
 }
 
 /* ---------- A phone, not a rectangle ---------- */
@@ -840,18 +849,6 @@
   border-radius: 14px;
   background: #000;
   z-index: 3;
-}
-
-.device::after {
-  content: '';
-  position: absolute;
-  inset-block-start: 120px;
-  inset-inline-end: -4px;
-  inline-size: 4px;
-  block-size: 64px;
-  border-radius: 2px;
-  background: #2a323d;
-  box-shadow: 0 -88px 0 #2a323d;
 }
 
 .device__glass {
@@ -907,4 +904,117 @@ h2[id] {
 .sitefoot a {
   display: inline-block;
   padding-block: var(--s-3);
+}
+
+.brandmark__glyph {
+  --cut: var(--glass-solid);
+  inline-size: 30px;
+  block-size: 30px;
+  fill: currentColor;
+}
+
+.sitebar .brandmark__glyph {
+  --cut: var(--surface);
+}
+
+/* A footbar with no pane behind it: two plain buttons that stand apart. */
+.footbar--plain {
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* A process strip under the top bar while something is being sent. */
+.process {
+  position: sticky;
+  inset-block-start: 56px;
+  z-index: 650;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-4);
+  background: var(--dado-tint);
+  color: var(--dado);
+  border-block-end: 1px solid var(--line);
+}
+
+.process__row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.process__row strong {
+  display: block;
+}
+
+.process .progress {
+  background: var(--surface);
+}
+
+/* Post a photo: one column on a phone, photo beside the details on a wide screen. */
+.post-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  inline-size: 100%;
+}
+
+.post-layout__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  min-inline-size: 0;
+}
+
+/* The spot page: a header, tabs and one panel that fits the screen. */
+.spot-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.spot-head__photo {
+  position: relative;
+  inline-size: 64px;
+  flex: none;
+}
+
+.spot-head__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-2);
+  min-inline-size: 0;
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-1);
+  padding: var(--s-1);
+  border-radius: var(--r-m);
+  background: var(--surface-sunk);
+}
+
+.tabs button {
+  min-block-size: var(--tap);
+  padding-inline: var(--s-1);
+  border: 0;
+  border-radius: var(--r-s);
+  background: transparent;
+  color: var(--ink-2);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tabs button[aria-selected='true'] {
+  background: var(--surface);
+  color: var(--dado);
+  box-shadow: var(--lift);
 }

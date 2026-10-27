@@ -117,6 +117,7 @@
           screen: 'detail',
           states: [
             ['red/ready', 'Chosen'],
+            ['red/sending', 'Saving (pending button)'],
             ['red/counted', 'Counted'],
             ['red/unverified', 'Unverified'],
             ['red/toosoon', 'Too soon'],
@@ -457,6 +458,19 @@
       note: 'New spot, or raise a cat alert.',
     }
   );
+
+  group('Spot and logging').items.push({
+    title: 'Spot page: other tabs',
+    page: 'spot.html',
+    screen: 'detail',
+    states: [
+      ['red/tab-cats', 'Cats'],
+      ['red/tab-chat', 'Chat'],
+      ['red/tab-history', 'History'],
+    ],
+    q: [12],
+    note: 'The log tab fits one screen; the rest are tabs, not a long scroll.',
+  });
   const feed = group('Explore').items.find((item) => item.screen === 'feed');
   feed.states.push(['menu', 'Photo menu'], ['menu-admin', 'Photo menu (admin)']);
   const post = group('Explore').items.find((item) => item.screen === 'post');

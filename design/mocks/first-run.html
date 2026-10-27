@@ -119,25 +119,15 @@
           <div class="notice__body"><span data-t="firstrun.location.waiting"></span></div>
         </div>
       </div>
-      <div class="footbar footbar--stack on-dado">
-        <button
-          class="btn btn--on-dado btn--lg"
-          type="button"
-          data-unless="prompt"
-          data-go="prompt"
-        >
+      <div class="footbar footbar--stack footbar--plain">
+        <button class="btn btn--lg" type="button" data-unless="prompt" data-go="prompt">
           <i data-icon="locate"></i><span data-t="firstrun.location.allow"></span>
         </button>
-        <button
-          class="btn btn--on-dado btn--lg"
-          type="button"
-          data-when="prompt"
-          aria-disabled="true"
-        >
-          <span data-t="firstrun.location.allow"></span>
+        <button class="btn btn--lg" type="button" data-when="prompt" aria-busy="true">
+          <span class="spinner spinner--btn"></span><span data-t="firstrun.location.pending"></span>
         </button>
         <a
-          class="btn btn--outline-on-dado btn--lg"
+          class="btn btn--secondary btn--lg"
           href="map.html?state=locdenied"
           data-t="firstrun.location.skip"
         ></a>
