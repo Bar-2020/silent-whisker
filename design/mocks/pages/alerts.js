@@ -28,14 +28,13 @@
       map
     );
     Mock.addAttribution(map);
-    window.L.marker([focus.lat, focus.lng], {
-      icon: window.L.divIcon({
-        className: '',
-        html: Mock.signHtml({ ...focus, selected: true }),
-        iconSize: null,
-      }),
-      keyboard: false,
-    }).addTo(map);
+    window.L.marker(
+      [focus.lat, focus.lng],
+      Mock.markerOptions(
+        Mock.t(`alerts.kind.${focus.kind}`),
+        Mock.signHtml({ ...focus, selected: true })
+      )
+    ).addTo(map);
   }
   new ResizeObserver(mountSideMap).observe(document.body);
 
@@ -45,6 +44,9 @@
     if (danger && note) {
       danger.checked = FILLED.includes(state);
       note.value = FILLED.includes(state) ? Mock.t(NOTE_STATES[state]) : '';
+      const counter = document.querySelector('.counter');
+      counter.dataset.v = JSON.stringify({ n: note.value.length, max: 140 });
+      Mock.refresh(counter.parentElement);
       note.setAttribute('aria-invalid', String(state === 'refused'));
     }
     mountSideMap();

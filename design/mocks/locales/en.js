@@ -5,6 +5,11 @@ window.MOCK_LOCALES.en = {
   'nav.cats': 'Cats',
   'nav.alerts': 'Alerts',
   'nav.me': 'Profile',
+  'nav.label': 'Main navigation',
+  'nav.home': 'Home',
+  'common.optionalLabel': '(optional)',
+  'map.heading': 'Map of feeding spots',
+  'spot.last.justNow': 'Last log: just now',
   'nav.otherLang': 'עברית',
 
   'common.close': 'Close',
@@ -19,7 +24,6 @@ window.MOCK_LOCALES.en = {
   'common.samplePhoto': 'Sample photo',
   'common.retry': 'Try again',
   'common.edit': 'Edit',
-  'common.optional': 'optional',
 
   'map.title': 'Map | Silent Whisker',
   'map.mapLabel': 'Map of feeding spots',

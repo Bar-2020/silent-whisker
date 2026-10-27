@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-27T09:54:44.438768+00:00",
+  "generatedAt": "2026-10-27T10:06:36.592045+00:00",
   "title": "Design System: Silent Whisker",
   "extensions": {
     "colorMeta": {
@@ -220,7 +220,7 @@
       "refersTo": "nav-glass-item-active",
       "description": "The floating tinted-glass tab bar; the active item is a lighter pill.",
       "html": "<nav class=\"ds-nav\"><a>Profile</a><a>Alerts</a><a>Cats</a><a aria-current=\"page\">Map</a></nav>",
-      "css": ".ds-nav{display:flex;gap:4px;padding:4px;border:1px solid rgb(255 255 255/.3);border-radius:28px;background:rgb(36 60 103/.72);backdrop-filter:blur(18px) saturate(1.8) brightness(.62);box-shadow:0 1px 2px rgb(20 32 52/.14),0 6px 18px rgb(20 32 52/.18),inset 0 1.5px 0 rgb(255 255 255/.55);font:600 .8125rem/1.2 system-ui,'Segoe UI',Roboto,sans-serif}.ds-nav a{flex:1;display:grid;place-items:center;min-height:56px;border-radius:24px;color:#eef3fa}.ds-nav a[aria-current]{background:rgb(255 255 255/.22);color:#fff}"
+      "css": ".ds-nav{display:flex;gap:4px;padding:4px;border:1px solid rgb(255 255 255/.3);border-radius:28px;background:rgb(36 60 103/.72);backdrop-filter:blur(18px) saturate(1.8) brightness(.62);box-shadow:0 1px 2px rgb(20 32 52/.14),0 6px 18px rgb(20 32 52/.18),inset 0 1.5px 0 rgb(255 255 255/.55);font:600 .875rem/1.2 system-ui,'Segoe UI',Roboto,sans-serif}.ds-nav a{flex:1;display:grid;place-items:center;min-height:56px;border-radius:24px;color:#eef3fa}.ds-nav a[aria-current]{background:rgb(255 255 255/.14);color:#fff}"
     },
     {
       "name": "Map Pin",
@@ -274,7 +274,7 @@
       },
       {
         "name": "The Legible Glass Rule",
-        "body": "The glass is see-through, but the backdrop is dimmed before the tint is laid on, so its labels keep at least 4.5:1 even over a plain white page (about 7:1). If it is made clearer, dim the backdrop more; never trade away the contrast.",
+        "body": "The glass is see-through, but the backdrop is dimmed before the tint is laid on, so its labels (#eef3fa, white when active) keep at least 4.5:1 even over a plain white page (about 7:1 over white). If it is made clearer, dim the backdrop more; never trade away the contrast.",
         "section": "elevation"
       }
     ],
@@ -283,7 +283,7 @@
       "**Do** pair every state colour with an icon and a word, in markers, chips and notices.",
       "**Do** use gender-neutral Hebrew: nouns, infinitives and plurals, never a \"you\" verb.",
       "**Do** write errors as what happened and what to do next, in one or two plain sentences.",
-      "**Do** keep targets at 48 px or more and primary actions inside the glass bar's thumb reach.",
+      "**Do** keep targets at 48 px or more (44 px for small buttons) and primary actions inside the glass bar's thumb reach.",
       "**Do** let the glass fall back to solid when blur is off or transparency is reduced.",
       "**Do** run every string through `t('key')` and every style through a class or a `data-*` attribute; no inline styles."
     ],
@@ -294,7 +294,7 @@
       "**Don't** put cat photos or any user photo on the map.",
       "**Don't** add a coloured side stripe to a card or notice, a gradient text, or a shadow on a resting card.",
       "**Don't** load a web font or a third-party script for chrome.",
-      "**Don't** let the glass fall below 4.5:1 for its labels (dim the backdrop rather than raise the tint), or put text smaller than 14 px (13 px only for the nav label) on it."
+      "**Don't** let the glass fall below 4.5:1 for its labels (dim the backdrop rather than raise the tint), or put text smaller than 14 px on it. "
     ]
   }
 }

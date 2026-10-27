@@ -63,7 +63,7 @@ typography:
     letterSpacing: "normal"
   nav:
     fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Hebrew', 'Arial Hebrew', Arial, sans-serif"
-    fontSize: "0.8125rem"
+    fontSize: "0.875rem"
     fontWeight: 600
     lineHeight: 1.2
     letterSpacing: "normal"
@@ -71,7 +71,9 @@ rounded:
   sm: "8px"
   md: "12px"
   lg: "20px"
+  nav-item: "24px"
   glass: "28px"
+  rail: "32px"
   pill: "999px"
 spacing:
   xs: "4px"
@@ -210,8 +212,8 @@ only; letter-spacing is never set (it breaks Hebrew letterforms).
 - **Title** (700, 1.375 rem, 1.25): screen titles, the first-run questions.
 - **Heading** (700, 1.125 rem, 1.3): section titles, top bar titles, sheet titles.
 - **Body** (400, 1 rem, 1.5): everything else; line length at most 65 characters in reading text.
-- **Label** (600, 0.875 rem, 1.2): chips, tags, hints, meta lines. Never below 14 px except the
-  nav label (13 px, 600).
+- **Label** (600, 0.875 rem, 1.2): chips, tags, hints, meta lines and the nav labels. Never below
+  14 px; the one exception is the map's OpenStreetMap attribution (12 px, set by their terms).
 
 ### Named Rules
 **The Tabular Time Rule.** Times, counts and distances use tabular figures so a column of "last
@@ -273,8 +275,8 @@ and a check mark, never a coloured side stripe.
 ## Components
 
 ### Buttons
-- **Shape:** 12 px radius, 48 px tall (56 px for the primary action of a screen), 24 px side
-  padding, label weight 600.
+- **Shape:** 12 px radius, 48 px tall (56 px for the primary action of a screen, 44 px for a
+  small button inside a row or a card), 24 px side padding, label weight 600.
 - **Primary:** slate blue fill, white label; pressed #213553. One per screen.
 - **Secondary:** white fill, 1.5 px slate border, slate label.
 - **Quiet:** no fill, slate label (back, cancel, "more").
@@ -284,7 +286,8 @@ and a check mark, never a coloured side stripe.
 
 ### Chips and tags
 - **Chip:** pill, 28 px, state tint with state ink, an icon then a word ("Food: needed"). Used for
-  levels, kinds, "in review".
+  levels, kinds, "in review" and "not verified" (both grey). A count (admin lists) is a slate-mist
+  chip: slate means "tap", never a state.
 - **Tag:** 8 px radius, 1 px line, quiet ink; dashed slate for "waiting for approval".
 
 ### Cards and containers
@@ -301,7 +304,7 @@ the map card. White, 1 px line, no shadow except over the map.
 
 ### Navigation (the glass)
 - **Phone bar:** 4 items, icon over a 13 px label, active item on a lighter pill (`rgb(255 255 255
-  / 0.22)`), inactive in #eef3fa. **Rail** (768 px up): the same pane vertical, the logo above, the
+  / 0.14)` with a 1 px light edge), inactive labels in #eef3fa, all 14 px. **Rail** (768 px up): the same pane vertical, the logo above, the
   language switch below. **Top bar** on inner pages: white, a hairline below, back arrow at the
   inline-start.
 - **Action bar:** on a phone, the primary action of a form sits in the same glass, floating above
@@ -322,12 +325,20 @@ distance.
 
 ### Notices and toasts
 A tinted block with an icon and a title plus one sentence (what happened, what to do). Toasts are
-ink-dark, bottom, one at a time. No coloured side stripes.
+ink-dark with white text, above the glass bar, one at a time. A gentle refusal ("already logged
+here", "not verified") is grey; red is for a spot that needs food or water and for real errors.
+No coloured side stripes.
 
 ### Feed post, comment, chat message
-Square photo, poster and place tag above it, like and comment counts below. Chat: others on the
+Square photo, poster and place tag above it, like and comment counts below (a liked heart fills
+slate blue, never red, because red means a need). Chat: others on the
 plain wall with an avatar, own messages tinted slate mist; a message in review has a dashed outline
 and a "in review" chip.
+
+### Photo placeholders
+In the mocks a photo is a pale placeholder in one of four tones (#dfe4ec, #e6e2d8, #d9e4de,
+#e4dce6) with a cat glyph and a "sample photo" label. The app shows real photos and uses the
+sunk grey (#eef1f5) while one loads.
 
 ## Do's and Don'ts
 
@@ -336,7 +347,8 @@ and a "in review" chip.
 - **Do** pair every state colour with an icon and a word, in markers, chips and notices.
 - **Do** use gender-neutral Hebrew: nouns, infinitives and plurals, never a "you" verb.
 - **Do** write errors as what happened and what to do next, in one or two plain sentences.
-- **Do** keep targets at 48 px or more and primary actions inside the glass bar's thumb reach.
+- **Do** keep targets at 48 px or more (44 px for small buttons) and primary actions inside the
+  glass bar's thumb reach.
 - **Do** let the glass fall back to solid when blur is off or transparency is reduced.
 - **Do** run every string through `t('key')` and every style through a class or a `data-*`
   attribute; no inline styles.
@@ -352,4 +364,4 @@ and a "in review" chip.
   resting card.
 - **Don't** load a web font or a third-party script for chrome.
 - **Don't** let the glass fall below 4.5:1 for its labels (dim the backdrop rather than raise the
-  tint), or put text smaller than 14 px (13 px only for the nav label) on it.
+  tint), or put text smaller than 14 px on it.

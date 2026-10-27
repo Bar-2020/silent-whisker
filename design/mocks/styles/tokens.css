@@ -50,7 +50,8 @@
   --fs-xl: 1.375rem;
   --fs-2xl: 1.75rem;
   --fs-display: clamp(1.875rem, 6.2vw, 2.875rem);
-  --fs-nav: 0.8125rem;
+  --fs-nav: 0.875rem;
+  --fs-xs: 0.75rem;
 
   /* Space: a 4px step. */
   --s-1: 4px;
@@ -67,6 +68,9 @@
   --r-m: 12px;
   --r-l: 20px;
   --r-pill: 999px;
+  --r-glass: 28px;
+  --r-nav-item: 24px;
+  --r-rail: 32px;
   --tap: 48px;
   --tap-l: 56px;
   --nav-size: 64px;
@@ -86,11 +90,17 @@
   --glass-blur: blur(18px) saturate(1.8) brightness(0.62);
   --glass-ink: #eef3fa;
   --glass-hover: rgb(255 255 255 / 0.12);
-  --glass-active: rgb(255 255 255 / 0.22);
+  --glass-active: rgb(255 255 255 / 0.14);
   --glass-active-ink: #ffffff;
   --nav-gap: 12px;
   --nav-total: calc(var(--nav-size) + var(--nav-gap) * 2);
   --rail-offset: calc(var(--rail-size) + var(--nav-gap) * 2);
+
+  /* Photo placeholders in the mocks; the app shows real photos. */
+  --photo-tone-1: #dfe4ec;
+  --photo-tone-2: #e6e2d8;
+  --photo-tone-3: #d9e4de;
+  --photo-tone-4: #e4dce6;
 
   /* Depth: flat, with one lift for things that float over the map. */
   --lift: 0 1px 2px rgb(20 32 52 / 0.14), 0 6px 18px rgb(20 32 52 / 0.18);

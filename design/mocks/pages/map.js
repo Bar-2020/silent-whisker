@@ -32,27 +32,34 @@
       onClick: () => select('alert'),
     }));
     items.forEach((spot) => {
-      const marker = window.L.marker([spot.lat, spot.lng], {
-        icon: window.L.divIcon({ className: '', html: Mock.pinHtml(spot), iconSize: null }),
-        keyboard: false,
-      }).addTo(map);
+      const marker = window.L.marker(
+        [spot.lat, spot.lng],
+        Mock.markerOptions(Mock.pinLabel(spot), Mock.pinHtml(spot))
+      ).addTo(map);
       marker.on('click', spot.onClick);
       layers.push(marker);
     });
     alerts.forEach((item) => {
-      const marker = window.L.marker([item.lat, item.lng], {
-        icon: window.L.divIcon({ className: '', html: Mock.signHtml(item), iconSize: null }),
-        keyboard: false,
-      }).addTo(map);
+      const marker = window.L.marker(
+        [item.lat, item.lng],
+        Mock.markerOptions(Mock.t(`alerts.kind.${item.kind}`), Mock.signHtml(item))
+      ).addTo(map);
       marker.on('click', item.onClick);
       layers.push(marker);
     });
-    layers.push(
-      window.L.marker(MockDemo.here, {
-        icon: window.L.divIcon({ className: '', html: '<div class="here"></div>', iconSize: null }),
-        interactive: false,
-      }).addTo(map)
-    );
+    if (state !== 'locdenied') {
+      layers.push(
+        window.L.marker(MockDemo.here, {
+          icon: window.L.divIcon({
+            className: '',
+            html: '<div class="here"></div>',
+            iconSize: null,
+          }),
+          interactive: false,
+          keyboard: false,
+        }).addTo(map)
+      );
+    }
   }
 
   if (window.L) {

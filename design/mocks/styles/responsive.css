@@ -17,7 +17,7 @@
     flex-direction: column;
     align-items: stretch;
     padding-block: var(--s-3);
-    border-radius: 32px;
+    border-radius: var(--r-rail);
   }
 
   .nav__item {
@@ -28,6 +28,7 @@
   .nav__brand {
     display: grid;
     place-items: center;
+    min-block-size: var(--tap);
     margin-block-end: var(--s-3);
   }
 
@@ -292,5 +293,11 @@
   .hero__dado .btn {
     align-self: flex-start;
     min-inline-size: 22rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .photo--banner {
+    --ratio: 16 / 9;
   }
 }

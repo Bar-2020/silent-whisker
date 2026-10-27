@@ -88,9 +88,9 @@
         `<i data-icon="${item.icon}"></i><span data-t="nav.${item.id}"></span></a>`
     ).join('');
     host.className = 'nav on-dado';
-    host.setAttribute('aria-label', 'nav');
+    host.setAttribute('aria-label', t('nav.label'));
     host.innerHTML =
-      `<a class="nav__brand" href="${withLang('landing.html')}"><img src="../../frontend/public/logo.png" alt="" /></a>` +
+      `<a class="nav__brand" href="${withLang('landing.html')}" aria-label="${t('nav.home')}"><img src="../../frontend/public/logo.png" alt="" /></a>` +
       items +
       `<a class="nav__lang" href="?${otherQuery(otherLang)}" lang="${otherLang}" data-t="nav.otherLang"></a>`;
   }
@@ -144,6 +144,18 @@
       el.setAttribute('aria-pressed', String(el.dataset.pressed.split(' ').includes(state)));
     });
     if (window.Mock.onState) window.Mock.onState(state);
+    showFirstProblem();
+  }
+
+  /* A refusal or error that sits below the fold is brought into view. */
+  function showFirstProblem() {
+    if (!active) return;
+    const problem = [
+      ...active.querySelectorAll(
+        '.field__error, .notice[data-level="red"], .notice[data-level="orange"]'
+      ),
+    ].find((el) => el.offsetParent !== null && !el.closest('.footbar, .toast'));
+    if (problem && state !== 'default') problem.scrollIntoView({ block: 'center' });
   }
 
   /* "red/counted" sets the state and the sub-state together; "/counted" sets only the sub-state. */
@@ -216,6 +228,20 @@
       .addTo(map);
   }
 
+  /* Pins and signs are buttons: reachable by keyboard and named by what they mean. */
+  function markerOptions(label, html) {
+    return {
+      icon: window.L.divIcon({ className: '', html, iconSize: null }),
+      keyboard: true,
+      title: label,
+      alt: label,
+    };
+  }
+
+  function pinLabel(spot) {
+    return spot.status === 'pending' ? t('map.legend.pending') : t(`map.legend.${spot.level}`);
+  }
+
   function mountMap(el, config) {
     if (!window.L) {
       el.dataset.failed = 'true';
@@ -233,7 +259,8 @@
     const add = (position, html, onClick) => {
       const marker = window.L.marker(position, {
         icon: window.L.divIcon({ className: '', html, iconSize: null }),
-        keyboard: false,
+        keyboard: true,
+        title: config.label || '',
       }).addTo(map);
       if (onClick) marker.on('click', onClick);
       layers.push(marker);
@@ -258,6 +285,8 @@
     refresh,
     getState: () => state,
     getSub: () => sub,
+    markerOptions,
+    pinLabel,
     mountMap,
     addAttribution,
     pinHtml,

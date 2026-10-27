@@ -8,6 +8,11 @@ window.MOCK_LOCALES.he = {
   'nav.cats': 'חתולים',
   'nav.alerts': 'התראות',
   'nav.me': 'פרופיל',
+  'nav.label': 'ניווט ראשי',
+  'nav.home': 'לעמוד הראשי',
+  'common.optionalLabel': '(לא חובה)',
+  'map.heading': 'מפת נקודות האכלה',
+  'spot.last.justNow': 'רישום אחרון: עכשיו',
   'nav.otherLang': 'English',
 
   'common.close': 'סגירה',
@@ -22,7 +27,6 @@ window.MOCK_LOCALES.he = {
   'common.samplePhoto': 'צילום לדוגמה',
   'common.retry': 'ניסיון חוזר',
   'common.edit': 'עריכה',
-  'common.optional': 'לא חובה',
 
   'map.title': 'מפה | Silent Whisker',
   'map.mapLabel': 'מפת נקודות האכלה',

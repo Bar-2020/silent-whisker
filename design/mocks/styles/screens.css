@@ -10,7 +10,7 @@
   margin: var(--nav-gap);
   padding: var(--s-1);
   border: 1px solid var(--glass-edge);
-  border-radius: 28px;
+  border-radius: var(--r-glass);
   background: var(--glass);
   box-shadow: var(--lift), var(--glass-shine);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -19,7 +19,7 @@
 
 .footbar .btn {
   flex: 1;
-  border-radius: 24px;
+  border-radius: var(--r-nav-item);
 }
 
 .btn--outline-on-dado {
@@ -535,8 +535,8 @@
 }
 
 .iconbtn--small {
-  inline-size: 40px;
-  block-size: 40px;
+  inline-size: 44px;
+  block-size: 44px;
   color: var(--ink-3);
 }
 

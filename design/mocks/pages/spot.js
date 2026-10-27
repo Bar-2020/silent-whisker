@@ -67,6 +67,7 @@
     const icon = kind === 'food' ? 'bowl' : 'drop';
     let when = 'spot.last.none';
     if (level !== 'none') when = kind === 'water' ? 'spot.last.water' : `spot.last.${amount}`;
+    if (hours === 0) when = 'spot.last.justNow';
     const action =
       level === 'none'
         ? ''
@@ -87,9 +88,10 @@
     title.dataset.t = view.name;
     document.getElementById('spot-address').dataset.t = view.address;
     const host = document.getElementById('state-rows');
-    host.innerHTML = view.food
-      ? stateRow('food', ...view.food) + stateRow('water', ...view.water)
-      : '';
+    /* A counted log turns the row green at once: the proof moment. */
+    const counted = Mock.getSub() === 'counted' && state === 'red';
+    const food = counted ? ['green', 0, 'full'] : view.food;
+    host.innerHTML = view.food ? stateRow('food', ...food) + stateRow('water', ...view.water) : '';
     Mock.refresh(document.querySelector('[data-screen="detail"]'));
   }
 
@@ -109,7 +111,9 @@
       first.checked = true;
       submit.disabled = LOG_RESULTS.includes(sub);
     }
-    if (form && (sub === 'ready' || LOG_RESULTS.includes(sub))) form.scrollIntoView();
+    /* A counted or unverified log reports at the top, beside the rows it changes; refusals stay at the form. */
+    if (sub === 'counted' || sub === 'unverified') window.scrollTo(0, 0);
+    else if (form && (sub === 'ready' || LOG_RESULTS.includes(sub))) form.scrollIntoView();
   }
 
   /* New spot and edit. */
@@ -159,14 +163,11 @@
     );
     Mock.addAttribution(map);
     MockDemo.spots.slice(0, 4).forEach((spot) => {
-      window.L.marker([spot.lat, spot.lng], {
-        icon: window.L.divIcon({
-          className: '',
-          html: Mock.pinHtml({ ...spot, selected: spot.id === 'red' }),
-          iconSize: null,
-        }),
-        keyboard: false,
-      }).addTo(map);
+      const selected = { ...spot, selected: spot.id === 'red' };
+      window.L.marker(
+        [spot.lat, spot.lng],
+        Mock.markerOptions(Mock.pinLabel(spot), Mock.pinHtml(selected))
+      ).addTo(map);
     });
   }
   new ResizeObserver(mountSideMap).observe(document.body);

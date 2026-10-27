@@ -55,6 +55,21 @@
             </div>
 
             <div class="page stack stack--5" data-unless="notfound">
+              <div class="notice" data-level="green" data-sub="counted">
+                <i data-icon="checkcircle"></i>
+                <div class="notice__body">
+                  <strong data-t="spot.log.counted.title"></strong
+                  ><span data-t="spot.log.counted.text"></span>
+                </div>
+              </div>
+              <div class="notice" data-level="none" data-sub="unverified">
+                <i data-icon="clock"></i>
+                <div class="notice__body">
+                  <strong data-t="spot.log.unverified.title"></strong>
+                  <span data-t="spot.log.unverified.text"></span>
+                  <a href="profile.html?screen=location-help" data-t="spot.log.unverified.help"></a>
+                </div>
+              </div>
               <div class="notice" data-when="pending-creator">
                 <i data-icon="clock"></i>
                 <div class="notice__body">
@@ -98,7 +113,7 @@
               </div>
 
               <div
-                class="photo photo--wide photo--round"
+                class="photo photo--banner photo--round"
                 data-tone="3"
                 data-when="red orange green creator inactive pending-creator pending-admin"
               >
@@ -177,25 +192,7 @@
                     <span data-t="spot.log.submit"></span>
                   </button>
 
-                  <div class="notice" data-level="green" data-sub="counted">
-                    <i data-icon="checkcircle"></i>
-                    <div class="notice__body">
-                      <strong data-t="spot.log.counted.title"></strong
-                      ><span data-t="spot.log.counted.text"></span>
-                    </div>
-                  </div>
-                  <div class="notice" data-level="orange" data-sub="unverified">
-                    <i data-icon="clock"></i>
-                    <div class="notice__body">
-                      <strong data-t="spot.log.unverified.title"></strong>
-                      <span data-t="spot.log.unverified.text"></span>
-                      <a
-                        href="profile.html?screen=location-help"
-                        data-t="spot.log.unverified.help"
-                      ></a>
-                    </div>
-                  </div>
-                  <div class="notice" data-level="red" data-sub="toosoon">
+                  <div class="notice" data-level="none" data-sub="toosoon">
                     <i data-icon="clock"></i>
                     <div class="notice__body">
                       <strong data-t="spot.log.tooSoon.title"></strong
@@ -456,8 +453,8 @@
             <div class="field">
               <label class="field__label" for="spot-name"
                 ><span data-t="newspot.name.label"></span>
-                <span class="muted small">(<span data-t="common.optional"></span>)</span></label
-              >
+                <span class="muted small" data-t="common.optionalLabel"></span
+              ></label>
               <input
                 class="input"
                 id="spot-name"
@@ -472,8 +469,8 @@
             <div class="field">
               <span class="field__label"
                 ><span data-t="newspot.photo.label"></span>
-                <span class="muted small">(<span data-t="common.optional"></span>)</span></span
-              >
+                <span class="muted small" data-t="common.optionalLabel"></span
+              ></span>
               <button class="photo-pick" type="button" data-unless="photo uploading">
                 <i data-icon="camera"></i><span data-t="newspot.photo.add"></span>
               </button>
