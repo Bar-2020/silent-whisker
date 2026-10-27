@@ -23,3 +23,6 @@ coverage/
 
 # Impeccable question-page state (machine-local).
 .impeccable/questions/
+
+# Screenshots made while choosing the look.
+design/previews/
