@@ -105,9 +105,9 @@ mode. Live (realtime) updates. A public map for signed-out visitors. Changing th
 
 Code first, no Figma (D-40). The tool is Impeccable (`.claude/skills/impeccable`).
 
-1. Before any screen is built, run `/impeccable shape` for every area: first run, landing and legal
-   pages, map, spot and logging, cats, cat alerts, chat, profile, navigation (D-55).
-2. Pick the look once into `DESIGN.md` (proposed tone: quiet, legible outdoors); the owner approves it.
+1. Done (D-55): `/impeccable shape` for every area, in `design/briefs/`; mocks of every screen in
+   `design/mocks/` (run `node design/serve.mjs`); open questions in `design/briefs/10-open-questions.md`.
+2. The look is in [DESIGN.md](DESIGN.md) (D-56). The owner approves the whole design before Phase 2.
 3. A phase builds only its own screens from the design; to change one, update the design first.
 4. Before each PR with screens, run `critique`, `audit` and `polish`.
 
@@ -133,7 +133,7 @@ One phase, one PR or smaller. Do not start a phase while the previous one is hal
 ## Evidence on Hand
 
 Repo art (cat-pin logo, README images) lives in `.github/assets/`. It is not the app's design
-system: Phase 2 picks the look and writes DESIGN.md. No reference apps yet; do not invent any.
+system, which is [DESIGN.md](DESIGN.md). No reference apps yet; do not invent any.
 
 ## Product Principles
 

@@ -151,8 +151,8 @@
       },
       {
         "name": "glass",
-        "value": "0 1px 2px rgb(20 32 52 / 0.14), 0 6px 18px rgb(20 32 52 / 0.18), inset 0 1px 0 rgb(255 255 255 / 0.42), inset 0 -1px 0 rgb(0 0 0 / 0.16)",
-        "purpose": "The navigation and form action bars, with fill rgb(33 53 83 / 0.86) and backdrop blur 20px."
+        "value": "0 1px 2px rgb(20 32 52 / 0.14), 0 6px 18px rgb(20 32 52 / 0.18), inset 0 1.5px 0 rgb(255 255 255 / 0.55), inset 0 -1px 0 rgb(255 255 255 / 0.14), inset 0 0 14px rgb(255 255 255 / 0.07)",
+        "purpose": "The navigation and form action bars, with fill rgb(36 60 103 / 0.72) over a backdrop blurred 18px and dimmed to 62%."
       }
     ],
     "motion": [
@@ -220,7 +220,7 @@
       "refersTo": "nav-glass-item-active",
       "description": "The floating tinted-glass tab bar; the active item is a lighter pill.",
       "html": "<nav class=\"ds-nav\"><a>Profile</a><a>Alerts</a><a>Cats</a><a aria-current=\"page\">Map</a></nav>",
-      "css": ".ds-nav{display:flex;gap:4px;padding:4px;border:1px solid rgb(255 255 255/.3);border-radius:28px;background:rgb(33 53 83/.86);backdrop-filter:blur(20px) saturate(1.6);box-shadow:0 1px 2px rgb(20 32 52/.14),0 6px 18px rgb(20 32 52/.18),inset 0 1px 0 rgb(255 255 255/.42);font:600 .8125rem/1.2 system-ui,'Segoe UI',Roboto,sans-serif}.ds-nav a{flex:1;display:grid;place-items:center;min-height:56px;border-radius:24px;color:#e3eaf5}.ds-nav a[aria-current]{background:rgb(255 255 255/.22);color:#fff}"
+      "css": ".ds-nav{display:flex;gap:4px;padding:4px;border:1px solid rgb(255 255 255/.3);border-radius:28px;background:rgb(36 60 103/.72);backdrop-filter:blur(18px) saturate(1.8) brightness(.62);box-shadow:0 1px 2px rgb(20 32 52/.14),0 6px 18px rgb(20 32 52/.18),inset 0 1.5px 0 rgb(255 255 255/.55);font:600 .8125rem/1.2 system-ui,'Segoe UI',Roboto,sans-serif}.ds-nav a{flex:1;display:grid;place-items:center;min-height:56px;border-radius:24px;color:#eef3fa}.ds-nav a[aria-current]{background:rgb(255 255 255/.22);color:#fff}"
     },
     {
       "name": "Map Pin",
@@ -274,7 +274,7 @@
       },
       {
         "name": "The Legible Glass Rule",
-        "body": "Glass is tinted dark enough (86%) that white labels keep at least 4.5:1 over a white map tile. Never make it clearer.",
+        "body": "The glass is see-through, but the backdrop is dimmed before the tint is laid on, so its labels keep at least 4.5:1 even over a plain white page (about 7:1). If it is made clearer, dim the backdrop more; never trade away the contrast.",
         "section": "elevation"
       }
     ],
@@ -294,7 +294,7 @@
       "**Don't** put cat photos or any user photo on the map.",
       "**Don't** add a coloured side stripe to a card or notice, a gradient text, or a shadow on a resting card.",
       "**Don't** load a web font or a third-party script for chrome.",
-      "**Don't** make the glass lighter than 86% opaque, or put text smaller than 14 px (13 px only for the nav label) on it. "
+      "**Don't** let the glass fall below 4.5:1 for its labels (dim the backdrop rather than raise the tint), or put text smaller than 14 px (13 px only for the nav label) on it."
     ]
   }
 }

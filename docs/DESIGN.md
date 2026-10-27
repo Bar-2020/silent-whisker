@@ -166,7 +166,7 @@ A white ground, one slate blue, and five state colours that carry meaning only.
 ### Primary
 - **Slate Blue** (#2d4467): buttons, the active selection, the nav glass tint, text links, the "+"
   and the landing page's painted band. Contrast on white 9.8:1.
-- **Deep Slate** (#213553): pressed and hover states, the solid fallback of the glass.
+- **Deep Slate** (#213553): pressed and hover states.
 - **Slate Mist** (#e3e9f3): chosen tiles, quiet notices, the avatar ground.
 - **Slate Pale** (#c6d2e6): secondary text on the landing band.
 
@@ -248,15 +248,19 @@ depth.
 - **Lift** (`box-shadow: 0 1px 2px rgb(20 32 52 / 0.14), 0 6px 18px rgb(20 32 52 / 0.18)`): the
   map card and panel, the round map controls, toasts.
 - **Glass** (a tinted pane, see Components): the navigation and the form action bars. Fill
-  `rgb(33 53 83 / 0.86)`, backdrop blur 20 px and saturate 1.6, a 1 px edge `rgb(255 255 255 /
-  0.3)`, an inner top highlight `inset 0 1px 0 rgb(255 255 255 / 0.42)`. It falls back to a solid
-  #213553 when `backdrop-filter` is unsupported or `prefers-reduced-transparency` is set.
+  `rgb(36 60 103 / 0.72)` over a backdrop that is blurred 18 px, saturated 1.8 and dimmed to 62%
+  (`backdrop-filter: blur(18px) saturate(1.8) brightness(0.62)`), a 1 px edge `rgb(255 255 255 /
+  0.42)`, and inner highlights: a bright top rim `inset 0 1.5px 0 rgb(255 255 255 / 0.55)`, a faint
+  bottom rim and a soft inner glow. The map and the page show through it. It falls back to a solid
+  slate blue #2d4467 when `backdrop-filter` is unsupported or `prefers-reduced-transparency` is set.
 
 ### Named Rules
 **The Float-Only Rule.** Depth means "this sits over the content". A resting card never has a
 shadow.
-**The Legible Glass Rule.** Glass is tinted dark enough (86%) that white labels keep at least 4.5:1
-over a white map tile. Never make it clearer.
+**The Legible Glass Rule.** The glass is see-through, but the backdrop is dimmed before the tint
+is laid on, so its labels (#eef3fa, white when active) keep at least 4.5:1 even over a plain white
+page (about 7:1 over white). If it is made clearer, dim the backdrop more; never trade away the
+contrast.
 
 ## Shapes
 
@@ -297,7 +301,7 @@ the map card. White, 1 px line, no shadow except over the map.
 
 ### Navigation (the glass)
 - **Phone bar:** 4 items, icon over a 13 px label, active item on a lighter pill (`rgb(255 255 255
-  / 0.22)`), inactive in #e3eaf5. **Rail** (768 px up): the same pane vertical, the logo above, the
+  / 0.22)`), inactive in #eef3fa. **Rail** (768 px up): the same pane vertical, the logo above, the
   language switch below. **Top bar** on inner pages: white, a hairline below, back arrow at the
   inline-start.
 - **Action bar:** on a phone, the primary action of a form sits in the same glass, floating above
@@ -347,5 +351,5 @@ and a "in review" chip.
 - **Don't** add a coloured side stripe to a card or notice, a gradient text, or a shadow on a
   resting card.
 - **Don't** load a web font or a third-party script for chrome.
-- **Don't** make the glass lighter than 86% opaque, or put text smaller than 14 px (13 px only for
-  the nav label) on it.
+- **Don't** let the glass fall below 4.5:1 for its labels (dim the backdrop rather than raise the
+  tint), or put text smaller than 14 px (13 px only for the nav label) on it.

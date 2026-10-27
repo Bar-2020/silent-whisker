@@ -22,8 +22,8 @@ map visible while the member reads or logs.
   not found; banned (writes refused with a plain message).
 
 ## Selected direction
-The glass pane is the system's signature: tinted slate-blue (86% opaque, blurred, with a light
-edge and a top highlight) so white labels stay readable over any map. The same glass carries the
+The glass pane is the system's signature: tinted slate-blue (72% fill over a blurred, dimmed backdrop, with a light
+edge and a bright top rim) so the map shows through and white labels stay readable. The same glass carries the
 form action bars. Active tab: a lighter pill; inactive: pale. Solid blue where blur is unavailable
 or reduced transparency is on.
 
