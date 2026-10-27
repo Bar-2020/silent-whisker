@@ -899,3 +899,12 @@
 h2[id] {
   scroll-margin-block-start: 96px;
 }
+
+.brandmark {
+  min-block-size: var(--tap);
+}
+
+.sitefoot a {
+  display: inline-block;
+  padding-block: var(--s-3);
+}

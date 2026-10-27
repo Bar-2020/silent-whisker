@@ -6,6 +6,7 @@
 }
 
 html {
+  scroll-padding-block: 72px calc(var(--nav-total) + var(--s-4));
   font: 400 var(--fs-m) / 1.5 var(--font);
   color: var(--ink);
   background: var(--wall);
@@ -197,4 +198,12 @@ bdi,
   stroke: var(--alert);
   stroke-width: 1.6;
   stroke-linecap: round;
+}
+
+/* A spinner still has to turn when motion is reduced; it is the only sign that something is loading. */
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 1.6s !important;
+    animation-iteration-count: infinite !important;
+  }
 }

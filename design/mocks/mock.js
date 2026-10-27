@@ -110,14 +110,14 @@
       const items = Object.keys(LANGS)
         .map(
           (code) =>
-            `<a class="menu__item" role="menuitem" href="?${otherQuery(code)}" lang="${code}"${code === lang ? ' aria-current="true"' : ''}>` +
+            `<a class="menu__item" href="?${otherQuery(code)}" lang="${code}"${code === lang ? ' aria-current="true"' : ''}>` +
             `${t(`lang.${code}`)}${code === lang ? '<i class="check-end" data-icon="check"></i>' : ''}</a>`
         )
         .join('');
       host.classList.add('langmenu');
       host.innerHTML =
-        `<button class="iconbtn langmenu__btn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="${id}" aria-label="${t('lang.label')}" data-toggle="${id}"><i data-icon="globe"></i></button>` +
-        `<div class="menu langmenu__menu" id="${id}" role="menu" hidden>${items}</div>`;
+        `<button class="iconbtn langmenu__btn" type="button" aria-expanded="false" aria-controls="${id}" aria-label="${t('lang.label')}" data-toggle="${id}"><i data-icon="globe"></i></button>` +
+        `<div class="menu langmenu__menu" id="${id}" hidden>${items}</div>`;
     });
   }
 
@@ -163,7 +163,43 @@
       el.setAttribute('aria-pressed', String(el.dataset.pressed.split(' ').includes(state)));
     });
     if (window.Mock.onState) window.Mock.onState(state);
+    improveAccessibility();
     showFirstProblem();
+  }
+
+  /* Names, announcements and links that a real component would carry from the start. */
+  function improveAccessibility() {
+    document.querySelectorAll('.field__error').forEach((el) => el.setAttribute('role', 'alert'));
+    document
+      .querySelectorAll('.notice[data-sub]')
+      .forEach((el) => el.setAttribute('role', 'status'));
+    document.querySelectorAll('[role="dialog"]').forEach((dialog, index) => {
+      if (dialog.hasAttribute('aria-labelledby') || dialog.hasAttribute('aria-label')) return;
+      const heading = dialog.querySelector('.sheet__title, h2, strong');
+      if (!heading) return;
+      heading.id = heading.id || `dialog-title-${index}`;
+      dialog.setAttribute('aria-labelledby', heading.id);
+    });
+    document.querySelectorAll('[aria-haspopup][data-go]').forEach((el) => {
+      el.setAttribute('aria-expanded', String(el.dataset.go === state));
+    });
+    let linked = 0;
+    document.querySelectorAll('.field').forEach((field) => {
+      const control = field.querySelector('input.input, textarea.textarea');
+      if (!control) return;
+      const ids = [...field.querySelectorAll('.field__hint, .field__error')]
+        .filter((el) => !el.closest('[hidden]'))
+        .map((el) => {
+          linked += 1;
+          el.id = el.id || `field-message-${linked}`;
+          return el.id;
+        });
+      if (ids.length) control.setAttribute('aria-describedby', ids.join(' '));
+      else control.removeAttribute('aria-describedby');
+    });
+    document
+      .querySelectorAll('input.input, textarea.textarea, .msg__bubble p, .comment__body p')
+      .forEach((el) => el.setAttribute('dir', 'auto'));
   }
 
   /* A refusal or error that sits below the fold is brought into view. */

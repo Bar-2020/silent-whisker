@@ -5,7 +5,7 @@ colors:
   wall: "#ffffff"
   surface-sunk: "#eef1f5"
   line: "#d3d9e2"
-  line-strong: "#8e9bab"
+  line-strong: "#8793a3"
   ink: "#1b2430"
   ink-soft: "#4a5563"
   ink-quiet: "#5f6b79"
@@ -186,7 +186,7 @@ A white ground, one slate blue, and five state colours that carry meaning only.
 
 ### Neutral
 - **Wall White** (#ffffff): every page and card. **Sunk** (#eef1f5): disabled fills, skeletons.
-- **Line** (#d3d9e2) hairlines; **Line Strong** (#8e9bab) input borders.
+- **Line** (#d3d9e2) hairlines; **Line Strong** (#8793a3) input borders.
 - **Ink** (#1b2430), **Ink Soft** (#4a5563), **Ink Quiet** (#5f6b79): text. All three pass 4.5:1 on
   white.
 
@@ -253,8 +253,8 @@ depth.
   else that floats over the map or the page with dark ink on it: the pin card and panel, the round
   map controls (all 52 px), menus, banners and the sticky top bar.
 - **Glass** (a tinted pane, see Components): the navigation and the form action bars. Fill
-  `rgb(36 60 103 / 0.5)` over a backdrop that is blurred 8 px, saturated 1.7 and dimmed to 60%
-  (`backdrop-filter: blur(8px) saturate(1.7) brightness(0.6)`), a 1 px edge `rgb(255 255 255 /
+  `rgb(36 60 103 / 0.58)` over a backdrop that is blurred 8 px, saturated 1.7 and dimmed to 56%
+  (`backdrop-filter: blur(8px) saturate(1.7) brightness(0.56)`), a 1 px edge `rgb(255 255 255 /
   0.42)`, and inner highlights: a bright top rim `inset 0 1.5px 0 rgb(255 255 255 / 0.55)`, a faint
   bottom rim and a soft inner glow. The map and the page show through it. It falls back to a solid
   slate blue #2d4467 when `backdrop-filter` is unsupported or `prefers-reduced-transparency` is set.
@@ -271,7 +271,8 @@ styles itself, which the no-inline-styles rule forbids in our code: a question f
 shadow.
 **The Legible Glass Rule.** The glass is see-through, but the backdrop is dimmed before the tint
 is laid on, so its labels (#eef3fa, white when active) keep at least 4.5:1 even over a plain white
-page (measured above 6:1 over white). If it is made clearer, dim the backdrop more; never trade away the
+page (5.3:1 for the inactive labels and 4.6:1 for the active one over plain white; the active tab is also
+bolder, not only lighter). If it is made clearer, dim the backdrop more; never trade away the
 contrast.
 
 ## Shapes
@@ -314,7 +315,7 @@ the map card. White, 1 px line, no shadow except over the map.
 
 ### Navigation (the glass)
 - **Phone bar:** 4 items (Map, Explore, Alerts, Profile), icon over a 13 px label, active item on a lighter pill (`rgb(255 255 255
-  / 0.14)` with a 1 px light edge), inactive labels in #eef3fa, all 14 px. **Rail** (768 px up): the same pane vertical, the logo above, the
+  / 0.12)` with a 1 px light edge and weight 800), inactive labels in #eef3fa, all 14 px. **Rail** (768 px up): the same pane vertical, the logo above, the
   language switch below. **Top bar** on inner pages: white, a hairline below, back arrow at the
   inline-start.
 - **Action bar:** on a phone, the primary action of a form sits in the same glass, floating above

@@ -62,8 +62,8 @@
       title +
       `<div class="post__who"><span class="avatar avatar--s" data-t="${item.initials}"></span><bdi data-t="${item.user}"></bdi></div>` +
       '<div class="post__actions">' +
-      `<button class="react" type="button" aria-pressed="${item.liked}"><i data-icon="paw"></i><span class="num">${item.likes}</span></button>` +
-      `<a class="react" href="cats.html?screen=cat"><i data-icon="comment"></i><span class="num">${item.comments}</span></a>` +
+      `<button class="react" type="button" aria-pressed="${item.liked}"><i data-icon="paw"></i><span class="visually-hidden" data-t="cats.like"></span><span class="num">${item.likes}</span></button>` +
+      `<a class="react" href="cats.html?screen=cat"><i data-icon="comment"></i><span class="visually-hidden" data-t="cats.comments.label"></span><span class="num">${item.comments}</span></a>` +
       '</div></div></article>'
     );
   }

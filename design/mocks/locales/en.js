@@ -25,6 +25,8 @@ window.MOCK_LOCALES.en = {
   'landing.nav.how': 'How it works',
   'landing.nav.privacy': 'Privacy',
   'landing.nav.support': 'Support',
+  'cats.like': 'Like',
+  'cats.comments.label': 'Comments',
   'nav.label': 'Main navigation',
   'nav.home': 'Home',
   'common.optionalLabel': '(optional)',

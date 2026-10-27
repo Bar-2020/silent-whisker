@@ -108,6 +108,7 @@ body[data-chrome='tabs'] .main {
 }
 
 .nav__item[aria-current='page'] {
+  font-weight: 800;
   background: var(--glass-active);
   color: var(--glass-active-ink);
   box-shadow:
@@ -308,7 +309,8 @@ body[data-chrome='tabs'] .main {
   align-items: center;
   gap: var(--s-1);
   min-block-size: 28px;
-  padding: var(--s-1) var(--s-3) var(--s-1) var(--s-2);
+  padding-block: var(--s-1);
+  padding-inline: var(--s-2) var(--s-3);
   border-radius: var(--r-pill);
   background: var(--lvl-tint);
   color: var(--lvl-ink);

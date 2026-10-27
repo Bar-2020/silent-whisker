@@ -28,6 +28,8 @@ window.MOCK_LOCALES.he = {
   'landing.nav.how': 'איך זה עובד',
   'landing.nav.privacy': 'פרטיות',
   'landing.nav.support': 'תמיכה',
+  'cats.like': 'סימון כאהוב',
+  'cats.comments.label': 'תגובות',
   'nav.label': 'ניווט ראשי',
   'nav.home': 'לעמוד הראשי',
   'common.optionalLabel': '(לא חובה)',

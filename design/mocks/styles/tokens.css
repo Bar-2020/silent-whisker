@@ -6,7 +6,7 @@
   --surface: #ffffff;
   --surface-sunk: #eef1f5;
   --line: #d3d9e2;
-  --line-strong: #8e9bab;
+  --line-strong: #8793a3;
 
   /* Ink. */
   --ink: #1b2430;
@@ -83,17 +83,17 @@
   --measure: 65ch;
 
   /* Liquid glass: the shell's tinted, blurred pane. It is solid where blur is unavailable. */
-  --glass: rgb(36 60 103 / 0.5);
+  --glass: rgb(36 60 103 / 0.58);
   --glass-solid: #2d4467;
   --glass-edge: rgb(255 255 255 / 0.42);
   --glass-shine:
     inset 0 1.5px 0 rgb(255 255 255 / 0.55), inset 0 -1px 0 rgb(255 255 255 / 0.14),
     inset 0 0 14px rgb(255 255 255 / 0.07);
   /* The backdrop is dimmed first so white labels keep 4.5:1 over a white map tile. */
-  --glass-blur: blur(8px) saturate(1.7) brightness(0.6);
+  --glass-blur: blur(8px) saturate(1.7) brightness(0.56);
   --glass-ink: #eef3fa;
-  --glass-hover: rgb(255 255 255 / 0.12);
-  --glass-active: rgb(255 255 255 / 0.14);
+  --glass-hover: rgb(255 255 255 / 0.08);
+  --glass-active: rgb(255 255 255 / 0.12);
   --glass-active-ink: #ffffff;
   --glass-light: rgb(255 255 255 / 0.64);
   --glass-light-edge: rgb(255 255 255 / 0.8);
