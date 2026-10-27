@@ -57,16 +57,19 @@
 
         <!-- The app is starting. -->
         <div class="centered" data-screen="loading" data-chrome="page" data-default-state="default">
-          <img class="boot-logo" src="../../frontend/public/logo.png" alt="" />
+          <svg class="brandmark__glyph boot-logo" aria-hidden="true"><use href="#i-cat"></use></svg>
           <span class="spinner"></span>
         </div>
 
         <!-- A refusal that arrives as a toast over whatever the member was doing. -->
         <div data-screen="toast" data-chrome="tabs" data-default-state="ratelimit">
           <header class="topbar"><h1 class="topbar__title" data-t="cats.feed.title"></h1></header>
-          <div class="page stack stack--3" aria-busy="true">
-            <div class="skeleton skeleton--post"></div>
-            <div class="skeleton skeleton--post"></div>
+          <div class="page page--feed feed" aria-busy="true">
+            <div class="skeleton-post">
+              <div class="skeleton skeleton--media"></div>
+              <div class="skeleton skeleton--line"></div>
+              <div class="skeleton skeleton--line skeleton--short"></div>
+            </div>
           </div>
           <div class="toast" role="alert" data-when="ratelimit">
             <i data-icon="clock"></i>

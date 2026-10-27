@@ -21,7 +21,27 @@
         <section class="stage" data-screen="map" data-default-state="default" data-state-attr>
           <div class="map" id="map" role="application" data-t-attr="aria-label:map.mapLabel"></div>
 
-          <div class="mapctl mapctl--top">
+          <div class="maptop">
+            <div class="mapsearch" role="search">
+              <i data-icon="search"></i>
+              <input
+                class="mapsearch__input"
+                id="map-search"
+                type="search"
+                autocomplete="off"
+                data-go="search"
+                data-t-attr="placeholder:map.search.placeholder;aria-label:map.search.label"
+              />
+              <button
+                class="mapsearch__clear"
+                type="button"
+                data-go="default"
+                data-when="search search-none"
+                data-t-attr="aria-label:common.clear"
+              >
+                <i data-icon="x"></i>
+              </button>
+            </div>
             <button
               class="round"
               type="button"
@@ -30,6 +50,59 @@
             >
               <i data-icon="help"></i>
             </button>
+
+            <div class="results" data-when="search">
+              <div class="results__group">
+                <h2 class="results__title" data-t="map.search.spots"></h2>
+                <a class="results__item" href="spot.html?screen=detail&state=red">
+                  <span class="results__icon"><i data-icon="pin"></i></span>
+                  <span class="results__text"
+                    ><strong data-t="demo.spot1.name"></strong
+                    ><span class="small muted" data-t="demo.spot1.address"></span
+                  ></span>
+                </a>
+                <a class="results__item" href="spot.html?screen=detail&state=green">
+                  <span class="results__icon"><i data-icon="pin"></i></span>
+                  <span class="results__text"
+                    ><strong data-t="demo.spot4.name"></strong
+                    ><span class="small muted" data-t="demo.spot4.address"></span
+                  ></span>
+                </a>
+              </div>
+              <div class="results__group">
+                <h2 class="results__title" data-t="map.search.places"></h2>
+                <a class="results__item" href="map.html">
+                  <span class="results__icon"><i data-icon="map"></i></span>
+                  <span class="results__text"
+                    ><strong data-t="demo.place.street"></strong
+                    ><span class="small muted"
+                      ><span data-t="map.search.type.street"></span> ·
+                      <span data-t="demo.place.streetCity"></span></span
+                  ></span>
+                </a>
+                <a class="results__item" href="map.html">
+                  <span class="results__icon"><i data-icon="map"></i></span>
+                  <span class="results__text"
+                    ><strong data-t="demo.place.address"></strong
+                    ><span class="small muted"
+                      ><span data-t="map.search.type.address"></span> ·
+                      <span data-t="demo.place.streetCity"></span></span
+                  ></span>
+                </a>
+                <a class="results__item" href="map.html">
+                  <span class="results__icon"><i data-icon="map"></i></span>
+                  <span class="results__text"
+                    ><strong data-t="demo.place.city"></strong
+                    ><span class="small muted" data-t="map.search.type.city"></span
+                  ></span>
+                </a>
+              </div>
+            </div>
+            <div class="results results--none" data-when="search-none">
+              <i data-icon="search" data-class="icon--l"></i>
+              <strong data-t="map.search.none"></strong>
+              <span class="small muted" data-t="map.search.noneHint"></span>
+            </div>
           </div>
 
           <div class="mapbanner" data-when="zoom">
@@ -40,25 +113,19 @@
             <i data-icon="info"></i>
             <span data-t="map.empty"></span>
           </div>
-          <div class="mapbanner" data-when="locdenied">
-            <i data-icon="locate"></i>
-            <span class="muted" data-t="map.locationOff"></span>
+          <div class="mapbanner mapbanner--stack" data-when="locdenied">
+            <div class="mapbanner__row">
+              <i data-icon="locate"></i>
+              <span data-t="map.locationOff"></span>
+            </div>
             <a
-              class="btn btn--small btn--secondary"
+              class="btn btn--small"
               href="profile.html?screen=location-help"
               data-t="map.locationOn"
             ></a>
           </div>
 
           <div class="mapctl">
-            <div class="menu" id="plus-menu" data-when="plus">
-              <a class="menu__item" href="spot.html?screen=new">
-                <i data-icon="pin"></i><span data-t="map.newSpot"></span>
-              </a>
-              <a class="menu__item" href="alerts.html?screen=raise">
-                <i data-icon="alert"></i><span data-t="map.raiseAlert"></span>
-              </a>
-            </div>
             <button class="round" type="button" data-t-attr="aria-label:map.locate">
               <i data-icon="locate"></i>
             </button>
@@ -67,11 +134,37 @@
               type="button"
               data-go="plus"
               data-t-attr="aria-label:map.add"
-              aria-haspopup="menu"
+              aria-haspopup="dialog"
             >
               <i data-icon="plus"></i>
             </button>
           </div>
+
+          <!-- The "+" opens a dialog: what do you want to add? -->
+          <div class="scrim" data-when="plus" data-go="default"></div>
+          <aside class="sheet sheet--modal" role="dialog" aria-modal="true" data-when="plus">
+            <h2 class="sheet__title" data-t="map.add.title"></h2>
+            <a class="dialog__option" href="spot.html?screen=new">
+              <span class="dialog__icon"><i data-icon="pin"></i></span>
+              <span class="dialog__text"
+                ><strong data-t="map.newSpot"></strong
+                ><span class="small muted" data-t="map.newSpot.hint"></span
+              ></span>
+            </a>
+            <a class="dialog__option" data-level="alert" href="alerts.html?screen=raise">
+              <span class="dialog__icon"><i data-icon="alert"></i></span>
+              <span class="dialog__text"
+                ><strong data-t="map.raiseAlert"></strong
+                ><span class="small muted" data-t="map.raiseAlert.hint"></span
+              ></span>
+            </a>
+            <button
+              class="btn btn--quiet"
+              type="button"
+              data-go="default"
+              data-t="common.cancel"
+            ></button>
+          </aside>
 
           <!-- A spot is selected: sheet on the phone, panel from 768px. -->
           <aside class="sheet sheet--peek" data-when="spot">
@@ -119,7 +212,10 @@
           </aside>
 
           <!-- A pending custom spot, as an admin sees it. -->
-          <aside class="sheet sheet--peek" data-when="spot-pending">
+          <aside
+            class="sheet sheet--peek"
+            data-when="spot-pending spot-pending-approve spot-pending-reject"
+          >
             <div class="sheet__head">
               <div class="stack stack--2">
                 <span class="tag tag--pending"
@@ -140,9 +236,62 @@
             </div>
             <p class="small muted" data-t="map.pendingBy" data-v='{"name":"Dana K."}'></p>
             <div class="adminrow">
-              <button class="btn" type="button" data-t="spot.admin.approve"></button>
-              <button class="btn btn--secondary" type="button" data-t="spot.admin.reject"></button>
+              <button
+                class="btn"
+                type="button"
+                data-go="spot-pending-approve"
+                data-t="spot.admin.approve"
+              ></button>
+              <button
+                class="btn btn--secondary"
+                type="button"
+                data-go="spot-pending-reject"
+                data-t="spot.admin.reject"
+              ></button>
             </div>
+          </aside>
+          <div class="scrim" data-when="spot-pending-approve spot-pending-reject"></div>
+          <aside
+            class="sheet sheet--modal"
+            role="dialog"
+            aria-modal="true"
+            data-when="spot-pending-approve"
+          >
+            <h2 class="sheet__title" data-t="spot.admin.approve.confirmTitle"></h2>
+            <p class="muted" data-t="spot.admin.approve.confirmText"></p>
+            <button
+              class="btn btn--lg"
+              type="button"
+              data-go="default"
+              data-t="spot.admin.approve.confirmYes"
+            ></button>
+            <button
+              class="btn btn--quiet"
+              type="button"
+              data-go="spot-pending"
+              data-t="common.cancel"
+            ></button>
+          </aside>
+          <aside
+            class="sheet sheet--modal"
+            role="dialog"
+            aria-modal="true"
+            data-when="spot-pending-reject"
+          >
+            <h2 class="sheet__title" data-t="spot.admin.reject.confirmTitle"></h2>
+            <p class="muted" data-t="spot.admin.reject.confirmText"></p>
+            <button
+              class="btn btn--lg btn--danger"
+              type="button"
+              data-go="default"
+              data-t="spot.admin.reject.confirmYes"
+            ></button>
+            <button
+              class="btn btn--quiet"
+              type="button"
+              data-go="spot-pending"
+              data-t="common.cancel"
+            ></button>
           </aside>
 
           <!-- A cat alert is selected. -->
@@ -164,7 +313,7 @@
               </button>
             </div>
             <p class="small muted num">
-              <span data-t="alerts.timeLeft" data-v='{"n":4}'></span> ·
+              <span data-t="alerts.reportedAgo" data-v='{"n":2}'></span> ·
               <span data-t="alerts.distance.m" data-v='{"n":320}'></span>
             </p>
             <div class="cluster">
@@ -194,6 +343,7 @@
             </div>
             <div class="legend" id="legend"></div>
             <p class="small muted" data-t="map.legendWorst"></p>
+            <p class="small muted" data-t="map.credit"></p>
           </aside>
         </section>
       </main>

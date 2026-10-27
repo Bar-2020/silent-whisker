@@ -31,10 +31,10 @@
           />
           <p class="field__hint" data-t="firstrun.name.hint"></p>
           <p class="field__error" data-when="errors">
-            <i data-icon="exclaim"></i><span data-t="firstrun.name.required"></span>
+            <span data-t="firstrun.name.required"></span>
           </p>
           <p class="field__error" data-when="refused">
-            <i data-icon="exclaim"></i><span data-t="firstrun.name.refused"></span>
+            <span data-t="firstrun.name.refused"></span>
           </p>
         </div>
 
@@ -48,10 +48,10 @@
           />
           <p class="field__hint" data-t="firstrun.city.hint"></p>
           <p class="field__error" data-when="errors">
-            <i data-icon="exclaim"></i><span data-t="firstrun.city.required"></span>
+            <span data-t="firstrun.city.required"></span>
           </p>
           <p class="field__error" data-when="citynotfound">
-            <i data-icon="exclaim"></i><span data-t="firstrun.city.notFound"></span>
+            <span data-t="firstrun.city.notFound"></span>
           </p>
         </div>
 
@@ -77,21 +77,16 @@
             </label>
           </div>
           <p class="field__error" data-when="errors">
-            <i data-icon="exclaim"></i><span data-t="firstrun.photo.required"></span>
+            <span data-t="firstrun.photo.required"></span>
           </p>
         </fieldset>
       </div>
-      <div class="footbar on-dado">
-        <button class="btn btn--on-dado btn--lg" type="button" data-unless="saving">
+      <div class="footbar">
+        <button class="btn btn--lg" type="button" data-unless="saving">
           <span data-t="common.continue"></span>
         </button>
-        <button
-          class="btn btn--on-dado btn--lg"
-          type="button"
-          data-when="saving"
-          aria-disabled="true"
-        >
-          <span class="spinner"></span><span data-t="firstrun.saving"></span>
+        <button class="btn btn--lg" type="button" data-when="saving" aria-busy="true">
+          <span class="spinner spinner--btn"></span><span data-t="firstrun.saving"></span>
         </button>
       </div>
     </form>
@@ -109,6 +104,13 @@
           <li><i data-icon="alert"></i><span data-t="firstrun.location.why2"></span></li>
           <li><i data-icon="map"></i><span data-t="firstrun.location.why3"></span></li>
         </ul>
+        <div class="notice" data-level="orange">
+          <i data-icon="info"></i>
+          <div class="notice__body">
+            <strong data-t="firstrun.location.always.title"></strong>
+            <span data-t="firstrun.location.always.text"></span>
+          </div>
+        </div>
         <div class="notice">
           <i data-icon="lock"></i>
           <div class="notice__body"><span data-t="firstrun.location.privacy"></span></div>
@@ -119,7 +121,7 @@
           <div class="notice__body"><span data-t="firstrun.location.waiting"></span></div>
         </div>
       </div>
-      <div class="footbar footbar--stack footbar--plain">
+      <div class="footbar footbar--stack">
         <button class="btn btn--lg" type="button" data-unless="prompt" data-go="prompt">
           <i data-icon="locate"></i><span data-t="firstrun.location.allow"></span>
         </button>
@@ -129,8 +131,16 @@
         <a
           class="btn btn--secondary btn--lg"
           href="map.html?state=locdenied"
+          data-unless="prompt"
           data-t="firstrun.location.skip"
         ></a>
+        <button
+          class="btn btn--secondary btn--lg"
+          type="button"
+          data-when="prompt"
+          disabled
+          data-t="firstrun.location.skip"
+        ></button>
       </div>
     </div>
 

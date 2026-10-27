@@ -13,6 +13,8 @@
     Mock.setState(state);
   }
 
+  const pendingState = (state) => state.startsWith('spot-pending');
+
   function draw(state) {
     layers.forEach((layer) => layer.remove());
     layers = [];
@@ -23,7 +25,7 @@
       selected: selectedSpot && spot.id === 'red',
       onClick: () => select('spot'),
     }));
-    if (state === 'spot-pending') {
+    if (pendingState(state)) {
       items.push({ ...MockDemo.pending, selected: true, onClick: () => select('spot-pending') });
     }
     const alerts = MockDemo.alerts.map((item) => ({
@@ -70,12 +72,22 @@
     window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(
       map
     );
-    Mock.addAttribution(map);
   } else {
     host.dataset.failed = 'true';
   }
 
+  /* The search box shows what was typed while a search is open. */
+  const search = document.getElementById('map-search');
+
   Mock.onState = (state) => {
+    if (search) {
+      search.value =
+        state === 'search'
+          ? Mock.t('demo.search')
+          : state === 'search-none'
+            ? Mock.t('demo.searchNone')
+            : '';
+    }
     if (map) {
       const zoom = STATE_VIEW[state] || DEFAULT_ZOOM;
       map.setView(state === 'empty' ? EMPTY_CENTER : MockDemo.center, zoom, { animate: false });

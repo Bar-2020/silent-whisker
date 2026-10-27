@@ -46,6 +46,12 @@
       food: ['orange', 10, 'partial'],
       water: ['green', 4],
     },
+    admin: {
+      name: 'demo.spot1.name',
+      address: 'demo.spot1.address',
+      food: ['orange', 10, 'partial'],
+      water: ['green', 4],
+    },
     'pending-creator': { name: 'demo.spot2.name', address: 'demo.spot2.address' },
     'pending-admin': { name: 'demo.spot2.name', address: 'demo.spot2.address' },
     notfound: { name: 'spot.notFound.title', address: 'spot.notFound.title' },
@@ -143,6 +149,9 @@
     if (edit) {
       edit.value = Mock.t(state === 'refused' ? 'demo.badName' : 'demo.spot1.name');
       edit.setAttribute('aria-invalid', String(state === 'refused'));
+      const inactive = ['inactive', 'admin-inactive'].includes(state);
+      document.getElementById('edit-active').checked = !inactive;
+      document.getElementById('edit-inactive').checked = inactive;
     }
   }
 
@@ -164,7 +173,6 @@
     window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(
       map
     );
-    Mock.addAttribution(map);
     MockDemo.spots.slice(0, 4).forEach((spot) => {
       const selected = { ...spot, selected: spot.id === 'red' };
       window.L.marker(
@@ -182,11 +190,25 @@
     document.querySelectorAll('[data-panel]').forEach((panel) => {
       panel.hidden = panel.dataset.panel !== tab;
     });
+    /* A footer belongs to one tab, and gives way to a dialog that is open. */
     document.querySelectorAll('[data-panel-footer]').forEach((footer) => {
-      footer.hidden = footer.dataset.panelFooter !== tab;
+      const dialogOpen = (footer.dataset.notsub || '').split(' ').includes(sub);
+      footer.hidden = footer.dataset.panelFooter !== tab || dialogOpen;
     });
     document.querySelectorAll('[data-tab]').forEach((button) => {
       button.setAttribute('aria-selected', String(button.dataset.tab === tab));
+    });
+  }
+
+  /* A report is one step: confirm, and a short toast says it was sent. */
+  const reportYes = document.getElementById('report-yes');
+  const reportToast = document.getElementById('report-toast');
+  if (reportYes && reportToast) {
+    reportYes.addEventListener('click', () => {
+      reportToast.hidden = false;
+      window.setTimeout(() => {
+        reportToast.hidden = true;
+      }, 2600);
     });
   }
 
