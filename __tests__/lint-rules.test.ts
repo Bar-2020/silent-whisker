@@ -36,7 +36,7 @@ tester.run('no-inline-styles', plugin.rules['no-inline-styles'], {
   ],
 });
 
-// D-33 (no magic numbers: constants live in src/constants/).
+// D-33 (no magic numbers: constants live in shared/constants/).
 tester.run(
   'numeric-constants-live-in-constants',
   plugin.rules['numeric-constants-live-in-constants'],
@@ -49,10 +49,10 @@ tester.run(
       'function area() { const w = 30; return w; }',
     ],
     invalid: [
-      { code: 'const LIMIT = 30;', errors: [{ message: /src\/constants/ }] },
-      { code: 'export const LIMIT = 30;', errors: [{ message: /src\/constants/ }] },
-      { code: 'export const OFFSET = -5;', errors: [{ message: /src\/constants/ }] },
-      { code: 'const RATIO = 0.5;', errors: [{ message: /src\/constants/ }] },
+      { code: 'const LIMIT = 30;', errors: [{ message: /shared\/constants/ }] },
+      { code: 'export const LIMIT = 30;', errors: [{ message: /shared\/constants/ }] },
+      { code: 'export const OFFSET = -5;', errors: [{ message: /shared\/constants/ }] },
+      { code: 'const RATIO = 0.5;', errors: [{ message: /shared\/constants/ }] },
     ],
   }
 );
@@ -68,7 +68,7 @@ tester.run(
       "import { meteredCall } from '../shared/metered-call';\nimport { ConverseCommand } from '@aws-sdk/client-bedrock-runtime';",
       "import type { InvokeModelCommandInput } from '@aws-sdk/client-bedrock-runtime';",
       "import { InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';\nimport { meteredCall } from './metered-call.js';",
-      "import { DetectLabelsCommand } from '@aws-sdk/client-rekognition';\nimport { meteredCall } from '@/functions/shared/metered-call';",
+      "import { DetectLabelsCommand } from '@aws-sdk/client-rekognition';\nimport { meteredCall } from '@/backend/shared/metered-call';",
     ],
     invalid: [
       {

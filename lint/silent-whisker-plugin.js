@@ -62,7 +62,7 @@ const noInlineStyles = restrictSyntax(
 
 // `no-magic-numbers` lets `const LIMIT = 30` through anywhere, which would
 // leave limits scattered across logic files. Constants belong in
-// src/constants/, so a numeric top-level const is rejected everywhere else.
+// shared/constants/, so a numeric top-level const is rejected everywhere else.
 // Any number but 0 and 1, fractions included, and the same behind a unary minus.
 // A string such as '10' is not a number and passes.
 const numericConstantsLiveInConstants = restrictSyntax(
@@ -77,7 +77,7 @@ const numericConstantsLiveInConstants = restrictSyntax(
     .map((selector) => ({
       selector,
       message:
-        'Numeric constants live in src/constants/. Move this one there and import it. .claude/instructions/hard-rules.md, Constants.',
+        'Numeric constants live in shared/constants/. Move this one there and import it. .claude/instructions/hard-rules.md, Constants.',
     }))
 );
 
@@ -121,7 +121,7 @@ const paidCallsGoThroughMeteredCall = {
         for (const node of paidImports) {
           context.report({
             node,
-            message: `"${node.source.value}" is a paid AWS client. Wrap every call in meteredCall (functions/shared/metered-call.ts) so the daily cap counts it. .claude/instructions/hard-rules.md, metered AWS calls.`,
+            message: `"${node.source.value}" is a paid AWS client. Wrap every call in meteredCall (backend/shared/metered-call.ts) so the daily cap counts it. .claude/instructions/hard-rules.md, metered AWS calls.`,
           });
         }
       },

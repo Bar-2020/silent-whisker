@@ -16,14 +16,14 @@ terraform {
   # block cannot read variables or files, which is also why the region is written here again.
   backend "s3" {
     key          = "bootstrap.tfstate"
-    region       = "eu-north-1" # = selected_region in src/constants/aws.json
+    region       = "eu-north-1" # = selected_region in shared/constants/aws.json
     use_lockfile = true         # a lock file in the bucket stops two runs at once
   }
 }
 
 locals {
   # The same constants file the app reads, so a value lives in one place (hard rules).
-  constants = jsondecode(file("${path.module}/../../src/constants/aws.json"))
+  constants = jsondecode(file("${path.module}/../../shared/constants/aws.json"))
 }
 
 provider "aws" {

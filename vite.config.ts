@@ -174,10 +174,10 @@ export default defineConfig({
       },
       {
         // Business logic holds no magic numbers: limits, timeouts, sizes and counts
-        // are named in src/constants/. 0, 1 and -1 stay readable in place. Tests
+        // are named in shared/constants/. 0, 1 and -1 stay readable in place. Tests
         // use literals freely.
-        files: ['src/**/*.{ts,tsx}', 'functions/**/*.ts'],
-        excludeFiles: ['src/constants/**', '**/*.test.{ts,tsx}'],
+        files: ['frontend/src/**/*.{ts,tsx}', 'backend/**/*.ts', 'shared/**/*.ts'],
+        excludeFiles: ['shared/constants/**', '**/*.test.{ts,tsx}'],
         rules: {
           'typescript/no-magic-numbers': [
             'error',

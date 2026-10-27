@@ -49,7 +49,7 @@ memory, and if you cannot find it, say so instead of guessing.
 
 Example (made up, for the shape only):
 
-> **[R3]** `functions/log-feeding/handler.ts:42`
+> **[R3]** `backend/log-feeding/handler.ts:42`
 > **What is wrong:** The check "has this member already logged this spot?" runs before the save, as
 > two separate steps. If a volunteer double-taps *fed*, both taps pass the check and the feeding is
 > counted twice.

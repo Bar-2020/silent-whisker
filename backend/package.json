@@ -1,0 +1,13 @@
+{
+  "name": "silent-whisker-backend",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "aws-sdk-client-mock": "4.1.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.1147.0",
+    "@aws-sdk/client-sns": "3.1147.0",
+    "@aws-sdk/lib-dynamodb": "3.1147.0"
+  }
+}

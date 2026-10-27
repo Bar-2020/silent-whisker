@@ -1,0 +1,8 @@
+{
+  "name": "silent-whisker-frontend",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "vp build"
+  }
+}

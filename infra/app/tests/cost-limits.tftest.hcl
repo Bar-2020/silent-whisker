@@ -20,7 +20,7 @@ run "counters_table_is_free_and_cleans_itself" {
       aws_dynamodb_table.daily_usage_counters.read_capacity == 1 &&
       aws_dynamodb_table.daily_usage_counters.write_capacity == 3
     )
-    error_message = "Provisioned 1 read and 3 write units, from src/constants/capacity.json (D-26)."
+    error_message = "Provisioned 1 read and 3 write units, from shared/constants/capacity.json (D-26)."
   }
 
   assert {

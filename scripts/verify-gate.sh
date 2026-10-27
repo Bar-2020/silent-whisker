@@ -25,7 +25,7 @@ cd "$(git rev-parse --show-toplevel 2>/dev/null || echo .)" || exit 0
 # list deliberately - that test is the only test the repo has today, so a
 # docs-only turn is exactly the kind that can turn `npm test` red.
 PATHS=(
-  'src' 'infra' 'functions' '__tests__' 'scripts' '.github'
+  'frontend' 'backend' 'shared' 'infra' '__tests__' 'scripts' '.github'
   'package.json' 'tsconfig.json' 'vite.config.ts' 'lint' '.fallowrc.json'
   'docs' '.claude/instructions' 'README.md' 'CLAUDE.md'
 )

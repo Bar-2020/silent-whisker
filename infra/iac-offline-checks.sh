@@ -12,7 +12,7 @@ if [[ "$mode" != lint && "$mode" != test ]]; then
   exit 2
 fi
 
-cd "$(dirname "$0")/../infra"
+cd "$(dirname "$0")"
 
 # One shared download of the AWS provider for all modules, instead of one per module.
 export TF_PLUGIN_CACHE_DIR="${TF_PLUGIN_CACHE_DIR:-$HOME/.terraform.d/plugin-cache}"

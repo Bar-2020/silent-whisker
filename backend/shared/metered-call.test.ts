@@ -3,7 +3,7 @@ import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 import { DynamoDBDocumentClient, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
-import { BREAKER_DAILY_MICRO_USD, COUNTER_TTL_SECONDS } from '../../src/constants/cost';
+import { BREAKER_DAILY_MICRO_USD, COUNTER_TTL_SECONDS } from '../../shared/constants/cost';
 import { meteredCall, takeDailyAllowance } from './metered-call';
 import type { CostGuard } from './metered-call.types';
 
