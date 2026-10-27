@@ -784,3 +784,7 @@
   inset: 0;
   aspect-ratio: auto;
 }
+
+.hero__cta .btn {
+  align-self: stretch;
+}

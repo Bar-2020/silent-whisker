@@ -762,6 +762,8 @@ button.row {
   position: absolute;
   inset-block-start: 7px;
   inset-inline-start: 7px;
+  /* Leaflet gives every svg in its marker pane z-index 200; the disc and badge sit above that. */
+  z-index: 500;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -787,6 +789,7 @@ button.row {
   position: absolute;
   inset-block-start: -4px;
   inset-inline-end: -8px;
+  z-index: 501;
   display: grid;
   place-items: center;
   inline-size: 22px;

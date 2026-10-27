@@ -293,3 +293,10 @@
     --ratio: 16 / 9;
   }
 }
+
+@media (min-width: 768px) {
+  .hero__cta .btn {
+    align-self: flex-start;
+    min-inline-size: 18rem;
+  }
+}

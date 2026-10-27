@@ -13,13 +13,13 @@ colors:
   slate-blue-deep: "#213553"
   slate-blue-tint: "#e3e9f3"
   slate-blue-quiet: "#c6d2e6"
-  need-green: "#2d7a49"
+  need-green: "#2a8f4f"
   need-green-ink: "#1f5c36"
   need-green-tint: "#e0f0e5"
-  need-orange: "#b4540a"
+  need-orange: "#d97706"
   need-orange-ink: "#8f4107"
   need-orange-tint: "#fbe8d4"
-  need-red: "#c0282d"
+  need-red: "#d32f2f"
   need-red-ink: "#9a1f24"
   need-red-tint: "#fbe0e0"
   no-data-grey: "#66707c"
@@ -173,9 +173,9 @@ A white ground, one slate blue, and five state colours that carry meaning only.
 - **Slate Pale** (#c6d2e6): secondary text on the landing band.
 
 ### Secondary (state colours: meaning, not decoration)
-- **Need Green** (#2d7a49) with ink #1f5c36 on tint #e0f0e5: food and water are fine.
-- **Need Orange** (#b4540a) with ink #8f4107 on tint #fbe8d4: running low.
-- **Need Red** (#c0282d) with ink #9a1f24 on tint #fbe0e0: food or water needed; also errors.
+- **Need Green** (#2a8f4f) with ink #1f5c36 on tint #e0f0e5: food and water are fine.
+- **Need Orange** (#d97706) with ink #8f4107 on tint #fbe8d4: running low.
+- **Need Red** (#d32f2f) with ink #9a1f24 on tint #fbe0e0: food or water needed; also errors.
 - **No-Data Grey** (#66707c) with ink #4d5762 on tint #e9ebee: no counted log yet, inactive,
   in review.
 
@@ -249,9 +249,12 @@ depth.
 ### Shadow Vocabulary
 - **Lift** (`box-shadow: 0 1px 2px rgb(20 32 52 / 0.14), 0 6px 18px rgb(20 32 52 / 0.18)`): the
   map card and panel, the round map controls, toasts.
+- **Light glass** (`rgb(255 255 255 / 0.74)`, blur 14 px, saturate 1.6, a white edge): everything
+  else that floats over the map or the page with dark ink on it: the pin card and panel, the round
+  map controls (all 52 px), menus, banners and the sticky top bar.
 - **Glass** (a tinted pane, see Components): the navigation and the form action bars. Fill
-  `rgb(36 60 103 / 0.72)` over a backdrop that is blurred 18 px, saturated 1.8 and dimmed to 62%
-  (`backdrop-filter: blur(18px) saturate(1.8) brightness(0.62)`), a 1 px edge `rgb(255 255 255 /
+  `rgb(36 60 103 / 0.62)` over a backdrop that is blurred 10 px, saturated 1.7 and dimmed to 66%
+  (`backdrop-filter: blur(10px) saturate(1.7) brightness(0.66)`), a 1 px edge `rgb(255 255 255 /
   0.42)`, and inner highlights: a bright top rim `inset 0 1.5px 0 rgb(255 255 255 / 0.55)`, a faint
   bottom rim and a soft inner glow. The map and the page show through it. It falls back to a solid
   slate blue #2d4467 when `backdrop-filter` is unsupported or `prefers-reduced-transparency` is set.
@@ -261,7 +264,7 @@ depth.
 shadow.
 **The Legible Glass Rule.** The glass is see-through, but the backdrop is dimmed before the tint
 is laid on, so its labels (#eef3fa, white when active) keep at least 4.5:1 even over a plain white
-page (about 7:1 over white). If it is made clearer, dim the backdrop more; never trade away the
+page (measured above 6:1 over white). If it is made clearer, dim the backdrop more; never trade away the
 contrast.
 
 ## Shapes
@@ -303,18 +306,24 @@ the map card. White, 1 px line, no shadow except over the map.
   check mark. Used for log kind, alert kind, address or location.
 
 ### Navigation (the glass)
-- **Phone bar:** 4 items, icon over a 13 px label, active item on a lighter pill (`rgb(255 255 255
+- **Phone bar:** 4 items (Map, Explore, Alerts, Profile), icon over a 13 px label, active item on a lighter pill (`rgb(255 255 255
   / 0.14)` with a 1 px light edge), inactive labels in #eef3fa, all 14 px. **Rail** (768 px up): the same pane vertical, the logo above, the
   language switch below. **Top bar** on inner pages: white, a hairline below, back arrow at the
   inline-start.
 - **Action bar:** on a phone, the primary action of a form sits in the same glass, floating above
   the keyboard-safe area; on wide screens it is an ordinary inline button.
 
+### Language menu
+A globe icon button (never a toggle, never the word "English") opens a short list of languages with a
+check on the current one: on the landing and legal headers and at the foot of the rail. In the
+profile the language is a row that opens a choice dialog.
+
 ### Map markers (signature component)
-A teardrop pin: the colour is the worse of food and water; the glyph is the bowl or the drop of
-whichever drives it (both when tied); a corner badge repeats the level as a mark. Inactive pins are
+Every marker has the same 46 x 56 footprint. A teardrop pin: the colour is the worse of food and
+water; a white disc holds a solid bowl or drop of whichever drives it (both small when tied); a
+corner badge repeats the level as a mark. Inactive pins are
 62% opaque; a pin waiting for approval is white with a dashed slate outline. A cat alert is a plum
-rounded square with a cat head and a text label ("In danger", "Sick"). The member's position is
+rounded square on a stem with a solid cat head and a text label ("In danger", "Sick"). The member's position is
 a blue dot with a soft halo. Selected markers scale 1.2 and gain an ink outline.
 
 ### State row, log tiles, history

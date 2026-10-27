@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-27T10:06:36.592045+00:00",
+  "generatedAt": "2026-10-27T13:35:21.992231+00:00",
   "title": "Design System: Silent Whisker",
   "extensions": {
     "colorMeta": {
@@ -52,46 +52,46 @@
       "need-green": {
         "role": "secondary",
         "displayName": "Need Green",
-        "canonical": "#2d7a49",
+        "canonical": "#2a8f4f",
         "tonalRamp": [
-          "#143721",
-          "#1b4a2c",
-          "#225d38",
-          "#297043",
-          "#488b60",
-          "#7ead8f",
-          "#b4d0be",
-          "#eaf2ed"
+          "#134024",
+          "#195730",
+          "#206d3c",
+          "#278449",
+          "#459d66",
+          "#7cba93",
+          "#b3d7c0",
+          "#eaf4ed"
         ]
       },
       "need-orange": {
         "role": "secondary",
         "displayName": "Need Orange",
-        "canonical": "#b4540a",
+        "canonical": "#d97706",
         "tonalRamp": [
-          "#512604",
-          "#6d3306",
-          "#8a4008",
-          "#a64d09",
-          "#be6a29",
-          "#d19668",
-          "#e4c2a7",
-          "#f8eee6"
+          "#623603",
+          "#844804",
+          "#a65b05",
+          "#c86e06",
+          "#de8826",
+          "#e8ab66",
+          "#f1cea6",
+          "#fbf1e6"
         ]
       },
       "need-red": {
         "role": "secondary",
         "displayName": "Need Red",
-        "canonical": "#c0282d",
+        "canonical": "#d32f2f",
         "tonalRamp": [
-          "#561214",
-          "#75181b",
-          "#931f22",
-          "#b12529",
-          "#c84448",
-          "#d87b7e",
-          "#e8b2b4",
-          "#f9eaea"
+          "#5f1515",
+          "#801d1d",
+          "#a12424",
+          "#c22b2b",
+          "#d94a4a",
+          "#e47f7f",
+          "#efb5b5",
+          "#fbeaea"
         ]
       },
       "no-data-grey": {
@@ -152,7 +152,7 @@
       {
         "name": "glass",
         "value": "0 1px 2px rgb(20 32 52 / 0.14), 0 6px 18px rgb(20 32 52 / 0.18), inset 0 1.5px 0 rgb(255 255 255 / 0.55), inset 0 -1px 0 rgb(255 255 255 / 0.14), inset 0 0 14px rgb(255 255 255 / 0.07)",
-        "purpose": "The navigation and form action bars, with fill rgb(36 60 103 / 0.72) over a backdrop blurred 18px and dimmed to 62%."
+        "purpose": "The navigation and form action bars, with fill rgb(36 60 103 / 0.62) over a backdrop blurred 10px and dimmed to 66%."
       }
     ],
     "motion": [
@@ -220,14 +220,14 @@
       "refersTo": "nav-glass-item-active",
       "description": "The floating tinted-glass tab bar; the active item is a lighter pill.",
       "html": "<nav class=\"ds-nav\"><a>Profile</a><a>Alerts</a><a>Cats</a><a aria-current=\"page\">Map</a></nav>",
-      "css": ".ds-nav{display:flex;gap:4px;padding:4px;border:1px solid rgb(255 255 255/.3);border-radius:28px;background:rgb(36 60 103/.72);backdrop-filter:blur(18px) saturate(1.8) brightness(.62);box-shadow:0 1px 2px rgb(20 32 52/.14),0 6px 18px rgb(20 32 52/.18),inset 0 1.5px 0 rgb(255 255 255/.55);font:600 .875rem/1.2 system-ui,'Segoe UI',Roboto,sans-serif}.ds-nav a{flex:1;display:grid;place-items:center;min-height:56px;border-radius:24px;color:#eef3fa}.ds-nav a[aria-current]{background:rgb(255 255 255/.14);color:#fff}"
+      "css": ".ds-nav{display:flex;gap:4px;padding:4px;border:1px solid rgb(255 255 255/.3);border-radius:28px;background:rgb(36 60 103/.62);backdrop-filter:blur(10px) saturate(1.7) brightness(.66);box-shadow:0 1px 2px rgb(20 32 52/.14),0 6px 18px rgb(20 32 52/.18),inset 0 1.5px 0 rgb(255 255 255/.55);font:600 .875rem/1.2 system-ui,'Segoe UI',Roboto,sans-serif}.ds-nav a{flex:1;display:grid;place-items:center;min-height:56px;border-radius:24px;color:#eef3fa}.ds-nav a[aria-current]{background:rgb(255 255 255/.14);color:#fff}"
     },
     {
       "name": "Map Pin",
       "kind": "custom",
       "refersTo": "",
       "description": "A teardrop whose tip is the exact point; colour is the worse of food and water, a corner mark repeats it.",
-      "html": "<svg width=\"40\" height=\"48\" viewBox=\"0 0 40 48\"><path d=\"M20 46S4 31 4 19a16 16 0 1 1 32 0c0 12-16 27-16 27z\" fill=\"#c0282d\" stroke=\"#fff\" stroke-width=\"2.5\"/></svg>",
+      "html": "<svg width=\"40\" height=\"48\" viewBox=\"0 0 40 48\"><path d=\"M20 46S4 31 4 19a16 16 0 1 1 32 0c0 12-16 27-16 27z\" fill=\"#d32f2f\" stroke=\"#fff\" stroke-width=\"2.5\"/></svg>",
       "css": ".ds-pin{display:block}"
     }
   ],
@@ -274,7 +274,7 @@
       },
       {
         "name": "The Legible Glass Rule",
-        "body": "The glass is see-through, but the backdrop is dimmed before the tint is laid on, so its labels (#eef3fa, white when active) keep at least 4.5:1 even over a plain white page (about 7:1 over white). If it is made clearer, dim the backdrop more; never trade away the contrast.",
+        "body": "The glass is see-through, but the backdrop is dimmed before the tint is laid on, so its labels (#eef3fa, white when active) keep at least 4.5:1 even over a plain white page (measured above 6:1 over white). If it is made clearer, dim the backdrop more; never trade away the contrast.",
         "section": "elevation"
       }
     ],
