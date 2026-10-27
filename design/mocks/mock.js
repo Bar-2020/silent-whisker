@@ -90,9 +90,25 @@
     host.className = 'nav on-dado';
     host.setAttribute('aria-label', t('nav.label'));
     host.innerHTML =
-      `<a class="nav__brand" href="${withLang('landing.html')}" aria-label="${t('nav.home')}"><svg class="brand-glyph" aria-hidden="true"><use href="#i-cat-fill"></use></svg></a>` +
+      `<a class="nav__brand" href="${withLang('landing.html')}" aria-label="${t('nav.home')}"><svg class="brand-glyph" aria-hidden="true"><use href="#i-cat"></use></svg></a>` +
       items +
       '<div class="nav__lang" data-langmenu></div>';
+  }
+
+  /* Every top bar carries the mark: first when the bar has no back button, right after it otherwise. */
+  function drawTopbarBrand() {
+    document.querySelectorAll('.topbar:not([data-nobrand])').forEach((bar) => {
+      const brand = document.createElement('a');
+      brand.className = 'topbar__brand';
+      brand.href = withLang('map.html');
+      brand.setAttribute('aria-label', t('nav.home'));
+      brand.innerHTML =
+        '<svg class="brandmark__glyph" aria-hidden="true"><use href="#i-cat"></use></svg>';
+      const first = bar.firstElementChild;
+      const hasBack = first && first.classList.contains('iconbtn') && first.tagName === 'A';
+      if (hasBack) first.after(brand);
+      else bar.prepend(brand);
+    });
   }
 
   function otherQuery(nextLang) {
@@ -201,9 +217,20 @@
       else control.removeAttribute('aria-describedby');
     });
     document
-      .querySelectorAll('input.input, textarea.textarea, .msg__bubble p, .comment__body p')
-      .forEach((el) => el.setAttribute('dir', 'auto'));
+      .querySelectorAll('input.input, textarea.textarea, .msg__text, .comment__body p')
+      .forEach(syncDirection);
   }
+
+  /* Typed words choose their own direction; an empty box (its placeholder) follows the page, so a
+     Hebrew placeholder sits at the right, not the left. */
+  const TEXT_BOX = 'input.input, textarea.textarea';
+  function syncDirection(el) {
+    if (el.matches(TEXT_BOX) && !el.value) el.removeAttribute('dir');
+    else el.setAttribute('dir', 'auto');
+  }
+  document.addEventListener('input', (event) => {
+    if (event.target.matches && event.target.matches(TEXT_BOX)) syncDirection(event.target);
+  });
 
   /* A refusal or error that sits below the fold is brought into view. */
   function showFirstProblem() {
@@ -284,15 +311,6 @@
     );
   }
 
-  /* The attribution sits on the side away from the rail (the rail is at the inline-start). */
-  function addAttribution(map) {
-    const position = lang === 'he' ? 'bottomleft' : 'bottomright';
-    window.L.control
-      .attribution({ position, prefix: false })
-      .addAttribution('&copy; OpenStreetMap')
-      .addTo(map);
-  }
-
   /* Pins and signs are buttons: reachable by keyboard and named by what they mean. */
   function markerOptions(label, html) {
     return {
@@ -319,7 +337,6 @@
     window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(
       map
     );
-    addAttribution(map);
     const layers = [];
     const add = (position, html, onClick) => {
       const marker = window.L.marker(position, {
@@ -353,7 +370,6 @@
     markerOptions,
     pinLabel,
     mountMap,
-    addAttribution,
     pinHtml,
     signHtml,
     onState: null,
@@ -361,6 +377,7 @@
 
   /* ----- boot ----- */
   drawNav();
+  drawTopbarBrand();
   drawLangMenu();
   drawIcons(document);
   translate(document);

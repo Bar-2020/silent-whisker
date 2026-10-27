@@ -1,36 +1,45 @@
 /* Page-level layout. Components live in components.css; widths in responsive.css. */
 
 /* ---------- The form footbar: primary actions live on the painted band ---------- */
+/* A screen with a pinned action bar fills the viewport, so the bar sits at the bottom of the screen
+   even when the form is short. */
+body[data-chrome='page'] [data-screen] {
+  position: relative;
+}
+
+body[data-chrome='page']
+  :is([data-screen], .split-view__panel):has(> :is(.footbar, .composer, [data-panel-footer])) {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100dvh;
+}
+
+body[data-chrome='page']
+  :is([data-screen], .split-view__panel):has(> :is(.footbar, .composer, [data-panel-footer]))
+  > .page {
+  flex: 1;
+  inline-size: 100%;
+}
+
+body[data-chrome='page']
+  :is([data-screen], .split-view__panel):has(> :is(.footbar, .composer, [data-panel-footer]))
+  > :is(.footbar, .composer, [data-panel-footer]) {
+  margin-block-start: auto;
+}
+
 .footbar {
   position: sticky;
-  inset-block-end: var(--nav-gap);
+  inset-block-end: 0;
   z-index: 700;
   display: flex;
-  gap: var(--s-2);
-  margin: var(--nav-gap);
-  padding: var(--s-1);
-  border: 1px solid var(--glass-edge);
-  border-radius: var(--r-glass);
-  background: var(--glass);
-  box-shadow: var(--lift), var(--glass-shine);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
+  gap: var(--s-3);
+  margin: 0;
+  padding: var(--s-3) var(--s-4) calc(var(--s-3) + env(safe-area-inset-bottom, 0px));
+  background: var(--surface);
 }
 
 .footbar .btn {
   flex: 1;
-  border-radius: var(--r-nav-item);
-}
-
-.btn--outline-on-dado {
-  background: transparent;
-  color: var(--glass-ink);
-  border-color: var(--glass-ink);
-}
-
-.btn--outline-on-dado:hover,
-.btn--outline-on-dado:active {
-  background: var(--dado-deep);
 }
 
 .page--narrow {
@@ -107,13 +116,13 @@
 }
 
 .band-section {
-  padding: var(--s-7) var(--s-4);
+  padding: var(--s-8) var(--s-5);
 }
 
 .band-section__inner {
   display: flex;
   flex-direction: column;
-  gap: var(--s-5);
+  gap: var(--s-6);
   max-inline-size: 64rem;
   margin-inline: auto;
 }
@@ -121,7 +130,7 @@
 .steps {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--s-5);
+  gap: var(--s-6);
 }
 
 .step {
@@ -144,6 +153,8 @@
 .step__visual .pin {
   translate: none;
   filter: none;
+  cursor: default;
+  pointer-events: none;
 }
 
 .step__visual .icon {
@@ -155,7 +166,7 @@
 .promise {
   display: flex;
   flex-direction: column;
-  gap: var(--s-4);
+  gap: var(--s-5);
 }
 
 .promise li {
@@ -198,9 +209,21 @@
 }
 
 .sitefoot {
-  padding: var(--s-6) var(--s-4);
-  border-block-start: 1px solid var(--line);
-  background: var(--surface);
+  padding: var(--s-7) var(--s-5) var(--s-8);
+  background: var(--dado-deep);
+  color: var(--dado-quiet);
+}
+
+.sitefoot a {
+  color: var(--dado-ink);
+}
+
+.sitefoot .muted {
+  color: var(--dado-quiet);
+}
+
+.sitefoot__made {
+  font-size: var(--fs-s);
 }
 
 .sitefoot__inner {
@@ -291,27 +314,22 @@
 .why {
   display: flex;
   flex-direction: column;
+  gap: var(--s-3);
 }
 
 .why li {
   display: flex;
   gap: var(--s-3);
-  align-items: flex-start;
-  padding-block: var(--s-2);
-  border-block-end: 1px solid var(--line);
+  align-items: center;
 }
 
-.why li:first-child {
-  padding-block-start: 0;
-}
-
-.why li:last-child {
-  border-block-end: 0;
-}
-
-.why .icon {
+.why li > .icon {
+  inline-size: 40px;
+  block-size: 40px;
+  padding: 8px;
+  border-radius: 50%;
+  background: var(--dado-tint);
   color: var(--dado);
-  margin-block-start: 2px;
 }
 
 /* ---------- Map page extras ---------- */
@@ -327,12 +345,185 @@
   --sheet-h: 236px;
 }
 
-.stage[data-sheet='spot'] .mapctl {
-  inset-block-end: calc(var(--nav-total) + var(--sheet-h) + var(--s-3));
+/* The two action buttons sit at the right in both languages (most hands are right hands), and give
+   way to a card, so nothing sits on top of it. */
+[dir='rtl'] .mapctl {
+  inset-inline-end: auto;
+  inset-inline-start: var(--s-4);
 }
 
-.stage[data-sheet='alert'] .mapctl {
-  inset-block-end: calc(var(--nav-total) + 280px + var(--s-3));
+.stage:is([data-sheet='spot'], [data-sheet='alert'], [data-sheet='legend']) .mapctl {
+  display: none;
+}
+
+/* The top row: search, and the legend button. */
+.maptop {
+  position: absolute;
+  inset-block-start: var(--s-4);
+  inset-inline: var(--s-4);
+  z-index: 520;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.mapsearch {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--s-2);
+  min-inline-size: 0;
+  block-size: var(--round);
+  padding-inline: var(--s-4) var(--s-2);
+  border: 1px solid var(--glass-light-edge);
+  border-radius: var(--r-pill);
+  background: var(--glass-light);
+  -webkit-backdrop-filter: var(--glass-light-blur);
+  backdrop-filter: var(--glass-light-blur);
+  box-shadow:
+    var(--lift),
+    inset 0 1.5px 0 rgb(255 255 255 / 0.9);
+  color: var(--dado);
+}
+
+.mapsearch:focus-within {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.mapsearch__input {
+  flex: 1;
+  min-inline-size: 0;
+  block-size: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: var(--fs-m);
+}
+
+.mapsearch__input:focus-visible {
+  outline: none;
+}
+
+.mapsearch__input::placeholder {
+  color: var(--ink-3);
+  opacity: 1;
+}
+
+.mapsearch__clear {
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  flex: none;
+  border: 0;
+  border-radius: 50%;
+  background: var(--dado-tint);
+  color: var(--dado);
+  cursor: pointer;
+}
+
+.mapsearch__clear .icon {
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+}
+
+.results {
+  position: absolute;
+  inset-block-start: calc(100% + var(--s-2));
+  inset-inline: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  max-block-size: min(60dvh, 28rem);
+  overflow-y: auto;
+  padding: var(--s-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  background: var(--surface);
+  box-shadow: var(--lift);
+}
+
+.results__title {
+  padding: var(--s-2) var(--s-3) var(--s-1);
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+  font-weight: 700;
+}
+
+.results__item {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-block-size: 56px;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-s);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.results__item:hover {
+  background: var(--dado-tint);
+}
+
+.results__icon {
+  display: grid;
+  place-items: center;
+  inline-size: 36px;
+  block-size: 36px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--dado-tint);
+  color: var(--dado);
+}
+
+.results__text {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.results--none {
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-6) var(--s-4);
+  color: var(--ink-3);
+  text-align: center;
+}
+
+/* A choice inside a dialog: a big row with an icon, a title and one line. */
+.dialog__option {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-block-size: var(--tap-l);
+  padding: var(--s-3) var(--s-4);
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-m);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.dialog__option:hover {
+  border-color: var(--dado);
+  background: var(--dado-tint);
+}
+
+.dialog__icon {
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--lvl-tint, var(--dado-tint));
+  color: var(--lvl-ink, var(--dado));
+}
+
+.dialog__text {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
 }
 
 .adminrow {
@@ -348,7 +539,7 @@
 .feed {
   display: flex;
   flex-direction: column;
-  gap: var(--s-3);
+  gap: var(--s-6);
 }
 
 .context {
@@ -365,16 +556,31 @@
   min-inline-size: 0;
 }
 
+/* An alert: the photo and the words on top, the two buttons side by side under them, full width. */
+.alerts {
+  display: flex;
+  flex-direction: column;
+}
+
 .alertrow {
   display: flex;
+  flex-direction: column;
   gap: var(--s-3);
-  padding: var(--s-4);
-  background: var(--surface);
-  border-block-end: 1px solid var(--line);
+  padding-block: var(--s-4);
+}
+
+.alertrow + .alertrow {
+  border-block-start: 1px solid var(--line);
+}
+
+.alertrow__top {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
 }
 
 .alertrow .photo {
-  inline-size: 88px;
+  inline-size: 80px;
   flex: none;
   border-radius: var(--r-s);
 }
@@ -385,6 +591,53 @@
   display: flex;
   flex-direction: column;
   gap: var(--s-2);
+}
+
+.alertrow__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-1) var(--s-2);
+}
+
+/* The note is at most 140 characters; the list shows two lines of it. */
+.alertrow__note {
+  display: -webkit-box;
+  overflow: hidden;
+  font-weight: 600;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.alertrow__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-2);
+}
+
+.alertrow__actions:has(> :only-child) {
+  grid-template-columns: 1fr;
+}
+
+.alertrow__actions--admin {
+  padding-block-start: var(--s-3);
+  border-block-start: 1px dashed var(--line-strong);
+}
+
+.alerts__note {
+  text-align: center;
+}
+
+.notice__action {
+  align-self: flex-start;
+  margin-block-start: var(--s-2);
+}
+
+fieldset.field > legend {
+  margin-block-end: var(--s-3);
+  padding: 0;
 }
 
 .statusline {
@@ -400,25 +653,6 @@
   block-size: 1.125rem;
 }
 
-.photo-pick {
-  display: grid;
-  place-items: center;
-  gap: var(--s-2);
-  min-block-size: 160px;
-  border: 1.5px dashed var(--dado);
-  border-radius: var(--r-m);
-  background: var(--dado-tint);
-  color: var(--dado);
-  font-weight: 600;
-  text-align: center;
-  cursor: pointer;
-}
-
-.photo-pick .icon {
-  inline-size: 2rem;
-  block-size: 2rem;
-}
-
 .centered {
   display: flex;
   flex-direction: column;
@@ -428,6 +662,11 @@
   min-block-size: 100dvh;
   padding: var(--s-5) var(--s-4);
   text-align: center;
+}
+
+/* Under a top bar the screen is the rest of the viewport, so nothing scrolls. */
+.topbar ~ .centered {
+  min-block-size: calc(100dvh - 56px);
 }
 
 .centered .illus {
@@ -451,15 +690,148 @@
   padding-inline: 0;
 }
 
-.post--solo {
-  border-radius: var(--r-m);
-  border: 1px solid var(--line);
-  overflow: hidden;
+.post--solo .post__open {
+  display: block;
+  inline-size: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
 }
 
-.skeleton--post {
-  block-size: 24rem;
+.post--solo .photo {
+  --ratio: 4 / 5;
+  display: grid;
+  inline-size: 100%;
+}
+
+.comments {
+  padding-block-start: var(--s-5);
+}
+
+/* A loading post: a photo block and two lines, solid so it reads as "coming". */
+.skeleton-post {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.skeleton--media {
+  aspect-ratio: 1 / 1;
+  border-radius: 0;
+}
+
+.skeleton--line {
+  block-size: 18px;
+  margin-inline: var(--s-4);
+}
+
+.skeleton--short {
+  inline-size: 40%;
+}
+
+/* The photo, full screen. */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 880;
+  display: grid;
+  place-items: center;
+  background: rgb(11 15 20 / 0.96);
+}
+
+.lightbox__photo {
+  --ratio: 4 / 5;
+  inline-size: min(100%, calc((100dvh - var(--s-8)) * 0.8));
+}
+
+.lightbox__close {
+  position: absolute;
+  inset-block-start: var(--s-3);
+  inset-inline-end: var(--s-3);
+  background: rgb(255 255 255 / 0.16);
+  color: #fff;
+}
+
+.lightbox__close:hover {
+  background: rgb(255 255 255 / 0.28);
+}
+
+/* A toast above the comment box, so a refusal does not push the text box around. */
+.toast--composer {
+  inset-block-end: calc(var(--tap) + var(--s-6) + var(--s-2));
+}
+
+/* The place picker: a map and a list that are one choice. */
+.picker-map {
+  position: relative;
+  block-size: 220px;
+  overflow: hidden;
+  border: 1px solid var(--line);
   border-radius: var(--r-m);
+}
+
+.searchbox {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-block-size: var(--tap);
+  padding-inline: var(--s-4);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--dado);
+}
+
+.searchbox:focus-within {
+  border-color: var(--dado);
+  outline: 3px solid var(--focus);
+  outline-offset: 0;
+}
+
+.searchbox__input {
+  flex: 1;
+  min-inline-size: 0;
+  min-block-size: var(--tap);
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+}
+
+.searchbox__input:focus-visible {
+  outline: none;
+}
+
+.picker__nearby {
+  padding-block-start: var(--s-3);
+  color: var(--ink-2);
+  font-size: var(--fs-m);
+}
+
+.pickrow__text {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+/* A small pin for a list row: the same drawing as the map, at half the size. */
+.pickpin {
+  --pin-w: 24px;
+  --pin-h: 29px;
+  display: grid;
+  place-items: center;
+  inline-size: 28px;
+  flex: none;
+}
+
+.pickpin .pin {
+  translate: none;
+  filter: none;
+  cursor: inherit;
+}
+
+.pickpin .pin__body {
+  stroke-width: 2;
 }
 
 .skeleton--msg {
@@ -483,9 +855,32 @@
 }
 
 .chat-page {
+  display: flex;
+  flex-direction: column;
   padding-inline: 0;
   padding-block: 0;
   min-block-size: 50dvh;
+}
+
+.chat-page > .empty {
+  flex: 1;
+  justify-content: center;
+}
+
+/* A bit more air in the chat's top bar: a title and the spot under it. */
+.topbar--chat {
+  min-block-size: 68px;
+  padding-block: var(--s-2);
+}
+
+/* The quoted message at the top of a dialog. */
+.dialog__quote {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-m);
+  background: var(--surface-sunk);
 }
 
 .chat-title {
@@ -513,11 +908,33 @@
 }
 
 .steps-list {
-  list-style: decimal;
-  padding: 0 var(--s-6) var(--s-4);
+  counter-reset: step;
+  padding: 0 var(--s-4) var(--s-4);
   display: flex;
   flex-direction: column;
-  gap: var(--s-2);
+  gap: var(--s-3);
+}
+
+/* The number is a small badge, so it reads the same in Hebrew and in English. */
+.steps-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  counter-increment: step;
+}
+
+.steps-list li::before {
+  content: counter(step);
+  display: grid;
+  place-items: center;
+  inline-size: 28px;
+  block-size: 28px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--dado-tint);
+  color: var(--dado);
+  font-size: var(--fs-s);
+  font-weight: 700;
 }
 
 .row--bad,
@@ -528,7 +945,7 @@
 .boot-logo {
   inline-size: 96px;
   block-size: 96px;
-  border-radius: var(--r-l);
+  color: var(--dado);
 }
 
 .footbar--stack {
@@ -548,24 +965,26 @@
 .hero {
   display: flex;
   flex-direction: column;
-  gap: var(--s-7);
+  gap: var(--s-8);
   max-inline-size: 64rem;
   margin-inline: auto;
-  padding: var(--s-6) var(--s-4) var(--s-7);
+  padding: var(--s-6) var(--s-5) var(--s-8);
   min-block-size: 0;
 }
 
+/* The first screen is the pitch alone: the phone starts below the fold, one scroll away. */
 .hero__copy {
   display: flex;
   flex-direction: column;
-  gap: var(--s-4);
+  gap: var(--s-5);
   justify-content: center;
+  min-block-size: calc(100svh - 8rem);
 }
 
 .hero__cta {
   display: flex;
   flex-direction: column;
-  gap: var(--s-3);
+  gap: var(--s-4);
   align-items: flex-start;
 }
 
@@ -578,13 +997,33 @@
 }
 
 .trust {
-  padding: var(--s-7) var(--s-4);
+  padding: var(--s-8) var(--s-5);
   background: var(--dado);
   color: var(--dado-quiet);
 }
 
 .trust h2 {
   color: var(--dado-ink);
+}
+
+/* The closing pitch is a section of its own: a tinted band, centred, clearly not the footer. */
+.band-section--cta {
+  background: var(--dado-tint);
+  text-align: center;
+}
+
+.band-section--cta .band-section__inner {
+  align-items: center;
+  max-inline-size: 40rem;
+}
+
+.band-section--cta h2 {
+  font-size: var(--fs-2xl);
+}
+
+.band-section--cta .cluster {
+  justify-content: center;
+  gap: var(--s-4);
 }
 
 .trust .promise .icon {
@@ -726,6 +1165,18 @@
   cursor: pointer;
 }
 
+/* A place that is fixed (the post started at a spot) cannot be changed: it looks sunk and has no chevron. */
+.where-pick:disabled {
+  border-color: var(--line);
+  background: var(--surface-sunk);
+  color: var(--ink-2);
+  cursor: not-allowed;
+}
+
+.where-pick:disabled > .icon:last-child {
+  display: none;
+}
+
 .where-pick:hover {
   background: var(--dado-tint);
 }
@@ -759,10 +1210,13 @@
 
 /* ---------- Brand mark in the rail ---------- */
 .brand-glyph {
-  --cut: var(--glass-solid);
-  inline-size: 30px;
-  block-size: 30px;
-  fill: var(--glass-ink);
+  inline-size: 32px;
+  block-size: 32px;
+  fill: none;
+  stroke: var(--glass-ink);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 /* ---------- Landing navigation: the same glass as the app ---------- */
@@ -907,25 +1361,28 @@ h2[id] {
 }
 
 .brandmark__glyph {
-  --cut: var(--glass-solid);
-  inline-size: 30px;
-  block-size: 30px;
-  fill: currentColor;
+  inline-size: 32px;
+  block-size: 32px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.sitebar .brandmark__glyph {
-  --cut: var(--surface);
+/* The mark in a top bar: the same outline cat, quiet, at the end of the bar. */
+.topbar__brand {
+  display: grid;
+  place-items: center;
+  inline-size: var(--tap);
+  block-size: var(--tap);
+  flex: none;
+  color: var(--dado);
 }
 
-/* A footbar with no pane behind it: two plain buttons that stand apart. */
-.footbar--plain {
-  gap: var(--s-3);
-  padding: var(--s-4);
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+.topbar__brand .brandmark__glyph {
+  inline-size: 28px;
+  block-size: 28px;
 }
 
 /* A process strip under the top bar while something is being sent. */
@@ -950,10 +1407,6 @@ h2[id] {
 
 .process__row strong {
   display: block;
-}
-
-.process .progress {
-  background: var(--surface);
 }
 
 /* Post a photo: one column on a phone, photo beside the details on a wide screen. */
@@ -1003,13 +1456,18 @@ h2[id] {
 }
 
 .tabs button {
+  display: grid;
+  place-items: center;
   min-block-size: var(--tap);
-  padding-inline: var(--s-1);
+  padding-inline: 0;
   border: 0;
   border-radius: var(--r-s);
   background: transparent;
   color: var(--ink-2);
+  font-size: var(--fs-s);
   font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -1017,4 +1475,169 @@ h2[id] {
   background: var(--surface);
   color: var(--dado);
   box-shadow: var(--lift);
+}
+
+/* ---------- Profile ---------- */
+/* My activity: a tinted card, three plain rows, no dividers. */
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding: var(--s-4);
+  border-radius: var(--r-l);
+  background: var(--dado-tint);
+}
+
+.stats h2 {
+  padding-block-end: var(--s-2);
+  color: var(--dado);
+  font-size: var(--fs-m);
+}
+
+.stats .stat {
+  min-block-size: var(--tap);
+  padding: 0;
+  border: 0;
+}
+
+.stats .stat__icon {
+  display: grid;
+  place-items: center;
+  inline-size: 36px;
+  block-size: 36px;
+  padding: 6px;
+  border-radius: 50%;
+  background: var(--surface);
+}
+
+.edit-avatar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.illus--start {
+  display: grid;
+  place-items: center;
+  inline-size: 56px;
+  block-size: 56px;
+  border-radius: 50%;
+  background: var(--dado-tint);
+  color: var(--dado);
+}
+
+/* A photo slot with no photo: the same size as the others, drawn quiet. */
+.photo--none {
+  border: 1.5px dashed var(--line-strong);
+  background: var(--surface-sunk);
+}
+
+/* A list that has nothing in it fills the screen, so its message sits in the middle. */
+.page--fill {
+  display: flex;
+  flex-direction: column;
+  min-block-size: calc(100dvh - 56px);
+}
+
+.page--fill > .empty {
+  flex: 1;
+  justify-content: center;
+}
+
+/* Reported content: a card with the content, two decisions and two member actions, on one grid. */
+.reports {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.report {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+}
+
+.report__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.report__body {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+}
+
+.report__body .photo {
+  inline-size: 80px;
+  flex: none;
+  border-radius: var(--r-s);
+}
+
+.report__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--s-1);
+  min-inline-size: 0;
+}
+
+.report__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-2);
+}
+
+.report__member {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding-block-start: var(--s-3);
+  border-block-start: 1px solid var(--line);
+}
+
+.report__member .btn--quiet {
+  border-color: var(--line-strong);
+}
+
+/* ---------- Spot page tabs ---------- */
+/* The cats at a spot: a real grid, three to a row, edge to edge. */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-2);
+}
+
+.cat-grid a {
+  display: block;
+}
+
+.cat-grid .photo {
+  border-radius: var(--r-s);
+}
+
+/* The chat inside the spot page: the thread, and the composer pinned under it. */
+.section--chat {
+  padding-block: 0;
+  border: 0;
+}
+
+.thread--inline {
+  padding: 0;
+}
+
+/* A short confirmation that sits above the bottom bar and goes away by itself. */
+.toast--quiet {
+  inset-block-end: calc(var(--tap-l) + var(--s-6));
+}
+
+/* A sentence on its own line, balanced, so a short pair of sentences never breaks mid-way. */
+.line {
+  display: block;
+  text-wrap: balance;
 }

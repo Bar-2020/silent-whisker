@@ -102,6 +102,10 @@
   --nav-total: calc(var(--nav-size) + var(--nav-gap) * 2);
   --rail-offset: calc(var(--rail-size) + var(--nav-gap) * 2);
 
+  /* Loading skeletons: solid, clearly darker than the page, so they read as "something is coming". */
+  --skeleton: #d5dce7;
+  --skeleton-shine: #e6ebf2;
+
   /* Photo placeholders in the mocks; the app shows real photos. */
   --photo-tone-1: #dfe4ec;
   --photo-tone-2: #e6e2d8;

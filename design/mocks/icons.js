@@ -4,7 +4,7 @@
 (function () {
   const ICONS = {
     map: '<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>',
-    cat: '<path d="M4 10V4l4.5 3h7L20 4v6c0 5-3.5 9-8 9s-8-4-8-9z"/><path d="M9 11.5h.01M15 11.5h.01M10.3 15c.5.5 1 .7 1.7.7s1.2-.2 1.7-.7"/>',
+    cat: '<path d="M4 10.6V4.9c0-.7.7-1 1.2-.7l3.6 2.3c2.1-.5 4.3-.5 6.4 0l3.6-2.3c.5-.3 1.2 0 1.2.7v5.7c.4.9.6 1.9.6 2.8 0 4-3.7 6.7-8.6 6.7S3.4 17.4 3.4 13.4c0-.9.2-1.9.6-2.8z"/><path d="M9 13h.01M15 13h.01"/><path d="M10.9 15.5h2.2L12 16.9z"/>',
     alert:
       '<path d="M10.3 4 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 4a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
     user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>',
@@ -53,10 +53,18 @@
       '<rect x="2.5" y="8.5" width="19" height="2.8" rx="1.4"/><path d="M4.5 13h15a7.5 7.5 0 0 1-15 0z"/>',
     'both-fill':
       '<path d="M12 1.8s3.1 3.3 3.1 5.4a3.1 3.1 0 0 1-6.2 0C8.9 5.1 12 1.8 12 1.8z"/><rect x="3.5" y="11.5" width="17" height="2.4" rx="1.2"/><path d="M5.2 15h13.6a6.8 6.8 0 0 1-13.6 0z"/>',
-    paw: '<ellipse cx="12" cy="16.2" rx="4.6" ry="3.8"/><circle cx="5.4" cy="11" r="2"/><circle cx="9" cy="6.6" r="2.1"/><circle cx="15" cy="6.6" r="2.1"/><circle cx="18.6" cy="11" r="2"/>',
+    paw: '<path d="M12 12.4c-3.1 0-5.9 2.6-5.9 5.5 0 1.7 1.2 2.6 2.8 2.6 1 0 1.8-.5 3.1-.5s2.1.5 3.1.5c1.6 0 2.8-.9 2.8-2.6 0-2.9-2.8-5.5-5.9-5.5z"/><ellipse cx="4.5" cy="11.2" rx="1.9" ry="2.4"/><ellipse cx="9" cy="6" rx="2" ry="2.6"/><ellipse cx="15" cy="6" rx="2" ry="2.6"/><ellipse cx="19.5" cy="11.2" rx="1.9" ry="2.4"/>',
     'drop-fill': '<path d="M12 2.5s6.5 7 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 9.5 12 2.5 12 2.5z"/>',
     'cat-fill':
-      '<path d="M4 3.5l4.8 3.3h6.4L20 3.5V13a8 8 0 0 1-16 0z"/><circle class="cut" cx="9" cy="12.5" r="1.4"/><circle class="cut" cx="15" cy="12.5" r="1.4"/><path class="cut-line" d="M10.3 16c.5.6 1 .8 1.7.8s1.2-.2 1.7-.8"/>',
+      '<path d="M4 10.6V4.9c0-.7.7-1 1.2-.7l3.6 2.3c2.1-.5 4.3-.5 6.4 0l3.6-2.3c.5-.3 1.2 0 1.2.7v5.7c.4.9.6 1.9.6 2.8 0 4-3.7 6.7-8.6 6.7S3.4 17.4 3.4 13.4c0-.9.2-1.9.6-2.8z"/><circle class="cut" cx="9" cy="13" r="1.3"/><circle class="cut" cx="15" cy="13" r="1.3"/><path class="cut" d="M10.7 15.4h2.6L12 17.1z"/>',
+    copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
+    thermometer:
+      '<path d="M8.5 13.6V5.5a2.5 2.5 0 0 1 5 0v8.1a4.5 4.5 0 1 1-5 0z"/><path d="M11 9.5v6.5"/><circle cx="11" cy="17" r="1.2" fill="currentColor" stroke="none"/><path d="M17.5 5h3M17.5 8.5h3M17.5 12h3"/>',
+    search: '<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>',
+    phone: '<rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M11 18.5h2"/>',
+    share: '<path d="M12 15V3.5M8 7l4-4 4 4M5 12v8h14v-8"/>',
+    addbox: '<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8.5v7M8.5 12h7"/>',
+    laptop: '<rect x="4.5" y="5" width="15" height="10" rx="1.5"/><path d="M2.5 19h19"/>',
   };
 
   const symbols = Object.entries(ICONS)

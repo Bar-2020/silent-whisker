@@ -156,6 +156,11 @@
   block-size: 1600px;
 }
 
+.viewer__stage[data-device='phone-full'] .frame {
+  inline-size: 360px;
+  block-size: 4200px;
+}
+
 .viewer__stage[data-device='phone-xs'] .frame {
   inline-size: 375px;
   block-size: 812px;
@@ -629,10 +634,6 @@
   box-shadow: var(--lift);
 }
 
-.ds__progress {
-  inline-size: 12rem;
-}
-
 .ds__skeleton {
   inline-size: 12rem;
   block-size: 20px;
@@ -656,34 +657,6 @@
   padding: var(--s-5);
 }
 
-.ds .footbar--glass {
-  min-inline-size: 14rem;
-  padding: var(--s-1);
-  border: 1px solid var(--glass-edge);
-  border-radius: var(--r-glass);
-  background: var(--glass);
-  box-shadow: var(--lift), var(--glass-shine);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-}
-
-.ds .footbar--glass .btn {
-  min-inline-size: 0;
-  inline-size: 100%;
-  border-radius: var(--r-nav-item);
-}
-
-.ds .footbar--glass .btn--on-dado {
-  background: var(--surface);
-  color: var(--dado);
-}
-
-.ds .footbar--glass .btn:disabled {
-  border-color: rgb(255 255 255 / 0.3);
-  background: rgb(255 255 255 / 0.2);
-  color: rgb(255 255 255 / 0.85);
-}
-
 .ds__stage {
   display: flex;
   flex-wrap: wrap;
@@ -699,4 +672,74 @@
 .iconbtn:disabled {
   color: var(--ink-3);
   cursor: not-allowed;
+}
+
+/* Samples added for the dialogs, the map search, the icons and the lists. */
+.ds .sheet.sheet--modal {
+  position: static;
+  inset: auto;
+  margin: 0;
+  inline-size: min(24rem, 100%);
+  max-block-size: none;
+  border: 1px solid var(--line);
+}
+
+.ds__sample--map {
+  position: relative;
+  display: block;
+  min-block-size: 88px;
+  padding: var(--s-4);
+  background: #e8ebe5;
+}
+
+.ds .maptop {
+  position: static;
+  inline-size: 100%;
+  max-inline-size: 26rem;
+}
+
+.ds__brand {
+  inline-size: 32px;
+  block-size: 32px;
+  color: var(--dado);
+}
+
+.ds__brand--l {
+  inline-size: 96px;
+  block-size: 96px;
+}
+
+.ds__icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+  gap: var(--s-3);
+}
+
+.ds__icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
+  margin: 0;
+  padding: var(--s-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  color: var(--dado);
+}
+
+.ds__icon figcaption {
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+}
+
+.ds__skeleton-post {
+  inline-size: 16rem;
+}
+
+.ds__alerts {
+  max-inline-size: 26rem;
+}
+
+.ds__grid-photos {
+  max-inline-size: 22rem;
 }

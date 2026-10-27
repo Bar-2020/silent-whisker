@@ -68,7 +68,7 @@
     if (state === 'Disabled')
       return `<button class="${cls}" type="button" disabled>${label}</button>`;
     if (state === 'Pending')
-      return `<button class="${cls}" type="button" aria-busy="true">${spin}Saving…</button>`;
+      return `<button class="${cls}" type="button" aria-busy="true">${spin}<span>Saving…</span></button>`;
     return `<button class="${cls}" type="button">${label}</button>`;
   }
   const matrix = `<div class="ds__scroll"><div class="ds__matrix"><span></span>${states
@@ -80,21 +80,18 @@
     )
     .join('')}</div></div>`;
   const barButtons = [
-    '<button class="btn btn--on-dado btn--lg" type="button">Save</button>',
-    '<button class="btn btn--on-dado btn--lg" type="button" disabled>Save</button>',
-    '<button class="btn btn--on-dado btn--lg" type="button" aria-busy="true"><span class="spinner spinner--btn"></span>Saving…</button>',
+    '<button class="btn btn--lg" type="button">Save</button>',
+    '<button class="btn btn--lg" type="button" disabled>Save</button>',
+    '<button class="btn btn--lg" type="button" aria-busy="true"><span class="spinner spinner--btn"></span><span>Saving…</span></button>',
   ];
-  const onGlass = `<div class="ds__stage">${barButtons
-    .map((html) => `<div class="footbar footbar--glass on-dado">${html}</div>`)
-    .join('')}</div>`;
-  const onWhite = `<div class="ds__sample">${barButtons
-    .map((html) => `<div class="footbar on-dado">${html}</div>`)
+  const onBar = `<div class="ds__sample">${barButtons
+    .map((html) => `<div class="footbar">${html}</div>`)
     .join('')}</div>`;
   const buttons = section(
     'buttons',
     'Buttons',
-    'Every variant has the same six states. Disabled is grey and says why close by (a label or a hint), never only by looking dull. Pending is for any button that sends something to the server: the button keeps its size and colour, a spinner shows, the label becomes the verb in progress, and it takes no taps. In the app, pending comes from the TanStack Query mutation (isPending), never from a hand-kept flag.',
-    `<h3>States by variant</h3>${matrix}<h3>On the glass bar of a form (phone): default, disabled, pending</h3>${onGlass}<h3>On the white page (wide screens)</h3>${onWhite}<h3>Sizes and round buttons</h3><div class="ds__sample"><button class="btn btn--small" type="button">Small 44</button><button class="btn" type="button">Default 48</button><button class="btn btn--lg" type="button">Large 56</button><button class="iconbtn" type="button" aria-label="Menu">${icon('more')}</button><button class="round" type="button" aria-label="Locate">${icon('locate')}</button><button class="round round--primary" type="button" aria-label="Add">${icon('plus')}</button><button class="round" type="button" disabled aria-label="Locate (disabled)">${icon('locate')}</button><button class="round round--primary" type="button" aria-busy="true" aria-label="Adding"><span class="spinner spinner--btn"></span></button></div>`
+    'Every variant has the same six states. Disabled is grey and says why close by (a label or a hint), never only by looking dull. Pending is for any button that sends something to the server: the button keeps its size and colour, only a spinner shows (the label stays in the page for screen readers), and it takes no taps. In the app, pending comes from the TanStack Query mutation (isPending), never from a hand-kept flag.',
+    `<h3>States by variant</h3>${matrix}<h3>On the pinned bar of a form: default, disabled, pending</h3><p class="muted">The bar is white and flat, pinned to the bottom of the screen, with no line, shadow or glass. On a wide screen it sits under the form.</p>${onBar}<h3>Sizes and round buttons</h3><div class="ds__sample"><button class="btn btn--small" type="button">Small 44</button><button class="btn" type="button">Default 48</button><button class="btn btn--lg" type="button">Large 56</button><button class="iconbtn" type="button" aria-label="Menu">${icon('more')}</button><button class="round" type="button" aria-label="Locate">${icon('locate')}</button><button class="round round--primary" type="button" aria-label="Add">${icon('plus')}</button><button class="round" type="button" disabled aria-label="Locate (disabled)">${icon('locate')}</button><button class="round round--primary" type="button" aria-busy="true" aria-label="Adding"><span class="spinner spinner--btn"></span></button></div>`
   );
 
   /* ----- forms ----- */
@@ -105,7 +102,7 @@
   const forms = section(
     'forms',
     'Forms',
-    'One text field style. The error is a sentence below it, in red ink, with the field tinted; focus is a 3 px ring.',
+    'One text field style. The error is a sentence below it, in red ink, with the field tinted and no icon; focus is a 3 px ring. A placeholder follows the page direction, typed words choose their own.',
     `${grid(
       cell('Default', field('Name', '<input class="input" placeholder="For example: Mitzi" />')) +
         cell('Focus', field('Name', '<input class="input is-focus" value="Mitzi" />')) +
@@ -114,7 +111,7 @@
           field(
             'Name',
             '<input class="input" aria-invalid="true" value="M" />',
-            `<span class="field__error">${icon('exclaim', 'icon--s')}At least 2 letters.</span>`
+            `<span class="field__error">At least 2 letters.</span>`
           )
         ) +
         cell('Disabled', field('Name', '<input class="input" disabled value="Mitzi" />')) +
@@ -149,9 +146,9 @@
           notice('red', 'restrict', 'Not allowed', 'This account is blocked.') +
           notice('none', 'clock', 'Too soon', 'You can log again in 2 hours.'),
         true
-      )}<h3>Loading</h3><div class="ds__sample"><span class="spinner"></span><div class="progress ds__progress"><div class="progress__bar" data-p="60"></div></div><div class="skeleton ds__skeleton"></div></div>` +
-      `<h3>Process strip: shown under the top bar while a screen is sending something</h3><div class="process ds__process" role="status"><div class="process__row"><span class="spinner"></span><div><strong>Uploading the photo</strong><span class="small">You can keep filling in the details.</span></div></div><div class="progress"><div class="progress__bar" data-p="60"></div></div></div>` +
-      `<h3>Toast</h3><div class="toast" role="status">${icon('check')}<span>Report received.</span></div>`
+      )}<h3>Loading: a spinner, and solid skeletons (never see-through)</h3><div class="ds__sample"><span class="spinner"></span></div><div class="ds__sample"><div class="skeleton-post ds__skeleton-post"><div class="skeleton skeleton--media"></div><div class="skeleton skeleton--line"></div><div class="skeleton skeleton--line skeleton--short"></div></div></div>` +
+      `<h3>Process strip: shown under the top bar while a screen is sending something</h3><div class="process ds__process" role="status"><div class="process__row"><span class="spinner"></span><div><strong>Uploading the photo</strong><span class="small">You can keep filling in the details.</span></div></div></div>` +
+      `<h3>Toast: a refusal or a short confirmation that does not move the page</h3><div class="ds__sample"><div class="toast" role="status">${icon('check')}<div class="notice__body"><span>Report sent.</span></div></div><div class="toast" role="alert">${icon('exclaim')}<div class="notice__body"><span>The text did not pass the check. Try rewording it.</span></div></div></div>`
   );
 
   /* ----- map markers ----- */
@@ -175,8 +172,11 @@
   const glass = section(
     'glass',
     'Glass and surfaces',
-    'The navigation and the form bar are slate glass over whatever is behind them (a bar on a phone, a floating rail from 768 px). Floating cards, round buttons and menus use light glass. Without backdrop-filter or with reduced transparency they turn solid slate or white.',
-    `<div class="ds__stage ds__stage--nav" id="nav-slot"></div><h3>Menu and sheet</h3><div class="ds__stage ds__sample"><div class="menu"><a class="menu__item" href="#glass">${icon('pin')}<span>New feeding spot</span></a><a class="menu__item" href="#glass">${icon('alert')}<span>Report a cat in danger</span></a></div></div>`
+    'The navigation is slate glass over whatever is behind it (a bar on a phone, a floating rail from 768 px). Floating cards, round buttons, the map search and menus use light glass. Without backdrop-filter or with reduced transparency they turn solid slate or white. The form bar is not glass.',
+    `<div class="ds__stage ds__stage--nav" id="nav-slot"></div>` +
+      `<h3>Menu: short, 44 px rows</h3><div class="ds__stage ds__sample"><div class="menu"><a class="menu__item" href="#glass">${icon('flag')}<span>Report this photo</span></a><a class="menu__item menu__item--bad" href="#glass">${icon('restrict')}<span>Hide the photo</span></a></div></div>` +
+      `<h3>Dialog: in the middle of the screen, with a scrim behind it</h3><div class="ds__sample"><div class="sheet sheet--modal" role="dialog"><h2 class="sheet__title">What do you want to add?</h2><a class="dialog__option" href="#glass"><span class="dialog__icon">${icon('pin')}</span><span class="dialog__text"><strong>New feeding spot</strong><span class="small muted">A place where cats eat and drink.</span></span></a><a class="dialog__option" data-level="alert" href="#glass"><span class="dialog__icon">${icon('alert')}</span><span class="dialog__text"><strong>Report a cat in danger</strong><span class="small muted">A cat that is hurt, sick or in danger now.</span></span></a><button class="btn btn--quiet" type="button">Cancel</button></div></div>` +
+      `<h3>Map search and its results</h3><div class="ds__sample ds__sample--map"><div class="maptop ds__maptop"><div class="mapsearch" role="search">${icon('search')}<input class="mapsearch__input" placeholder="City, street, address or spot" /></div><button class="round" type="button" aria-label="Legend">${icon('help')}</button></div></div>`
   );
 
   /* ----- lists and cards ----- */
@@ -185,10 +185,25 @@
     'Lists and cards',
     'Rows are one tap target with a chevron; counts are chips; photos use a warm placeholder tone until a real photo loads.',
     `<div class="rows"><a class="row" href="#lists">${icon('pin', 'row__icon')}<span class="row__main"><span class="row__title">Bialik 14, Tel Aviv</span><br /><span class="row__value">Feeding spot</span></span><span class="chip chip--count"><span class="num">3</span></span>${icon('chevron', 'row__chev icon--flip')}</a><a class="row" href="#lists">${icon('cat', 'row__icon')}<span class="row__main"><span class="row__title">Mitzi</span></span>${icon('chevron', 'row__chev icon--flip')}</a></div>` +
-      `<div class="ds__sample"><div class="photo photo--square ds__photo" data-tone="1">${icon('cat')}</div><div class="photo photo--square ds__photo" data-tone="2">${icon('cat')}</div><div class="photo photo--square ds__photo" data-tone="3">${icon('cat')}</div><div class="photo photo--square ds__photo" data-tone="4">${icon('cat')}</div></div>`
+      `<div class="ds__sample"><div class="photo photo--square ds__photo" data-tone="1">${icon('cat')}</div><div class="photo photo--square ds__photo" data-tone="2">${icon('cat')}</div><div class="photo photo--square ds__photo" data-tone="3">${icon('cat')}</div><div class="photo photo--square ds__photo" data-tone="4">${icon('cat')}</div></div>` +
+      `<h3>Like and comment: outlined when off, solid when on</h3><div class="ds__sample"><button class="react" type="button" aria-pressed="false">${icon('paw')}<span class="num">17</span></button><button class="react" type="button" aria-pressed="true">${icon('paw')}<span class="num">24</span></button><button class="react" type="button">${icon('comment')}<span class="num">3</span></button></div>` +
+      `<h3>An alert: photo and words on top, two buttons side by side under them</h3><div class="alerts ds__alerts"><article class="alertrow"><div class="alertrow__top"><div class="photo photo--square" data-tone="1">${icon('cat')}</div><div class="alertrow__main"><div class="alertrow__head"><span class="chip" data-level="alert">${icon('thermometer')}<span>Sick</span></span><span class="alertrow__time small muted">Reported 2 hours ago</span></div><p class="alertrow__note">Limping on a back leg, under a car</p><p class="small muted">320 m · Florentin</p></div></div><div class="alertrow__actions"><a class="btn btn--small" href="#lists">Alert details</a><a class="btn btn--small btn--secondary" href="#lists">Show on map</a></div></article></div>` +
+      `<h3>Photos in a grid: three to a row</h3><div class="cat-grid ds__grid-photos">${[1, 2, 3, 4, 3, 2].map((tone) => `<div class="photo photo--square" data-tone="${tone}">${icon('cat')}</div>`).join('')}</div>`
   );
 
-  root.innerHTML = [colour, type, buttons, forms, feedback, map, glass, lists].join('');
+  /* ----- brand and icons ----- */
+  const brand = section(
+    'icons',
+    'Brand mark and icons',
+    'The mark is an outline cat head, 2 px strokes with round ends, two dot eyes and a small nose. It sits at the start of every top bar and in the navigation rail, in the colour of the bar. Every icon is drawn on a 24 px grid with the same 2 px stroke.',
+    `<div class="ds__sample ds__sample--pad"><svg class="brandmark__glyph ds__brand ds__brand--l" aria-hidden="true"><use href="#i-cat"></use></svg><svg class="brandmark__glyph ds__brand" aria-hidden="true"><use href="#i-cat"></use></svg><span class="topbar__brand"><svg class="brandmark__glyph" aria-hidden="true"><use href="#i-cat"></use></svg></span></div>` +
+      `<h3>All icons</h3><div class="ds__icons">${window.MOCK_ICON_IDS.map(
+        (id) =>
+          `<figure class="ds__icon">${icon(id, 'icon--l')}<figcaption>${id}</figcaption></figure>`
+      ).join('')}</div>`
+  );
+
+  root.innerHTML = [colour, type, buttons, forms, feedback, map, glass, lists, brand].join('');
   document.getElementById('nav-slot').append(document.querySelector('[data-nav]'));
   window.Mock.refresh(document.body);
 })();

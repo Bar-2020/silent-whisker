@@ -65,15 +65,13 @@ body[data-chrome='tabs'] .main {
 }
 
 @supports not (backdrop-filter: blur(1px)) {
-  .nav,
-  .footbar {
+  .nav {
     background: var(--glass-solid);
   }
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .nav,
-  .footbar {
+  .nav {
     background: var(--glass-solid);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
@@ -979,7 +977,7 @@ button.row {
 
 .mapbanner {
   position: absolute;
-  inset-block-start: var(--s-4);
+  inset-block-start: calc(var(--s-4) + var(--round) + var(--s-3));
   inset-inline: var(--s-4);
   z-index: 500;
   display: flex;
@@ -996,9 +994,21 @@ button.row {
   color: var(--dado);
 }
 
+.mapbanner--stack {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-3);
+}
+
+.mapbanner__row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
 .menu {
   min-inline-size: 15rem;
-  padding: var(--s-2);
+  padding: var(--s-1);
   border: 1px solid var(--glass-light-edge);
   border-radius: var(--r-m);
   box-shadow: var(--lift);
@@ -1009,8 +1019,8 @@ button.row {
   align-items: center;
   gap: var(--s-3);
   inline-size: 100%;
-  min-block-size: var(--tap);
-  padding: var(--s-2) var(--s-3);
+  min-block-size: 44px;
+  padding: var(--s-1) var(--s-3);
   border: 0;
   border-radius: var(--r-s);
   background: transparent;
@@ -1107,15 +1117,32 @@ button.row {
   font-size: var(--fs-l);
 }
 
-.sheet--modal {
+/* A modal is a dialog in the middle of the screen, over everything, with a scrim behind it. */
+.sheet.sheet--modal,
+.stage .sheet.sheet--modal {
   position: fixed;
+  inset: 0;
+  z-index: 860;
+  margin: auto;
+  block-size: fit-content;
+  max-block-size: calc(100dvh - var(--s-6));
+  inline-size: min(26rem, 100% - var(--s-6));
+  gap: var(--s-4);
+  padding: var(--s-5);
+  overflow-y: auto;
+  border: 0;
+  border-radius: var(--r-l);
+  background: var(--surface);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: var(--lift);
 }
 
 .scrim {
   position: fixed;
   inset: 0;
-  z-index: 590;
-  background: rgb(20 32 52 / 0.4);
+  z-index: 850;
+  background: rgb(20 32 52 / 0.45);
 }
 
 /* ---------- Spot: state rows ---------- */
@@ -1179,9 +1206,7 @@ button.row {
 
 /* ---------- Cats ---------- */
 .post {
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: var(--r-l);
+  position: relative;
   background: var(--surface);
 }
 
@@ -1213,25 +1238,22 @@ button.row {
   color: var(--dado);
 }
 
+/* The three dots sit in the title row, at the end, never on the photo. */
 .post__more {
-  position: absolute;
-  inset-block-start: var(--s-3);
-  inset-inline-end: var(--s-3);
-  inline-size: var(--tap);
-  block-size: var(--tap);
-  border: 1px solid var(--glass-light-edge);
-  border-radius: 50%;
-  color: var(--ink);
+  margin-block: calc(var(--s-2) * -1);
+  margin-inline-end: calc(var(--s-2) * -1);
+  color: var(--ink-2);
 }
 
 .post__menu {
   position: absolute;
-  inset-block-start: calc(var(--s-3) + var(--tap) + var(--s-1));
+  inset-block-start: calc(var(--s-4) + var(--tap));
   inset-inline-end: var(--s-3);
   z-index: 20;
 }
 
 .post__body {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--s-3);
@@ -1240,13 +1262,21 @@ button.row {
 
 .post__title {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
   gap: var(--s-3);
 }
 
 .post__title h2 {
+  min-inline-size: 0;
   font-size: var(--fs-l);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+/* When it was posted: the last line of the post. */
+.post__time {
+  margin-block-start: calc(var(--s-1) * -1);
 }
 
 .post__who {
@@ -1276,9 +1306,9 @@ button.row {
   gap: var(--s-2);
   min-block-size: var(--tap);
   padding-inline: var(--s-4);
-  border: 1.5px solid transparent;
+  border: 1.5px solid var(--dado);
   border-radius: var(--r-pill);
-  background: var(--dado-tint);
+  background: var(--surface);
   color: var(--dado);
   font-size: var(--fs-m);
   font-weight: 700;
@@ -1289,10 +1319,11 @@ button.row {
 .react .icon {
   inline-size: 1.5rem;
   block-size: 1.5rem;
+  stroke-width: 1.5;
 }
 
 .react:hover {
-  background: var(--slate-mist-deep, #d3dcec);
+  background: var(--dado-tint);
 }
 
 .react[aria-pressed='true'] {
@@ -1327,9 +1358,13 @@ button.row {
   min-inline-size: 0;
 }
 
+.comment + .comment {
+  border-block-start: 1px solid var(--line);
+}
+
 .comment__meta {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--s-2);
   font-size: var(--fs-s);
   color: var(--ink-2);
@@ -1340,7 +1375,7 @@ button.row {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, var(--surface-sunk), var(--wall), var(--surface-sunk));
+  background: linear-gradient(90deg, var(--skeleton), var(--skeleton-shine), var(--skeleton));
   background-size: 200% 100%;
   animation: shimmer 1.6s linear infinite;
   border-radius: var(--r-s);
@@ -1371,16 +1406,29 @@ button.row {
 }
 
 .msg__bubble {
+  display: flex;
+  flex-direction: column;
   min-inline-size: 0;
   padding: var(--s-2) var(--s-3);
   border-radius: var(--r-m);
   background: var(--surface);
   border: 1px solid var(--line);
+  color: inherit;
+  font: inherit;
+  text-align: start;
+}
+
+button.msg__bubble {
+  cursor: pointer;
+}
+
+button.msg__bubble:hover {
+  background: var(--dado-tint);
 }
 
 .msg__meta {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--s-2);
   font-size: var(--fs-s);
   color: var(--ink-2);
@@ -1506,23 +1554,6 @@ button.row {
   place-items: center;
 }
 
-.progress {
-  block-size: 6px;
-  border-radius: var(--r-pill);
-  background: var(--surface-sunk);
-  overflow: hidden;
-}
-
-.progress__bar {
-  inline-size: var(--p, 40%);
-  block-size: 100%;
-  background: var(--dado);
-}
-
-.progress__bar[data-p='60'] {
-  --p: 60%;
-}
-
 .spinner {
   inline-size: 20px;
   block-size: 20px;
@@ -1637,12 +1668,6 @@ body[data-chrome='tabs'] .shell--map .main {
   --lvl-ink: var(--dado);
 }
 
-.stage[data-sheet='zoom'] .mapctl--top,
-.stage[data-sheet='empty'] .mapctl--top,
-.stage[data-sheet='locdenied'] .mapctl--top {
-  inset-block-start: calc(var(--s-4) + 64px);
-}
-
 /* ---------- Button states: every variant has the same six ---------- */
 .btn.is-hover,
 .btn.is-pressed {
@@ -1681,22 +1706,27 @@ body[data-chrome='tabs'] .shell--map .main {
 /* Pending: an asynchronous action is in flight. The label says what is happening, a spinner turns,
    the button keeps its size and colour and takes no taps. */
 .btn[aria-busy='true'] {
+  position: relative;
   cursor: progress;
   pointer-events: none;
 }
 
-.spinner--btn {
-  inline-size: 18px;
-  block-size: 18px;
-  border: 2.5px solid color-mix(in srgb, currentColor 30%, transparent);
-  border-block-start-color: currentColor;
+/* Only the spinner shows. The label stays in the page (invisible, still read aloud), so the button keeps its width. */
+.btn[aria-busy='true'] > :not(.spinner) {
+  opacity: 0;
 }
 
-.footbar .btn:disabled,
-.footbar .btn[aria-disabled='true'] {
-  border-color: rgb(255 255 255 / 0.3);
-  background: rgb(255 255 255 / 0.2);
-  color: rgb(255 255 255 / 0.85);
+.btn[aria-busy='true'] > .spinner {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+}
+
+.spinner--btn {
+  inline-size: 20px;
+  block-size: 20px;
+  border: 2.5px solid color-mix(in srgb, currentColor 30%, transparent);
+  border-block-start-color: currentColor;
 }
 
 /* The state row: icon, what and how bad on the first line; how long ago and the small "empty" report on the second. */

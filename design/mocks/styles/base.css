@@ -15,6 +15,8 @@ html {
   accent-color: var(--dado);
   caret-color: var(--dado);
   scrollbar-color: var(--line-strong) transparent;
+  /* On a phone the scrollbar is an overlay, never a track beside the top bar. */
+  scrollbar-width: none;
 }
 
 body {
