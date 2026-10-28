@@ -41,6 +41,8 @@ billing history):
 - Tokens a day: 564,480,001 (the quota's name says it is doubled for cross-Region calls).
 - Cross-Region, which the EU profile uses (D-09): 400,000 tokens and 20 requests a minute.
   On-demand, one Region: 200,000 tokens and 10 requests a minute.
+- Nova 2 Lite (`eu.amazon.nova-2-lite-v1:0`) has its own quotas, also non-zero: 216,000,000 tokens
+  a day and, cross-Region, 8,000,000 tokens and 20 requests a minute.
 - One test photo used 477 input and 2 output tokens, so a day's token limit covers over a million
   photo checks. The 20 requests a minute is the limit that can bite: a burst of uploads past it is
   throttled, and a throttled call is a failed call, so the photo stays hidden (R-04) and the
