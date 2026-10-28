@@ -105,11 +105,11 @@ mode. Live (realtime) updates. A public map for signed-out visitors. Changing th
 
 Code first, no Figma (D-40). The tool is Impeccable (`.claude/skills/impeccable`).
 
-1. Before a phase builds screens, run `/impeccable shape` for each area it touches (first run,
-   map, spot and logging, cats, chat).
-2. Phase 2 picks the look once, which writes `DESIGN.md`.
-3. Before each PR with screens, run `critique`, `audit` and `polish`.
-4. Proposed tone: quiet and legible outdoors, not bold.
+1. Before any screen is built, run `/impeccable shape` for every area: first run, landing and legal
+   pages, map, spot and logging, cats, cat alerts, chat, profile, navigation (D-55).
+2. Pick the look once into `DESIGN.md` (proposed tone: quiet, legible outdoors); the owner approves it.
+3. A phase builds only its own screens from the design; to change one, update the design first.
+4. Before each PR with screens, run `critique`, `audit` and `polish`.
 
 ## Build order
 
@@ -119,9 +119,9 @@ One phase, one PR or smaller. Do not start a phase while the previous one is hal
 1. AWS infra and deploy pipeline in Stockholm (Terraform, GitHub deploy key, the text and photo tests D-49 and
    D-50, AWS Budget of $10 a month, cost limits, D-52). CloudFront serves the app and `/locales/`
    (D-38, D-49).
-2. Google sign-in and profile, the public landing and legal pages, Hebrew/English shell,
-   responsive shell, and `DESIGN.md` (UI and UX design). Sign-in is required (D-39), so it comes
-   before the map.
+2. Design of every screen, approved (UI and UX design, `DESIGN.md`), then Google sign-in and profile,
+   the public landing and legal pages, Hebrew/English shell, responsive shell. Sign-in is required
+   (D-39), so it comes before the map.
 3. Map and spots (exact; custom spots per D-47), municipal stations loaded into `spots`, custom spots
    (proposed: a separate form, admin approval, D-43), the admin approval buttons, moderated photo upload.
 4. Feeding and water logs (no photo), the first-run location screen and the "needs food/water"
