@@ -1081,8 +1081,10 @@ fieldset.field > legend {
   color: var(--dado-ink);
 }
 
-.hero .lead,
-.hero .small {
+/* The words of the pitch sit on the band. The caption under the phone is not part of the pitch: on a phone it
+   sits on the white page below the band, so it takes dark ink. */
+.hero__copy .lead,
+.hero__copy .small {
   color: var(--dado-quiet);
 }
 
@@ -1117,7 +1119,9 @@ fieldset.field > legend {
 }
 
 .hero__visual figcaption {
-  color: var(--ink-3);
+  color: var(--ink-2);
+  text-align: center;
+  text-wrap: balance;
 }
 
 /* The section under the phone makes room for the part that hangs over it. */

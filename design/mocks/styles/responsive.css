@@ -299,7 +299,7 @@
   }
 
   .hero__visual figcaption {
-    color: var(--dado-quiet);
+    color: var(--dado-ink);
   }
 
   .hero {

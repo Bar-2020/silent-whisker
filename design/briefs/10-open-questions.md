@@ -120,18 +120,18 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
   loaded when the card opens (not with the pins), approved photos only, hidden when the spot is a custom
   spot the member may not see (R-03).*
 - **Q38. Map search.** The owner asked for a search by city, street, house address and spot name. The
-  geocoder (Nominatim, D-29) forbids autocomplete and allows 1 request a second. *Recommend: spots by name come
+  geocoder (Nominatim, D-29) forbids autocomplete and allows 1 request a second. *Decided (2026-10-28): spots by name come
   from our own table as the member types; places are searched when they press search, cached, with the same
   limits; switch to Amazon Location Service if blocked.*
-- **Q39. The admin menu in a spot chat.** A three-dots menu at the end of the top bar, for admins. *Recommend:
+- **Q39. The admin menu in a spot chat.** A three-dots menu at the end of the top bar, for admins. *Decided (2026-10-28):
   "reported messages in this chat" and "pause the chat at this spot"; restrict and ban stay on a message's dialog.
   "Pause the chat" is new and needs the spec's say.*
 - **Q40. A creator marking a spot inactive needs an admin.** The request waits in the admin list of waiting
-  spots, the spot stays active meanwhile, and an admin's own change applies at once. *Recommend: yes.*
+  spots, the spot stays active meanwhile, and an admin's own change applies at once. *Decided (2026-10-28): yes.*
 - **Q41. A cat photo has a required name (up to 40 characters) and an optional place.** The spec makes the name
-  optional. *Recommend: as the owner asked; the name is the title of the post.*
+  optional. *Decided (2026-10-28): as the owner asked; the name is the title of the post.*
 - **Q42. Ended alerts stay visible to everyone for 7 days** (the spec shows them only to admins, for 24 hours),
-  and an alert says "reported N hours ago", not "N hours left". *Recommend: yes; extending is still admin only.*
+  and an alert says "reported N hours ago", not "N hours left". *Decided (2026-10-28): yes; extending is still admin only.*
 - **Q43. The map credit.** Checked 2026-10-28: OpenStreetMap's tile policy says the credit must be
   clearly on the map and not hidden behind a toggle; their attribution guidelines let it fold into an (i)
   after five seconds. *Decided: it shows in a corner when a map opens, folds into an (i) after five seconds,
