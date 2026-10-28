@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+    />
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/screens.css" />
+    <link rel="stylesheet" href="styles/responsive.css" />
+  </head>
+  <body data-title="alerts.title" data-chrome="tabs">
+    <div class="shell">
+      <main class="main">
+        <!-- ============ List (the Alerts tab) ============ -->
+        <div data-screen="list" data-chrome="tabs" data-default-state="default">
+          <header class="topbar">
+            <h1 class="topbar__title" data-t="alerts.list.title"></h1>
+            <a class="btn btn--small" href="alerts.html?screen=raise"
+              ><i data-icon="siren" data-class="icon--s"></i><span data-t="alerts.raise.cta"></span
+            ></a>
+          </header>
+          <div class="page page--wide stack stack--4">
+            <div class="empty" data-when="empty">
+              <i data-icon="checkcircle" data-class="icon--l"></i>
+              <h2 data-t="alerts.list.empty.title"></h2>
+              <p data-t="alerts.list.empty.text"></p>
+            </div>
+
+            <div class="alerts" data-unless="empty">
+              <article class="alertrow" data-when="own">
+                <div class="alertrow__top">
+                  <div class="photo photo--square" data-tone="2"><i data-icon="cat"></i></div>
+                  <div class="alertrow__main">
+                    <div class="alertrow__head">
+                      <span class="chip" data-level="alert"
+                        ><i data-icon="thermometer"></i><span data-t="alerts.kind.sick"></span
+                      ></span>
+                      <span class="chip" data-level="none"
+                        ><i data-icon="clock"></i><span data-t="common.inReview"></span
+                      ></span>
+                    </div>
+                    <p class="alertrow__note" data-t="demo.alert2.note"></p>
+                    <p class="small muted" data-t="alerts.list.reviewNote"></p>
+                  </div>
+                </div>
+              </article>
+
+              <article class="alertrow">
+                <div class="alertrow__top">
+                  <div class="photo photo--square" data-tone="1"><i data-icon="cat"></i></div>
+                  <div class="alertrow__main">
+                    <div class="alertrow__head">
+                      <span class="chip" data-level="alert"
+                        ><i data-icon="siren"></i><span data-t="alerts.kind.danger"></span
+                      ></span>
+                      <span class="alertrow__time small muted num" data-unless="soon"
+                        ><span data-t="alerts.reportedAgo" data-v='{"n":2}'></span
+                      ></span>
+                      <span class="statusline alertrow__time" data-level="orange" data-when="soon"
+                        ><i data-icon="clock"></i
+                        ><span class="num" data-t="alerts.removedSoon" data-v='{"n":40}'></span
+                      ></span>
+                    </div>
+                    <p class="alertrow__note" data-t="demo.alert1.note"></p>
+                    <p class="small muted">
+                      <span class="num" data-t="alerts.distance.m" data-v='{"n":320}'></span> ·
+                      <span data-t="demo.area1"></span>
+                    </p>
+                  </div>
+                </div>
+                <div class="alertrow__actions">
+                  <a
+                    class="btn btn--small"
+                    href="alerts.html?screen=detail"
+                    data-t="alerts.openAlert"
+                  ></a>
+                  <a
+                    class="btn btn--small btn--secondary"
+                    href="map.html?state=alert"
+                    data-t="alerts.showOnMap"
+                  ></a>
+                </div>
+                <div class="alertrow__actions alertrow__actions--admin" data-when="admin">
+                  <button
+                    class="btn btn--small btn--secondary"
+                    type="button"
+                    data-t="alerts.admin.extend"
+                  ></button>
+                  <button
+                    class="btn btn--small btn--secondary"
+                    type="button"
+                    data-t="alerts.admin.resolve"
+                  ></button>
+                </div>
+              </article>
+
+              <article class="alertrow">
+                <div class="alertrow__top">
+                  <div class="photo photo--square" data-tone="4"><i data-icon="cat"></i></div>
+                  <div class="alertrow__main">
+                    <div class="alertrow__head">
+                      <span class="chip" data-level="alert"
+                        ><i data-icon="thermometer"></i><span data-t="alerts.kind.sick"></span
+                      ></span>
+                      <span class="alertrow__time small muted num"
+                        ><span data-t="alerts.reportedAgo" data-v='{"n":4}'></span
+                      ></span>
+                    </div>
+                    <p class="alertrow__note" data-t="demo.alert3.note"></p>
+                    <p class="small muted">
+                      <span class="num" data-t="alerts.distance.km" data-v='{"n":"1.4"}'></span> ·
+                      <span data-t="demo.area2"></span>
+                    </p>
+                  </div>
+                </div>
+                <div class="alertrow__actions">
+                  <a
+                    class="btn btn--small"
+                    href="alerts.html?screen=detail"
+                    data-t="alerts.openAlert"
+                  ></a>
+                  <a
+                    class="btn btn--small btn--secondary"
+                    href="map.html?state=alert"
+                    data-t="alerts.showOnMap"
+                  ></a>
+                </div>
+              </article>
+              <article class="alertrow">
+                <div class="alertrow__top">
+                  <div class="photo photo--square" data-tone="3"><i data-icon="cat"></i></div>
+                  <div class="alertrow__main">
+                    <div class="alertrow__head">
+                      <span class="chip" data-level="alert"
+                        ><i data-icon="medical"></i><span data-t="alerts.kind.neuter"></span
+                      ></span>
+                      <span class="alertrow__time small muted num"
+                        ><span data-t="alerts.reportedDaysAgo" data-v='{"n":3}'></span
+                      ></span>
+                    </div>
+                    <p class="alertrow__note" data-t="demo.alert4.note"></p>
+                    <p class="small muted">
+                      <span class="num" data-t="alerts.distance.km" data-v='{"n":"2.1"}'></span> ·
+                      <span data-t="demo.area1"></span>
+                    </p>
+                  </div>
+                </div>
+                <div class="alertrow__actions">
+                  <a
+                    class="btn btn--small"
+                    href="alerts.html?screen=detail&state=neuter"
+                    data-t="alerts.openAlert"
+                  ></a>
+                  <a
+                    class="btn btn--small btn--secondary"
+                    href="map.html?state=alert"
+                    data-t="alerts.showOnMap"
+                  ></a>
+                </div>
+              </article>
+            </div>
+
+            <a class="btn btn--secondary btn--block" href="alerts.html?screen=history">
+              <i data-icon="clock"></i><span data-t="alerts.history.cta"></span>
+            </a>
+            <p class="small muted alerts__note"><span data-t="alerts.list.note"></span></p>
+          </div>
+        </div>
+
+        <!-- ============ Past alerts: ended in the last week, visible to everyone ============ -->
+        <div data-screen="history" data-chrome="page" data-default-state="default">
+          <header class="topbar">
+            <a class="iconbtn" href="alerts.html" data-t-attr="aria-label:common.back"
+              ><i data-icon="back" data-class="icon--flip"></i
+            ></a>
+            <h1 class="topbar__title" data-t="alerts.history.title"></h1>
+          </header>
+          <div class="page page--wide stack stack--4">
+            <p class="small muted" data-t="alerts.history.note"></p>
+
+            <div class="empty" data-when="empty">
+              <i data-icon="checkcircle" data-class="icon--l"></i>
+              <h2 data-t="alerts.history.empty.title"></h2>
+              <p data-t="alerts.history.empty.text"></p>
+            </div>
+
+            <div class="alerts" data-unless="empty">
+              <article class="alertrow">
+                <div class="alertrow__top">
+                  <div class="photo photo--square" data-tone="3"><i data-icon="cat"></i></div>
+                  <div class="alertrow__main">
+                    <div class="alertrow__head">
+                      <span class="chip" data-level="none"
+                        ><i data-icon="clock"></i><span data-t="alerts.expired"></span
+                      ></span>
+                      <span class="chip" data-level="alert"
+                        ><i data-icon="siren"></i><span data-t="alerts.kind.danger"></span
+                      ></span>
+                    </div>
+                    <p class="alertrow__note" data-t="demo.alert3.note"></p>
+                    <p class="small muted num" data-t="alerts.endedAgo" data-v='{"n":9}'></p>
+                  </div>
+                </div>
+                <div class="alertrow__actions">
+                  <a
+                    class="btn btn--small btn--secondary"
+                    href="alerts.html?screen=detail&state=expired"
+                    data-t="alerts.openAlert"
+                  ></a>
+                </div>
+              </article>
+              <article class="alertrow">
+                <div class="alertrow__top">
+                  <div class="photo photo--square" data-tone="2"><i data-icon="cat"></i></div>
+                  <div class="alertrow__main">
+                    <div class="alertrow__head">
+                      <span class="chip" data-level="none"
+                        ><i data-icon="clock"></i><span data-t="alerts.expired"></span
+                      ></span>
+                      <span class="chip" data-level="alert"
+                        ><i data-icon="thermometer"></i><span data-t="alerts.kind.sick"></span
+                      ></span>
+                    </div>
+                    <p class="alertrow__note" data-t="demo.alert2.note"></p>
+                    <p class="small muted num" data-t="alerts.endedDaysAgo" data-v='{"n":3}'></p>
+                  </div>
+                </div>
+                <div class="alertrow__actions">
+                  <a
+                    class="btn btn--small btn--secondary"
+                    href="alerts.html?screen=detail&state=expired"
+                    data-t="alerts.openAlert"
+                  ></a>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ Raise ============ -->
+        <div data-screen="raise" data-chrome="page" data-default-state="form">
+          <header class="topbar">
+            <a class="iconbtn" href="alerts.html" data-t-attr="aria-label:common.back"
+              ><i data-icon="back" data-class="icon--flip"></i
+            ></a>
+            <h1 class="topbar__title" data-t="alerts.raise.title"></h1>
+          </header>
+
+          <div class="centered" data-when="inreview inreview-neuter">
+            <span class="illus"><i data-icon="clock"></i></span>
+            <h2 data-t="alerts.raise.review.title"></h2>
+            <p
+              class="muted"
+              data-when="inreview"
+              data-t="alerts.raise.review.text"
+              data-v='{"n":6}'
+            ></p>
+            <p
+              class="muted"
+              data-when="inreview-neuter"
+              data-t="alerts.raise.review.textDays"
+              data-v='{"n":7}'
+            ></p>
+            <a class="btn" href="alerts.html?state=own" data-t="alerts.raise.review.back"></a>
+          </div>
+
+          <form
+            class="page page--narrow stack stack--5"
+            novalidate
+            data-unless="inreview inreview-neuter"
+          >
+            <div class="notice" data-level="red" data-when="nocat">
+              <i data-icon="image-off"></i>
+              <div class="notice__body">
+                <strong data-t="cats.post.noCat.title"></strong
+                ><span data-t="alerts.raise.noCat.text"></span>
+              </div>
+            </div>
+            <div class="notice" data-level="none" data-when="limit">
+              <i data-icon="clock"></i>
+              <div class="notice__body">
+                <strong data-t="alerts.raise.limit.title"></strong
+                ><span data-t="alerts.raise.limit.text"></span>
+              </div>
+            </div>
+
+            <fieldset class="field">
+              <legend class="field__label" data-t="alerts.raise.kind.label"></legend>
+              <div class="choices choices--2">
+                <label class="choice">
+                  <input type="radio" name="alertkind" value="danger" id="kind-danger" />
+                  <span class="choice__tile"
+                    ><i data-icon="siren" data-class="icon--l"></i
+                    ><span data-t="alerts.kind.danger"></span
+                    ><small data-t="alerts.raise.kind.dangerHint"></small
+                    ><span class="choice__mark"><i data-icon="check"></i></span
+                  ></span>
+                </label>
+                <label class="choice">
+                  <input type="radio" name="alertkind" value="sick" id="kind-sick" />
+                  <span class="choice__tile"
+                    ><i data-icon="thermometer" data-class="icon--l"></i
+                    ><span data-t="alerts.kind.sick"></span
+                    ><small data-t="alerts.raise.kind.sickHint"></small
+                    ><span class="choice__mark"><i data-icon="check"></i></span
+                  ></span>
+                </label>
+                <label class="choice choice--row choice--wide">
+                  <input type="radio" name="alertkind" value="neuter" id="kind-neuter" />
+                  <span class="choice__tile"
+                    ><i data-icon="medical"></i
+                    ><span class="pickrow__text"
+                      ><strong data-t="alerts.kind.neuter"></strong
+                      ><small data-t="alerts.raise.kind.neuterHint"></small></span
+                    ><span class="choice__mark"><i data-icon="check"></i></span
+                  ></span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="field">
+              <span class="field__label" data-t="alerts.raise.photo.label"></span>
+              <button
+                class="dropzone dropzone--compact"
+                type="button"
+                data-when="form locating vague nopermission nocat"
+              >
+                <span class="dropzone__inner"
+                  ><span class="dropzone__camera"><i data-icon="camera"></i></span
+                  ><span data-t="alerts.raise.photo.add"></span
+                ></span>
+              </button>
+              <button class="dropzone dropzone--compact" type="button" disabled data-when="limit">
+                <span class="dropzone__inner"
+                  ><span class="dropzone__camera"><i data-icon="camera"></i></span
+                  ><span data-t="alerts.raise.photo.add"></span
+                ></span>
+              </button>
+              <div
+                class="dropzone dropzone--filled dropzone--compact"
+                data-unless="form locating vague nopermission limit nocat"
+              >
+                <div class="photo" data-tone="1"><i data-icon="cat"></i></div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="alert-note" data-t="alerts.raise.note.label"></label>
+              <textarea
+                class="textarea"
+                id="alert-note"
+                data-t-attr="placeholder:alerts.raise.note.placeholder"
+              ></textarea>
+              <p class="field__error" data-when="refused">
+                <span data-t="common.refusedText"></span>
+              </p>
+              <span
+                class="counter num"
+                data-t="alerts.raise.note.counter"
+                data-v='{"n":0,"max":140}'
+              ></span>
+            </div>
+
+            <div class="stack stack--2">
+              <span class="field__label" data-t="alerts.raise.location.label"></span>
+              <div class="notice" data-when="form locating">
+                <span class="spinner"></span>
+                <div class="notice__body">
+                  <span data-t="alerts.raise.location.locating"></span>
+                </div>
+              </div>
+              <div
+                class="notice"
+                data-level="green"
+                data-when="ready neuter submitting nocat limit refused"
+              >
+                <i data-icon="checkcircle"></i>
+                <div class="notice__body">
+                  <strong data-t="alerts.raise.location.good"></strong
+                  ><span data-t="alerts.raise.location.goodText" data-v='{"m":9}'></span>
+                </div>
+              </div>
+              <div class="notice" data-level="orange" data-when="vague">
+                <i data-icon="gps-weak"></i>
+                <div class="notice__body">
+                  <strong data-t="alerts.raise.location.vague"></strong
+                  ><span data-t="alerts.raise.location.vagueText"></span>
+                  <button class="btn btn--small btn--secondary notice__action" type="button">
+                    <i data-icon="retry" data-class="icon--s"></i
+                    ><span data-t="common.retry"></span>
+                  </button>
+                </div>
+              </div>
+              <div class="notice" data-level="red" data-when="nopermission">
+                <i data-icon="locate-off"></i>
+                <div class="notice__body">
+                  <strong data-t="alerts.raise.location.off"></strong>
+                  <span data-t="alerts.raise.location.offText"></span>
+                  <a
+                    href="profile.html?screen=location-help"
+                    data-t="alerts.raise.location.help"
+                  ></a>
+                  <button class="btn btn--small btn--secondary notice__action" type="button">
+                    <i data-icon="retry" data-class="icon--s"></i
+                    ><span data-t="common.retry"></span>
+                  </button>
+                </div>
+              </div>
+              <p
+                class="small muted"
+                data-t="alerts.raise.missing"
+                data-when="form locating vague nopermission nocat limit"
+              ></p>
+              <p
+                class="small muted"
+                data-t="alerts.raise.visible"
+                data-unless="form locating vague nopermission nocat limit"
+              ></p>
+            </div>
+          </form>
+          <div class="footbar" data-unless="inreview inreview-neuter">
+            <button
+              class="btn btn--lg"
+              type="button"
+              disabled
+              data-when="form locating vague nopermission limit nocat"
+            >
+              <span data-t="alerts.raise.submit"></span>
+            </button>
+            <button
+              class="btn btn--lg"
+              type="button"
+              data-go="inreview"
+              data-unless="form locating vague nopermission limit nocat submitting"
+            >
+              <span data-t="alerts.raise.submit"></span>
+            </button>
+            <button class="btn btn--lg" type="button" aria-busy="true" data-when="submitting">
+              <span class="spinner spinner--btn"></span><span data-t="alerts.raise.sending"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ============ One alert ============ -->
+        <div class="split-view" data-screen="detail" data-chrome="page" data-default-state="member">
+          <div class="split-view__panel">
+            <header class="topbar">
+              <a class="iconbtn" href="alerts.html" data-t-attr="aria-label:common.back"
+                ><i data-icon="back" data-class="icon--flip"></i
+              ></a>
+              <h1 class="topbar__title" data-t="alerts.detail.title"></h1>
+              <button class="iconbtn" type="button" data-t-attr="aria-label:common.report">
+                <i data-icon="flag"></i>
+              </button>
+            </header>
+            <div class="page stack stack--5">
+              <div class="notice" data-level="none" data-when="expired expired-admin">
+                <i data-icon="clock"></i>
+                <div class="notice__body">
+                  <strong data-t="alerts.expired"></strong
+                  ><span data-t="alerts.detail.expiredText"></span>
+                </div>
+              </div>
+              <div class="photo photo--wide photo--round" data-tone="1">
+                <i data-icon="cat"></i
+                ><span class="photo__caption" data-t="common.samplePhoto"></span>
+              </div>
+              <div class="stack stack--3">
+                <div class="cluster">
+                  <span class="chip" data-level="alert" data-unless="neuter"
+                    ><i data-icon="siren"></i><span data-t="alerts.kind.danger"></span
+                  ></span>
+                  <span class="chip" data-level="alert" data-when="neuter"
+                    ><i data-icon="medical"></i><span data-t="alerts.kind.neuter"></span
+                  ></span>
+                </div>
+                <p class="lead lead--strong" data-unless="neuter" data-t="demo.alert1.note"></p>
+                <p class="lead lead--strong" data-when="neuter" data-t="demo.alert4.note"></p>
+                <p class="small muted" data-unless="neuter">
+                  <span data-t="alerts.detail.by" data-v='{"name":"Dana K."}'></span> ·
+                  <span class="num" data-t="alerts.reportedAgo" data-v='{"n":2}'></span> ·
+                  <span class="num" data-t="alerts.distance.m" data-v='{"n":320}'></span>
+                </p>
+                <p class="small muted" data-when="neuter">
+                  <span data-t="alerts.detail.by" data-v='{"name":"Dana K."}'></span> ·
+                  <span class="num" data-t="alerts.reportedDaysAgo" data-v='{"n":3}'></span> ·
+                  <span class="num" data-t="alerts.distance.km" data-v='{"n":"2.1"}'></span>
+                </p>
+              </div>
+              <section class="section" data-when="admin expired-admin">
+                <div class="stack stack--3">
+                  <h2 data-t="alerts.admin.title"></h2>
+                  <div class="adminrow">
+                    <button
+                      class="btn btn--secondary"
+                      type="button"
+                      data-t="alerts.admin.extend"
+                    ></button>
+                    <button
+                      class="btn btn--secondary"
+                      type="button"
+                      data-when="admin"
+                      data-t="alerts.admin.resolve"
+                    ></button>
+                  </div>
+                  <p class="small muted" data-t="alerts.admin.hint"></p>
+                </div>
+              </section>
+            </div>
+            <div class="footbar">
+              <a
+                class="btn btn--lg"
+                href="https://www.google.com/maps/dir/?api=1&destination=32.0628,34.7691"
+                target="_blank"
+                rel="noopener"
+                data-unless="expired expired-admin"
+                ><i data-icon="navigate"></i><span data-t="common.navigate"></span
+              ></a>
+              <a
+                class="btn btn--lg btn--secondary"
+                href="map.html?state=alert"
+                data-t="alerts.showOnMap"
+              ></a>
+            </div>
+          </div>
+          <div class="split-view__map"><div class="map" id="alert-map"></div></div>
+        </div>
+      </main>
+      <nav data-nav="alerts"></nav>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script src="locales/he.js"></script>
+    <script src="locales/en.js"></script>
+    <script src="icons.js"></script>
+    <script src="mock.js"></script>
+    <script src="demo.js"></script>
+    <script src="pages/alerts.js"></script>
+  </body>
+</html>

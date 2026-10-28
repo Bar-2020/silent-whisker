@@ -25,8 +25,8 @@ proposed values that live in `shared/constants/` (see [DECISIONS.md](DECISIONS.m
 | R-20 | Municipal stations cannot be renamed, deactivated or deleted by members. Only the import changes them. | Lambda |
 | R-21 | Every endpoint is rate limited: per route at the API front door, and per member for writes. Over the limit the request is refused and nothing is saved (429). The per-member limit, counted in Lambda, answers `RATE_LIMITED` with `Retry-After`; the front door's own 429 is bare, so the app treats every 429 alike and waits a default time (D-60). The app files and `/locales/` have no per-IP limit, because there is no WAF for now; CloudFront's free allowance and the spend limit bound them (D-38, D-49). Every limit is a constant. | API Gateway, Lambda |
 | R-22 | Every API route requires a valid sign-in. The only things served without one are the landing page, the privacy policy, the terms and the translation files. | JWT authorizer (API Gateway) |
-| R-23 | A cat alert needs a photo, a note and the phone's location, read at submit, with an accuracy of 50 m or better (D-25), or nothing is saved. A member can raise at most 5 cat alerts a day. | Lambda |
-| R-24 | Members see a cat alert only while it is approved, not resolved and not expired: it expires 6 hours after it is raised, plus 12 hours for each extension, counted from the old expiry or from now, whichever is later, with no limit on extensions. Only an admin can resolve or extend one, and can still see and extend one for 24 hours after it expired, but not a resolved one. | Lambda |
+| R-23 | A cat alert of any kind (`danger`, `sick` or `neuter`, D-64) needs a photo, a note and the phone's location, read at submit, with an accuracy of 50 m or better (D-25), or nothing is saved. A member can raise at most 5 cat alerts a day, all kinds together. | Lambda |
+| R-24 | Members see a cat alert on the map and in the list only while it is approved, not resolved and not expired. An alert expires 6 hours after it is raised (`danger`, `sick`) or 7 days after (`neuter`, D-64), plus 12 hours (7 days for `neuter`) for each extension, counted from the old expiry or from now, whichever is later, with no limit on extensions. An alert that expired and was not resolved stays in a past-alerts list that every member sees for 7 days after it expired (D-58); a resolved one is never shown. Only an admin can resolve or extend one, and can extend one that expired during those 7 days. | Lambda |
 | R-25 | A cat photo, and the photo of a cat alert, must contain a cat (checked by the photo check, D-09), or it is rejected and never shown. A member can post at most 10 cat photos and write at most 60 comments a day. | Lambda |
 | R-26 | A member's like on a cat counts once; liking again takes it back. | Lambda |
 | R-27 | A custom spot stays hidden from other members, and takes no logs or empty reports, until an admin approves it. Only an admin can approve or reject one. | Lambda |
@@ -34,12 +34,15 @@ proposed values that live in `shared/constants/` (see [DECISIONS.md](DECISIONS.m
 | R-29 | The feed returns the cat photos that are not on the seen list the app sends before any that are. The list is kept on the member's phone, not on the server. | Lambda |
 | R-30 | A member can upload at most 20 photos a day, counted when the upload starts, whether or not the photo is approved later. | Lambda |
 | R-31 | A member can post at most 100 chat messages a day (D-52). | Lambda |
+| R-32 | A creator's request to mark a custom spot inactive takes effect only when an admin approves it, and the spot stays active meanwhile. An admin's own change to a spot's name or status takes effect at once (D-58). | Lambda |
+| R-33 | An admin can pause the chat of a spot. While it is paused nobody can post there, and members can still read it (D-58). | Lambda |
+| R-34 | A cat photo post needs a name of 1 to 40 characters (a constant), moderated like other text. The place is optional (D-58). | Lambda |
 
 ## Proof checks (R-09)
 
 A log is **counted** when the location check passes, otherwise it is saved as **unverified**:
-visible in the spot's history, but it does not reset the timers or add to stats. No photo is needed
-(D-18).
+kept, but not listed in the spot's history (D-58), and it does not reset the timers or add to stats. No
+photo is needed (D-18).
 
 - The phone's location, read at the moment of submit, is within the proof radius (50 m) of the
   spot and reports an accuracy of 50 m or better (D-25).

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/screens.css" />
+    <link rel="stylesheet" href="styles/responsive.css" />
+  </head>
+  <body data-title="states.title" data-chrome="page">
+    <div class="shell">
+      <main class="main">
+        <!-- No connection. -->
+        <div class="centered" data-screen="offline" data-chrome="page" data-default-state="default">
+          <span class="illus"><i data-icon="offline"></i></span>
+          <h1 data-t="states.offline.title"></h1>
+          <p class="muted" data-t="states.offline.text"></p>
+          <button class="btn" type="button">
+            <i data-icon="retry"></i><span data-t="common.retry"></span>
+          </button>
+        </div>
+
+        <!-- Sign-in expired. -->
+        <div class="centered" data-screen="session" data-chrome="page" data-default-state="default">
+          <span class="illus"><i data-icon="lock"></i></span>
+          <h1 data-t="states.session.title"></h1>
+          <p class="muted" data-t="states.session.text"></p>
+          <a class="btn" href="landing.html" data-t="landing.signIn"></a>
+        </div>
+
+        <!-- A route that does not exist. -->
+        <div
+          class="centered"
+          data-screen="notfound"
+          data-chrome="page"
+          data-default-state="default"
+        >
+          <span class="illus"><i data-icon="map"></i></span>
+          <h1 data-t="states.notFound.title"></h1>
+          <p class="muted" data-t="states.notFound.text"></p>
+          <a class="btn" href="map.html" data-t="states.notFound.back"></a>
+        </div>
+
+        <!-- The language files did not load: no text exists, so the screen has an icon and a button only. -->
+        <div
+          class="centered"
+          data-screen="locale-failed"
+          data-chrome="page"
+          data-default-state="default"
+        >
+          <span class="illus"><i data-icon="offline"></i></span>
+          <button class="round round--primary" type="button"><i data-icon="retry"></i></button>
+        </div>
+
+        <!-- The app is starting. -->
+        <div class="centered" data-screen="loading" data-chrome="page" data-default-state="default">
+          <svg class="brandmark__glyph boot-logo" aria-hidden="true"><use href="#i-cat"></use></svg>
+          <span class="spinner"></span>
+        </div>
+
+        <!-- A refusal that arrives as a toast over whatever the member was doing. -->
+        <div data-screen="toast" data-chrome="tabs" data-default-state="ratelimit">
+          <header class="topbar"><h1 class="topbar__title" data-t="cats.feed.title"></h1></header>
+          <div class="page page--feed feed" aria-busy="true">
+            <div class="skeleton-post">
+              <div class="skeleton skeleton--media"></div>
+              <div class="skeleton skeleton--line"></div>
+              <div class="skeleton skeleton--line skeleton--short"></div>
+            </div>
+          </div>
+          <div class="toast" role="alert" data-when="ratelimit">
+            <i data-icon="clock"></i>
+            <div class="notice__body">
+              <strong data-t="common.rateLimit.title"></strong
+              ><span data-t="common.rateLimit.text" data-v='{"n":30}'></span>
+            </div>
+          </div>
+          <div class="toast" role="alert" data-when="banned">
+            <i data-icon="restrict"></i>
+            <div class="notice__body">
+              <strong data-t="common.banned.title"></strong
+              ><span data-t="common.banned.text"></span>
+            </div>
+          </div>
+          <div class="toast" role="alert" data-when="error">
+            <i data-icon="xcircle"></i>
+            <div class="notice__body">
+              <strong data-t="states.error.title"></strong><span data-t="states.error.text"></span>
+            </div>
+          </div>
+        </div>
+      </main>
+      <nav data-nav="explore"></nav>
+    </div>
+
+    <script src="locales/he.js"></script>
+    <script src="locales/en.js"></script>
+    <script src="icons.js"></script>
+    <script src="mock.js"></script>
+  </body>
+</html>

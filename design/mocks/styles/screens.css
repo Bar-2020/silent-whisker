@@ -1,0 +1,1922 @@
+/* Page-level layout. Components live in components.css; widths in responsive.css. */
+
+/* ---------- The form footbar: primary actions live on the painted band ---------- */
+/* A screen with a pinned action bar fills the viewport, so the bar sits at the bottom of the screen
+   even when the form is short. */
+body[data-chrome='page'] [data-screen] {
+  position: relative;
+}
+
+body[data-chrome='page'] [data-pinned] {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100dvh;
+}
+
+body[data-chrome='page'] [data-pinned] > .page {
+  flex: 1;
+  inline-size: 100%;
+}
+
+body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-footer]) {
+  margin-block-start: auto;
+}
+
+.footbar {
+  position: sticky;
+  inset-block-end: 0;
+  z-index: 700;
+  display: flex;
+  gap: var(--s-3);
+  margin: 0;
+  padding: var(--s-3) var(--s-4) calc(var(--s-3) + env(safe-area-inset-bottom, 0px));
+  background: var(--surface);
+}
+
+.footbar .btn {
+  flex: 1;
+}
+
+.page--narrow {
+  max-inline-size: 30rem;
+}
+
+.page--wide {
+  max-inline-size: 64rem;
+}
+
+.lead {
+  font-size: var(--fs-l);
+  color: var(--ink-2);
+}
+
+/* A lead that is the main sentence of its screen (an alert's note, "deleting is final"): full ink, heavier. */
+.lead--strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.brandmark {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.brandmark img {
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: var(--r-s);
+}
+
+/* ---------- Public site: landing and legal ---------- */
+.sitebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+}
+
+.sitebar__end {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.hero h1 {
+  font-size: var(--fs-display);
+  line-height: 1.15;
+}
+
+.band-section {
+  padding: var(--s-8) var(--s-5);
+}
+
+.band-section__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+  max-inline-size: 64rem;
+  margin-inline: auto;
+}
+
+/* The three steps are a sequence, so they are numbered and joined by a line. The picture of each step
+   takes the colour of the state it shows: red, the bowl, green. */
+.steps {
+  counter-reset: step;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-6);
+}
+
+.step {
+  counter-increment: step;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--s-4);
+  align-items: start;
+}
+
+.step__num {
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: 50%;
+  background: var(--dado);
+  color: var(--dado-ink);
+  font-size: var(--fs-l);
+  font-weight: 700;
+}
+
+.step__num::before {
+  content: counter(step);
+}
+
+/* The line from this number down to the next one. */
+.step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 21px;
+  inset-block: 52px calc(var(--s-6) * -1 + 8px);
+  inline-size: 2px;
+  background: repeating-linear-gradient(to bottom, var(--line-strong) 0 6px, transparent 6px 12px);
+}
+
+.step__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding-block-start: var(--s-2);
+}
+
+.step__visual {
+  display: grid;
+  place-items: center;
+  inline-size: 72px;
+  block-size: 72px;
+  grid-column: 3;
+  grid-row: 1;
+  border-radius: var(--r-l);
+  background: var(--lvl-tint, var(--dado-tint));
+}
+
+.step__visual .pin {
+  translate: none;
+  filter: none;
+  cursor: default;
+  pointer-events: none;
+}
+
+.step__visual .icon {
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  color: var(--dado);
+}
+
+.promise {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.promise li {
+  display: flex;
+  gap: var(--s-3);
+  align-items: flex-start;
+}
+
+.promise .icon {
+  color: var(--dado);
+  margin-block-start: 2px;
+}
+
+.adslot {
+  display: grid;
+  place-items: center;
+  min-block-size: 250px;
+  max-inline-size: 336px;
+  margin-inline: auto;
+  inline-size: 100%;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r-s);
+  color: var(--ink-3);
+  font-size: var(--fs-s);
+  text-align: center;
+  padding: var(--s-3);
+}
+
+.consent {
+  position: sticky;
+  inset-block-end: 0;
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  font-size: var(--fs-s);
+  background: var(--surface);
+  border-block-start: 1px solid var(--line-strong);
+  box-shadow: var(--lift);
+}
+
+/* The footer closes the page the way the hero opens it: the same slate, darker at the bottom. */
+.sitefoot {
+  padding: var(--s-8) var(--s-5) var(--s-6);
+  background: linear-gradient(180deg, var(--dado-deep), var(--band-deep));
+  color: var(--dado-quiet);
+}
+
+.sitefoot a {
+  color: var(--dado-ink);
+}
+
+.sitefoot__inner {
+  display: grid;
+  gap: var(--s-6);
+  max-inline-size: 64rem;
+  margin-inline: auto;
+}
+
+.sitefoot__brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.sitefoot__brand .brandmark {
+  color: var(--dado-ink);
+  font-size: var(--fs-l);
+}
+
+.sitefoot__links ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--s-5);
+}
+
+.sitefoot__links a {
+  display: flex;
+  align-items: center;
+  min-block-size: 44px;
+  padding-block: 0;
+  text-decoration: none;
+}
+
+.sitefoot__links a:hover {
+  text-decoration: underline;
+}
+
+.sitefoot__base {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding-block-start: var(--s-5);
+  border-block-start: 1px solid rgb(255 255 255 / 0.16);
+  font-size: var(--fs-s);
+}
+
+.sitefoot__made {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+
+.sitefoot__heart {
+  color: var(--heart);
+}
+
+.read {
+  max-inline-size: var(--measure);
+  margin-inline: auto;
+  padding: var(--s-5) var(--s-4) var(--s-8);
+}
+
+.read h1 {
+  font-size: var(--fs-2xl);
+  margin-block-end: var(--s-2);
+}
+
+.read h2 {
+  margin-block: var(--s-6) var(--s-2);
+}
+
+.read p + p,
+.read ul + p,
+.read p + ul {
+  margin-block-start: var(--s-3);
+}
+
+.read ul {
+  list-style: disc;
+  padding-inline-start: var(--s-5);
+}
+
+.read li + li {
+  margin-block-start: var(--s-2);
+}
+
+.sample-note {
+  margin-block: var(--s-4);
+}
+
+.toc {
+  display: none;
+}
+
+/* ---------- First run ---------- */
+.firstrun {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100dvh;
+}
+
+.firstrun__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  inline-size: 100%;
+  max-inline-size: 30rem;
+  margin-inline: auto;
+  padding: var(--s-4) var(--s-4) var(--s-5);
+}
+
+.firstrun__body .illus,
+.illus--start {
+  display: grid;
+  place-items: center;
+  inline-size: 56px;
+  block-size: 56px;
+  border-radius: 50%;
+  background: var(--dado-tint);
+  color: var(--dado);
+}
+
+.firstrun__body .illus .icon {
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+}
+
+.why {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.why li {
+  display: flex;
+  gap: var(--s-3);
+  align-items: center;
+}
+
+.why li > .icon {
+  inline-size: 40px;
+  block-size: 40px;
+  padding: 8px;
+  border-radius: 50%;
+  background: var(--dado-tint);
+  color: var(--dado);
+}
+
+/* ---------- Map page extras ---------- */
+.split-view {
+  display: block;
+}
+
+.split-view__map {
+  display: none;
+}
+
+.sheet--peek {
+  --sheet-h: 236px;
+}
+
+/* The two action buttons sit at the right in both languages (most hands are right hands), and give
+   way to a card, so nothing sits on top of it. */
+[dir='rtl'] .mapctl {
+  inset-inline-end: auto;
+  inset-inline-start: var(--s-4);
+}
+
+.stage:is([data-sheet='spot'], [data-sheet='alert'], [data-sheet='legend']) .mapctl {
+  display: none;
+}
+
+/* The top row: search, and the legend button. */
+.maptop {
+  position: absolute;
+  inset-block-start: var(--s-4);
+  inset-inline: var(--s-4);
+  z-index: 520;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.mapsearch {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--s-2);
+  min-inline-size: 0;
+  block-size: var(--round);
+  padding-inline: var(--s-4) var(--s-2);
+  border: 1px solid var(--glass-light-edge);
+  border-radius: var(--r-pill);
+  background: var(--glass-light);
+  -webkit-backdrop-filter: var(--glass-light-blur);
+  backdrop-filter: var(--glass-light-blur);
+  box-shadow:
+    var(--lift),
+    inset 0 1.5px 0 rgb(255 255 255 / 0.9);
+  color: var(--dado);
+}
+
+.mapsearch:focus-within {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.mapsearch__input {
+  flex: 1;
+  min-inline-size: 0;
+  block-size: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: var(--fs-m);
+}
+
+.mapsearch__input:focus-visible {
+  outline: none;
+}
+
+.mapsearch__input::placeholder {
+  color: var(--ink-3);
+  opacity: 1;
+}
+
+.mapsearch__clear {
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  flex: none;
+  border: 0;
+  border-radius: 50%;
+  background: var(--dado-tint);
+  color: var(--dado);
+  cursor: pointer;
+}
+
+.mapsearch__clear .icon {
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+}
+
+.results {
+  position: absolute;
+  inset-block-start: calc(100% + var(--s-2));
+  inset-inline: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  max-block-size: min(60dvh, 28rem);
+  overflow-y: auto;
+  padding: var(--s-2);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .results {
+    background: var(--surface);
+  }
+}
+
+.results__title {
+  padding: var(--s-2) var(--s-3) var(--s-1);
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+  font-weight: 700;
+}
+
+.results__item {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-block-size: 56px;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-s);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.results__item:hover {
+  background: rgb(255 255 255 / 0.6);
+}
+
+.results__icon {
+  display: grid;
+  place-items: center;
+  inline-size: 36px;
+  block-size: 36px;
+  flex: none;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.7);
+  color: var(--dado);
+}
+
+.results__text {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.results--none {
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-6) var(--s-4);
+  color: var(--ink-3);
+  text-align: center;
+}
+
+/* A choice inside a dialog: a big row with an icon, a title and one line. */
+.dialog__option {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-block-size: var(--tap-l);
+  padding: var(--s-3) var(--s-4);
+  border: 1.5px solid rgb(255 255 255 / 0.85);
+  border-radius: var(--r-m);
+  background: rgb(255 255 255 / 0.62);
+  box-shadow: 0 1px 2px rgb(20 32 52 / 0.1);
+  color: var(--ink);
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.dialog__option:hover {
+  border-color: var(--dado);
+  background: rgb(255 255 255 / 0.85);
+}
+
+.dialog__icon {
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--lvl-tint, var(--dado-tint));
+  color: var(--lvl-ink, var(--dado));
+}
+
+.dialog__text {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.adminrow {
+  display: flex;
+  gap: var(--s-2);
+}
+
+.adminrow .btn {
+  flex: 1;
+}
+
+/* ---------- Content pages ---------- */
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+}
+
+.context {
+  display: none;
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.identity__text {
+  min-inline-size: 0;
+}
+
+/* An alert: the photo and the words on top, the two buttons side by side under them, full width. */
+.alerts {
+  display: flex;
+  flex-direction: column;
+}
+
+.alertrow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding-block: var(--s-4);
+}
+
+.alertrow + .alertrow {
+  border-block-start: 1px solid var(--line);
+}
+
+.alertrow__top {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+}
+
+.alertrow .photo {
+  inline-size: 80px;
+  flex: none;
+  border-radius: var(--r-s);
+}
+
+.alertrow__main {
+  flex: 1;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.alertrow__title {
+  font-size: var(--fs-m);
+}
+
+.alertrow__main > .tag {
+  align-self: flex-start;
+}
+
+.alertrow__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-1) var(--s-2);
+}
+
+/* The note is at most 140 characters; the list shows two lines of it. */
+.alertrow__note {
+  display: -webkit-box;
+  overflow: hidden;
+  font-weight: 600;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.alertrow__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-2);
+}
+
+.alertrow__actions:has(> :only-child) {
+  grid-template-columns: 1fr;
+}
+
+.alertrow__actions--admin {
+  padding-block-start: var(--s-3);
+  border-block-start: 1px dashed var(--line-strong);
+}
+
+.alerts__note {
+  text-align: center;
+}
+
+.notice__action {
+  align-self: flex-start;
+  margin-block-start: var(--s-2);
+}
+
+fieldset.field > legend {
+  margin-block-end: var(--s-3);
+  padding: 0;
+}
+
+.statusline {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--fs-s);
+  font-weight: 600;
+}
+
+.statusline .icon {
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+}
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-4);
+  min-block-size: 100dvh;
+  padding: var(--s-5) var(--s-4);
+  text-align: center;
+}
+
+/* Under a top bar the screen is the rest of the viewport, so nothing scrolls. */
+.topbar ~ .centered {
+  min-block-size: calc(100dvh - 56px);
+}
+
+.centered .illus {
+  display: grid;
+  place-items: center;
+  inline-size: 88px;
+  block-size: 88px;
+  border-radius: 50%;
+  background: var(--surface-sunk);
+  color: var(--ink-2);
+}
+
+.centered .illus .icon {
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+}
+
+/* ---------- Cats, chat, profile extras ---------- */
+.page--feed {
+  max-inline-size: 34rem;
+  padding-inline: 0;
+}
+
+.post--solo .post__open {
+  display: block;
+  inline-size: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.post--solo .photo {
+  --ratio: 4 / 5;
+  display: grid;
+  inline-size: 100%;
+}
+
+.comments {
+  padding-block-start: var(--s-5);
+}
+
+/* A loading post: a photo block and two lines, solid so it reads as "coming". */
+.skeleton-post {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.skeleton--media {
+  aspect-ratio: 1 / 1;
+  border-radius: 0;
+}
+
+.skeleton--line {
+  block-size: 18px;
+  margin-inline: var(--s-4);
+}
+
+.skeleton--short {
+  inline-size: 40%;
+}
+
+/* The photo, full screen. */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 880;
+  display: grid;
+  place-items: center;
+  background: rgb(11 15 20 / 0.96);
+}
+
+.lightbox__photo {
+  --ratio: 4 / 5;
+  inline-size: min(100%, calc((100dvh - var(--s-8)) * 0.8));
+}
+
+.lightbox__close {
+  position: absolute;
+  inset-block-start: var(--s-3);
+  inset-inline-end: var(--s-3);
+  background: rgb(255 255 255 / 0.16);
+  color: #fff;
+}
+
+.lightbox__close:hover {
+  background: rgb(255 255 255 / 0.28);
+}
+
+/* A toast above the comment box, so a refusal does not push the text box around. */
+.toast--composer {
+  inset-block-end: calc(var(--tap) + var(--s-6) + var(--s-2));
+}
+
+/* The place picker: a map and a list that are one choice. */
+.picker-map {
+  position: relative;
+  block-size: 220px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+}
+
+.searchbox {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-block-size: var(--tap);
+  padding-inline: var(--s-4);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--dado);
+}
+
+.searchbox:focus-within {
+  border-color: var(--dado);
+  outline: 3px solid var(--focus);
+  outline-offset: 0;
+}
+
+.searchbox__input {
+  flex: 1;
+  min-inline-size: 0;
+  min-block-size: var(--tap);
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+}
+
+.searchbox__input:focus-visible {
+  outline: none;
+}
+
+.picker__nearby {
+  padding-block-start: var(--s-3);
+  color: var(--ink-2);
+  font-size: var(--fs-m);
+}
+
+.pickrow__text {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+/* A small pin for a list row: the same drawing as the map, at half the size. */
+.pickpin {
+  --pin-w: 24px;
+  --pin-h: 29px;
+  display: grid;
+  place-items: center;
+  inline-size: 28px;
+  flex: none;
+}
+
+.pickpin .pin {
+  translate: none;
+  filter: none;
+  cursor: inherit;
+}
+
+.pickpin .pin__body {
+  stroke-width: 2;
+}
+
+.skeleton--msg {
+  block-size: 3.5rem;
+  inline-size: 70%;
+}
+
+.skeleton--msg:nth-child(2) {
+  inline-size: 55%;
+  margin-inline-start: auto;
+}
+
+.composer__field {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.composer__input {
+  min-block-size: var(--tap);
+  resize: none;
+}
+
+.chat-page {
+  display: flex;
+  flex-direction: column;
+  padding-inline: 0;
+  padding-block: 0;
+  min-block-size: 50dvh;
+}
+
+.chat-page > .empty {
+  flex: 1;
+  justify-content: center;
+}
+
+/* A bit more air in the chat's top bar: a title and the spot under it. */
+.topbar--chat {
+  min-block-size: 68px;
+  padding-block: var(--s-2);
+}
+
+/* The quoted message at the top of a dialog. */
+.dialog__quote {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-m);
+  background: rgb(45 68 103 / 0.14);
+}
+
+.chat-title {
+  font-size: var(--fs-l);
+  line-height: 1.2;
+}
+
+.iconbtn--small {
+  inline-size: 44px;
+  block-size: 44px;
+  color: var(--ink-3);
+}
+
+.howto {
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  background: var(--surface);
+}
+
+.howto summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  min-block-size: var(--tap);
+  padding: var(--s-3) var(--s-4);
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+
+.howto summary::-webkit-details-marker {
+  display: none;
+}
+
+/* The open or closed mark is a drawn chevron, like the others, not a text glyph. */
+.howto summary::after {
+  content: '';
+  inline-size: 9px;
+  block-size: 9px;
+  flex: none;
+  border-block-end: 2px solid var(--dado);
+  border-inline-end: 2px solid var(--dado);
+  rotate: 45deg;
+  transition: rotate var(--dur-1) var(--ease);
+}
+
+.howto[open] summary::after {
+  rotate: -135deg;
+}
+
+.steps-list {
+  counter-reset: step;
+  padding: 0 var(--s-4) var(--s-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+/* The number is a small badge, so it reads the same in Hebrew and in English. */
+.steps-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  counter-increment: step;
+}
+
+.steps-list li::before {
+  content: counter(step);
+  display: grid;
+  place-items: center;
+  inline-size: 28px;
+  block-size: 28px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--dado-tint);
+  color: var(--dado);
+  font-size: var(--fs-s);
+  font-weight: 700;
+}
+
+.row--bad,
+.row--bad .row__icon {
+  color: var(--bad-ink);
+}
+
+.boot-logo {
+  inline-size: 96px;
+  block-size: 96px;
+  color: var(--dado);
+}
+
+.footbar--stack {
+  flex-direction: column;
+}
+
+/* Fixes from the second review pass. */
+.profile-grid .page + .page {
+  padding-block-start: 0;
+}
+
+/* ---------- Landing: hero with the real product, steps, a painted trust band ---------- */
+[data-screen='home'] {
+  --nav-offset: 84px;
+  --bleed: 9rem;
+}
+
+/* The hero is a band of slate, lit from one corner, that runs up under the navigation. The phone
+   starts below the fold and stands half on the band, half on the white page below it. */
+.hero-band {
+  margin-block-start: calc(var(--nav-offset) * -1);
+  padding-block-start: var(--nav-offset);
+  background:
+    radial-gradient(70% 40% at 88% 6%, rgb(143 165 200 / 0.38), transparent 72%),
+    radial-gradient(60% 36% at 4% 62%, rgb(58 90 145 / 0.55), transparent 72%),
+    linear-gradient(168deg, var(--band-deep) 0%, var(--dado) 46%, var(--band-lift) 100%);
+  color: var(--dado-ink);
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  max-inline-size: 64rem;
+  margin-inline: auto;
+  padding: var(--s-6) var(--s-5) 0;
+  min-block-size: 0;
+}
+
+.hero h1 {
+  color: var(--dado-ink);
+}
+
+/* The words of the pitch sit on the band. The caption under the phone is not part of the pitch: on a phone it
+   sits on the white page below the band, so it takes dark ink. */
+.hero__copy .lead,
+.hero__copy .small {
+  color: var(--dado-quiet);
+}
+
+.hero__cta a:not(.btn) {
+  color: var(--dado-ink);
+}
+
+/* The first screen is the pitch alone: the phone starts below the fold, one scroll away. */
+.hero__copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  justify-content: center;
+  min-block-size: calc(100svh - var(--nav-offset) - 4rem);
+}
+
+.hero__cta {
+  align-items: flex-start;
+}
+
+.hero__visual {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
+  margin: 0 0 calc(var(--bleed) * -1);
+}
+
+.hero__visual figcaption {
+  color: var(--ink-2);
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* The section under the phone makes room for the part that hangs over it. */
+.band-section--steps {
+  padding-block-start: calc(var(--s-8) + var(--bleed));
+}
+
+.trust {
+  padding: var(--s-8) var(--s-5);
+  background: var(--dado);
+  color: var(--dado-quiet);
+}
+
+.trust h2 {
+  color: var(--dado-ink);
+}
+
+/* The closing pitch is a section of its own: a tinted band, centred, clearly not the footer. */
+.band-section--cta {
+  background: var(--dado-tint);
+  text-align: center;
+}
+
+.band-section--cta .band-section__inner {
+  align-items: center;
+  max-inline-size: 40rem;
+}
+
+.band-section--cta h2 {
+  font-size: var(--fs-2xl);
+}
+
+.band-section--cta .cluster {
+  justify-content: center;
+  gap: var(--s-4);
+}
+
+.trust .promise .icon {
+  color: var(--dado-ink);
+}
+
+/* ---------- Language menu: a globe that opens a short list ---------- */
+.langmenu {
+  position: relative;
+}
+
+.langmenu__menu {
+  position: absolute;
+  inset-block-start: calc(100% + var(--s-1));
+  inset-inline-end: 0;
+  z-index: 900;
+  min-inline-size: 12rem;
+}
+
+.nav__lang .langmenu__menu {
+  inset-block: auto 0;
+  inset-inline: calc(100% + var(--s-3)) auto;
+}
+
+.langmenu__btn {
+  color: var(--dado);
+}
+
+.nav .langmenu__btn {
+  color: var(--glass-ink);
+}
+
+.nav .langmenu__btn:hover {
+  background: var(--glass-hover);
+}
+
+.check-end {
+  margin-inline-start: auto;
+  color: var(--dado);
+}
+
+.hero__cta .btn {
+  align-self: stretch;
+}
+
+/* ---------- Share a photo: two real buttons, never a line of text ---------- */
+.share {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border: 1px solid var(--line);
+  border-radius: var(--r-l);
+  background: var(--surface);
+}
+
+/* ---------- Post a photo ---------- */
+.dropzone {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: 100%;
+  aspect-ratio: 4 / 3;
+  border: 2px dashed var(--dado);
+  border-radius: var(--r-l);
+  background: var(--dado-tint);
+  color: var(--dado);
+  font: inherit;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.dropzone__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.dropzone__camera {
+  display: grid;
+  place-items: center;
+  inline-size: 72px;
+  block-size: 72px;
+  border-radius: 50%;
+  background: var(--dado);
+  color: var(--dado-ink);
+}
+
+.dropzone__camera .icon {
+  inline-size: 2rem;
+  block-size: 2rem;
+}
+
+/* A photo that is only one part of a long form: a row, not a poster. */
+.dropzone--compact {
+  aspect-ratio: auto;
+  min-block-size: 88px;
+}
+
+.dropzone--compact .dropzone__inner {
+  flex-direction: row;
+  gap: var(--s-3);
+}
+
+.dropzone--compact .dropzone__camera {
+  inline-size: 48px;
+  block-size: 48px;
+}
+
+.dropzone--compact .dropzone__camera .icon {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+}
+
+.dropzone--compact.dropzone--filled {
+  min-block-size: 160px;
+}
+
+.dropzone:disabled {
+  border-color: var(--line-strong);
+  background: var(--surface-sunk);
+  color: var(--ink-3);
+  cursor: not-allowed;
+}
+
+.dropzone:disabled .dropzone__camera {
+  background: var(--ink-3);
+}
+
+.dropzone--filled {
+  cursor: default;
+  border: 1px solid var(--line);
+  background: var(--surface-sunk);
+}
+
+.dropzone .photo {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
+}
+
+.dropzone__change {
+  position: absolute;
+  inset-block-end: var(--s-3);
+  inset-inline-end: var(--s-3);
+  z-index: 1;
+}
+
+.where-pick {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  inline-size: 100%;
+  min-block-size: var(--tap-l);
+  padding: var(--s-2) var(--s-4);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--r-m);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+/* A place that is fixed (the post started at a spot) cannot be changed: it looks sunk and has no chevron. */
+.where-pick:disabled {
+  border-color: var(--line);
+  background: var(--surface-sunk);
+  color: var(--ink-2);
+  cursor: not-allowed;
+}
+
+.where-pick:disabled > .icon:last-child {
+  display: none;
+}
+
+.where-pick:hover {
+  background: var(--dado-tint);
+}
+
+.where-pick .icon {
+  color: var(--dado);
+}
+
+.where-pick__text {
+  flex: 1;
+  min-inline-size: 0;
+  font-weight: 600;
+}
+
+.where-pick__hint {
+  display: block;
+  font-size: var(--fs-s);
+  font-weight: 400;
+  color: var(--ink-2);
+}
+
+/* ---------- Brand mark in the rail ---------- */
+.brand-glyph {
+  inline-size: 32px;
+  block-size: 32px;
+  fill: none;
+  stroke: var(--glass-ink);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---------- Landing navigation: the same glass as the app ---------- */
+.sitenav {
+  position: sticky;
+  inset-block-start: var(--nav-gap);
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin: var(--nav-gap);
+  padding: var(--s-2) var(--s-3);
+}
+
+.sitenav .brandmark {
+  flex: 1;
+  color: var(--dado-ink);
+}
+
+.sitenav__links {
+  display: none;
+}
+
+.sitenav__links a {
+  display: grid;
+  place-items: center;
+  min-block-size: var(--tap);
+  padding-inline: var(--s-3);
+  border-radius: var(--r-nav-item);
+  color: var(--glass-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.sitenav__links a:hover {
+  background: var(--glass-hover);
+}
+
+.sitenav__end {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+
+.sitenav .langmenu__btn {
+  color: var(--glass-ink);
+}
+
+.sitenav .btn--on-dado {
+  padding-inline: var(--s-4);
+  border-radius: var(--r-pill);
+}
+
+/* ---------- A phone, not a rectangle ---------- */
+.device {
+  --device-zoom: 0.78;
+  position: relative;
+  inline-size: calc(360px * var(--device-zoom) + 24px);
+  padding: 12px;
+  border-radius: 48px;
+  background: #11161d;
+  box-shadow:
+    inset 0 0 0 2px #394353,
+    0 0 0 1.5px rgb(255 255 255 / 0.22),
+    0 2px 6px rgb(8 16 32 / 0.3),
+    0 36px 70px rgb(8 16 32 / 0.5);
+}
+
+/* Inside the phone frame the page leaves room at the top for the camera island. */
+[data-frame] .maptop {
+  inset-block-start: calc(var(--s-4) + 36px);
+}
+
+[data-frame] .mapbanner {
+  inset-block-start: calc(var(--s-4) + 36px + var(--round) + var(--s-3));
+}
+
+.device::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 22px;
+  inset-inline: 0;
+  inline-size: 84px;
+  block-size: 24px;
+  margin-inline: auto;
+  border-radius: 14px;
+  background: #000;
+  z-index: 3;
+}
+
+.device__glass {
+  position: relative;
+  border-radius: 36px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.device__glass::after {
+  content: '';
+  position: absolute;
+  inset-block-end: 6px;
+  inset-inline: 0;
+  inline-size: 96px;
+  block-size: 4px;
+  margin-inline: auto;
+  border-radius: 2px;
+  background: rgb(255 255 255 / 0.85);
+  box-shadow: 0 0 0 0.5px rgb(20 32 52 / 0.3);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.device__screen {
+  display: block;
+  inline-size: 360px;
+  block-size: 700px;
+  border: 0;
+  background: #fff;
+  zoom: var(--device-zoom);
+}
+
+.hero h1,
+.hero .lead {
+  text-wrap: balance;
+}
+
+[data-bare] .nav,
+[data-bare] .mapctl,
+[data-bare] .sheet {
+  display: none;
+}
+
+h2[id] {
+  scroll-margin-block-start: 96px;
+}
+
+.brandmark {
+  min-block-size: var(--tap);
+}
+
+.sitefoot a {
+  display: inline-block;
+  padding-block: var(--s-3);
+}
+
+.brandmark__glyph {
+  inline-size: 32px;
+  block-size: 32px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The mark in a top bar: the same outline cat, quiet, at the end of the bar. */
+.topbar__brand {
+  display: grid;
+  place-items: center;
+  inline-size: var(--tap);
+  block-size: var(--tap);
+  flex: none;
+  color: var(--dado);
+}
+
+.topbar__brand .brandmark__glyph {
+  inline-size: 28px;
+  block-size: 28px;
+}
+
+/* A process strip under the top bar while something is being sent. */
+.process {
+  position: sticky;
+  inset-block-start: 56px;
+  z-index: 650;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-4);
+  background: var(--dado-tint);
+  color: var(--dado);
+  border-block-end: 1px solid var(--line);
+}
+
+.process__row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.process__row strong {
+  display: block;
+}
+
+/* Post a photo: one column on a phone, photo beside the details on a wide screen. */
+.post-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  inline-size: 100%;
+}
+
+.post-layout__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  min-inline-size: 0;
+}
+
+/* The spot page: a header, tabs and one panel that fits the screen. */
+.spot-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.spot-head__photo {
+  position: relative;
+  inline-size: 64px;
+  flex: none;
+}
+
+.spot-head__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-2);
+  min-inline-size: 0;
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-1);
+  padding: var(--s-1);
+  border-radius: var(--r-m);
+  background: var(--surface-sunk);
+}
+
+.tabs button {
+  display: grid;
+  place-items: center;
+  min-block-size: var(--tap);
+  padding-inline: 2px;
+  border: 0;
+  border-radius: var(--r-s);
+  background: transparent;
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+  font-weight: 600;
+  text-align: center;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.tabs button[aria-selected='true'] {
+  background: var(--surface);
+  color: var(--dado);
+  box-shadow: inset 0 0 0 1.5px var(--dado);
+}
+
+/* ---------- Profile ---------- */
+/* My activity: a tinted card, three plain rows, no dividers. */
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding: var(--s-4) var(--s-5);
+  border-radius: var(--r-l);
+  background: var(--dado-tint);
+}
+
+.stats h2 {
+  padding-block-end: var(--s-2);
+  color: var(--dado);
+  font-size: var(--fs-m);
+}
+
+.stats .stat {
+  min-block-size: var(--tap);
+  padding: 0;
+  border: 0;
+}
+
+.stats .stat__icon {
+  display: grid;
+  place-items: center;
+  inline-size: 36px;
+  block-size: 36px;
+  padding: 6px;
+  border-radius: 50%;
+  background: var(--surface);
+}
+
+.edit-avatar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+/* A photo slot with no photo: the same size as the others, drawn quiet. */
+.photo--none {
+  border: 1.5px dashed var(--line-strong);
+  background: var(--surface-sunk);
+}
+
+/* A list that has nothing in it fills the screen, so its message sits in the middle. */
+.page--fill {
+  display: flex;
+  flex-direction: column;
+  min-block-size: calc(100dvh - 56px);
+}
+
+.page--fill > .empty {
+  flex: 1;
+  justify-content: center;
+}
+
+/* Reported content: a card with the content, two decisions and two member actions, on one grid. */
+.reports {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.report {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+}
+
+.report__body {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+}
+
+.report__body .photo {
+  inline-size: 80px;
+  flex: none;
+  border-radius: var(--r-s);
+}
+
+.report__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--s-1);
+  min-inline-size: 0;
+}
+
+.report__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-2);
+}
+
+.report__member {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding-block-start: var(--s-3);
+  border-block-start: 1px solid var(--line);
+}
+
+.report__member .btn--quiet {
+  border-color: var(--line-strong);
+}
+
+/* ---------- Spot page tabs ---------- */
+/* The cats at a spot: a real grid, three to a row, edge to edge. */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-2);
+}
+
+.cat-grid a {
+  display: block;
+}
+
+.cat-grid .photo {
+  border-radius: var(--r-s);
+}
+
+/* The chat inside the spot page: the thread, and the composer pinned under it. */
+.section--chat {
+  padding-block: 0;
+  border: 0;
+}
+
+.thread--inline {
+  padding: 0;
+}
+
+/* A short confirmation that sits above the bottom bar and goes away by itself. */
+.toast--quiet {
+  inset-block-end: calc(var(--tap-l) + var(--s-6));
+}
+
+/* A sentence on its own line, balanced, so a short pair of sentences never breaks mid-way. */
+.line {
+  display: block;
+  text-wrap: balance;
+}
+
+/* ---------- The map credit ---------- */
+/* At the bottom corner away from the action buttons, level with them; it folds into a small (i) after a few seconds. */
+.mapcredit {
+  position: absolute;
+  inset-block-end: var(--s-2);
+  inset-inline-start: var(--s-2);
+  z-index: 510;
+  display: flex;
+  align-items: center;
+  border-radius: var(--r-pill);
+  background: rgb(255 255 255 / 0.9);
+  font-size: var(--fs-xs);
+}
+
+[dir='rtl'] .mapcredit {
+  inset-inline: auto var(--s-2);
+}
+
+.stage .mapcredit {
+  inset-block-end: calc(var(--nav-total) + var(--s-6) + var(--s-1));
+}
+
+.stage[data-sheet='spot'] .mapcredit {
+  inset-block-end: calc(var(--nav-total) + var(--sheet-h) + var(--s-2));
+}
+
+.stage[data-sheet='alert'] .mapcredit {
+  inset-block-end: calc(var(--nav-total) + 280px + var(--s-2));
+}
+
+.mapcredit__text {
+  position: relative;
+  padding: var(--s-1) var(--s-3);
+  color: var(--ink-2);
+  text-underline-offset: 2px;
+}
+
+/* The link is small to look at and 44 px to hit. */
+.mapcredit__text::after {
+  content: '';
+  position: absolute;
+  inset-block: -9px;
+  inset-inline: 0;
+}
+
+.mapcredit__info {
+  display: none;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--dado);
+  cursor: pointer;
+}
+
+.mapcredit__info .icon {
+  inline-size: 28px;
+  block-size: 28px;
+  padding: 5px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.9);
+}
+
+.mapcredit.is-collapsed {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.mapcredit.is-collapsed .mapcredit__text {
+  display: none;
+}
+
+.mapcredit.is-collapsed .mapcredit__info {
+  display: grid;
+}
+
+/* ---------- The third alert kind: spay or neuter, not urgent ---------- */
+/* In the choice group it is a calm full-width row under the two urgent tiles. */
+.choices--2 > .choice--wide {
+  grid-column: 1 / -1;
+}
+
+/* On the map it is the same sign, paler: a pale plum box with a plum outline, so it never shouts like a danger. */
+.sign[data-kind='neuter'] {
+  color: var(--alert);
+}
+
+.sign[data-kind='neuter'] .sign__box {
+  border-color: var(--alert);
+  background: var(--alert-tint);
+}
+
+/* ---------- Audit fixes ---------- */
+/* A white button on a pale map needs a clear edge, or it looks smaller than the dark one beside it. */
+.round:not(.round--primary) {
+  border-color: var(--line-strong);
+  background: rgb(255 255 255 / 0.92);
+}
+
+/* A link standing alone in a notice is a 44 px target. */
+.notice__body > a {
+  display: flex;
+  align-items: center;
+  min-block-size: 44px;
+}
+
+.sitefoot__links a {
+  min-inline-size: 44px;
+}
+
+/* Place names and areas are typed words: they do not flip the sentence around them. */
+.post__place > span:not(.icon),
+.meta-line > span {
+  unicode-bidi: isolate;
+}
+
+/* Without blur, or with transparency turned down, every pane of glass turns solid. */
+@supports not (backdrop-filter: blur(1px)) {
+  .sitenav,
+  .round--primary {
+    background: var(--glass-solid);
+  }
+
+  .mapsearch {
+    background: var(--surface);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .sitenav,
+  .round--primary {
+    background: var(--glass-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .mapsearch,
+  .results,
+  .sheet.sheet--modal,
+  .stage .sheet.sheet--modal {
+    background: var(--surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}

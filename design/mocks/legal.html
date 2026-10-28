@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/screens.css" />
+    <link rel="stylesheet" href="styles/responsive.css" />
+  </head>
+  <body data-title="legal.title" data-chrome="public">
+    <header class="sitebar">
+      <a class="brandmark" href="landing.html">
+        <svg class="brandmark__glyph" aria-hidden="true"><use href="#i-cat"></use></svg>
+        <span>Silent Whisker</span>
+      </a>
+      <div class="sitebar__end"><span data-langmenu></span></div>
+    </header>
+
+    <main>
+      <div class="readwrap" data-screen="privacy" data-default-state="default">
+        <nav class="toc" data-t-attr="aria-label:legal.toc">
+          <ol>
+            <li><a href="#p1" data-t="legal.privacy.s1.h"></a></li>
+            <li><a href="#p2" data-t="legal.privacy.s2.h"></a></li>
+            <li><a href="#p3" data-t="legal.privacy.s3.h"></a></li>
+            <li><a href="#p4" data-t="legal.privacy.s4.h"></a></li>
+            <li><a href="#p5" data-t="legal.privacy.s5.h"></a></li>
+          </ol>
+        </nav>
+
+        <article class="read">
+          <h1 data-t="legal.privacy.title"></h1>
+          <div class="notice sample-note">
+            <i data-icon="info"></i>
+            <div class="notice__body"><span data-t="legal.sample"></span></div>
+          </div>
+          <h2 id="p1" data-t="legal.privacy.s1.h"></h2>
+          <p data-t="legal.privacy.s1.p"></p>
+          <h2 id="p2" data-t="legal.privacy.s2.h"></h2>
+          <p data-t="legal.privacy.s2.p"></p>
+          <ul>
+            <li data-t="legal.privacy.s2.l1"></li>
+            <li data-t="legal.privacy.s2.l2"></li>
+            <li data-t="legal.privacy.s2.l3"></li>
+          </ul>
+          <h2 id="p3" data-t="legal.privacy.s3.h"></h2>
+          <p data-t="legal.privacy.s3.p"></p>
+          <h2 id="p4" data-t="legal.privacy.s4.h"></h2>
+          <p data-t="legal.privacy.s4.p"></p>
+          <h2 id="p5" data-t="legal.privacy.s5.h"></h2>
+          <p data-t="legal.privacy.s5.p"></p>
+        </article>
+      </div>
+
+      <div class="readwrap" data-screen="terms" data-default-state="default">
+        <nav class="toc" data-t-attr="aria-label:legal.toc">
+          <ol>
+            <li><a href="#t1" data-t="legal.terms.s1.h"></a></li>
+            <li><a href="#t2" data-t="legal.terms.s2.h"></a></li>
+            <li><a href="#t3" data-t="legal.terms.s3.h"></a></li>
+            <li><a href="#t4" data-t="legal.terms.s4.h"></a></li>
+          </ol>
+        </nav>
+        <article class="read">
+          <h1 data-t="legal.terms.title"></h1>
+          <div class="notice sample-note">
+            <i data-icon="info"></i>
+            <div class="notice__body"><span data-t="legal.sample"></span></div>
+          </div>
+          <h2 id="t1" data-t="legal.terms.s1.h"></h2>
+          <p data-t="legal.terms.s1.p"></p>
+          <h2 id="t2" data-t="legal.terms.s2.h"></h2>
+          <p data-t="legal.terms.s2.p"></p>
+          <ul>
+            <li data-t="legal.terms.s2.l1"></li>
+            <li data-t="legal.terms.s2.l2"></li>
+            <li data-t="legal.terms.s2.l3"></li>
+          </ul>
+          <h2 id="t3" data-t="legal.terms.s3.h"></h2>
+          <p data-t="legal.terms.s3.p"></p>
+          <h2 id="t4" data-t="legal.terms.s4.h"></h2>
+          <p data-t="legal.terms.s4.p"></p>
+        </article>
+      </div>
+    </main>
+
+    <footer class="sitefoot">
+      <div class="sitefoot__inner">
+        <nav class="sitefoot__links" data-t-attr="aria-label:landing.footer.label">
+          <ul>
+            <li><a href="legal.html?screen=terms" data-t="legal.terms.title"></a></li>
+            <li><a href="legal.html?screen=privacy" data-t="legal.privacy.title"></a></li>
+            <li><a href="landing.html" data-t="legal.backHome"></a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="locales/he.js"></script>
+    <script src="locales/en.js"></script>
+    <script src="icons.js"></script>
+    <script src="mock.js"></script>
+  </body>
+</html>
