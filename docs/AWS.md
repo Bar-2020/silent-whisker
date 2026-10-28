@@ -34,7 +34,7 @@ big decision.
 
 ## Bedrock quotas
 
-Amazon Nova Lite in eu-north-1, read with `aws service-quotas list-service-quotas` on 2026-10-28,
+Amazon Nova Lite (the original, `eu.amazon.nova-lite-v1:0`) in eu-north-1, read with `aws service-quotas list-service-quotas` on 2026-10-28,
 after AWS Support raised them from 0 (it says limits follow account eligibility and grow with
 billing history):
 
@@ -55,6 +55,7 @@ billing history):
 | AWS WAF, pay-as-you-go | $5 per web ACL and $1 per rule a month, $0.60 per million requests, on top of CloudFront. A rate-based rule is an ordinary rule | S22 |
 | Rekognition DetectLabels, DetectModerationLabels | first 1M images a month: $1.00 per 1,000 in us-east-1 and Ireland, $1.20 in Tel Aviv and Frankfurt | S8 |
 | Rekognition free tier | the page still shows 12 months of 1,000 images a month; new accounts get credits instead, plan on none | S8, S12 |
+| Bedrock Amazon Nova 2 Lite, Stockholm, Standard tier (photo check, D-09) | $0.33 per 1M input tokens and $2.72 per 1M output tokens, so one 479-token test photo costs about $0.00016, or $0.16 per 1,000 photos. Provisional: the model tested is the original Nova Lite, whose row was not in the screenshot of the page the owner read on 2026-10-28; the original is likely cheaper, so this is probably an upper bound | S9 |
 | Guardrails text content filters | $0.15 per 1,000 text units (1 unit is up to 1,000 characters), same for Classic and Standard, no free tier | S9 |
 | Cognito | 10,000 MAU always free on Lite or Essentials (Plus has none); Google is a social provider, so it counts here, not in the 50 MAU SAML/OIDC bucket | S11, S18 |
 | Lambda | always free: 1M requests and 400,000 GB-seconds a month | S12, S14 |
@@ -91,13 +92,13 @@ writes per member per day of 1 text unit each, 30 days.
 | | 100 members | 1,000 members |
 |---|---|---|
 | Photo checks | 200 | 2,000 |
-| Photo check price | from the photo test | from the photo test |
+| Photo checks at about $0.00016 each (provisional, see Costs) | $0.03 | $0.33 |
 | Guardrails at $0.15 per 1,000 units (6,000 and 60,000) | $0.90 | $9.00 |
-| Moderation total | about $0.90 plus photos | about $9 plus photos |
+| Moderation total | about $0.93 | about $9.33 |
 | S3, DynamoDB on-demand, Lambda, CloudFront, Cognito | under $1 | under $1 |
 
-Per-member limits keep one person from driving this up. The circuit breaker at $2 a day (D-52) caps
-a bad day; tripped every day it would burn the $100 credit in about 50 days, so its email is there to
+Per-member limits keep one person from driving this up. At 1,000 members a normal day is about
+$0.31, so the circuit breaker at $2 a day (D-52) is about 6 times that. It caps a bad day; tripped every day it would burn the $100 credit in about 50 days, so its email is there to
 act on. The AWS Budget is only a backup: it alerts, and is not instant.
 
 Phase 1 builds the cost limits, but no phase 1 code calls them. The first phase that moderates
