@@ -85,4 +85,11 @@ run "pages_without_a_file_serve_the_app" {
     condition     = aws_cloudfront_function.spa_fallback.runtime == "cloudfront-js-2.0" && aws_cloudfront_function.spa_fallback.publish
     error_message = "The fallback must be published and use the current runtime, or CloudFront keeps serving the old code."
   }
+
+  assert {
+    condition = alltrue([
+      for b in aws_cloudfront_distribution.site.ordered_cache_behavior : length(b.function_association) == 0
+    ])
+    error_message = "Only the files' behavior may carry the page fallback (D-63): on /api it would answer every call with the web page."
+  }
 }
