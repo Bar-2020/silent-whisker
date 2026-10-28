@@ -80,7 +80,7 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
   *Recommend: approved cat alerts the member raised that an admin marked resolved. It is hard to
   fake and means what it says.*
 - **Q25. Delete my account.** Account deletion is allowed by the hard-delete exception but has no
-  route or screen. *Recommend: add `DELETE /me` and a row in Me; the design shows a confirm
+  route or screen. *Recommend: add `DELETE /profile` and a row in Me; the design shows a confirm
   sheet.*
 - **Q26. Where is the language switch?** *Recommend: landing page header, the Me tab, and the
   bottom of the desktop rail.*
