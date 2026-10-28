@@ -24,9 +24,11 @@
   or water, or its creator or an admin. Positions are exact; city stations and cat alerts go to all.
 - **Every metered AWS call goes through one function**, `meteredCall` in
   `backend/shared/metered-call.ts` (a lint rule fails a file that imports a paid AWS client
-  without it), that checks the global circuit breaker,
-  and every paid action has a per-member daily limit (R-05, D-52). Past the breaker, content waits pending; it is never
-  refused for cost (except the profile text, which is checked on the spot, D-62) and never shown before moderation passes.
+  without it), that checks the global circuit breaker, and every paid action has a per-member
+  daily limit (R-05, D-52). Past the breaker, content waits pending; it is never refused for
+  cost (except the profile text, which is checked on the spot, D-62) and never shown before
+  moderation passes.
 - **Every endpoint is rate limited** (R-21). A new endpoint ships with its limit in
-  `shared/constants/` and a test that calls it past the limit and expects a refusal; the API front door's own throttle cannot be called without a deployed API, so a Terraform test proves every route has one (D-60). Static files
-  have no per-IP limit: there is no WAF for now (D-38).
+  `shared/constants/` and a test that calls it past the limit and expects a refusal. The API
+  front door's own throttle cannot be called without a deployed API, so a Terraform test proves
+  every route has one (D-60). Static files have no per-IP limit: there is no WAF for now (D-38).

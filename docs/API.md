@@ -21,8 +21,8 @@ Draft. CloudFront in front of an API Gateway HTTP API and Lambda (D-38); every p
 | `POST /cat-alerts/{id}/resolve`, `POST /cat-alerts/{id}/extend` | admin | Hide a cat alert now, or add 12 hours (any number of times) | `FORBIDDEN`, `ALREADY_RESOLVED` (R-24) |
 | `GET /spots/{id}/messages`, `POST /spots/{id}/messages` | member | Chat of a spot (D-48) | `BANNED`, `CHAT_RESTRICTED` (R-08), `MODERATION_REJECTED` |
 | `POST /reports` | member | Report content | |
-| `GET /me` | member | The caller's profile: name, city, photo choice and `status`. The first call after sign-in creates it from the token (D-59), with no name or city yet. A banned member still gets it, so the app can say so | |
-| `PATCH /me` | member | Update profile: full name and city (2 to 35 characters each, D-61), show the Google photo (asked at first sign-in, D-27). Name and city are checked on the spot and saved only if the check passes (D-62) | `BANNED`, `DAILY_LIMIT` (5 saves a day, D-61), `INVALID_INPUT`, `MODERATION_REJECTED`, `CITY_NOT_FOUND` (D-29), `CHECK_UNAVAILABLE` (503: the check cannot run, the spending cap is reached or AWS is down, D-62) |
+| `GET /profile` | member | The caller's profile: name, city, photo choice and `status`. The first call after sign-in creates it from the token (D-59), with no name or city yet. A banned member still gets it, so the app can say so | |
+| `PATCH /profile` | member | Update profile: full name and city (2 to 35 characters each, D-61), show the Google photo (asked at first sign-in, D-27). Name and city are checked on the spot and saved only if the check passes (D-62) | `BANNED`, `DAILY_LIMIT` (5 saves a day, D-61), `INVALID_INPUT`, `MODERATION_REJECTED`, `CITY_NOT_FOUND` (D-29), `CHECK_UNAVAILABLE` (503: the check cannot run, the spending cap is reached or AWS is down, D-62) |
 | `POST /admin/users/{id}/ban`, `.../restrict-chat` | admin | Ban, restrict chat | `FORBIDDEN` |
 | `GET /admin/spots?status=pending`, `POST /admin/spots/{id}/approve`, `.../reject` | admin | List custom spots waiting for approval, approve or reject one (R-27) | `FORBIDDEN` |
 
