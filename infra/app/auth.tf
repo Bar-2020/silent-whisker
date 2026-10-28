@@ -1,7 +1,6 @@
 # Who may sign in (D-59): a Cognito user pool, the list of members, where Google is the only way
 # in. The app sends the visitor straight to Google, so Cognito's own sign-in page is never seen.
-# The limits (token lifetimes, the app's return address) are in shared/constants/auth.json, which
-# the app reads too.
+# The limits (the refresh token's life, the app's return address) are in shared/constants/auth.json.
 
 locals {
   auth     = jsondecode(file("${path.module}/../../shared/constants/auth.json"))
@@ -35,8 +34,8 @@ resource "aws_cognito_user_pool" "members" {
   # Deleting the pool would delete every member, so AWS refuses until this is switched off.
   deletion_protection = "ACTIVE"
 
-  # Free for the first 10,000 active members a month, like Lite (AWS.md). Essentials is the plan
-  # that rotates refresh tokens and later offers the newer sign-in pages.
+  # Free for the first 10,000 active members a month, like Lite (AWS.md), and the plan that offers
+  # the newer sign-in pages later.
   user_pool_tier = "ESSENTIALS"
 
   # Nobody makes an account with a password: members exist only by signing in with Google.
@@ -101,12 +100,9 @@ resource "aws_cognito_user_pool_client" "web" {
   # together; the app refreshes through the token endpoint.
   explicit_auth_flows = ["ALLOW_USER_SRP_AUTH"]
 
-  id_token_validity      = local.auth.id_token_minutes
-  access_token_validity  = local.auth.access_token_minutes
+  # Cognito's own hour for the ID and access tokens is kept; only the refresh token is set.
   refresh_token_validity = local.auth.refresh_token_days
   token_validity_units {
-    id_token      = "minutes"
-    access_token  = "minutes"
     refresh_token = "days"
   }
 

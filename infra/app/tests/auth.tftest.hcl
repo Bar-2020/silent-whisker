@@ -92,7 +92,7 @@ run "the_app_client_is_a_public_code_flow_client" {
   }
 }
 
-run "tokens_are_short_and_the_refresh_token_rotates" {
+run "the_refresh_token_expires_and_rotates" {
   command = apply
 
   assert {
@@ -101,16 +101,6 @@ run "tokens_are_short_and_the_refresh_token_rotates" {
       one(aws_cognito_user_pool_client.web.token_validity_units).refresh_token == "days"
     )
     error_message = "The refresh token lives 30 days, from shared/constants/auth.json (D-59)."
-  }
-
-  assert {
-    condition = (
-      aws_cognito_user_pool_client.web.id_token_validity == 60 &&
-      aws_cognito_user_pool_client.web.access_token_validity == 60 &&
-      one(aws_cognito_user_pool_client.web.token_validity_units).id_token == "minutes" &&
-      one(aws_cognito_user_pool_client.web.token_validity_units).access_token == "minutes"
-    )
-    error_message = "The ID and access tokens live an hour, from shared/constants/auth.json."
   }
 
   assert {
