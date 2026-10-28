@@ -162,6 +162,18 @@
     if (text) document.title = `${text} | Silent Whisker`;
   }
 
+  /* A screen with a pinned bar at its foot (a form's button, a composer) is as tall as the viewport, so
+     the bar sits at the bottom. The screen says so, and the styles read that one attribute. */
+  function markPinned() {
+    document.querySelectorAll('[data-screen], .split-view__panel').forEach((el) => {
+      const kids = [...el.children];
+      if (kids.some((kid) => kid.matches('.footbar, [data-panel-footer]')))
+        el.dataset.pinned = 'bar';
+      else if (kids.some((kid) => kid.matches('.composer'))) el.dataset.pinned = 'composer';
+      else delete el.dataset.pinned;
+    });
+  }
+
   function applyState() {
     screens.forEach((el) => {
       el.hidden = el !== active;
@@ -191,6 +203,7 @@
     document.querySelectorAll('[data-pressed]').forEach((el) => {
       el.setAttribute('aria-pressed', String(el.dataset.pressed.split(' ').includes(state)));
     });
+    markPinned();
     if (window.Mock.onState) window.Mock.onState(state);
     syncTitle();
     improveAccessibility();

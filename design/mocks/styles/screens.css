@@ -7,23 +7,18 @@ body[data-chrome='page'] [data-screen] {
   position: relative;
 }
 
-body[data-chrome='page']
-  :is([data-screen], .split-view__panel):has(> :is(.footbar, .composer, [data-panel-footer])) {
+body[data-chrome='page'] [data-pinned] {
   display: flex;
   flex-direction: column;
   min-block-size: 100dvh;
 }
 
-body[data-chrome='page']
-  :is([data-screen], .split-view__panel):has(> :is(.footbar, .composer, [data-panel-footer]))
-  > .page {
+body[data-chrome='page'] [data-pinned] > .page {
   flex: 1;
   inline-size: 100%;
 }
 
-body[data-chrome='page']
-  :is([data-screen], .split-view__panel):has(> :is(.footbar, .composer, [data-panel-footer]))
-  > :is(.footbar, .composer, [data-panel-footer]) {
+body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-footer]) {
   margin-block-start: auto;
 }
 
@@ -74,31 +69,6 @@ body[data-chrome='page']
   inline-size: 32px;
   block-size: 32px;
   border-radius: var(--r-s);
-}
-
-.langswitch {
-  display: inline-flex;
-  border: 1.5px solid var(--line-strong);
-  border-radius: var(--r-pill);
-  overflow: hidden;
-  background: var(--surface);
-}
-
-.langswitch a {
-  display: grid;
-  place-items: center;
-  min-inline-size: 48px;
-  min-block-size: 40px;
-  padding-inline: var(--s-3);
-  color: var(--ink);
-  font-size: var(--fs-s);
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.langswitch a[aria-current='true'] {
-  background: var(--dado);
-  color: var(--dado-ink);
 }
 
 /* ---------- Public site: landing and legal ---------- */
@@ -376,7 +346,8 @@ body[data-chrome='page']
   padding: var(--s-4) var(--s-4) var(--s-5);
 }
 
-.firstrun__body .illus {
+.firstrun__body .illus,
+.illus--start {
   display: grid;
   place-items: center;
   inline-size: 56px;
@@ -518,14 +489,6 @@ body[data-chrome='page']
   max-block-size: min(60dvh, 28rem);
   overflow-y: auto;
   padding: var(--s-2);
-  border: 1px solid var(--glass-light-edge);
-  border-radius: var(--r-l);
-  background: var(--glass-panel);
-  -webkit-backdrop-filter: var(--glass-panel-blur);
-  backdrop-filter: var(--glass-panel-blur);
-  box-shadow:
-    var(--lift),
-    inset 0 1.5px 0 rgb(255 255 255 / 0.9);
 }
 
 @supports not (backdrop-filter: blur(1px)) {
@@ -1080,10 +1043,6 @@ fieldset.field > legend {
   flex-direction: column;
 }
 
-.sheet__pad {
-  padding-block-end: var(--s-5);
-}
-
 /* Fixes from the second review pass. */
 .profile-grid .page + .page {
   padding-block-start: 0;
@@ -1142,9 +1101,6 @@ fieldset.field > legend {
 }
 
 .hero__cta {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-4);
   align-items: flex-start;
 }
 
@@ -1251,16 +1207,6 @@ fieldset.field > legend {
   border: 1px solid var(--line);
   border-radius: var(--r-l);
   background: var(--surface);
-}
-
-.share__actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--s-3);
-}
-
-.share__actions .btn {
-  min-block-size: var(--tap-l);
 }
 
 /* ---------- Post a photo ---------- */
@@ -1407,16 +1353,6 @@ fieldset.field > legend {
   color: var(--ink-2);
 }
 
-.pick-option {
-  display: flex;
-  align-items: center;
-  gap: var(--s-3);
-}
-
-.pick-option .legend__swatch {
-  flex: none;
-}
-
 /* ---------- Brand mark in the rail ---------- */
 .brand-glyph {
   inline-size: 32px;
@@ -1438,13 +1374,6 @@ fieldset.field > legend {
   gap: var(--s-3);
   margin: var(--nav-gap);
   padding: var(--s-2) var(--s-3);
-  border: 1px solid var(--glass-edge);
-  border-radius: var(--r-glass);
-  background: var(--glass);
-  color: var(--glass-ink);
-  box-shadow: var(--lift), var(--glass-shine);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
 }
 
 .sitenav .brandmark {
@@ -1734,16 +1663,6 @@ h2[id] {
   gap: var(--s-3);
 }
 
-.illus--start {
-  display: grid;
-  place-items: center;
-  inline-size: 56px;
-  block-size: 56px;
-  border-radius: 50%;
-  background: var(--dado-tint);
-  color: var(--dado);
-}
-
 /* A photo slot with no photo: the same size as the others, drawn quiet. */
 .photo--none {
   border: 1.5px dashed var(--line-strong);
@@ -1776,13 +1695,6 @@ h2[id] {
   padding: var(--s-4);
   border: 1px solid var(--line);
   border-radius: var(--r-m);
-}
-
-.report__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--s-3);
 }
 
 .report__body {

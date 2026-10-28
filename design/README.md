@@ -44,6 +44,13 @@ Needs a network connection for the map tiles. A page also works on its own, for 
 central Tel Aviv: invented, not city data), the Leaflet script from a CDN, and photos drawn as
 labelled placeholders. The app builds these properly in React, with the real API and an icon sprite file.
 
+## Checks
+
+`npm run verify` runs fallow on the mocks' stylesheets: a repeated block of declarations, a broken
+reference or a hard-coded value that has a token fails it. Unused classes and over-complex selectors
+(5 or more parts) show as warnings only: many classes are written by `mock.js`, which fallow cannot
+read, and CSS-only checked tiles need a long selector. The mock scripts themselves are not checked.
+
 ## Using it in Phase 2
 
 Read `docs/DESIGN.md` first, then the page you are building and its brief. Move `tokens.css` into

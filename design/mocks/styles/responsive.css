@@ -6,8 +6,7 @@
   }
 
   /* On a wide screen the bar sits under the form, so the screen is as tall as its content. */
-  body[data-chrome='page']
-    :is([data-screen], .split-view__panel):has(> :is(.footbar, [data-panel-footer])) {
+  body[data-chrome='page'] [data-pinned='bar'] {
     min-block-size: 0;
   }
 
@@ -260,9 +259,6 @@
   .thread {
     padding-inline: var(--s-5);
   }
-  .photo--banner {
-    --ratio: 16 / 9;
-  }
   .hero__cta .btn {
     align-self: flex-start;
     min-inline-size: 18rem;
@@ -280,10 +276,6 @@
 }
 
 @media (min-width: 1024px) {
-  .topbar__cta {
-    display: none;
-  }
-
   .split-view {
     display: grid;
     grid-template-columns: minmax(24rem, 30rem) minmax(0, 1fr);

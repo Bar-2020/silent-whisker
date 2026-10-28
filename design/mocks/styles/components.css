@@ -47,6 +47,18 @@ body[data-chrome='tabs'] .main {
   min-inline-size: 0;
 }
 
+/* The tinted glass pane: the phone bar and the landing's top bar. */
+.nav,
+.sitenav {
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--r-glass);
+  background: var(--glass);
+  color: var(--glass-ink);
+  box-shadow: var(--lift), var(--glass-shine);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
 .nav {
   position: fixed;
   inset-inline: var(--nav-gap);
@@ -55,13 +67,6 @@ body[data-chrome='tabs'] .main {
   display: flex;
   gap: var(--s-1);
   padding: var(--s-1);
-  border: 1px solid var(--glass-edge);
-  border-radius: var(--r-glass);
-  background: var(--glass);
-  color: var(--glass-ink);
-  box-shadow: var(--lift), var(--glass-shine);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
 }
 
 @supports not (backdrop-filter: blur(1px)) {
@@ -174,10 +179,6 @@ body[data-chrome='tabs'] .main {
   --gap: var(--s-5);
 }
 
-.stack--6 {
-  --gap: var(--s-6);
-}
-
 .cluster {
   display: flex;
   flex-wrap: wrap;
@@ -185,7 +186,8 @@ body[data-chrome='tabs'] .main {
   gap: var(--gap, var(--s-2));
 }
 
-.split {
+.split,
+.report__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -200,11 +202,6 @@ body[data-chrome='tabs'] .main {
 .section:first-child {
   border-block-start: 0;
   padding-block-start: 0;
-}
-
-.screen-note {
-  font-size: var(--fs-s);
-  color: var(--ink-2);
 }
 
 /* ---------- Buttons: the dado colour means "you can tap this" ---------- */
@@ -289,6 +286,7 @@ body[data-chrome='tabs'] .main {
   border-color: var(--line);
   color: var(--ink-3);
   cursor: not-allowed;
+  transform: none;
 }
 
 .btn--on-dado {
@@ -445,14 +443,6 @@ body[data-chrome='tabs'] .main {
   color: var(--ink-2);
 }
 
-.input:disabled,
-.textarea:disabled {
-  border-color: var(--line);
-  background: var(--surface-sunk);
-  color: var(--ink-3);
-  cursor: not-allowed;
-}
-
 .counter {
   align-self: flex-end;
   font-size: var(--fs-s);
@@ -555,6 +545,8 @@ body[data-chrome='tabs'] .main {
   outline-offset: 2px;
 }
 
+.input:disabled,
+.textarea:disabled,
 .choice input:disabled + .choice__tile {
   border-color: var(--line);
   background: var(--surface-sunk);
@@ -907,11 +899,6 @@ button.row {
   gap: var(--s-3);
 }
 
-.mapctl--top {
-  inset-block-end: auto;
-  inset-block-start: var(--s-4);
-}
-
 /* Things that float over the map are clear glass too: light, with dark ink on it. */
 .mapbanner,
 .menu,
@@ -1115,6 +1102,20 @@ button.row {
   font-size: var(--fs-l);
 }
 
+/* The whiter light glass: dialogs and the map search results. */
+.results,
+.sheet.sheet--modal,
+.stage .sheet.sheet--modal {
+  border: 1px solid var(--glass-light-edge);
+  border-radius: var(--r-l);
+  background: var(--glass-panel);
+  -webkit-backdrop-filter: var(--glass-panel-blur);
+  backdrop-filter: var(--glass-panel-blur);
+  box-shadow:
+    var(--lift),
+    inset 0 1.5px 0 rgb(255 255 255 / 0.9);
+}
+
 /* A modal is a dialog in the middle of the screen, over everything, with a scrim behind it. */
 .sheet.sheet--modal,
 .stage .sheet.sheet--modal {
@@ -1128,14 +1129,6 @@ button.row {
   gap: var(--s-4);
   padding: var(--s-5);
   overflow-y: auto;
-  border: 1px solid var(--glass-light-edge);
-  border-radius: var(--r-l);
-  background: var(--glass-panel);
-  -webkit-backdrop-filter: var(--glass-panel-blur);
-  backdrop-filter: var(--glass-panel-blur);
-  box-shadow:
-    var(--lift),
-    inset 0 1.5px 0 rgb(255 255 255 / 0.9);
 }
 
 @supports not (backdrop-filter: blur(1px)) {
@@ -1206,10 +1199,6 @@ button.row {
 .log__main {
   flex: 1;
   min-inline-size: 0;
-}
-
-.log--unverified {
-  color: var(--ink-2);
 }
 
 /* ---------- Cats ---------- */
@@ -1372,7 +1361,8 @@ button.row {
   border-block-start: 1px solid var(--line);
 }
 
-.comment__meta {
+.comment__meta,
+.msg__meta {
   display: flex;
   align-items: center;
   gap: var(--s-2);
@@ -1434,14 +1424,6 @@ button.msg__bubble {
 
 button.msg__bubble:hover {
   background: var(--dado-tint);
-}
-
-.msg__meta {
-  display: flex;
-  align-items: center;
-  gap: var(--s-2);
-  font-size: var(--fs-s);
-  color: var(--ink-2);
 }
 
 .msg__meta strong {
@@ -1632,10 +1614,6 @@ body[data-chrome='tabs'] .shell--map .main {
   position: relative;
 }
 
-.spot-thumb {
-  inline-size: 88px;
-}
-
 /* Fixes found in the first review pass. */
 .stack > .chip,
 .stack > .tag {
@@ -1669,10 +1647,6 @@ body[data-chrome='tabs'] .shell--map .main {
   inline-size: 1.125rem;
   block-size: 1.125rem;
   stroke-width: 2;
-}
-
-.photo--banner {
-  --ratio: 3 / 1;
 }
 
 .chip--count {

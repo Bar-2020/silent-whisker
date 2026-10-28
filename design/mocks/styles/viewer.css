@@ -564,11 +564,6 @@
   box-shadow: var(--lift);
 }
 
-.ds__skeleton {
-  inline-size: 12rem;
-  block-size: 20px;
-}
-
 .ds__process {
   position: static;
   max-inline-size: 30rem;
