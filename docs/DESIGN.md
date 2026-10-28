@@ -484,7 +484,7 @@ heart is an icon, not an emoji).
   Past alerts (the last 7 days) are one tap away, visible to everyone. In the raise form "sick" has a
   thermometer; a vague or missing location offers **Try again**; a refused note says so under the box.
   One alert: the admin actions sit right under it, **Navigate** and **Show on map** are on the pinned bar.
-  **Spay or neuter** is the third kind in the raise form (D-59): a calm full-width row under the two
+  **Spay or neuter** is the third kind in the raise form (D-63): a calm full-width row under the two
   urgent tiles, a medical-cross icon, "not urgent". It stays 7 days instead of 6 hours, so its row says
   "reported N days ago" and its in-review screen says "7 days"; it has its own paler sign on the map and a
   line in the legend.
