@@ -153,6 +153,13 @@
   /* A second, optional dimension (for example the result shown under a form). */
   let sub = params.get('sub') || '';
 
+  /* The title of the page is the title of the screen being shown, so a tab or a history list names it. */
+  function syncTitle() {
+    const heading = active && active.querySelector('h1');
+    const text = heading && heading.textContent.trim();
+    if (text) document.title = `${text} | Silent Whisker`;
+  }
+
   function applyState() {
     screens.forEach((el) => {
       el.hidden = el !== active;
@@ -183,6 +190,7 @@
       el.setAttribute('aria-pressed', String(el.dataset.pressed.split(' ').includes(state)));
     });
     if (window.Mock.onState) window.Mock.onState(state);
+    syncTitle();
     improveAccessibility();
     showFirstProblem();
   }
@@ -190,6 +198,13 @@
   /* Names, announcements and links that a real component would carry from the start. */
   function improveAccessibility() {
     document.querySelectorAll('.field__error').forEach((el) => el.setAttribute('role', 'alert'));
+    document
+      .querySelectorAll('header.topbar, header.sitenav, header.sitebar')
+      .forEach((el) => el.setAttribute('role', 'banner'));
+    document
+      .querySelectorAll('footer.sitefoot')
+      .forEach((el) => el.setAttribute('role', 'contentinfo'));
+    document.querySelectorAll('ul, ol').forEach((el) => el.setAttribute('role', 'list'));
     document
       .querySelectorAll('.notice[data-sub]')
       .forEach((el) => el.setAttribute('role', 'status'));
@@ -199,6 +214,9 @@
       if (!heading) return;
       heading.id = heading.id || `dialog-title-${index}`;
       dialog.setAttribute('aria-labelledby', heading.id);
+    });
+    document.querySelectorAll('[data-disclosure][data-go]').forEach((el) => {
+      el.setAttribute('aria-expanded', String(el.dataset.go === state));
     });
     document.querySelectorAll('[aria-haspopup][data-go]').forEach((el) => {
       el.setAttribute('aria-expanded', String(el.dataset.go === state));
@@ -271,6 +289,9 @@
         if (target) target.hidden = !target.hidden;
       });
       const menu = document.getElementById(toggle.dataset.toggle);
+      if (menu && toggle.hasAttribute('data-disclosure')) {
+        toggle.setAttribute('aria-expanded', String(!menu.hidden));
+      }
       if (menu && menu.classList.contains('langmenu__menu')) {
         toggle.setAttribute('aria-expanded', String(!menu.hidden));
         closeLangMenus(toggle.parentElement);
@@ -410,4 +431,5 @@
   translate(document);
   applyState();
   if (document.body.dataset.title) document.title = t(document.body.dataset.title);
+  syncTitle();
 })();

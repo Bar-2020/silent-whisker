@@ -439,6 +439,12 @@ body[data-chrome='tabs'] .main {
   background: var(--bad-tint);
 }
 
+/* On the red tint the usual placeholder grey is just under 4.5:1. */
+.input[aria-invalid='true']::placeholder,
+.textarea[aria-invalid='true']::placeholder {
+  color: var(--ink-2);
+}
+
 .input:disabled,
 .textarea:disabled {
   border-color: var(--line);
@@ -907,7 +913,6 @@ button.row {
 }
 
 /* Things that float over the map are clear glass too: light, with dark ink on it. */
-.round,
 .mapbanner,
 .menu,
 .stage .sheet,
@@ -1000,7 +1005,7 @@ button.row {
 }
 
 .menu {
-  min-inline-size: 15rem;
+  min-inline-size: min(15rem, calc(100vw - var(--s-6)));
   padding: var(--s-1);
   border: 1px solid var(--glass-light-edge);
   border-radius: var(--r-m);
@@ -1094,7 +1099,7 @@ button.row {
   gap: 2px;
   padding: 1px var(--s-2);
   border-radius: var(--r-pill);
-  background: var(--glass-light);
+  background: rgb(255 255 255 / 0.9);
   color: var(--dado);
   font-size: var(--fs-xs);
   font-weight: 700;
@@ -1229,9 +1234,11 @@ button.row {
   align-items: center;
   gap: var(--s-1);
   max-inline-size: calc(100% - var(--s-5) * 2);
-  padding: var(--s-1) var(--s-3) var(--s-1) var(--s-2);
+  padding-block: var(--s-1);
+  padding-inline: var(--s-2) var(--s-3);
   border: 1px solid var(--glass-light-edge);
   border-radius: var(--r-pill);
+  background: rgb(255 255 255 / 0.9);
   font-size: var(--fs-s);
   font-weight: 600;
   line-height: 1.3;

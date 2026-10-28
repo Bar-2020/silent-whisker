@@ -19,13 +19,17 @@
       <main class="main">
         <h1 class="visually-hidden" data-t="map.heading"></h1>
         <section class="stage" data-screen="map" data-default-state="default" data-state-attr>
-          <div class="map" id="map" role="application" data-t-attr="aria-label:map.mapLabel"></div>
+          <div class="map" id="map" data-t-attr="aria-label:map.mapLabel"></div>
 
           <div class="maptop">
             <div class="mapsearch" role="search">
               <i data-icon="search"></i>
               <input
                 class="mapsearch__input"
+                role="combobox"
+                aria-expanded="false"
+                aria-controls="map-results"
+                aria-autocomplete="list"
                 id="map-search"
                 type="search"
                 autocomplete="off"
@@ -51,17 +55,24 @@
               <i data-icon="help"></i>
             </button>
 
-            <div class="results" data-when="search">
-              <div class="results__group">
-                <h2 class="results__title" data-t="map.search.spots"></h2>
-                <a class="results__item" href="spot.html?screen=detail&state=red">
+            <p
+              class="visually-hidden"
+              role="status"
+              data-when="search"
+              data-t="map.search.count"
+              data-v='{"n":5}'
+            ></p>
+            <div class="results" id="map-results" role="listbox" data-when="search">
+              <div class="results__group" role="group" aria-labelledby="results-spots-h">
+                <h2 class="results__title" id="results-spots-h" data-t="map.search.spots"></h2>
+                <a class="results__item" role="option" href="spot.html?screen=detail&state=red">
                   <span class="results__icon"><i data-icon="pin"></i></span>
                   <span class="results__text"
                     ><strong data-t="demo.spot1.name"></strong
                     ><span class="small muted" data-t="demo.spot1.address"></span
                   ></span>
                 </a>
-                <a class="results__item" href="spot.html?screen=detail&state=green">
+                <a class="results__item" role="option" href="spot.html?screen=detail&state=green">
                   <span class="results__icon"><i data-icon="pin"></i></span>
                   <span class="results__text"
                     ><strong data-t="demo.spot4.name"></strong
@@ -69,9 +80,9 @@
                   ></span>
                 </a>
               </div>
-              <div class="results__group">
-                <h2 class="results__title" data-t="map.search.places"></h2>
-                <a class="results__item" href="map.html">
+              <div class="results__group" role="group" aria-labelledby="results-places-h">
+                <h2 class="results__title" id="results-places-h" data-t="map.search.places"></h2>
+                <a class="results__item" role="option" href="map.html">
                   <span class="results__icon"><i data-icon="map"></i></span>
                   <span class="results__text"
                     ><strong data-t="demo.place.street"></strong
@@ -80,7 +91,7 @@
                       <span data-t="demo.place.streetCity"></span></span
                   ></span>
                 </a>
-                <a class="results__item" href="map.html">
+                <a class="results__item" role="option" href="map.html">
                   <span class="results__icon"><i data-icon="map"></i></span>
                   <span class="results__text"
                     ><strong data-t="demo.place.address"></strong
@@ -89,7 +100,7 @@
                       <span data-t="demo.place.streetCity"></span></span
                   ></span>
                 </a>
-                <a class="results__item" href="map.html">
+                <a class="results__item" role="option" href="map.html">
                   <span class="results__icon"><i data-icon="map"></i></span>
                   <span class="results__text"
                     ><strong data-t="demo.place.city"></strong
@@ -98,7 +109,7 @@
                 </a>
               </div>
             </div>
-            <div class="results results--none" data-when="search-none">
+            <div class="results results--none" role="status" data-when="search-none">
               <i data-icon="search" data-class="icon--l"></i>
               <strong data-t="map.search.none"></strong>
               <span class="small muted" data-t="map.search.noneHint"></span>

@@ -36,7 +36,7 @@
     items.forEach((spot) => {
       const marker = window.L.marker(
         [spot.lat, spot.lng],
-        Mock.markerOptions(Mock.pinLabel(spot), Mock.pinHtml(spot))
+        Mock.markerOptions(`${Mock.t(spot.name)}: ${Mock.pinLabel(spot)}`, Mock.pinHtml(spot))
       ).addTo(map);
       marker.on('click', spot.onClick);
       layers.push(marker);
@@ -54,7 +54,7 @@
         window.L.marker(MockDemo.here, {
           icon: window.L.divIcon({
             className: '',
-            html: '<div class="here"></div>',
+            html: `<div class="here" role="img" aria-label="${Mock.t('map.here')}"></div>`,
             iconSize: null,
           }),
           interactive: false,
@@ -82,6 +82,7 @@
 
   Mock.onState = (state) => {
     if (search) {
+      search.setAttribute('aria-expanded', String(state === 'search' || state === 'search-none'));
       search.value =
         state === 'search'
           ? Mock.t('demo.search')

@@ -688,6 +688,10 @@ body[data-chrome='page']
   gap: var(--s-2);
 }
 
+.alertrow__title {
+  font-size: var(--fs-m);
+}
+
 .alertrow__main > .tag {
   align-self: flex-start;
 }
@@ -1673,7 +1677,7 @@ h2[id] {
   display: grid;
   place-items: center;
   min-block-size: var(--tap);
-  padding-inline: 0;
+  padding-inline: 2px;
   border: 0;
   border-radius: var(--r-s);
   background: transparent;
@@ -1681,7 +1685,7 @@ h2[id] {
   font-size: var(--fs-s);
   font-weight: 600;
   text-align: center;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
   cursor: pointer;
 }
 
@@ -1866,9 +1870,7 @@ h2[id] {
   display: flex;
   align-items: center;
   border-radius: var(--r-pill);
-  background: var(--glass-light);
-  -webkit-backdrop-filter: var(--glass-light-blur);
-  backdrop-filter: var(--glass-light-blur);
+  background: rgb(255 255 255 / 0.9);
   font-size: var(--fs-xs);
 }
 
@@ -1889,9 +1891,18 @@ h2[id] {
 }
 
 .mapcredit__text {
+  position: relative;
   padding: var(--s-1) var(--s-3);
   color: var(--ink-2);
   text-underline-offset: 2px;
+}
+
+/* The link is small to look at and 44 px to hit. */
+.mapcredit__text::after {
+  content: '';
+  position: absolute;
+  inset-block: -9px;
+  inset-inline: 0;
 }
 
 .mapcredit__info {
@@ -1911,7 +1922,7 @@ h2[id] {
   block-size: 28px;
   padding: 5px;
   border-radius: 50%;
-  background: var(--glass-light);
+  background: rgb(255 255 255 / 0.9);
 }
 
 .mapcredit.is-collapsed {
@@ -1942,4 +1953,56 @@ h2[id] {
 .sign[data-kind='neuter'] .sign__box {
   border-color: var(--alert);
   background: var(--alert-tint);
+}
+
+/* ---------- Audit fixes ---------- */
+.round:not(.round--primary) {
+  background: rgb(255 255 255 / 0.92);
+}
+
+/* A link standing alone in a notice is a 44 px target. */
+.notice__body > a {
+  display: flex;
+  align-items: center;
+  min-block-size: 44px;
+}
+
+.sitefoot__links a {
+  min-inline-size: 44px;
+}
+
+/* Place names and areas are typed words: they do not flip the sentence around them. */
+.post__place > span:not(.icon),
+.meta-line > span {
+  unicode-bidi: isolate;
+}
+
+/* Without blur, or with transparency turned down, every pane of glass turns solid. */
+@supports not (backdrop-filter: blur(1px)) {
+  .sitenav,
+  .round--primary {
+    background: var(--glass-solid);
+  }
+
+  .mapsearch {
+    background: var(--surface);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .sitenav,
+  .round--primary {
+    background: var(--glass-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .mapsearch,
+  .results,
+  .sheet.sheet--modal,
+  .stage .sheet.sheet--modal {
+    background: var(--surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
 }

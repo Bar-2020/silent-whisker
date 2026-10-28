@@ -41,7 +41,7 @@
 
   /* The context menu of a photo: report for everyone, hide and restrict for admins. */
   const MENU =
-    '<div class="menu post__menu" data-when="menu menu-admin" role="menu">' +
+    '<div class="menu post__menu" id="post-menu" data-when="menu menu-admin">' +
     `<button class="menu__item" type="button"><i data-icon="flag"></i><span data-t="cats.menu.report"></span></button>` +
     `<button class="menu__item menu__item--bad" type="button" data-when="menu-admin"><i data-icon="restrict"></i><span data-t="cats.menu.hide"></span></button>` +
     `<button class="menu__item menu__item--bad" type="button" data-when="menu-admin"><i data-icon="lock"></i><span data-t="chat.admin.restrict"></span></button>` +
@@ -52,12 +52,12 @@
     return (
       '<article class="post">' +
       '<div class="post__media">' +
-      `<a href="cats.html?screen=cat"><div class="photo photo--square" data-tone="${item.tone}"><i data-icon="cat"></i></div></a>` +
+      `<a href="cats.html?screen=cat" data-t-attr="aria-label:${item.cat}"><div class="photo photo--square" data-tone="${item.tone}"><i data-icon="cat"></i></div></a>` +
       `<span class="post__place"><i data-icon="pin"></i><span data-t="${item.place}"></span></span>` +
       '</div>' +
       '<div class="post__body">' +
       `<div class="post__title"><h2 data-t="${item.cat}"></h2>` +
-      `<button class="iconbtn iconbtn--small post__more" type="button" aria-haspopup="menu" data-go="menu" data-t-attr="aria-label:common.more"><i data-icon="more"></i></button></div>` +
+      `<button class="iconbtn iconbtn--small post__more" type="button" data-disclosure aria-controls="post-menu" data-go="menu" data-t-attr="aria-label:common.more"><i data-icon="more"></i></button></div>` +
       (index === 0 ? MENU : '') +
       `<div class="post__who"><span class="avatar avatar--s" data-t="${item.initials}"></span><bdi data-t="${item.user}"></bdi></div>` +
       '<div class="post__actions">' +

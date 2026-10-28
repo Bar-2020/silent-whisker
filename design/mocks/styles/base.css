@@ -19,6 +19,11 @@ html {
   scrollbar-width: none;
 }
 
+/* A focused control is never hidden behind the consent bar. */
+html:has(.consent:not([hidden])) {
+  scroll-padding-block-end: 12rem;
+}
+
 body {
   margin: 0;
   min-block-size: 100dvh;
@@ -107,7 +112,12 @@ svg {
   outline-offset: 2px;
 }
 
-.on-dado :focus-visible {
+/* On slate (the bars, the landing band, the footer, the full-screen photo) the ring is white. */
+.on-dado :focus-visible,
+.hero-band :focus-visible,
+.sitefoot :focus-visible,
+.trust :focus-visible,
+.lightbox :focus-visible {
   outline-color: var(--dado-ink);
 }
 
@@ -208,5 +218,27 @@ bdi,
   .spinner {
     animation-duration: 1.6s !important;
     animation-iteration-count: infinite !important;
+  }
+}
+
+/* High-contrast (forced colours) mode: a selected or pressed state cannot rely on a fill or a shadow. */
+@media (forced-colors: active) {
+  .tabs button[aria-selected='true'],
+  .nav__item[aria-current='page'],
+  .react[aria-pressed='true'],
+  .choice input:checked + .choice__tile {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+
+  .spinner {
+    border-color: CanvasText;
+    border-block-start-color: Highlight;
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled='true'] {
+    border-color: GrayText;
+    color: GrayText;
   }
 }

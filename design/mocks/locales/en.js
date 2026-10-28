@@ -660,4 +660,7 @@ window.MOCK_LOCALES.en = {
   'spot.admin.inactive.rejectText': 'The request is declined and the spot stays active.',
   'spot.admin.inactive.rejectYes': 'Decline request',
   'profile.admin.inactiveBy': 'Requested by {name}',
+  'map.search.count': '{n} results',
+  'map.here': 'Your location',
+  'chat.message.dialogLabel': 'Message actions',
 };

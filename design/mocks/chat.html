@@ -27,13 +27,14 @@
               type="button"
               data-when="admin admin-menu"
               data-go="admin-menu"
-              aria-haspopup="menu"
+              data-disclosure
+              aria-controls="chat-admin-menu"
               data-t-attr="aria-label:chat.admin.menu"
             >
               <i data-icon="more"></i>
             </button>
           </header>
-          <div class="menu menu--float" role="menu" data-when="admin-menu">
+          <div class="menu menu--float" id="chat-admin-menu" data-when="admin-menu">
             <a class="menu__item" href="profile.html?screen=admin-reports">
               <i data-icon="flag"></i><span data-t="chat.admin.reported"></span>
             </a>
@@ -151,6 +152,7 @@
             class="sheet sheet--modal"
             role="dialog"
             aria-modal="true"
+            data-t-attr="aria-label:chat.message.dialogLabel"
             data-when="message message-admin"
           >
             <div class="dialog__quote">

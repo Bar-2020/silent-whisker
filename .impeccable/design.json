@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-28T11:25:47.413283+00:00",
+  "generatedAt": "2026-10-28T13:19:08.757580+00:00",
   "title": "Design System: Silent Whisker",
   "extensions": {
     "colorMeta": {
@@ -285,7 +285,12 @@
       "**Do** write errors as what happened and what to do next, in one or two plain sentences.",
       "**Do** keep targets at 48 px or more (44 px for small buttons) and primary actions on the pinned bar, inside the thumb's reach.",
       "**Do** let the glass fall back to solid when blur is off or transparency is reduced.",
-      "**Do** run every string through `t('key')` and every style through a class or a `data-*` attribute; no inline styles."
+      "**Do** run every string through `t('key')` and every style through a class or a `data-*` attribute; no inline styles.",
+      "**Do** name every photo link and photo button by the photo's own name, and every icon-only control by what it does; a map marker is named by the spot and its state, and the member's position by \"your location\".",
+      "**Do** keep the focus ring white on slate (the bars, the landing band, the footer, the full-screen photo) and blue on white, at least 3:1 against what is behind it.",
+      "**Do** make a three-dots menu a disclosure (`aria-expanded`, `aria-controls`), not `role=\"menu\"`, and name a dialog by its purpose (\"Message actions\"), not by the first line inside it.",
+      "**Do** give a selected or pressed state more than a fill or a shadow, so forced-colours mode shows it (an outline), and give every pane of glass a solid fallback for no blur and for reduced transparency.",
+      "**Do** set the page title to the screen's title, so a tab or a history list names it."
     ],
     "donts": [
       "**Don't** use cream, terracotta, neon-on-dark or a gamified look (badges, streaks, levels). Stats carry no prize.",

@@ -181,7 +181,7 @@
       const selected = { ...spot, selected: spot.id === 'red' };
       window.L.marker(
         [spot.lat, spot.lng],
-        Mock.markerOptions(Mock.pinLabel(spot), Mock.pinHtml(selected))
+        Mock.markerOptions(`${Mock.t(spot.name)}: ${Mock.pinLabel(spot)}`, Mock.pinHtml(selected))
       ).addTo(map);
     });
   }
@@ -200,7 +200,12 @@
       footer.hidden = footer.dataset.panelFooter !== tab || dialogOpen;
     });
     document.querySelectorAll('[data-tab]').forEach((button) => {
-      button.setAttribute('aria-selected', String(button.dataset.tab === tab));
+      const selected = button.dataset.tab === tab;
+      const panel = document.querySelector(`[data-panel="${button.dataset.tab}"]`);
+      if (panel && !panel.id) panel.id = `panel-${button.dataset.tab}`;
+      button.setAttribute('aria-selected', String(selected));
+      if (panel) button.setAttribute('aria-controls', panel.id);
+      button.tabIndex = selected ? 0 : -1;
     });
   }
 

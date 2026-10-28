@@ -103,8 +103,8 @@
   --glass-light-edge: rgb(255 255 255 / 0.8);
   --glass-light-blur: blur(12px) saturate(1.6);
   /* Dialogs and search results: light glass, a little more white so dark ink stays legible over a busy map. */
-  --glass-panel: rgb(255 255 255 / 0.74);
-  --glass-panel-blur: blur(20px) saturate(1.8);
+  --glass-panel: rgb(255 255 255 / 0.84);
+  --glass-panel-blur: blur(26px) saturate(1.6);
   --nav-gap: 12px;
   --nav-total: calc(var(--nav-size) + var(--nav-gap) * 2);
   --rail-offset: calc(var(--rail-size) + var(--nav-gap) * 2);

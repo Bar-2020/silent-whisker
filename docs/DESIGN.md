@@ -256,7 +256,7 @@ depth.
 - **Light glass** (`rgb(255 255 255 / 0.64)`, blur 12 px, saturate 1.6, a white edge): everything
   else that floats over the map or the page with dark ink on it: the pin card and panel, the round
   map controls (all 52 px), the map search, menus, banners and the sticky top bar. **Dialogs and
-  search results** use a whiter version (`rgb(255 255 255 / 0.74)`, blur 20 px, saturate 1.8) over a light
+  search results** use a whiter version (`rgb(255 255 255 / 0.84)`, blur 26 px, saturate 1.6) over a light
   scrim (30%), so the map or page shows through blurred and dark ink stays legible.
 - **Glass** (a tinted pane, see Components): the navigation bar and rail only. Fill
   `rgb(36 60 103 / 0.58)` over a backdrop that is blurred 8 px, saturated 1.7 and dimmed to 56%
@@ -270,7 +270,8 @@ displacement and edge light the CSS cannot, in Chromium; Safari and Firefox get 
 light without the displacement. Wrap the same content in it, keep the CSS glass above as the
 fallback, and keep the dim-then-tint rule so labels stay legible (the library's glass is clear on
 its own). Side by side over a live map: `design/mocks/glass-react.html`. The library sets inline
-styles itself, which the no-inline-styles rule forbids in our code: a question for the owner (Q35).
+styles itself, which the no-inline-styles rule forbids in our code: a question for the owner (Q35). Leaflet
+also writes inline `style` attributes on its map, so the content security policy must allow `style-src-attr`.
 
 ### Named Rules
 **The Float-Only Rule.** Depth means "this sits over the content". A resting card never has a
@@ -311,7 +312,7 @@ Every component below, with its states, is drawn in `design/mocks/design-system.
   keeps its button enabled.
 - **Pending:** every button that sends something to the server keeps its size and colour and shows
   **only a 20 px spinner**; the label stays in the page, invisible, so the width does not change and a
-  screen reader still hears it. It takes no taps (`aria-busy="true"`) and still shows focus. In the
+  screen reader still hears it. It takes no taps (`aria-busy="true"`, and the handler ignores Enter too) and still shows focus. In the
   app the pending state is the `isPending` flag of that action's TanStack Query mutation, never a
   flag kept by hand; the same mutation then drives the success and the error.
 
@@ -512,6 +513,16 @@ sunk grey (#eef1f5) while one loads.
 - **Do** let the glass fall back to solid when blur is off or transparency is reduced.
 - **Do** run every string through `t('key')` and every style through a class or a `data-*`
   attribute; no inline styles.
+- **Do** name every photo link and photo button by the photo's own name, and every icon-only control by
+  what it does; a map marker is named by the spot and its state, and the member's position by "your
+  location".
+- **Do** keep the focus ring white on slate (the bars, the landing band, the footer, the full-screen
+  photo) and blue on white, at least 3:1 against what is behind it.
+- **Do** make a three-dots menu a disclosure (`aria-expanded`, `aria-controls`), not `role="menu"`, and
+  name a dialog by its purpose ("Message actions"), not by the first line inside it.
+- **Do** give a selected or pressed state more than a fill or a shadow, so forced-colours mode shows it
+  (an outline), and give every pane of glass a solid fallback for no blur and for reduced transparency.
+- **Do** set the page title to the screen's title, so a tab or a history list names it.
 
 ### Don't:
 - **Don't** use cream, terracotta, neon-on-dark or a gamified look (badges, streaks, levels). Stats
