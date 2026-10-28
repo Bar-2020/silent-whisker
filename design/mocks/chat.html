@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/screens.css" />
+    <link rel="stylesheet" href="styles/responsive.css" />
+  </head>
+  <body data-title="chat.title" data-chrome="page">
+    <div class="shell">
+      <main class="main">
+        <div data-screen="thread" data-default-state="default">
+          <header class="topbar topbar--chat">
+            <a class="iconbtn" href="spot.html" data-t-attr="aria-label:common.back"
+              ><i data-icon="back" data-class="icon--flip"></i
+            ></a>
+            <div class="topbar__title">
+              <h1 class="chat-title" data-t="chat.heading"></h1>
+              <p class="small muted" data-t="demo.spot1.name"></p>
+            </div>
+            <button
+              class="iconbtn"
+              type="button"
+              data-when="admin admin-menu"
+              data-go="admin-menu"
+              data-disclosure
+              aria-controls="chat-admin-menu"
+              data-t-attr="aria-label:chat.admin.menu"
+            >
+              <i data-icon="more"></i>
+            </button>
+          </header>
+          <div class="menu menu--float" id="chat-admin-menu" data-when="admin-menu">
+            <a class="menu__item" href="profile.html?screen=admin-reports">
+              <i data-icon="flag"></i><span data-t="chat.admin.reported"></span>
+            </a>
+            <button class="menu__item menu__item--bad" type="button">
+              <i data-icon="restrict"></i><span data-t="chat.admin.pause"></span>
+            </button>
+          </div>
+
+          <div class="page page--narrow chat-page">
+            <div class="thread" data-when="loading" aria-busy="true">
+              <div class="skeleton skeleton--msg"></div>
+              <div class="skeleton skeleton--msg"></div>
+              <div class="skeleton skeleton--msg"></div>
+            </div>
+
+            <div class="empty" data-when="empty">
+              <i data-icon="comment" data-class="icon--l"></i>
+              <h2 data-t="chat.empty.title"></h2>
+              <p data-t="chat.empty.text"></p>
+            </div>
+
+            <div class="thread" data-unless="loading empty">
+              <button
+                class="btn btn--quiet btn--small"
+                type="button"
+                data-t="chat.earlier"
+              ></button>
+
+              <!-- Tapping a message opens a dialog: copy it, or report it. -->
+              <div class="msg">
+                <span class="avatar" data-t="demo.user1.initials"></span>
+                <button class="msg__bubble" type="button" data-go="message" aria-haspopup="dialog">
+                  <span class="msg__meta">
+                    <strong><bdi data-t="demo.user1.name"></bdi></strong
+                    ><time class="num">07:10</time>
+                  </span>
+                  <span class="msg__text" data-t="demo.msg1"></span>
+                </button>
+              </div>
+              <div class="msg">
+                <span class="avatar" data-t="demo.user2.initials"></span>
+                <button class="msg__bubble" type="button" data-go="message" aria-haspopup="dialog">
+                  <span class="msg__meta">
+                    <strong><bdi data-t="demo.user2.name"></bdi></strong
+                    ><time class="num">07:42</time>
+                  </span>
+                  <span class="msg__text" data-t="demo.msg2"></span>
+                </button>
+              </div>
+              <div class="msg msg--own">
+                <span class="avatar" data-t="demo.me.initials"></span>
+                <button class="msg__bubble" type="button" data-go="message" aria-haspopup="dialog">
+                  <span class="msg__meta">
+                    <strong><bdi data-t="demo.me.name"></bdi></strong><time class="num">08:05</time>
+                  </span>
+                  <span class="msg__text" data-t="demo.msg3"></span>
+                </button>
+              </div>
+              <div class="msg msg--own msg--review" data-when="review">
+                <span class="avatar" data-t="demo.me.initials"></span>
+                <div class="msg__bubble">
+                  <span class="msg__meta">
+                    <span class="chip" data-level="none"
+                      ><i data-icon="clock"></i><span data-t="common.inReview"></span
+                    ></span>
+                  </span>
+                  <span class="msg__text" data-t="demo.msg4"></span>
+                  <span class="msg__text small" data-t="chat.review.note"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="composer" data-unless="restricted limit banned">
+            <div class="field composer__field">
+              <textarea
+                class="textarea composer__input"
+                rows="1"
+                data-t-attr="placeholder:chat.composer.placeholder;aria-label:chat.composer.placeholder"
+                aria-invalid="false"
+              ></textarea>
+            </div>
+            <button
+              class="iconbtn iconbtn--solid"
+              type="button"
+              data-t-attr="aria-label:common.send"
+            >
+              <i data-icon="send" data-class="icon--flip"></i>
+            </button>
+          </div>
+          <div class="composer" data-when="restricted limit banned">
+            <div class="notice" data-level="red">
+              <i data-icon="restrict"></i>
+              <div class="notice__body">
+                <span
+                  data-when="restricted"
+                  data-t="chat.restricted.text"
+                  data-v='{"date":"12.11"}'
+                ></span>
+                <span data-when="limit" data-t="chat.limit.text"></span>
+                <span data-when="banned" data-t="common.banned.text"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- A refused message is a toast, so the text box stays where it is. -->
+          <div class="toast toast--composer" role="alert" data-when="rejected">
+            <i data-icon="xcircle"></i>
+            <div class="notice__body"><span data-t="chat.rejected"></span></div>
+          </div>
+
+          <!-- What can be done with a message. -->
+          <div class="scrim" data-when="message message-admin" data-go="default"></div>
+          <aside
+            class="sheet sheet--modal"
+            role="dialog"
+            aria-modal="true"
+            data-t-attr="aria-label:chat.message.dialogLabel"
+            data-when="message message-admin"
+          >
+            <div class="dialog__quote">
+              <strong><bdi data-t="demo.user2.name"></bdi></strong>
+              <span class="muted" data-t="demo.msg2"></span>
+            </div>
+            <button class="dialog__option" type="button" data-go="default">
+              <span class="dialog__icon"><i data-icon="copy"></i></span>
+              <strong data-t="chat.message.copy"></strong>
+            </button>
+            <button class="dialog__option" type="button" data-go="default">
+              <span class="dialog__icon"><i data-icon="flag"></i></span>
+              <strong data-t="chat.message.report"></strong>
+            </button>
+            <button
+              class="dialog__option"
+              data-level="red"
+              type="button"
+              data-go="default"
+              data-when="message-admin"
+            >
+              <span class="dialog__icon"><i data-icon="restrict"></i></span>
+              <strong data-t="chat.admin.restrict"></strong>
+            </button>
+            <button
+              class="dialog__option"
+              data-level="red"
+              type="button"
+              data-go="default"
+              data-when="message-admin"
+            >
+              <span class="dialog__icon"><i data-icon="lock"></i></span>
+              <strong data-t="chat.admin.ban"></strong>
+            </button>
+            <button
+              class="btn btn--quiet"
+              type="button"
+              data-go="default"
+              data-t="common.cancel"
+            ></button>
+          </aside>
+        </div>
+      </main>
+      <nav data-nav="map"></nav>
+    </div>
+
+    <script src="locales/he.js"></script>
+    <script src="locales/en.js"></script>
+    <script src="icons.js"></script>
+    <script src="mock.js"></script>
+    <script src="pages/chat.js"></script>
+  </body>
+</html>

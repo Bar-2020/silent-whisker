@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/screens.css" />
+    <link rel="stylesheet" href="styles/responsive.css" />
+  </head>
+  <body data-title="landing.title" data-chrome="public">
+    <section data-screen="home" data-default-state="default">
+      <header class="sitenav on-dado">
+        <a class="brandmark" href="landing.html">
+          <svg class="brandmark__glyph" aria-hidden="true"><use href="#i-cat"></use></svg>
+          <span>Silent Whisker</span>
+        </a>
+        <nav class="sitenav__links" data-t-attr="aria-label:landing.nav.label">
+          <a href="#how-h" data-t="landing.nav.how"></a>
+          <a href="#privacy-h" data-t="landing.nav.privacy"></a>
+          <a href="#free-h" data-t="landing.nav.support"></a>
+        </nav>
+        <div class="sitenav__end">
+          <span data-langmenu></span>
+          <a
+            class="btn btn--small btn--on-dado"
+            href="first-run.html?screen=profile"
+            data-t="landing.signInShort"
+          ></a>
+        </div>
+      </header>
+
+      <main>
+        <div class="hero-band">
+          <section class="hero" aria-labelledby="landing-h1">
+            <div class="hero__copy">
+              <h1 id="landing-h1" data-t="landing.h1"></h1>
+              <p class="lead" data-t="landing.lead"></p>
+              <div class="hero__cta stack">
+                <a
+                  class="btn btn--lg btn--on-dado"
+                  href="first-run.html?screen=profile"
+                  data-t="landing.signIn"
+                ></a>
+                <p class="small" data-t-html="landing.consent"></p>
+              </div>
+            </div>
+            <figure class="hero__visual">
+              <div class="device">
+                <div class="device__glass">
+                  <iframe
+                    class="device__screen"
+                    id="hero-map"
+                    loading="lazy"
+                    tabindex="-1"
+                    aria-hidden="true"
+                    inert
+                    data-t-attr="title:landing.hero.visualLabel"
+                  ></iframe>
+                </div>
+              </div>
+              <figcaption class="small" data-t="landing.hero.caption"></figcaption>
+            </figure>
+          </section>
+        </div>
+
+        <section class="band-section band-section--steps" aria-labelledby="how-h">
+          <div class="band-section__inner">
+            <div class="stack stack--2">
+              <h2 id="how-h" data-t="landing.how.title"></h2>
+              <p class="lead" data-t="landing.how.lead"></p>
+            </div>
+            <ol class="steps">
+              <li class="step" data-level="red">
+                <span class="step__num" aria-hidden="true"></span>
+                <span class="step__visual" id="step-pin-red"></span>
+                <div class="step__text">
+                  <h3 data-t="landing.step1.title"></h3>
+                  <p class="muted" data-t="landing.step1.text"></p>
+                </div>
+              </li>
+              <li class="step">
+                <span class="step__num" aria-hidden="true"></span>
+                <span class="step__visual"><i data-icon="bowl"></i></span>
+                <div class="step__text">
+                  <h3 data-t="landing.step2.title"></h3>
+                  <p class="muted" data-t="landing.step2.text"></p>
+                </div>
+              </li>
+              <li class="step" data-level="green">
+                <span class="step__num" aria-hidden="true"></span>
+                <span class="step__visual" id="step-pin-green"></span>
+                <div class="step__text">
+                  <h3 data-t="landing.step3.title"></h3>
+                  <p class="muted" data-t="landing.step3.text"></p>
+                </div>
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        <section class="trust" aria-labelledby="privacy-h">
+          <div class="band-section__inner">
+            <h2 id="privacy-h" data-t="landing.privacy.title"></h2>
+            <ul class="promise">
+              <li><i data-icon="locate"></i><span data-t="landing.privacy.1"></span></li>
+              <li><i data-icon="pin"></i><span data-t="landing.privacy.2"></span></li>
+              <li><i data-icon="shield"></i><span data-t="landing.privacy.3"></span></li>
+              <li><i data-icon="lock"></i><span data-t="landing.privacy.4"></span></li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="band-section">
+          <div class="band-section__inner">
+            <div class="adslot" role="complementary" data-t-attr="aria-label:landing.ad.label">
+              <span data-t="landing.ad.slot"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="band-section band-section--cta" aria-labelledby="free-h">
+          <div class="band-section__inner">
+            <h2 id="free-h" data-t="landing.free.title"></h2>
+            <p class="muted" data-t="landing.free.text"></p>
+            <div class="cluster">
+              <a
+                class="btn btn--lg"
+                href="first-run.html?screen=profile"
+                data-t="landing.signIn"
+              ></a>
+              <a class="btn btn--secondary" href="#"
+                ><i data-icon="heart"></i><span data-t="landing.donate"></span
+              ></a>
+              <a class="btn btn--quiet" href="#"
+                ><i data-icon="code"></i><span data-t="landing.source"></span
+              ></a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="sitefoot" id="foot">
+        <div class="sitefoot__inner">
+          <div class="sitefoot__brand">
+            <a class="brandmark" href="landing.html">
+              <svg class="brandmark__glyph" aria-hidden="true"><use href="#i-cat"></use></svg>
+              <span>Silent Whisker</span>
+            </a>
+            <p data-t="landing.footer.tagline"></p>
+          </div>
+          <nav class="sitefoot__links" data-t-attr="aria-label:landing.footer.label">
+            <ul>
+              <li><a href="#how-h" data-t="landing.nav.how"></a></li>
+              <li><a href="legal.html?screen=terms" data-t="legal.terms.title"></a></li>
+              <li><a href="#privacy-h" data-t="landing.nav.privacy"></a></li>
+              <li><a href="legal.html?screen=privacy" data-t="legal.privacy.title"></a></li>
+              <li><a href="#" data-t="landing.source"></a></li>
+              <li><a href="#" data-t="landing.donate"></a></li>
+            </ul>
+          </nav>
+          <div class="sitefoot__base">
+            <p data-t="landing.footer"></p>
+            <p class="sitefoot__made" id="made-by"></p>
+          </div>
+        </div>
+      </footer>
+
+      <!-- Visitors in the EU and UK see the consent tool of the ad provider; this bar only shows where it sits. -->
+      <div
+        class="consent"
+        role="region"
+        data-when="eu"
+        data-t-attr="aria-label:landing.consentBar.label"
+      >
+        <div class="stack stack--2">
+          <p data-t="landing.consentBar.text"></p>
+          <p class="small muted" data-t="landing.consentBar.sample"></p>
+        </div>
+        <div class="cluster">
+          <button
+            class="btn btn--secondary"
+            type="button"
+            data-t="landing.consentBar.decline"
+          ></button>
+          <button class="btn" type="button" data-t="landing.consentBar.accept"></button>
+        </div>
+      </div>
+    </section>
+
+    <script src="locales/he.js"></script>
+    <script src="locales/en.js"></script>
+    <script src="icons.js"></script>
+    <script src="mock.js"></script>
+    <script src="pages/landing.js"></script>
+  </body>
+</html>

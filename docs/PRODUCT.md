@@ -12,7 +12,7 @@ web
 
 ## Stack
 
-React, Vite, TypeScript, react-leaflet, react-i18next. AWS: S3 + CloudFront, Lambda, DynamoDB,
+React, Vite, TypeScript, TanStack Query, react-leaflet, react-i18next. AWS: S3 + CloudFront, Lambda, DynamoDB,
 Cognito. Terraform, deployed from GitHub Actions with a deploy-only key (D-02).
 
 ## Who uses it
@@ -20,24 +20,24 @@ Cognito. Terraform, deployed from GitHub Actions with a deploy-only key (D-02).
 - **Member** (signed in with Google): everyone who uses the app. Sees city stations and cat alerts,
   and custom spots when nearby or when they need food or water (D-47). Signed-out people see only a landing page,
   the privacy policy and the terms (D-39).
-- **Custom spot creator**: the member who added a custom spot. Can rename it and mark it inactive.
+- **Custom spot creator**: the member who added a custom spot. Can rename it, and ask an admin to mark it inactive (R-32).
 - **Admin**: a member with an admin flag. Approves custom spots, bans users, restricts chat, resolves or extends
   cat alerts. No separate admin screens: the actions are buttons in the normal screens, shown only to admins.
 
 ## v1 scope
 
 1. **Map** (Leaflet + OpenStreetMap): feeding spots (official and custom) and cat alerts, never cat photos
-   (D-45). Spots that most need food or water are highlighted, based on time since the last counted log and whether the spot is active.
+   (D-45). Spots that most need food or water are highlighted, based on time since the last counted log and whether the spot is active. A search finds a city, street, address or spot name (D-58); the OpenStreetMap credit stays visible on the map.
 2. **Spot**: name (the custom spot creator's, or generated from the street), photo, exact address. On the map,
    every spot is an exact point (D-47). Active or inactive. The app adds only custom spots, each approved by an admin (D-43); city stations come only from the import pipeline (D-34).
 3. **Feeding and water logs**: no photo. The volunteer picks a full or partial bowl (D-16). A log
    counts when the phone is within the proof radius of the spot and the limits pass (R-09), and then updates
    the spot's timers. Anyone at the spot can report "this spot was empty" (D-19).
-4. **Cats and the feed**: photos of cats (each must contain one), at a spot or random with a
+4. **Cats and the feed**: photos of cats (each must contain one and has a required name of 1 to 40 characters, R-34), at a spot or random with a
    location tag, in an Instagram-style feed, never on the map. Others like and comment (D-44, D-45).
-5. **Cat alerts**: a sick cat or a cat in danger, with a photo and a note, tagged from where the
-   member stands. On the map for 6 hours; admins resolve or extend (D-41, D-42).
-6. **Chat**: small, per spot only; cat posts have comments instead (D-48). Automatic moderation.
+5. **Cat alerts**: a sick cat, a cat in danger or, not urgent, a cat that needs spaying or neutering (D-64), with a photo and a
+   note, tagged from where the member stands. On the map for 6 hours (7 days for spay or neuter), then in a past-alerts list every member sees for 7 days; admins resolve or extend (D-41, D-42, R-24).
+6. **Chat**: small, per spot only; cat posts have comments instead (D-48). Automatic moderation. An admin can pause a spot's chat (R-33).
 7. **Profile**: at first sign-in the app asks for the full name, the city (the map opens there) and whether to show the
    Google photo, otherwise initials (D-21, D-27). Stats: cats helped, feedings, water given.
 8. **Languages**: Hebrew (default, RTL) and English. Every string is in `he.json` and `en.json`,
@@ -105,9 +105,9 @@ mode. Live (realtime) updates. A public map for signed-out visitors. Changing th
 
 Code first, no Figma (D-40). The tool is Impeccable (`.claude/skills/impeccable`).
 
-1. Before any screen is built, run `/impeccable shape` for every area: first run, landing and legal
-   pages, map, spot and logging, cats, cat alerts, chat, profile, navigation (D-55).
-2. Pick the look once into `DESIGN.md` (proposed tone: quiet, legible outdoors); the owner approves it.
+1. Done (D-55): `/impeccable shape` for every area, in `design/briefs/`; mocks of every screen in
+   `design/mocks/` (run `node design/serve.mjs`); open questions in `design/briefs/10-open-questions.md`.
+2. The look is in [DESIGN.md](DESIGN.md) (D-56). The owner approves the whole design before Phase 2.
 3. A phase builds only its own screens from the design; to change one, update the design first.
 4. Before each PR with screens, run `critique`, `audit` and `polish`.
 
@@ -133,7 +133,7 @@ One phase, one PR or smaller. Do not start a phase while the previous one is hal
 ## Evidence on Hand
 
 Repo art (cat-pin logo, README images) lives in `.github/assets/`. It is not the app's design
-system: Phase 2 picks the look and writes DESIGN.md. No reference apps yet; do not invent any.
+system, which is [DESIGN.md](DESIGN.md). No reference apps yet; do not invent any.
 
 ## Product Principles
 

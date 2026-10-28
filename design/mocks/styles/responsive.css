@@ -1,0 +1,417 @@
+/* Every width rule, in one place. Phone is the base; 768px adds the rail, 1024px adds panels. */
+
+@media (min-width: 768px) {
+  html {
+    scrollbar-width: auto;
+  }
+
+  /* On a wide screen the bar sits under the form, so the screen is as tall as its content. */
+  body[data-chrome='page'] [data-pinned='bar'] {
+    min-block-size: 0;
+  }
+
+  /* The bar becomes a rail of the same glass, floating at the inline-start. */
+  body[data-chrome='tabs'] .main {
+    padding-block-end: 0;
+  }
+
+  .shell .main {
+    padding-inline-start: var(--rail-offset);
+  }
+
+  .nav {
+    inset-inline: var(--nav-gap) auto;
+    inset-block: var(--nav-gap);
+    inline-size: var(--rail-size);
+    flex-direction: column;
+    align-items: stretch;
+    padding-block: var(--s-3);
+    border-radius: var(--r-rail);
+  }
+
+  .nav__item {
+    flex: none;
+    min-block-size: 68px;
+  }
+
+  /* The rail carries the mark, so the top bar does not repeat it. */
+  .topbar__brand {
+    display: none;
+  }
+
+  .nav__brand {
+    display: grid;
+    place-items: center;
+    min-block-size: var(--tap);
+    margin-block-end: var(--s-3);
+  }
+
+  .nav__brand img {
+    inline-size: 40px;
+    block-size: 40px;
+    border-radius: var(--r-s);
+  }
+
+  .nav__lang {
+    display: grid;
+    place-items: center;
+    margin-block-start: auto;
+    min-block-size: var(--tap);
+    color: var(--glass-ink);
+    font-size: var(--fs-nav);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .nav__lang:hover {
+    color: var(--dado-ink);
+  }
+
+  /* On a wide screen inner pages keep the rail, so the top bar loses its back-only job. */
+  body[data-chrome='page'] .nav {
+    display: flex;
+  }
+
+  .page {
+    padding: var(--s-6) var(--s-5) var(--s-8);
+  }
+
+  /* On a wide screen the actions of a top bar stay near the column, not at the edge of the window. */
+  .topbar {
+    padding-inline: max(var(--s-2), calc((100% - 64rem) / 2));
+  }
+
+  .feed .post .photo {
+    --ratio: 4 / 3;
+  }
+
+  .picker-map {
+    block-size: 320px;
+  }
+
+  .adminrow {
+    max-inline-size: 28rem;
+  }
+
+  .stage {
+    block-size: 100dvh;
+  }
+
+  /* The sheet becomes a panel at the inline-start of the map, beside the rail. */
+  .stage .sheet {
+    inset-block: var(--s-4);
+    inset-inline: calc(var(--rail-offset) + var(--s-2)) auto;
+    inline-size: var(--panel-size);
+    border-radius: var(--r-l);
+    padding: var(--s-5);
+    overflow-y: auto;
+  }
+
+  .stage .sheet--peek {
+    inset-block-end: auto;
+  }
+
+  .mapctl,
+  .stage[data-sheet='spot'] .mapctl,
+  .stage[data-sheet='alert'] .mapctl {
+    inset-block-end: var(--s-4);
+  }
+
+  /* The credit sits at the bottom, left of the action buttons, in both directions. */
+  .stage .mapcredit,
+  [dir='rtl'] .stage .mapcredit {
+    inset-block-end: var(--s-2);
+    inset-inline: auto calc(var(--s-4) + var(--round) + var(--s-3));
+  }
+
+  .stage[data-sheet='spot'] .mapcredit,
+  .stage[data-sheet='alert'] .mapcredit {
+    inset-block-end: var(--s-2);
+  }
+
+  /* Beside the side panel there is room, so the buttons stay, at the inline-end. */
+  [dir='rtl'] .mapctl {
+    inset-inline: auto var(--s-4);
+  }
+
+  .stage:is([data-sheet='spot'], [data-sheet='alert']) .mapctl {
+    display: flex;
+  }
+
+  .maptop {
+    inset-inline: auto var(--s-4);
+    inline-size: 26rem;
+  }
+
+  .map .leaflet-bottom {
+    inset-block-end: 0;
+  }
+
+  .mapbanner {
+    inset-inline: calc(var(--rail-offset) + var(--s-2)) var(--s-4);
+  }
+
+  .toast {
+    inset-inline: auto var(--s-5);
+    inset-block-end: var(--s-5);
+    inline-size: 24rem;
+  }
+
+  /* On a wide screen the bar is not pinned: it sits under the form, on the page. */
+  .footbar {
+    position: static;
+    inline-size: 100%;
+    max-inline-size: 30rem;
+    margin: 0 auto;
+    padding: var(--s-2) var(--s-5) var(--s-8);
+    border: 0;
+    background: transparent;
+  }
+
+  .footbar .btn {
+    flex: 0 1 auto;
+    min-inline-size: 12rem;
+  }
+
+  .firstrun__body {
+    padding-block-start: var(--s-8);
+  }
+
+  .steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-7);
+  }
+
+  /* In a row: the number, then the picture, then the words, with the line running across to the next. */
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s-4);
+  }
+
+  .step__visual {
+    grid-column: auto;
+  }
+
+  .step:not(:last-child)::before {
+    inset-block: 21px auto;
+    inset-inline: 60px calc(var(--s-7) * -1 + 16px);
+    inline-size: auto;
+    block-size: 2px;
+    background: repeating-linear-gradient(to right, var(--line-strong) 0 6px, transparent 6px 12px);
+  }
+
+  [dir='rtl'] .step:not(:last-child)::before {
+    background: repeating-linear-gradient(to left, var(--line-strong) 0 6px, transparent 6px 12px);
+  }
+
+  .sitefoot__inner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    column-gap: var(--s-8);
+  }
+
+  .sitefoot__links ul {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .sitefoot__base {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .sitebar {
+    padding: var(--s-4) var(--s-6);
+  }
+
+  .consent {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: var(--s-6);
+  }
+
+  .feed {
+    gap: var(--s-5);
+  }
+
+  .feed .post .photo,
+  .post--solo .photo {
+    border-radius: var(--r-m);
+  }
+
+  .post--solo {
+    max-inline-size: 40rem;
+    margin-inline: auto;
+    padding-block-start: var(--s-5);
+  }
+
+  .post--solo .photo {
+    --ratio: 1 / 1;
+  }
+
+  .alertrow__actions {
+    grid-template-columns: repeat(2, minmax(0, 14rem));
+    justify-content: start;
+  }
+
+  .thread {
+    padding-inline: var(--s-5);
+  }
+  .hero__cta .btn {
+    align-self: flex-start;
+    min-inline-size: 18rem;
+  }
+  .sitenav {
+    inline-size: min(100% - var(--s-5), 70rem);
+    margin-inline: auto;
+    padding-inline: var(--s-4);
+  }
+
+  .sitenav__links {
+    display: flex;
+    gap: var(--s-1);
+  }
+}
+
+@media (min-width: 1024px) {
+  .split-view {
+    display: grid;
+    grid-template-columns: minmax(24rem, 30rem) minmax(0, 1fr);
+    min-block-size: 100dvh;
+  }
+
+  .split-view__panel {
+    min-inline-size: 0;
+    border-inline-end: 1px solid var(--line);
+    background: var(--surface);
+  }
+
+  .split-view__map {
+    display: block;
+    position: sticky;
+    inset-block-start: 0;
+    block-size: 100dvh;
+  }
+
+  .split-view__panel .page {
+    padding-inline: var(--s-5);
+  }
+
+  .hero__copy {
+    min-block-size: 0;
+  }
+
+  [data-screen='home'] {
+    --bleed: 0rem;
+  }
+
+  .hero__visual figcaption {
+    color: var(--dado-ink);
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--s-8);
+    padding-block: var(--s-7) var(--s-8);
+  }
+
+  .hero h1 {
+    max-inline-size: 16ch;
+  }
+
+  .device {
+    --device-zoom: 0.9;
+  }
+
+  .toc {
+    display: block;
+    position: sticky;
+    inset-block-start: var(--s-5);
+    align-self: start;
+    inline-size: 14rem;
+    font-size: var(--fs-s);
+  }
+
+  .toc ol {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+  }
+
+  .readwrap {
+    display: flex;
+    justify-content: center;
+    gap: var(--s-6);
+    padding-inline: var(--s-5);
+  }
+
+  .readwrap .read {
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  .layout-2 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18rem;
+    gap: var(--s-6);
+    align-items: start;
+    max-inline-size: 64rem;
+    margin-inline: auto;
+    padding: var(--s-6) var(--s-5);
+  }
+
+  .layout-2 .page {
+    padding: 0;
+    margin: 0;
+    max-inline-size: none;
+  }
+
+  .context {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-4);
+    position: sticky;
+    inset-block-start: var(--s-6);
+  }
+
+  .profile-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+    gap: var(--s-6);
+    max-inline-size: 64rem;
+    margin-inline: auto;
+    padding: var(--s-6) var(--s-5);
+    align-items: start;
+  }
+
+  .profile-grid .page {
+    padding: 0;
+    margin: 0;
+    max-inline-size: none;
+  }
+  .post-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: var(--s-7);
+    align-items: start;
+  }
+
+  .page--post {
+    max-inline-size: 64rem;
+  }
+
+  .footbar--wide {
+    max-inline-size: 64rem;
+    justify-content: flex-end;
+    padding-inline: var(--s-5);
+  }
+
+  .footbar--wide .btn {
+    flex: 0 0 auto;
+    min-inline-size: 18rem;
+  }
+}

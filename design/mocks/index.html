@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Silent Whisker: screen viewer</title>
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/viewer.css" />
+  </head>
+  <body class="viewer">
+    <!-- Design tooling, not the app: English only, so its text is not part of the app's strings. -->
+    <header class="viewer__bar on-dado">
+      <strong class="viewer__title">Silent Whisker · every screen</strong>
+      <div class="viewer__controls">
+        <div class="seg" role="group" aria-label="Device" id="seg-device"></div>
+        <div class="seg" role="group" aria-label="Zoom" id="seg-zoom"></div>
+        <div class="seg" role="group" aria-label="Language" id="seg-lang"></div>
+        <a
+          class="btn btn--small btn--on-dado"
+          href="design-system.html?lang=en"
+          target="_blank"
+          rel="noopener"
+          >Design system</a
+        >
+        <a class="btn btn--small btn--on-dado" id="open-tab" target="_blank" rel="noopener"
+          >Open in a tab</a
+        >
+      </div>
+    </header>
+
+    <nav class="viewer__list" aria-label="Screens" id="list"></nav>
+
+    <main class="viewer__main">
+      <div class="viewer__caption">
+        <h1 id="caption-title"></h1>
+        <p class="muted" id="caption-detail"></p>
+        <div class="cluster" id="caption-questions"></div>
+      </div>
+      <div class="viewer__stage" id="stage" data-zoom="100" data-device="phone">
+        <iframe class="frame" id="frame" title="Screen preview"></iframe>
+      </div>
+    </main>
+
+    <script src="viewer.js"></script>
+  </body>
+</html>
