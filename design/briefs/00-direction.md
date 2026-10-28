@@ -1,7 +1,7 @@
 # Direction: the stairwell wall, in slate-blue glass
 
 How the look was chosen (Impeccable `shape` → new-work, Operate mode). The result is in
-[DESIGN.md](../../docs/DESIGN.md); this file keeps the reasoning.
+[DESIGN.md](../DESIGN.md); this file keeps the reasoning.
 
 ## Decision record
 

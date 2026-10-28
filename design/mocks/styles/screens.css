@@ -1861,7 +1861,7 @@ h2[id] {
 }
 
 /* ---------- The map credit ---------- */
-/* At the bottom corner away from the action buttons; it folds into a small (i) after a few seconds. */
+/* At the bottom corner away from the action buttons, level with them; it folds into a small (i) after a few seconds. */
 .mapcredit {
   position: absolute;
   inset-block-end: var(--s-2);
@@ -1879,7 +1879,7 @@ h2[id] {
 }
 
 .stage .mapcredit {
-  inset-block-end: calc(var(--nav-total) + var(--s-1));
+  inset-block-end: calc(var(--nav-total) + var(--s-6) + var(--s-1));
 }
 
 .stage[data-sheet='spot'] .mapcredit {
@@ -1956,7 +1956,9 @@ h2[id] {
 }
 
 /* ---------- Audit fixes ---------- */
+/* A white button on a pale map needs a clear edge, or it looks smaller than the dark one beside it. */
 .round:not(.round--primary) {
+  border-color: var(--line-strong);
   background: rgb(255 255 255 / 0.92);
 }
 

@@ -139,11 +139,7 @@ describe('documentation cross-references', () => {
 const MAX_SPEC_LINES = 150;
 
 describe('spec size budget', () => {
-  // DESIGN.md is the design-token file the design tool reads (a YAML block and eight fixed
-  // sections), so its size follows that format, not the prose-spec budget.
-  const specs = readdirSync(join(REPO_ROOT, 'docs')).filter(
-    (f) => extname(f) === '.md' && f !== 'DESIGN.md'
-  );
+  const specs = readdirSync(join(REPO_ROOT, 'docs')).filter((f) => extname(f) === '.md');
 
   it.each(specs)('docs/%s stays within the line budget', (name) => {
     const lines = readFileSync(join(REPO_ROOT, 'docs', name), 'utf8').split('\n').length;

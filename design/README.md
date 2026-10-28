@@ -1,7 +1,7 @@
 # design/
 
 The design of every screen, made before any screen is built. The look itself is
-[docs/DESIGN.md](../docs/DESIGN.md); this folder holds the evidence and the mocks. Nothing here is
+[DESIGN.md](DESIGN.md); this folder holds the evidence and the mocks. Nothing here is
 imported by `frontend/`, `backend/` or `infra/`, and the dead-code audit skips it.
 
 ## Look at it
@@ -46,6 +46,6 @@ labelled placeholders. The app builds these properly in React, with the real API
 
 ## Using it in Phase 2
 
-Read `docs/DESIGN.md` first, then the page you are building and its brief. Move `tokens.css` into
+Read `design/DESIGN.md` first, then the page you are building and its brief. Move `tokens.css` into
 `frontend/src/styles/`, keep one stylesheet beside each component (CSS Modules), and keep the
 breakpoints in one file. If a screen must change, change the mock and `DESIGN.md` first.
