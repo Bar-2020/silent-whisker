@@ -43,7 +43,8 @@ billing history):
   On-demand, one Region: 200,000 tokens and 10 requests a minute.
 - One test photo used 477 input and 2 output tokens, so a day's token limit covers over a million
   photo checks. The 20 requests a minute is the limit that can bite: a burst of uploads past it is
-  throttled, and a throttled call is a failed call, so the photo stays hidden (R-04).
+  throttled, and a throttled call is a failed call, so the photo stays hidden (R-04) and the
+  re-check job picks it up (D-53).
 
 ## Costs
 
