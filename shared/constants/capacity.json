@@ -1,3 +1,4 @@
 {
-  "daily_usage_counters": { "read": 1, "write": 3 }
+  "daily_usage_counters": { "read": 1, "write": 3 },
+  "users": { "read": 1, "write": 1 }
 }

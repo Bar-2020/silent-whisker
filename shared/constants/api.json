@@ -1,0 +1,6 @@
+{
+  "routes": {
+    "GET /api/profile": { "rate_per_second": 2, "burst": 10 }
+  },
+  "lambda": { "memory_mb": 256, "timeout_seconds": 10, "log_retention_days": 30 }
+}

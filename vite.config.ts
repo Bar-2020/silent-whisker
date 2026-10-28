@@ -153,6 +153,16 @@ const asErrors = (names: string[]) =>
 const SONARJS_RULES = sonarjs.configs.recommended.rules as Record<string, 'error' | 'off'>;
 
 export default defineConfig({
+  // `npm run build:backend`: each Lambda handler becomes one self-contained folder (its code and
+  // the AWS SDK parts it uses), which Terraform zips. Add a handler as one more entry, with its
+  // own outDir, so its zip never depends on a file another handler shares.
+  pack: {
+    entry: { handler: 'backend/get-profile/handler.ts' },
+    outDir: 'backend/dist/get-profile',
+    target: 'node24',
+    clean: true,
+    deps: { onlyBundle: false },
+  },
   lint: {
     plugins: ['typescript'],
     jsPlugins: ['eslint-plugin-sonarjs', './lint/silent-whisker-plugin.js'],
@@ -199,6 +209,11 @@ export default defineConfig({
         // the backtracking cost sonarjs warns about is not a real attack surface.
         files: ['__tests__/docs-links.test.ts'],
         rules: { 'sonarjs/super-linear-regex': 'off' },
+      },
+      {
+        // The test feeds the profile handler a plain-http photo address, which it must refuse (D-21).
+        files: ['backend/get-profile/handler.test.ts'],
+        rules: { 'sonarjs/no-clear-text-protocols': 'off' },
       },
       {
         // The test runs infra/app/spa-fallback.js, the repo's own CloudFront Function, to check

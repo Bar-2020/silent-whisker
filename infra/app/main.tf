@@ -9,6 +9,12 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.0"
     }
+
+    # Zips the built Lambda handlers (api.tf).
+    archive = {
+      source  = "hashicorp/archive"
+      version = "~> 2.0"
+    }
   }
 
   # Same state bucket as bootstrap/, its own file. The bucket name is passed at `terraform init`

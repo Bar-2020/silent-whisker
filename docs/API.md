@@ -2,7 +2,7 @@
 
 Draft. CloudFront in front of an API Gateway HTTP API and Lambda (D-38); every path below is served under `/api/` (D-60). JSON. Errors are `{ "code": "SOME_CODE" }` with the HTTP status. A per-member limit answers
 `RATE_LIMITED` (429, with `Retry-After`, R-21); the front door's own throttle answers a bare 429 (D-60).
-"Member" means a valid Google sign-in through Cognito, sent as the ID token (D-59). Every route needs one (R-22).
+"Member" means a valid Google sign-in through Cognito, sent as the ID token (D-59). Every route needs one (R-22). The front door refuses a missing or invalid token itself, with a bare `401`; a handler answers `UNAUTHORIZED` (401) when the token is valid but is not an ID token.
 
 | Method and path | Who | Does | Refusals |
 |---|---|---|---|
@@ -21,7 +21,7 @@ Draft. CloudFront in front of an API Gateway HTTP API and Lambda (D-38); every p
 | `POST /cat-alerts/{id}/resolve`, `POST /cat-alerts/{id}/extend` | admin | Hide a cat alert now, or add 12 hours (any number of times) | `FORBIDDEN`, `ALREADY_RESOLVED` (R-24) |
 | `GET /spots/{id}/messages`, `POST /spots/{id}/messages` | member | Chat of a spot (D-48) | `BANNED`, `CHAT_RESTRICTED` (R-08), `MODERATION_REJECTED` |
 | `POST /reports` | member | Report content | |
-| `GET /profile` | member | The caller's profile: name, city, photo choice and `status`. The first call after sign-in creates it from the token (D-59), with no name or city yet. A banned member still gets it, so the app can say so | |
+| `GET /profile` | member | The caller's profile: `display_name`, `city` and `avatar_url` (each `null` until set), `show_google_photo` and `status`. The first call after sign-in creates it from the token (D-59), with no name or city yet and `show_google_photo` false. A banned member still gets it, so the app can say so. Never cached | `UNAUTHORIZED` |
 | `PATCH /profile` | member | Update profile: full name and city (2 to 35 characters each, D-61), show the Google photo (asked at first sign-in, D-27). Name and city are checked on the spot and saved only if the check passes (D-62) | `BANNED`, `DAILY_LIMIT` (5 saves a day, D-61), `INVALID_INPUT`, `MODERATION_REJECTED`, `CITY_NOT_FOUND` (D-29), `CHECK_UNAVAILABLE` (503: the check cannot run, the spending cap is reached or AWS is down, D-62) |
 | `POST /admin/users/{id}/ban`, `.../restrict-chat` | admin | Ban, restrict chat | `FORBIDDEN` |
 | `GET /admin/spots?status=pending`, `POST /admin/spots/{id}/approve`, `.../reject` | admin | List custom spots waiting for approval, approve or reject one (R-27) | `FORBIDDEN` |
