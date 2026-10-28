@@ -1,8 +1,8 @@
 # API
 
-Draft. Lambda behind CloudFront. JSON. Errors are `{ "code": "SOME_CODE" }` with the HTTP status. Every route can also answer
-`RATE_LIMITED` (429, with `Retry-After`, R-21).
-"Member" means a valid Google sign-in through Cognito. Every route needs one (R-22).
+Draft. CloudFront in front of an API Gateway HTTP API and Lambda (D-38); every path below is served under `/api/` (D-57). JSON. Errors are `{ "code": "SOME_CODE" }` with the HTTP status. A per-member limit answers
+`RATE_LIMITED` (429, with `Retry-After`, R-21); the front door's own throttle answers a bare 429 (D-57).
+"Member" means a valid Google sign-in through Cognito, sent as the ID token (D-56). Every route needs one (R-22).
 
 | Method and path | Who | Does | Refusals |
 |---|---|---|---|
@@ -21,7 +21,8 @@ Draft. Lambda behind CloudFront. JSON. Errors are `{ "code": "SOME_CODE" }` with
 | `POST /cat-alerts/{id}/resolve`, `POST /cat-alerts/{id}/extend` | admin | Hide a cat alert now, or add 12 hours (any number of times) | `FORBIDDEN`, `ALREADY_RESOLVED` (R-24) |
 | `GET /spots/{id}/messages`, `POST /spots/{id}/messages` | member | Chat of a spot (D-48) | `BANNED`, `CHAT_RESTRICTED` (R-08), `MODERATION_REJECTED` |
 | `POST /reports` | member | Report content | |
-| `PATCH /me` | member | Update profile: full name, city, show the Google photo (asked at first sign-in, D-27) | `MODERATION_REJECTED`, `CITY_NOT_FOUND` (D-29) |
+| `GET /me` | member | The caller's profile: name, city, photo choice, `status` and `profile_status`. The first call after sign-in creates it from the token (D-56). A banned member still gets it, so the app can say so | |
+| `PATCH /me` | member | Update profile: full name and city (2 to 35 characters each, D-58), show the Google photo (asked at first sign-in, D-27). The text waits as pending until the check passes, also when the check is deferred or fails (D-59) | `BANNED`, `DAILY_LIMIT` (5 saves a day, D-58), `INVALID_INPUT`, `MODERATION_REJECTED`, `CITY_NOT_FOUND` (D-29) |
 | `POST /admin/users/{id}/ban`, `.../restrict-chat` | admin | Ban, restrict chat | `FORBIDDEN` |
 | `GET /admin/spots?status=pending`, `POST /admin/spots/{id}/approve`, `.../reject` | admin | List custom spots waiting for approval, approve or reject one (R-27) | `FORBIDDEN` |
 

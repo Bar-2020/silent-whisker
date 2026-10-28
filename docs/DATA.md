@@ -5,7 +5,7 @@ names follow D-54. All fields `snake_case`. All times UTC ISO 8601. Every item e
 
 | Entity | Key fields | Notes |
 |---|---|---|
-| `users` | `user_id`, `display_name`, `city`, `city_lat`, `city_lng`, `avatar_url`, `show_google_photo` (bool), `status` (`active`/`banned`), `chat_restricted_until`, `is_admin`, counters (`cats_helped`, `feedings`, `waters`) | `user_id` is the Cognito subject. `display_name` is the full name typed at first sign-in (D-27). `city_lat` and `city_lng` are the city's map centre from the lookup (D-29). `avatar_url` is the Google account photo, written only by the server at sign-in and shown only when `show_google_photo` is true (D-21) |
+| `users` | `user_id`, `display_name`, `city`, `city_lat`, `city_lng`, `avatar_url`, `show_google_photo` (bool), `status` (`active`/`banned`), `chat_restricted_until`, `is_admin`, counters (`cats_helped`, `feedings`, `waters`), `pending_profile`, `profile_status` (`pending`/`approved`/`rejected`), `recheck` | `user_id` is the Cognito subject. `display_name` is the full name typed at first sign-in (D-27). `pending_profile` holds the typed name and city until the text check passes; `display_name`, `city`, `city_lat` and `city_lng` change only on approval (D-59). `recheck` marks a profile waiting for the nightly re-check and is removed when it is done (D-60). `city_lat` and `city_lng` are the city's map centre from the lookup (D-29). `avatar_url` is the Google account photo, written only by the server at sign-in and shown only when `show_google_photo` is true (D-21) |
 | `spots` | `spot_id`, `name`, `photo_key`, `address`, `lat`, `lng`, `geo_cell`, `active`, `last_fed_at`, `last_fed_amount`, `last_watered_at`, `food_empty_at`, `water_empty_at`, `created_by`, `source`, `source_id`, `status` | `status` is `pending` for a custom spot until moderation passes and an admin approves it, then `approved` (R-27); imports are `approved`. Every position is exact (D-47). A custom spot is returned only as R-03 allows: the member's phone within 150 m, the spot needing food or water, or the member is its creator or an admin. `*_empty_at` is the latest "was empty" report (D-19). `source` is `user` or a municipal source id; `created_by` is the custom spot creator; imports have none. Municipal rows are loaded by the import from Phase 3 (D-34) |
 | `care_logs` | `log_id`, `spot_id`, `user_id`, `kind` (`feeding`/`water`/`food_empty`/`water_empty`), `amount` (`full`/`partial`, feeding only), `counted` (bool, feeding and water only), `disputed_by` (member ids), `distance_m`, `status` | `counted` is the result of the R-09 checks. A "was empty" report that passes R-16 is saved as a `food_empty` or `water_empty` row, so the once per 3 hours check can find it; a refused one is not saved (D-23). `disputed_by` is filled by those reports (R-16, D-19); not empty means disputed. `distance_m` is rounded to 10 m; the phone's coordinates are not stored |
 | `cat_posts` | `cat_id`, `spot_id`, `name`, `photo_key`, `geohash`, `geo_cell`, `area`, `created_by`, `like_count`, `status` | One post per photo; the photo must contain a cat (R-25). `name` is optional and moderated. `spot_id` is set for a cat at a spot and empty for a random cat. `geohash` is the neighbourhood cell (its length is a constant): the spot's cell, or the cell of the phone's location, else of the profile city. It is the only position kept, and `geo_cell` is its first part for the feed; an exact point is never stored (R-28). `area` is the place tag shown in the feed: the spot's name, or a coarse place name from a cached reverse lookup (D-29). `like_count` is kept by Lambda from `cat_post_likes` |
@@ -30,7 +30,7 @@ cells the app asks the member to zoom in.
 
 | Table | Partition key | Sort key | Indexes (partition, sort) | Serves |
 |---|---|---|---|---|
-| `users` | `user_id` | | | Profile; ban and chat checks (R-08) |
+| `users` | `user_id` | | `recheck`, `created_at` (keys only; only rows with `recheck` appear in it) | Profile; ban and chat checks (R-08); profiles waiting for the re-check (D-60) |
 | `spots` | `spot_id` | | `geo_cell` (map fields only); `status`, `created_at` (keys only) | Map (R-03), spot page, admins' list of pending spots (R-27) |
 | `care_logs` | `spot_id` | `log_id` | `user_id`, `created_at` | Spot history and the latest counted log to dispute (D-19); per member, R-10, R-13 and R-16 |
 | `cat_posts` | `cat_id` | | `spot_id`, `created_at`; `geo_cell`, `created_at` | Likes and comments by id, cats on the spot page, the feed's last 7 days (D-45) |
@@ -43,7 +43,7 @@ cells the app asks the member to zoom in.
 | `geocode_cache` | `query` | | | Saved lookups (D-29) |
 
 Capacity (D-26): each table and each index needs at least 1 read and 1 write unit, so these 11
-tables and 7 indexes take 18 of the 25 free units, leaving 7 for the busiest (`care_logs`, `spots`,
+tables and 8 indexes take 19 of the 25 free units, leaving 6 for the busiest (`care_logs`, `spots`,
 `daily_usage_counters`); `daily_usage_counters` takes 2 of them (3 write units, `shared/constants/capacity.json`), because every paid call and every member write counts there (D-52). That holds about one counted log a second, plus DynamoDB's short burst
 allowance.
 
@@ -58,5 +58,6 @@ allowance.
 - Feed: approved cats by `geo_cell` around the member's cell, from the last 7 days, minus the photo ids the app sends as already seen, sorted by `like_count` then newest, 20 a page; when nothing unseen is left, the seen ones again (D-45, R-29). Never part of the map answers.
 - Cat alerts: by `geo_cell` for the viewport, filtered by R-24, exact point (D-47).
 - Spot page: `care_logs`, `cat_posts`, `spot_chat_messages` by `spot_id`, newest first. Cat page: `cat_post_comments` by `cat_id`.
+- Waiting profiles: the `users` index on `recheck`, oldest first, read by the nightly re-check (D-53, D-60).
 - Logs by member: by `user_id`, newest first. Gives the 24 hour count (R-13) and the 3 hour
   checks for logs (R-10) and "was empty" reports (R-16).
