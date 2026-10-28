@@ -44,7 +44,6 @@ big decision.
 | Guardrails text content filters | $0.15 per 1,000 text units (1 unit is up to 1,000 characters), same for Classic and Standard, no free tier | S9 |
 | Cognito | 10,000 MAU always free on Lite or Essentials (Plus has none); Google is a social provider, so it counts here, not in the 50 MAU SAML/OIDC bucket | S11, S18 |
 | API Gateway HTTP API (D-38) | $1.00 per million calls up to 300M a month, then $0.90 (US prices in the page's examples; the Stockholm price was not read). The free tier is 1M calls a month for 12 months | S27 |
-| EventBridge Scheduler (D-53) | free tier: 14,000,000 invocations a month (the page does not say for how long), then $1.00 per million; we use about 30 | S28 |
 | Lambda | always free: 1M requests and 400,000 GB-seconds a month | S12, S14 |
 | DynamoDB | always free: 25 GB, 25 WCU, 25 RCU, but only for provisioned capacity. On-demand in Tel Aviv: $0.85 per million writes, $0.17 per million reads | S12, S15 |
 | S3 | no free allowance for a new account. Standard per GB-month: $0.0250 Tel Aviv, $0.0245 Frankfurt, $0.0230 Ireland | S12, S16 |
@@ -91,7 +90,7 @@ act on. The AWS Budget is only a backup: it alerts, and is not instant.
 Phase 1 builds the cost limits, but no phase 1 code calls them. The first phase that moderates
 anything, text or photo (the profile name in phase 2, or the photo upload in phase 3), wraps its
 paid check in `meteredCall` ([metered-call.ts](../backend/shared/metered-call.ts)), takes the
-member's daily allowance first, and builds the re-check of deferred content (D-53, D-60).
+member's daily allowance first. The profile is checked on the spot and refused when the check cannot run (D-59); the re-check of deferred content (D-53) comes with the photo upload in phase 3.
 
 ## Sources
 
@@ -130,4 +129,3 @@ member's daily allowance first, and builds the re-check of deferred content (D-5
   https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier-plans.html (read 2026-10-17)
 - S26: https://docs.aws.amazon.com/accounts/latest/reference/scps-and-rcps-for-projects.html (read 2026-10-18)
 - S27: https://aws.amazon.com/api-gateway/pricing/ (read 2026-10-28)
-- S28: https://aws.amazon.com/eventbridge/pricing/ (read 2026-10-28)
