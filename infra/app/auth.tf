@@ -70,6 +70,21 @@ resource "aws_cognito_identity_provider" "google" {
     name     = "name"
     picture  = "picture"
   }
+
+  # Cognito fills in Google's own addresses and a few related settings after it makes the provider
+  # (seen in the deploy log of 2026-10-28). Terraform does not list them, so it "removed" them, and
+  # Cognito put them back, on every deploy. Only these six are skipped: the client id, secret and
+  # scopes above still apply.
+  lifecycle {
+    ignore_changes = [
+      provider_details["attributes_url"],
+      provider_details["attributes_url_add_attributes"],
+      provider_details["authorize_url"],
+      provider_details["oidc_issuer"],
+      provider_details["token_request_method"],
+      provider_details["token_url"],
+    ]
+  }
 }
 
 # The web app's registration: a public client (a browser cannot keep a secret) using the
