@@ -88,6 +88,10 @@ jobs:
         env:
           # Where cost alerts go (D-52); a secret because the repository is public.
           TF_VAR_alert_email: ${{ secrets.ALERT_EMAIL }}
+          # The Google sign-in client (D-59): the id is a repository variable, the secret a
+          # secret of this environment. Without both, Terraform leaves Google sign-in off.
+          TF_VAR_google_client_id: ${{ vars.GOOGLE_CLIENT_ID }}
+          TF_VAR_google_client_secret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: |
           ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
           terraform init -input=false -backend-config="bucket=silent-whisker-tfstate-$ACCOUNT"
