@@ -32,6 +32,19 @@ big decision.
   AWS charges nothing extra for it (S4).
 - InvokeGuardrailChecks ($0.07 per 1,000 units) is not available in any of these Regions (S19).
 
+## Bedrock quotas
+
+Amazon Nova Lite in eu-north-1, read with `aws service-quotas list-service-quotas` on 2026-10-28,
+after AWS Support raised them from 0 (it says limits follow account eligibility and grow with
+billing history):
+
+- Tokens a day: 564,480,001 (the quota's name says it is doubled for cross-Region calls).
+- Cross-Region, which the EU profile uses (D-09): 400,000 tokens and 20 requests a minute.
+  On-demand, one Region: 200,000 tokens and 10 requests a minute.
+- One test photo used 477 input and 2 output tokens, so a day's token limit covers over a million
+  photo checks. The 20 requests a minute is the limit that can bite: a burst of uploads past it is
+  throttled, and a throttled call is a failed call, so the photo stays hidden (R-04).
+
 ## Costs
 
 | Item | Figure | Source |
