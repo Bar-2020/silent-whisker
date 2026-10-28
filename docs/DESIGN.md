@@ -377,7 +377,8 @@ landing, pickers). A spot is a plain teardrop in the state colour (the worse of 
 no glyph and no badge: the card that opens, the legend and the marker's accessible name carry the
 words (colour alone, see Q36). Inactive pins are 62% opaque; a pin waiting for approval is white with
 a dashed slate outline. A cat alert is a plum rounded square on a stem with a solid cat head and a
-text label ("In danger", "Sick"). The member's position is a blue dot with a soft halo. **Selected:**
+text label ("In danger", "Sick"). **Spay or neuter** (the third alert kind, not urgent) is the same
+sign, paler: a pale plum box with a plum outline and glyph, so it never shouts like a danger. The member's position is a blue dot with a soft halo. **Selected:**
 the pin scales 1.2 and gets a 2.5 px dark slate outline, and the card shows that spot. Pins that
 explain steps (the landing page) and the pins in a picker's list are not buttons and do not act like
 one (no pointer).
@@ -478,6 +479,10 @@ heart is an icon, not an emoji).
   Past alerts (the last 7 days) are one tap away, visible to everyone. In the raise form "sick" has a
   thermometer; a vague or missing location offers **Try again**; a refused note says so under the box.
   One alert: the admin actions sit right under it, **Navigate** and **Show on map** are on the pinned bar.
+  **Spay or neuter** is the third kind in the raise form (D-59): a calm full-width row under the two
+  urgent tiles, a medical-cross icon, "not urgent". It stays 7 days instead of 6 hours, so its row says
+  "reported N days ago" and its in-review screen says "7 days"; it has its own paler sign on the map and a
+  line in the legend.
 - **Profile:** a pencil in the top bar edits; "My activity" is a tinted card with no dividers and 24 px at
   the sides; one
   list holds language, location, **Install as an app** (a guide per browser), sign out and delete.

@@ -110,7 +110,8 @@
       `<div class="legend__item"><span class="legend__swatch">${Mock.pinHtml(item.pin)}</span><span>${Mock.t(item.key)}</span></div>`
   );
   rows.push(
-    `<div class="legend__item"><span class="legend__swatch">${Mock.signHtml({ kind: 'danger' })}</span><span>${Mock.t('map.legend.alert')}</span></div>`
+    `<div class="legend__item"><span class="legend__swatch">${Mock.signHtml({ kind: 'danger' })}</span><span>${Mock.t('map.legend.alert')}</span></div>`,
+    `<div class="legend__item"><span class="legend__swatch">${Mock.signHtml({ kind: 'neuter' })}</span><span>${Mock.t('map.legend.neuter')}</span></div>`
   );
   document.getElementById('legend').innerHTML = rows.join('');
 })();

@@ -23,5 +23,6 @@ window.MockDemo = {
   alerts: [
     { id: 'danger', lat: 32.0647, lng: 34.7703, kind: 'danger' },
     { id: 'sick', lat: 32.0598, lng: 34.7727, kind: 'sick' },
+    { id: 'neuter', lat: 32.0611, lng: 34.7667, kind: 'neuter' },
   ],
 };

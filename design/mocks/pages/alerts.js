@@ -1,9 +1,10 @@
 /* Alerts: the raise form's filled states and the side map on wide screens. */
 (function () {
   const { Mock, MockDemo } = window;
-  const FILLED = ['ready', 'submitting', 'nocat', 'limit', 'refused'];
+  const FILLED = ['ready', 'neuter', 'submitting', 'nocat', 'limit', 'refused'];
   const NOTE_STATES = {
     ready: 'demo.alert1.note',
+    neuter: 'demo.alert4.note',
     submitting: 'demo.alert1.note',
     nocat: 'demo.alert1.note',
     limit: 'demo.alert1.note',
@@ -42,7 +43,9 @@
     const danger = document.getElementById('kind-danger');
     const note = document.getElementById('alert-note');
     if (danger && note) {
-      danger.checked = FILLED.includes(state);
+      const neuter = state === 'neuter';
+      danger.checked = FILLED.includes(state) && !neuter;
+      document.getElementById('kind-neuter').checked = neuter;
       note.value = FILLED.includes(state) ? Mock.t(NOTE_STATES[state]) : '';
       const counter = document.querySelector('.counter');
       counter.dataset.v = JSON.stringify({ n: note.value.length, max: 140 });

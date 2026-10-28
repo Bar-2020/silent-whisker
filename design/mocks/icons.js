@@ -66,6 +66,7 @@
       '<circle cx="12" cy="12" r="7"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M4 4l16 16"/>',
     xcircle: '<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>',
     'image-off': '<path d="M4 5h16v14H4z"/><path d="M4 16l5-5 3 3M3 3l18 18"/>',
+    medical: '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
     thermometer:
       '<path d="M8.5 13.6V5.5a2.5 2.5 0 0 1 5 0v8.1a4.5 4.5 0 1 1-5 0z"/><path d="M11 9.5v6.5"/><circle cx="11" cy="17" r="1.2" fill="currentColor" stroke="none"/><path d="M17.5 5h3M17.5 8.5h3M17.5 12h3"/>',
     search: '<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>',

@@ -165,7 +165,7 @@
     'map',
     'Map markers',
     'A pin is a teardrop in the state colour and nothing else; the card, the legend and the marker name carry the words. A selected pin is larger with a dark outline. A cat in danger is a plum sign with a stem and a label.',
-    `${grid(pins)}<h3>Cat alert sign</h3><div class="ds__sample">${window.Mock.signHtml({ kind: 'danger' })}${window.Mock.signHtml({ kind: 'danger', selected: true })}</div><h3>Your position</h3><div class="ds__sample ds__sample--pad"><span class="here" aria-label="Your position"></span></div>`
+    `${grid(pins)}<h3>Cat alert sign</h3><div class="ds__sample">${window.Mock.signHtml({ kind: 'danger' })}${window.Mock.signHtml({ kind: 'danger', selected: true })}${window.Mock.signHtml({ kind: 'neuter' })}</div><h3>Your position</h3><div class="ds__sample ds__sample--pad"><span class="here" aria-label="Your position"></span></div>`
   );
 
   /* ----- glass and surfaces ----- */

@@ -307,7 +307,7 @@
   function signHtml(alertItem) {
     const selected = alertItem.selected ? ' is-selected' : '';
     return (
-      `<div class="sign${selected}" data-level="alert"><span class="sign__box"><svg class="sign__glyph" aria-hidden="true"><use href="#i-cat-fill"></use></svg></span>` +
+      `<div class="sign${selected}" data-level="alert" data-kind="${alertItem.kind}"><span class="sign__box"><svg class="sign__glyph" aria-hidden="true"><use href="#i-cat-fill"></use></svg></span>` +
       `<span class="sign__stem"></span><span class="sign__label">${t(`alerts.kind.${alertItem.kind}`)}</span></div>`
     );
   }

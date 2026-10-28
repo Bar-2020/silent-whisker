@@ -279,12 +279,14 @@
           screen: 'raise',
           states: [
             ['form', 'Empty form'],
+            ['neuter', 'Spay or neuter chosen'],
             ['locating', 'Locating'],
             ['ready', 'Ready'],
             ['vague', 'Too vague'],
             ['nopermission', 'Location off'],
             ['submitting', 'Sending'],
             ['inreview', 'In review'],
+            ['inreview-neuter', 'In review (spay or neuter, 7 days)'],
             ['nocat', 'No cat found'],
             ['refused', 'Note refused'],
             ['limit', 'Daily limit'],
@@ -299,6 +301,7 @@
           states: [
             ['member', 'Member'],
             ['admin', 'Admin'],
+            ['neuter', 'Spay or neuter (member)'],
             ['expired', 'Expired (everyone, for a week)'],
             ['expired-admin', 'Expired (admin)'],
           ],

@@ -301,7 +301,8 @@ window.MOCK_LOCALES.en = {
   'alerts.title': 'Alerts | Silent Whisker',
   'alerts.list.title': 'Alerts',
   'alerts.raise.cta': 'New alert',
-  'alerts.list.note': 'An alert stays for 6 hours unless an admin extends it.',
+  'alerts.list.note':
+    'An alert stays for 6 hours (7 days for spay or neuter) unless an admin extends it.',
   'alerts.list.empty.title': 'No alerts nearby',
   'alerts.list.empty.text': 'That is good news.',
   'alerts.list.reviewNote': 'In review. It appears on the map once approved.',
@@ -652,4 +653,11 @@ window.MOCK_LOCALES.en = {
   'landing.footer.label': 'Footer links',
   'map.credit.short': '© OpenStreetMap',
   'map.credit.show': 'Map data credit',
+  'alerts.kind.neuter': 'Spay or neuter',
+  'alerts.raise.kind.neuterHint': 'Not urgent. A cat that has not had the operation.',
+  'map.legend.neuter': 'Cat that needs spaying or neutering (not urgent)',
+  'alerts.raise.review.textDays':
+    'It appears on the map once approved and stays for {n} days. Until then only you can see it.',
+  'alerts.reportedDaysAgo': 'Reported {n} days ago',
+  'demo.alert4.note': 'A female cat by the school who needs spaying',
 };

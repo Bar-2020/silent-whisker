@@ -1851,3 +1851,19 @@ h2[id] {
 .mapcredit.is-collapsed .mapcredit__info {
   display: grid;
 }
+
+/* ---------- The third alert kind: spay or neuter, not urgent ---------- */
+/* In the choice group it is a calm full-width row under the two urgent tiles. */
+.choices--2 > .choice--wide {
+  grid-column: 1 / -1;
+}
+
+/* On the map it is the same sign, paler: a pale plum box with a plum outline, so it never shouts like a danger. */
+.sign[data-kind='neuter'] {
+  color: var(--alert);
+}
+
+.sign[data-kind='neuter'] .sign__box {
+  border-color: var(--alert);
+  background: var(--alert-tint);
+}

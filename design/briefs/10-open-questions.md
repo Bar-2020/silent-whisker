@@ -137,5 +137,8 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
   after five seconds. *Decided: it shows in a corner when a map opens, folds into an (i) after five seconds,
   and the legend repeats it. The public tile server also needs a named User-Agent and a Referer, caching, and
   no prefetching; self-hosted tiles stay the plan (Q4). Also: with location off the feed shows the profile city.*
+- **Q44. Spay or neuter alerts (D-59).** Chosen by the owner as a third alert kind. *Recommend: lasts 7 days
+  (a constant) and an admin can extend it; the reporter or an admin can mark it handled; it counts toward the same
+  daily alert limit; the photo must show a cat; the text and photo checks are the same.*
 - **Accessibility target (not a question):** WCAG 2.2 AA, with 48 px touch targets and visible
   focus. Israeli web accessibility rules point to the same level.

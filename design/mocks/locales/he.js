@@ -296,7 +296,8 @@ window.MOCK_LOCALES.he = {
   'alerts.title': 'התראות | Silent Whisker',
   'alerts.list.title': 'התראות',
   'alerts.raise.cta': 'דיווח חדש',
-  'alerts.list.note': 'התראה מוצגת 6 שעות, אלא אם מנהל מאריך אותה.',
+  'alerts.list.note':
+    'התראה מוצגת 6 שעות, והתראה על סירוס או עיקור 7 ימים, אלא אם מנהל מאריך אותה.',
   'alerts.list.empty.title': 'אין התראות באזור',
   'alerts.list.empty.text': 'אלה חדשות טובות.',
   'alerts.list.reviewNote': 'ההתראה בבדיקה ותופיע במפה אחרי האישור.',
@@ -633,4 +634,11 @@ window.MOCK_LOCALES.he = {
   'landing.footer.label': 'קישורים בתחתית העמוד',
   'map.credit.short': '© OpenStreetMap',
   'map.credit.show': 'זכויות היוצרים של נתוני המפה',
+  'alerts.kind.neuter': 'סירוס או עיקור',
+  'alerts.raise.kind.neuterHint': 'לא דחוף. חתול שעוד לא עבר את הניתוח.',
+  'map.legend.neuter': 'חתול שצריך סירוס או עיקור (לא דחוף)',
+  'alerts.raise.review.textDays':
+    'היא תופיע במפה אחרי האישור ותישאר {n} ימים. עד אז היא נראית רק לך.',
+  'alerts.reportedDaysAgo': 'דווח לפני {n} ימים',
+  'demo.alert4.note': 'חתולה ליד בית הספר שצריכה עיקור',
 };

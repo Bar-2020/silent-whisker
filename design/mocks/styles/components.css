@@ -1542,7 +1542,7 @@ button.msg__bubble:hover {
 .legend {
   display: flex;
   flex-direction: column;
-  gap: var(--s-3);
+  gap: var(--s-2);
 }
 
 .legend__item {
@@ -1602,6 +1602,8 @@ body[data-chrome='page'] .nav {
 }
 
 .stage .sheet {
+  max-block-size: calc(100dvh - var(--nav-total) - var(--s-4));
+  overflow-y: auto;
   inset-inline: var(--nav-gap);
   inset-block-end: calc(var(--nav-total) - var(--s-1));
   border: 1px solid var(--glass-light-edge);
