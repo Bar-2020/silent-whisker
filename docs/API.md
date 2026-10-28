@@ -1,8 +1,8 @@
 # API
 
-Draft. Lambda behind CloudFront. JSON. Errors are `{ "code": "SOME_CODE" }` with the HTTP status. Every route can also answer
-`RATE_LIMITED` (429, with `Retry-After`, R-21).
-"Member" means a valid Google sign-in through Cognito. Every route needs one (R-22).
+Draft. CloudFront in front of an API Gateway HTTP API and Lambda (D-38); every path below is served under `/api/` (D-60). JSON. Errors are `{ "code": "SOME_CODE" }` with the HTTP status. A per-member limit answers
+`RATE_LIMITED` (429, with `Retry-After`, R-21); the front door's own throttle answers a bare 429 (D-60).
+"Member" means a valid Google sign-in through Cognito, sent as the ID token (D-59). Every route needs one (R-22).
 
 | Method and path | Who | Does | Refusals |
 |---|---|---|---|
@@ -23,7 +23,8 @@ Draft. Lambda behind CloudFront. JSON. Errors are `{ "code": "SOME_CODE" }` with
 | `GET /search?q=` | member | Spots by name, as the member types, that R-03 lets them see; with `places=1`, also cities, streets and addresses from the cached geocoder (D-29). The app asks for places only when the member submits, because the geocoder does not allow autocomplete. No match is an empty list | |
 | `PATCH /spots/{id}` | creator or admin | Rename a custom spot, or set `active`. From the creator, `active: false` is saved as a request and the spot stays active (R-32); from an admin it applies at once | `FORBIDDEN`, `NOT_FOUND`, `MODERATION_REJECTED` |
 | `POST /reports` | member | Report content | |
-| `PATCH /me` | member | Update profile: full name, city, show the Google photo (asked at first sign-in, D-27) | `MODERATION_REJECTED`, `CITY_NOT_FOUND` (D-29) |
+| `GET /profile` | member | The caller's profile: name, city, photo choice and `status`. The first call after sign-in creates it from the token (D-59), with no name or city yet. A banned member still gets it, so the app can say so | |
+| `PATCH /profile` | member | Update profile: full name and city (2 to 35 characters each, D-61), show the Google photo (asked at first sign-in, D-27). Name and city are checked on the spot and saved only if the check passes (D-62) | `BANNED`, `DAILY_LIMIT` (5 saves a day, D-61), `INVALID_INPUT`, `MODERATION_REJECTED`, `CITY_NOT_FOUND` (D-29), `CHECK_UNAVAILABLE` (503: the check cannot run, the spending cap is reached or AWS is down, D-62) |
 | `POST /admin/users/{id}/ban`, `.../restrict-chat` | admin | Ban, restrict chat | `FORBIDDEN` |
 | `GET /admin/spots?status=pending`, `POST /admin/spots/{id}/approve`, `.../reject` | admin | List custom spots waiting for approval and the inactive requests on custom spots, approve or reject one (R-27, R-32) | `FORBIDDEN` |
 | `POST /admin/spots/{id}/pause-chat`, `.../resume-chat` | admin | Pause or resume the chat of a spot (R-33) | `FORBIDDEN` |
