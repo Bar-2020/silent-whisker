@@ -20,6 +20,10 @@
   --dado-ink: #ffffff;
   --dado-quiet: #c6d2e6;
   --rail-line: #8fa5c8;
+  /* The landing band and the footer: the slate, deeper at one end and lifted at the other. */
+  --band-deep: #172740;
+  --band-lift: #3a5a91;
+  --heart: #ff7a85;
 
   /* State colours. Each also has an ink for text on its tint, and always travels with an icon. */
   --ok: #2a8f4f;
@@ -98,6 +102,9 @@
   --glass-light: rgb(255 255 255 / 0.64);
   --glass-light-edge: rgb(255 255 255 / 0.8);
   --glass-light-blur: blur(12px) saturate(1.6);
+  /* Dialogs and search results: light glass, a little more white so dark ink stays legible over a busy map. */
+  --glass-panel: rgb(255 255 255 / 0.74);
+  --glass-panel-blur: blur(20px) saturate(1.8);
   --nav-gap: 12px;
   --nav-total: calc(var(--nav-size) + var(--nav-gap) * 2);
   --rail-offset: calc(var(--rail-size) + var(--nav-gap) * 2);

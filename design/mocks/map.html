@@ -113,11 +113,9 @@
             <i data-icon="info"></i>
             <span data-t="map.empty"></span>
           </div>
-          <div class="mapbanner mapbanner--stack" data-when="locdenied">
-            <div class="mapbanner__row">
-              <i data-icon="locate"></i>
-              <span data-t="map.locationOff"></span>
-            </div>
+          <div class="mapbanner" data-when="locdenied">
+            <i data-icon="locate-off"></i>
+            <span class="mapbanner__text" data-t="map.locationOff"></span>
             <a
               class="btn btn--small"
               href="profile.html?screen=location-help"
@@ -152,7 +150,7 @@
               ></span>
             </a>
             <a class="dialog__option" data-level="alert" href="alerts.html?screen=raise">
-              <span class="dialog__icon"><i data-icon="alert"></i></span>
+              <span class="dialog__icon"><i data-icon="siren"></i></span>
               <span class="dialog__text"
                 ><strong data-t="map.raiseAlert"></strong
                 ><span class="small muted" data-t="map.raiseAlert.hint"></span
@@ -197,7 +195,7 @@
             </div>
             <div class="cluster">
               <span class="chip" data-level="red"
-                ><i data-icon="exclaim"></i><span data-t="map.chip.food.red"></span
+                ><i data-icon="bowl-empty"></i><span data-t="map.chip.food.red"></span
               ></span>
               <span class="chip" data-level="green"
                 ><i data-icon="check"></i><span data-t="map.chip.water.green"></span
@@ -299,7 +297,7 @@
             <div class="sheet__head">
               <div class="stack stack--2">
                 <span class="chip" data-level="alert">
-                  <i data-icon="exclaim"></i><span data-t="alerts.kind.danger"></span>
+                  <i data-icon="siren"></i><span data-t="alerts.kind.danger"></span>
                 </span>
                 <h2 class="sheet__title" data-t="demo.alert1.note"></h2>
               </div>

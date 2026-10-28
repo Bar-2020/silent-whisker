@@ -27,6 +27,7 @@
     window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(
       map
     );
+    Mock.addCredit(host.parentElement);
     window.L.marker(
       [focus.lat, focus.lng],
       Mock.markerOptions(

@@ -20,8 +20,8 @@ alert is, then pick one and go. Used in glare, one-handed, often while moving.
   page. The close X sits at the inline-end corner of the title row.
 - The "+" button opens a dialog: "New feeding spot" (the new spot form) and "Report a cat in danger"
   (the cat alert form); both screens are in the mocks. A search box sits at the top (Q38). The two
-  action buttons sit at the right on a phone and hide while a card is open. The map credit is in the
-  legend (Q43).
+  action buttons sit at the right on a phone and hide while a card is open. The map credit shows in a
+  corner and folds into an (i) after five seconds (Q43).
 
 ## Selected direction
 Full-bleed OpenStreetMap tiles softened by a CSS filter (Q4), the glass nav, two round controls.

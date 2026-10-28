@@ -994,16 +994,9 @@ button.row {
   color: var(--dado);
 }
 
-.mapbanner--stack {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--s-3);
-}
-
-.mapbanner__row {
-  display: flex;
-  align-items: center;
-  gap: var(--s-3);
+.mapbanner__text {
+  flex: 1;
+  min-inline-size: 0;
 }
 
 .menu {
@@ -1130,19 +1123,29 @@ button.row {
   gap: var(--s-4);
   padding: var(--s-5);
   overflow-y: auto;
-  border: 0;
+  border: 1px solid var(--glass-light-edge);
   border-radius: var(--r-l);
-  background: var(--surface);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-  box-shadow: var(--lift);
+  background: var(--glass-panel);
+  -webkit-backdrop-filter: var(--glass-panel-blur);
+  backdrop-filter: var(--glass-panel-blur);
+  box-shadow:
+    var(--lift),
+    inset 0 1.5px 0 rgb(255 255 255 / 0.9);
 }
 
+@supports not (backdrop-filter: blur(1px)) {
+  .sheet.sheet--modal,
+  .stage .sheet.sheet--modal {
+    background: var(--surface);
+  }
+}
+
+/* A light scrim: the page stays visible, so the glass has something to blur. */
 .scrim {
   position: fixed;
   inset: 0;
   z-index: 850;
-  background: rgb(20 32 52 / 0.45);
+  background: rgb(20 32 52 / 0.3);
 }
 
 /* ---------- Spot: state rows ---------- */

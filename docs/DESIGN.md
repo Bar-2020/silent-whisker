@@ -255,7 +255,9 @@ depth.
   map card and panel, the round map controls, toasts.
 - **Light glass** (`rgb(255 255 255 / 0.64)`, blur 12 px, saturate 1.6, a white edge): everything
   else that floats over the map or the page with dark ink on it: the pin card and panel, the round
-  map controls (all 52 px), the map search, menus, banners and the sticky top bar.
+  map controls (all 52 px), the map search, menus, banners and the sticky top bar. **Dialogs and
+  search results** use a whiter version (`rgb(255 255 255 / 0.74)`, blur 20 px, saturate 1.8) over a light
+  scrim (30%), so the map or page shows through blurred and dark ink stays legible.
 - **Glass** (a tinted pane, see Components): the navigation bar and rail only. Fill
   `rgb(36 60 103 / 0.58)` over a backdrop that is blurred 8 px, saturated 1.7 and dimmed to 56%
   (`backdrop-filter: blur(8px) saturate(1.7) brightness(0.56)`), a 1 px edge `rgb(255 255 255 /
@@ -349,10 +351,14 @@ An **outline cat head**: round-cornered ears, a wide face, two dot eyes and a sm
 drawn in 2 px strokes (1.75 px at 32 px) with round caps and joins and no fill; it takes the colour of
 the bar it sits on (slate on white, pale on the glass). It is the one mark for the rail, the landing
 header, every top bar and the app-starting screen. The solid cat head is only for the plum alert sign
-on the map. All icons are in `design/mocks/icons.js` and listed in `design-system.html`.
+on the map. All icons are in `design/mocks/icons.js` and listed in `design-system.html`. **No icon is an exclamation
+mark.** Each place has an icon that says what it means: a siren for a cat alert, an empty bowl or an empty
+drop for a spot that needs food or water, a weak GPS target for a position that is not accurate enough, a
+crossed-out target for location off, a crossed-out image for "no cat found", a circled cross for a refused
+text, a thermometer for a sick cat.
 
 ### Dialogs and menus
-- **Dialog:** a centred card (26 rem at most, 20 px radius) over a dark scrim, above everything. A
+- **Dialog:** a centred pane of light glass (26 rem at most, 20 px radius) over a light scrim, above everything. A
   title, one or two lines, then choices or buttons: big option rows (icon in a circle, a bold title and
   a line) or a primary button and a quiet Cancel. Used for the map "+" (new spot, or a cat alert),
   confirming approve or reject, confirming a report, the actions on a chat message (copy, report; an
@@ -443,25 +449,37 @@ photo (4:5, no outline) that opens full screen when tapped.
 
 ### Landing
 A floating glass pill (the brand mark and name, three anchors on wide screens, the language globe, a
-Sign in button). On a phone the first screen is the pitch alone, with room around it (24 px gutters,
-72 px between sections), so the phone frame (rounded bezel, island, no side buttons) around the live
-map starts one scroll below. Then the three steps (their pins do not act like buttons), the privacy
-band, a tinted closing section of its own (centred, with the sign-in, donate and source buttons) and a
-slate footer with the legal links and "Made with a heart by Bar Almog".
+Sign in button) over a **hero band**: the slate, deep at one end and lifted at the other, lit by two soft
+glows, running up under the pill (the only gradient in the product, and never on text). On a phone the
+first screen is the pitch alone, with room around it (24 px gutters, 72 px between sections); a white
+Sign-in button sits on the band. The phone frame (rounded bezel with a light rim, camera island, no side
+buttons) around the live map starts one scroll below and **hangs half over the band and half over the
+white page**; inside it the map leaves room under the island, so the island never covers the search
+box. Then **three numbered steps** (the order matters): a number, a dashed line down (across on a wide
+screen) to the next, the words, and a picture in the colour of the state it shows (a red pin, the bowl,
+a green pin; the pins do not act like buttons). Then the privacy band, a tinted closing section of its
+own, and a slate **footer** in the same colours as the hero, darker at the bottom: the mark and a one-line
+promise, six links in a grid, a hairline, the licence line and "Made with a drawn heart by Bar Almog" (the
+heart is an icon, not an emoji).
 
 ### Map search, alerts, profile
 - **Map search:** a pill field at the top of the map (the legend "?" beside it); typing lists feeding
   spots by name, then places (cities, streets, house addresses), one row each with its kind; no results
   says so and what to try. The two action buttons sit at the right in both languages on a phone, and
   disappear while a spot or an alert is selected. Banners (zoom in, location off) sit under the top
-  row, and "location off" is a line of text with its button below it. The map credit is in the legend.
+  row, and "location off" is one row: a crossed-out target, the words and the "Turn on" button at the end.
+  **The map credit** ("© OpenStreetMap", linked to their copyright page) shows in the bottom corner away
+  from the action buttons when a map opens, folds into a small (i) button after five seconds, and the (i)
+  shows it again (OpenStreetMap's attribution guidelines allow this; their tile policy forbids hiding it
+  behind a toggle from the start, so it never starts hidden). The legend repeats it.
 - **Alert row:** photo and words on top (kind chip, "reported N hours ago", the note cut at two lines,
   distance and area), then **Details** and **Show on map** side by side, full width. A countdown is
   never shown for helping a cat; only a gentle "leaves the map in N minutes" when it is about to go.
   Past alerts (the last 7 days) are one tap away, visible to everyone. In the raise form "sick" has a
   thermometer; a vague or missing location offers **Try again**; a refused note says so under the box.
   One alert: the admin actions sit right under it, **Navigate** and **Show on map** are on the pinned bar.
-- **Profile:** a pencil in the top bar edits; "My activity" is a tinted card with no dividers; one
+- **Profile:** a pencil in the top bar edits; "My activity" is a tinted card with no dividers and 24 px at
+  the sides; one
   list holds language, location, **Install as an app** (a guide per browser), sign out and delete.
   Location help shows, per browser (Android Chrome, iPhone Safari, Chrome, Edge, Firefox, Safari on a
   Mac), how to allow it **permanently**, not "this time". Lists in the admin screens use the same row

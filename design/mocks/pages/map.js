@@ -72,6 +72,7 @@
     window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(
       map
     );
+    Mock.addCredit(host.parentElement);
   } else {
     host.dataset.failed = 'true';
   }

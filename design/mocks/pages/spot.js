@@ -56,7 +56,10 @@
     'pending-admin': { name: 'demo.spot2.name', address: 'demo.spot2.address' },
     notfound: { name: 'spot.notFound.title', address: 'spot.notFound.title' },
   };
-  const LEVEL_MARK = { green: 'check', orange: 'clock', red: 'exclaim', none: 'dash' };
+  /* The mark on a state chip says what the state means: ok, running low, the bowl or the drop is empty, no data. */
+  const levelMark = (kind, level) =>
+    level === 'red' ? (kind === 'food' ? 'bowl-empty' : 'drop-empty') : LEVEL_MARK[level];
+  const LEVEL_MARK = { green: 'check', orange: 'clock', none: 'dash' };
   const DETAIL_STATES = Object.keys(VIEWS);
   const PLACE_STATES = ['address', 'address-error', 'photo', 'uploading', 'refused'];
   const LOG_RESULTS = [
@@ -85,7 +88,7 @@
       `<div class="state" data-level="${level}">` +
       `<span class="state__icon"><i data-icon="${icon}"></i></span>` +
       `<div class="cluster"><h3 class="state__label" data-t="spot.state.${kind}"></h3>` +
-      `<span class="chip"><i data-icon="${LEVEL_MARK[level]}"></i><span data-t="level.${kind}.${level}"></span></span></div>` +
+      `<span class="chip"><i data-icon="${levelMark(kind, level)}"></i><span data-t="level.${kind}.${level}"></span></span></div>` +
       `<p class="state__when num" data-t="${when}" data-v='{"n":${hours || 0}}'></p>${action}</div>`
     );
   }
@@ -173,6 +176,7 @@
     window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(
       map
     );
+    Mock.addCredit(host.parentElement);
     MockDemo.spots.slice(0, 4).forEach((spot) => {
       const selected = { ...spot, selected: spot.id === 'red' };
       window.L.marker(

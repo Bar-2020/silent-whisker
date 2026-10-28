@@ -176,6 +176,7 @@
         pickerMap
       );
     }
+    Mock.addCredit(host.parentElement);
     pickerMap.invalidateSize();
     drawPickerMarkers();
   }

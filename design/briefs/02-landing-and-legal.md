@@ -16,8 +16,9 @@ reachable from the landing page.
   close or when the spot needs help, phone location not stored); "free and open source"; donate
   link; one reserved ad slot; footer with privacy, terms, source code.
 - No numbers about users, spots or cats (none exist yet; claims are never invented).
-- On a phone the first screen is the pitch alone and the phone frame starts below it. A tinted closing
-  section stands apart from a slate footer, which ends with "Made with a heart by Bar Almog".
+- On a phone the first screen is the pitch alone, on a slate gradient band; the phone frame starts below
+  it and hangs over the band's edge. The three steps are numbered. A tinted closing section stands apart
+  from a slate footer (mark, promise, links, "Made with a heart by Bar Almog").
 
 ## Selected direction
 Inherit the wall and band; the landing is where the band is bigger: the lower part of the first

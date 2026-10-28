@@ -101,6 +101,18 @@
     inset-block-end: var(--s-4);
   }
 
+  /* The credit sits at the bottom, left of the action buttons, in both directions. */
+  .stage .mapcredit,
+  [dir='rtl'] .stage .mapcredit {
+    inset-block-end: var(--s-2);
+    inset-inline: auto calc(var(--s-4) + var(--round) + var(--s-3));
+  }
+
+  .stage[data-sheet='spot'] .mapcredit,
+  .stage[data-sheet='alert'] .mapcredit {
+    inset-block-end: var(--s-2);
+  }
+
   /* Beside the side panel there is room, so the buttons stay, at the inline-end. */
   [dir='rtl'] .mapctl {
     inset-inline: auto var(--s-4);
@@ -151,10 +163,46 @@
 
   .steps {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-7);
   }
 
+  /* In a row: the number, then the picture, then the words, with the line running across to the next. */
   .step {
+    display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s-4);
+  }
+
+  .step__visual {
+    grid-column: auto;
+  }
+
+  .step:not(:last-child)::before {
+    inset-block: 21px auto;
+    inset-inline: 60px calc(var(--s-7) * -1 + 16px);
+    inline-size: auto;
+    block-size: 2px;
+    background: repeating-linear-gradient(to right, var(--line-strong) 0 6px, transparent 6px 12px);
+  }
+
+  [dir='rtl'] .step:not(:last-child)::before {
+    background: repeating-linear-gradient(to left, var(--line-strong) 0 6px, transparent 6px 12px);
+  }
+
+  .sitefoot__inner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    column-gap: var(--s-8);
+  }
+
+  .sitefoot__links ul {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .sitefoot__base {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    justify-content: space-between;
   }
 
   .sitebar {
@@ -244,6 +292,14 @@
 
   .hero__copy {
     min-block-size: 0;
+  }
+
+  [data-screen='home'] {
+    --bleed: 0rem;
+  }
+
+  .hero__visual figcaption {
+    color: var(--dado-quiet);
   }
 
   .hero {

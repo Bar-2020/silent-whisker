@@ -127,27 +127,66 @@ body[data-chrome='page']
   margin-inline: auto;
 }
 
+/* The three steps are a sequence, so they are numbered and joined by a line. The picture of each step
+   takes the colour of the state it shows: red, the bowl, green. */
 .steps {
+  counter-reset: step;
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--s-6);
 }
 
 .step {
-  display: flex;
+  counter-increment: step;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: var(--s-4);
-  align-items: flex-start;
+  align-items: start;
+}
+
+.step__num {
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: 50%;
+  background: var(--dado);
+  color: var(--dado-ink);
+  font-size: var(--fs-l);
+  font-weight: 700;
+}
+
+.step__num::before {
+  content: counter(step);
+}
+
+/* The line from this number down to the next one. */
+.step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 21px;
+  inset-block: 52px calc(var(--s-6) * -1 + 8px);
+  inline-size: 2px;
+  background: repeating-linear-gradient(to bottom, var(--line-strong) 0 6px, transparent 6px 12px);
+}
+
+.step__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding-block-start: var(--s-2);
 }
 
 .step__visual {
   display: grid;
   place-items: center;
-  inline-size: 64px;
+  inline-size: 72px;
   block-size: 72px;
-  flex: none;
-  border-radius: var(--r-m);
-  background: var(--surface);
-  border: 1px solid var(--line);
+  grid-column: 3;
+  grid-row: 1;
+  border-radius: var(--r-l);
+  background: var(--lvl-tint, var(--dado-tint));
 }
 
 .step__visual .pin {
@@ -158,8 +197,8 @@ body[data-chrome='page']
 }
 
 .step__visual .icon {
-  inline-size: 2rem;
-  block-size: 2rem;
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
   color: var(--dado);
 }
 
@@ -208,9 +247,10 @@ body[data-chrome='page']
   box-shadow: var(--lift);
 }
 
+/* The footer closes the page the way the hero opens it: the same slate, darker at the bottom. */
 .sitefoot {
-  padding: var(--s-7) var(--s-5) var(--s-8);
-  background: var(--dado-deep);
+  padding: var(--s-8) var(--s-5) var(--s-6);
+  background: linear-gradient(180deg, var(--dado-deep), var(--band-deep));
   color: var(--dado-quiet);
 }
 
@@ -218,26 +258,59 @@ body[data-chrome='page']
   color: var(--dado-ink);
 }
 
-.sitefoot .muted {
-  color: var(--dado-quiet);
-}
-
-.sitefoot__made {
-  font-size: var(--fs-s);
-}
-
 .sitefoot__inner {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-4);
+  display: grid;
+  gap: var(--s-6);
   max-inline-size: 64rem;
   margin-inline: auto;
 }
 
-.sitefoot ul {
+.sitefoot__brand {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--s-2) var(--s-5);
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.sitefoot__brand .brandmark {
+  color: var(--dado-ink);
+  font-size: var(--fs-l);
+}
+
+.sitefoot__links ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--s-5);
+}
+
+.sitefoot__links a {
+  display: flex;
+  align-items: center;
+  min-block-size: 44px;
+  padding-block: 0;
+  text-decoration: none;
+}
+
+.sitefoot__links a:hover {
+  text-decoration: underline;
+}
+
+.sitefoot__base {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding-block-start: var(--s-5);
+  border-block-start: 1px solid rgb(255 255 255 / 0.16);
+  font-size: var(--fs-s);
+}
+
+.sitefoot__made {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+
+.sitefoot__heart {
+  color: var(--heart);
 }
 
 .read {
@@ -438,10 +511,20 @@ body[data-chrome='page']
   max-block-size: min(60dvh, 28rem);
   overflow-y: auto;
   padding: var(--s-2);
-  border: 1px solid var(--line);
-  border-radius: var(--r-m);
-  background: var(--surface);
-  box-shadow: var(--lift);
+  border: 1px solid var(--glass-light-edge);
+  border-radius: var(--r-l);
+  background: var(--glass-panel);
+  -webkit-backdrop-filter: var(--glass-panel-blur);
+  backdrop-filter: var(--glass-panel-blur);
+  box-shadow:
+    var(--lift),
+    inset 0 1.5px 0 rgb(255 255 255 / 0.9);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .results {
+    background: var(--surface);
+  }
 }
 
 .results__title {
@@ -463,7 +546,7 @@ body[data-chrome='page']
 }
 
 .results__item:hover {
-  background: var(--dado-tint);
+  background: rgb(255 255 255 / 0.6);
 }
 
 .results__icon {
@@ -473,7 +556,7 @@ body[data-chrome='page']
   block-size: 36px;
   flex: none;
   border-radius: 50%;
-  background: var(--dado-tint);
+  background: rgb(255 255 255 / 0.7);
   color: var(--dado);
 }
 
@@ -498,15 +581,20 @@ body[data-chrome='page']
   gap: var(--s-3);
   min-block-size: var(--tap-l);
   padding: var(--s-3) var(--s-4);
-  border: 1.5px solid var(--line);
+  border: 1.5px solid rgb(255 255 255 / 0.85);
   border-radius: var(--r-m);
+  background: rgb(255 255 255 / 0.62);
+  box-shadow: 0 1px 2px rgb(20 32 52 / 0.1);
   color: var(--ink);
+  font: inherit;
+  text-align: start;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .dialog__option:hover {
   border-color: var(--dado);
-  background: var(--dado-tint);
+  background: rgb(255 255 255 / 0.85);
 }
 
 .dialog__icon {
@@ -880,7 +968,7 @@ fieldset.field > legend {
   gap: var(--s-1);
   padding: var(--s-3) var(--s-4);
   border-radius: var(--r-m);
-  background: var(--surface-sunk);
+  background: rgb(45 68 103 / 0.14);
 }
 
 .chat-title {
@@ -962,14 +1050,44 @@ fieldset.field > legend {
 }
 
 /* ---------- Landing: hero with the real product, steps, a painted trust band ---------- */
+[data-screen='home'] {
+  --nav-offset: 84px;
+  --bleed: 9rem;
+}
+
+/* The hero is a band of slate, lit from one corner, that runs up under the navigation. The phone
+   starts below the fold and stands half on the band, half on the white page below it. */
+.hero-band {
+  margin-block-start: calc(var(--nav-offset) * -1);
+  padding-block-start: var(--nav-offset);
+  background:
+    radial-gradient(70% 40% at 88% 6%, rgb(143 165 200 / 0.38), transparent 72%),
+    radial-gradient(60% 36% at 4% 62%, rgb(58 90 145 / 0.55), transparent 72%),
+    linear-gradient(168deg, var(--band-deep) 0%, var(--dado) 46%, var(--band-lift) 100%);
+  color: var(--dado-ink);
+}
+
 .hero {
   display: flex;
   flex-direction: column;
   gap: var(--s-8);
   max-inline-size: 64rem;
   margin-inline: auto;
-  padding: var(--s-6) var(--s-5) var(--s-8);
+  padding: var(--s-6) var(--s-5) 0;
   min-block-size: 0;
+}
+
+.hero h1 {
+  color: var(--dado-ink);
+}
+
+.hero .lead,
+.hero .small {
+  color: var(--dado-quiet);
+}
+
+.hero__cta a:not(.btn) {
+  color: var(--dado-ink);
 }
 
 /* The first screen is the pitch alone: the phone starts below the fold, one scroll away. */
@@ -978,7 +1096,7 @@ fieldset.field > legend {
   flex-direction: column;
   gap: var(--s-5);
   justify-content: center;
-  min-block-size: calc(100svh - 8rem);
+  min-block-size: calc(100svh - var(--nav-offset) - 4rem);
 }
 
 .hero__cta {
@@ -989,11 +1107,22 @@ fieldset.field > legend {
 }
 
 .hero__visual {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--s-2);
-  margin: 0;
+  margin: 0 0 calc(var(--bleed) * -1);
+}
+
+.hero__visual figcaption {
+  color: var(--ink-3);
+}
+
+/* The section under the phone makes room for the part that hangs over it. */
+.band-section--steps {
+  padding-block-start: calc(var(--s-8) + var(--bleed));
 }
 
 .trust {
@@ -1287,9 +1416,18 @@ fieldset.field > legend {
   background: #11161d;
   box-shadow:
     inset 0 0 0 2px #394353,
-    0 0 0 1.5px #0b0f14,
-    var(--lift),
-    0 18px 40px rgb(20 32 52 / 0.25);
+    0 0 0 1.5px rgb(255 255 255 / 0.22),
+    0 2px 6px rgb(8 16 32 / 0.3),
+    0 36px 70px rgb(8 16 32 / 0.5);
+}
+
+/* Inside the phone frame the page leaves room at the top for the camera island. */
+[data-frame] .maptop {
+  inset-block-start: calc(var(--s-4) + 36px);
+}
+
+[data-frame] .mapbanner {
+  inset-block-start: calc(var(--s-4) + 36px + var(--round) + var(--s-3));
 }
 
 .device::before {
@@ -1483,7 +1621,7 @@ h2[id] {
   display: flex;
   flex-direction: column;
   gap: var(--s-1);
-  padding: var(--s-4);
+  padding: var(--s-4) var(--s-5);
   border-radius: var(--r-l);
   background: var(--dado-tint);
 }
@@ -1640,4 +1778,76 @@ h2[id] {
 .line {
   display: block;
   text-wrap: balance;
+}
+
+/* ---------- The map credit ---------- */
+/* At the bottom corner away from the action buttons; it folds into a small (i) after a few seconds. */
+.mapcredit {
+  position: absolute;
+  inset-block-end: var(--s-2);
+  inset-inline-start: var(--s-2);
+  z-index: 510;
+  display: flex;
+  align-items: center;
+  border-radius: var(--r-pill);
+  background: var(--glass-light);
+  -webkit-backdrop-filter: var(--glass-light-blur);
+  backdrop-filter: var(--glass-light-blur);
+  font-size: var(--fs-xs);
+}
+
+[dir='rtl'] .mapcredit {
+  inset-inline: auto var(--s-2);
+}
+
+.stage .mapcredit {
+  inset-block-end: calc(var(--nav-total) + var(--s-1));
+}
+
+.stage[data-sheet='spot'] .mapcredit {
+  inset-block-end: calc(var(--nav-total) + var(--sheet-h) + var(--s-2));
+}
+
+.stage[data-sheet='alert'] .mapcredit {
+  inset-block-end: calc(var(--nav-total) + 280px + var(--s-2));
+}
+
+.mapcredit__text {
+  padding: var(--s-1) var(--s-3);
+  color: var(--ink-2);
+  text-underline-offset: 2px;
+}
+
+.mapcredit__info {
+  display: none;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--dado);
+  cursor: pointer;
+}
+
+.mapcredit__info .icon {
+  inline-size: 28px;
+  block-size: 28px;
+  padding: 5px;
+  border-radius: 50%;
+  background: var(--glass-light);
+}
+
+.mapcredit.is-collapsed {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.mapcredit.is-collapsed .mapcredit__text {
+  display: none;
+}
+
+.mapcredit.is-collapsed .mapcredit__info {
+  display: grid;
 }

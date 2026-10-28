@@ -132,8 +132,10 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
   optional. *Recommend: as the owner asked; the name is the title of the post.*
 - **Q42. Ended alerts stay visible to everyone for 7 days** (the spec shows them only to admins, for 24 hours),
   and an alert says "reported N hours ago", not "N hours left". *Recommend: yes; extending is still admin only.*
-- **Q43. The map credit moved from the corner into the legend.** OpenStreetMap wants a visible credit;
-  one tap on "?" shows it. *Recommend: keep, and check it against the tile policy before launch. Also: with
-  location off the feed shows the member's profile city.*
+- **Q43. The map credit.** Checked 2026-10-28: OpenStreetMap's tile policy says the credit must be
+  clearly on the map and not hidden behind a toggle; their attribution guidelines let it fold into an (i)
+  after five seconds. *Decided: it shows in a corner when a map opens, folds into an (i) after five seconds,
+  and the legend repeats it. The public tile server also needs a named User-Agent and a Referer, caching, and
+  no prefetching; self-hosted tiles stay the plan (Q4). Also: with location off the feed shows the profile city.*
 - **Accessibility target (not a question):** WCAG 2.2 AA, with 48 px touch targets and visible
   focus. Israeli web accessibility rules point to the same level.

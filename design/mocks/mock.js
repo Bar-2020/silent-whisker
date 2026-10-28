@@ -12,6 +12,7 @@
   const strings = (window.MOCK_LOCALES && window.MOCK_LOCALES[lang]) || {};
 
   if (params.has('bare')) document.documentElement.dataset.bare = 'true';
+  if (params.has('frame')) document.documentElement.dataset.frame = 'true';
   document.documentElement.lang = lang;
   document.documentElement.dir = LANGS[lang].dir;
 
@@ -69,7 +70,7 @@
   const NAV = [
     { id: 'map', icon: 'map', href: 'map.html' },
     { id: 'explore', icon: 'compass', href: 'cats.html' },
-    { id: 'alerts', icon: 'alert', href: 'alerts.html' },
+    { id: 'alerts', icon: 'siren', href: 'alerts.html' },
     { id: 'me', icon: 'user', href: 'profile.html' },
   ];
 
@@ -355,6 +356,31 @@
     return map;
   }
 
+  /* The map credit OpenStreetMap asks for: visible on the map when it opens, folded into a small
+     (i) button after five seconds (allowed by their attribution guidelines), and shown again by a tap. */
+  const CREDIT_SECONDS = 5;
+  function addCredit(container) {
+    if (!container || container.querySelector('.mapcredit')) return;
+    const credit = document.createElement('div');
+    credit.className = 'mapcredit';
+    credit.innerHTML =
+      `<a class="mapcredit__text" dir="ltr" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">${t('map.credit.short')}</a>` +
+      `<button class="mapcredit__info" type="button" aria-label="${t('map.credit.show')}"><i data-icon="info"></i></button>`;
+    container.append(credit);
+    drawIcons(credit);
+    let timer = 0;
+    const fold = () => {
+      credit.classList.add('is-collapsed');
+    };
+    const open = () => {
+      credit.classList.remove('is-collapsed');
+      window.clearTimeout(timer);
+      timer = window.setTimeout(fold, CREDIT_SECONDS * 1000);
+    };
+    credit.querySelector('.mapcredit__info').addEventListener('click', open);
+    open();
+  }
+
   function refresh(root) {
     drawIcons(root);
     translate(root);
@@ -370,6 +396,7 @@
     markerOptions,
     pinLabel,
     mountMap,
+    addCredit,
     pinHtml,
     signHtml,
     onState: null,

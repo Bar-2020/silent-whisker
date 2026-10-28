@@ -139,7 +139,7 @@
     'feedback',
     'Feedback',
     'State colour is always paired with an icon and words. A refusal for a gentle reason (too soon, daily limit) is grey, not red.',
-    `<h3>Chips: the five states</h3><div class="ds__sample">${chip('green', 'check', 'Water is fine')}${chip('orange', 'clock', 'Food is running low')}${chip('red', 'exclaim', 'Needs food')}${chip('none', 'clock', 'No log yet')}${chip('alert', 'alert', 'Cat in danger')}</div>` +
+    `<h3>Chips: the five states</h3><div class="ds__sample">${chip('green', 'check', 'Water is fine')}${chip('orange', 'clock', 'Food is running low')}${chip('red', 'bowl-empty', 'Needs food')}${chip('none', 'clock', 'No log yet')}${chip('alert', 'siren', 'Cat in danger')}</div>` +
       `<h3>Notices</h3>${grid(
         notice('green', 'check', 'Counted', 'Thank you for feeding.') +
           notice('orange', 'clock', 'Running low', 'Someone should come soon.') +
@@ -148,7 +148,7 @@
         true
       )}<h3>Loading: a spinner, and solid skeletons (never see-through)</h3><div class="ds__sample"><span class="spinner"></span></div><div class="ds__sample"><div class="skeleton-post ds__skeleton-post"><div class="skeleton skeleton--media"></div><div class="skeleton skeleton--line"></div><div class="skeleton skeleton--line skeleton--short"></div></div></div>` +
       `<h3>Process strip: shown under the top bar while a screen is sending something</h3><div class="process ds__process" role="status"><div class="process__row"><span class="spinner"></span><div><strong>Uploading the photo</strong><span class="small">You can keep filling in the details.</span></div></div></div>` +
-      `<h3>Toast: a refusal or a short confirmation that does not move the page</h3><div class="ds__sample"><div class="toast" role="status">${icon('check')}<div class="notice__body"><span>Report sent.</span></div></div><div class="toast" role="alert">${icon('exclaim')}<div class="notice__body"><span>The text did not pass the check. Try rewording it.</span></div></div></div>`
+      `<h3>Toast: a refusal or a short confirmation that does not move the page</h3><div class="ds__sample"><div class="toast" role="status">${icon('check')}<div class="notice__body"><span>Report sent.</span></div></div><div class="toast" role="alert">${icon('xcircle')}<div class="notice__body"><span>The text did not pass the check. Try rewording it.</span></div></div></div>`
   );
 
   /* ----- map markers ----- */
@@ -175,7 +175,7 @@
     'The navigation is slate glass over whatever is behind it (a bar on a phone, a floating rail from 768 px). Floating cards, round buttons, the map search and menus use light glass. Without backdrop-filter or with reduced transparency they turn solid slate or white. The form bar is not glass.',
     `<div class="ds__stage ds__stage--nav" id="nav-slot"></div>` +
       `<h3>Menu: short, 44 px rows</h3><div class="ds__stage ds__sample"><div class="menu"><a class="menu__item" href="#glass">${icon('flag')}<span>Report this photo</span></a><a class="menu__item menu__item--bad" href="#glass">${icon('restrict')}<span>Hide the photo</span></a></div></div>` +
-      `<h3>Dialog: in the middle of the screen, with a scrim behind it</h3><div class="ds__sample"><div class="sheet sheet--modal" role="dialog"><h2 class="sheet__title">What do you want to add?</h2><a class="dialog__option" href="#glass"><span class="dialog__icon">${icon('pin')}</span><span class="dialog__text"><strong>New feeding spot</strong><span class="small muted">A place where cats eat and drink.</span></span></a><a class="dialog__option" data-level="alert" href="#glass"><span class="dialog__icon">${icon('alert')}</span><span class="dialog__text"><strong>Report a cat in danger</strong><span class="small muted">A cat that is hurt, sick or in danger now.</span></span></a><button class="btn btn--quiet" type="button">Cancel</button></div></div>` +
+      `<h3>Dialog: in the middle of the screen, with a scrim behind it</h3><div class="ds__sample"><div class="sheet sheet--modal" role="dialog"><h2 class="sheet__title">What do you want to add?</h2><a class="dialog__option" href="#glass"><span class="dialog__icon">${icon('pin')}</span><span class="dialog__text"><strong>New feeding spot</strong><span class="small muted">A place where cats eat and drink.</span></span></a><a class="dialog__option" data-level="alert" href="#glass"><span class="dialog__icon">${icon('siren')}</span><span class="dialog__text"><strong>Report a cat in danger</strong><span class="small muted">A cat that is hurt, sick or in danger now.</span></span></a><button class="btn btn--quiet" type="button">Cancel</button></div></div>` +
       `<h3>Map search and its results</h3><div class="ds__sample ds__sample--map"><div class="maptop ds__maptop"><div class="mapsearch" role="search">${icon('search')}<input class="mapsearch__input" placeholder="City, street, address or spot" /></div><button class="round" type="button" aria-label="Legend">${icon('help')}</button></div></div>`
   );
 
