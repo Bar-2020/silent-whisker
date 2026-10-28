@@ -114,6 +114,7 @@ svg {
 /* Times and counts line up in columns. */
 .num {
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .muted {

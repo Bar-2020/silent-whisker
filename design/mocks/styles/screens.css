@@ -55,6 +55,12 @@ body[data-chrome='page']
   color: var(--ink-2);
 }
 
+/* A lead that is the main sentence of its screen (an alert's note, "deleting is final"): full ink, heavier. */
+.lead--strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
 .brandmark {
   display: flex;
   align-items: center;
@@ -241,7 +247,8 @@ body[data-chrome='page']
   display: flex;
   flex-direction: column;
   gap: var(--s-3);
-  padding: var(--s-4);
+  padding: var(--s-3) var(--s-4);
+  font-size: var(--fs-s);
   background: var(--surface);
   border-block-start: 1px solid var(--line-strong);
   box-shadow: var(--lift);
@@ -681,6 +688,10 @@ body[data-chrome='page']
   gap: var(--s-2);
 }
 
+.alertrow__main > .tag {
+  align-self: flex-start;
+}
+
 .alertrow__head {
   display: flex;
   flex-wrap: wrap;
@@ -989,10 +1000,35 @@ fieldset.field > legend {
 }
 
 .howto summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
   min-block-size: var(--tap);
   padding: var(--s-3) var(--s-4);
   font-weight: 600;
+  list-style: none;
   cursor: pointer;
+}
+
+.howto summary::-webkit-details-marker {
+  display: none;
+}
+
+/* The open or closed mark is a drawn chevron, like the others, not a text glyph. */
+.howto summary::after {
+  content: '';
+  inline-size: 9px;
+  block-size: 9px;
+  flex: none;
+  border-block-end: 2px solid var(--dado);
+  border-inline-end: 2px solid var(--dado);
+  rotate: 45deg;
+  transition: rotate var(--dur-1) var(--ease);
+}
+
+.howto[open] summary::after {
+  rotate: -135deg;
 }
 
 .steps-list {
@@ -1261,6 +1297,42 @@ fieldset.field > legend {
 .dropzone__camera .icon {
   inline-size: 2rem;
   block-size: 2rem;
+}
+
+/* A photo that is only one part of a long form: a row, not a poster. */
+.dropzone--compact {
+  aspect-ratio: auto;
+  min-block-size: 88px;
+}
+
+.dropzone--compact .dropzone__inner {
+  flex-direction: row;
+  gap: var(--s-3);
+}
+
+.dropzone--compact .dropzone__camera {
+  inline-size: 48px;
+  block-size: 48px;
+}
+
+.dropzone--compact .dropzone__camera .icon {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+}
+
+.dropzone--compact.dropzone--filled {
+  min-block-size: 160px;
+}
+
+.dropzone:disabled {
+  border-color: var(--line-strong);
+  background: var(--surface-sunk);
+  color: var(--ink-3);
+  cursor: not-allowed;
+}
+
+.dropzone:disabled .dropzone__camera {
+  background: var(--ink-3);
 }
 
 .dropzone--filled {
@@ -1616,7 +1688,7 @@ h2[id] {
 .tabs button[aria-selected='true'] {
   background: var(--surface);
   color: var(--dado);
-  box-shadow: var(--lift);
+  box-shadow: inset 0 0 0 1.5px var(--dado);
 }
 
 /* ---------- Profile ---------- */

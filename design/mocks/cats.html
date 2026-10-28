@@ -33,7 +33,7 @@
             <div class="page page--feed">
               <div class="feed">
                 <div class="notice" data-when="noloc">
-                  <i data-icon="locate"></i>
+                  <i data-icon="locate-off"></i>
                   <div class="notice__body">
                     <strong id="feed-city"></strong>
                     <span data-t="cats.feed.city.text"></span>
@@ -194,7 +194,13 @@
 
             <div class="post-layout">
               <div class="stack stack--2">
-                <button class="dropzone" type="button" data-when="choose limit nocat">
+                <button class="dropzone" type="button" data-when="choose nocat">
+                  <span class="dropzone__inner"
+                    ><span class="dropzone__camera"><i data-icon="camera"></i></span
+                    ><span data-t="cats.post.photo.add"></span
+                  ></span>
+                </button>
+                <button class="dropzone" type="button" disabled data-when="limit">
                   <span class="dropzone__inner"
                     ><span class="dropzone__camera"><i data-icon="camera"></i></span
                     ><span data-t="cats.post.photo.add"></span

@@ -327,17 +327,23 @@
             <div class="field">
               <span class="field__label" data-t="alerts.raise.photo.label"></span>
               <button
-                class="dropzone"
+                class="dropzone dropzone--compact"
                 type="button"
-                data-when="form locating vague nopermission limit nocat"
+                data-when="form locating vague nopermission nocat"
               >
                 <span class="dropzone__inner"
                   ><span class="dropzone__camera"><i data-icon="camera"></i></span
                   ><span data-t="alerts.raise.photo.add"></span
                 ></span>
               </button>
+              <button class="dropzone dropzone--compact" type="button" disabled data-when="limit">
+                <span class="dropzone__inner"
+                  ><span class="dropzone__camera"><i data-icon="camera"></i></span
+                  ><span data-t="alerts.raise.photo.add"></span
+                ></span>
+              </button>
               <div
-                class="dropzone dropzone--filled"
+                class="dropzone dropzone--filled dropzone--compact"
                 data-unless="form locating vague nopermission limit nocat"
               >
                 <div class="photo" data-tone="1"><i data-icon="cat"></i></div>
@@ -474,8 +480,8 @@
                     ><i data-icon="medical"></i><span data-t="alerts.kind.neuter"></span
                   ></span>
                 </div>
-                <p class="lead" data-unless="neuter" data-t="demo.alert1.note"></p>
-                <p class="lead" data-when="neuter" data-t="demo.alert4.note"></p>
+                <p class="lead lead--strong" data-unless="neuter" data-t="demo.alert1.note"></p>
+                <p class="lead lead--strong" data-when="neuter" data-t="demo.alert4.note"></p>
                 <p class="small muted" data-unless="neuter">
                   <span data-t="alerts.detail.by" data-v='{"name":"Dana K."}'></span> ·
                   <span class="num" data-t="alerts.reportedAgo" data-v='{"n":2}'></span> ·

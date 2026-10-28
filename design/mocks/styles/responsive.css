@@ -77,6 +77,23 @@
     padding: var(--s-6) var(--s-5) var(--s-8);
   }
 
+  /* On a wide screen the actions of a top bar stay near the column, not at the edge of the window. */
+  .topbar {
+    padding-inline: max(var(--s-2), calc((100% - 64rem) / 2));
+  }
+
+  .feed .post .photo {
+    --ratio: 4 / 3;
+  }
+
+  .picker-map {
+    block-size: 320px;
+  }
+
+  .adminrow {
+    max-inline-size: 28rem;
+  }
+
   .stage {
     block-size: 100dvh;
   }

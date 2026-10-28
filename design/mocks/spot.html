@@ -435,7 +435,16 @@
               aria-modal="true"
               data-sub="empty-food empty-water"
             >
-              <h2 class="sheet__title" data-t="spot.empty.confirm.title"></h2>
+              <h2
+                class="sheet__title"
+                data-sub="empty-food"
+                data-t="spot.empty.confirm.titleFood"
+              ></h2>
+              <h2
+                class="sheet__title"
+                data-sub="empty-water"
+                data-t="spot.empty.confirm.titleWater"
+              ></h2>
               <p class="muted" data-t="spot.empty.confirm.text"></p>
               <button
                 class="btn btn--lg"
@@ -579,46 +588,6 @@
               <div class="notice__body"><span data-t="newspot.privacy"></span></div>
             </div>
 
-            <div class="field">
-              <label class="field__label" for="spot-name"
-                ><span data-t="newspot.name.label"></span>
-                <span class="muted small" data-t="common.optionalLabel"></span
-              ></label>
-              <input
-                class="input"
-                id="spot-name"
-                data-t-attr="placeholder:newspot.name.placeholder"
-              />
-              <p class="field__hint" data-t="newspot.name.hint"></p>
-              <p class="field__error" data-when="refused">
-                <span data-t="newspot.name.refused"></span>
-              </p>
-            </div>
-
-            <div class="field">
-              <span class="field__label"
-                ><span data-t="newspot.photo.label"></span>
-                <span class="muted small" data-t="common.optionalLabel"></span
-              ></span>
-              <button class="dropzone" type="button" data-unless="photo uploading">
-                <span class="dropzone__inner"
-                  ><span class="dropzone__camera"><i data-icon="camera"></i></span
-                  ><span data-t="newspot.photo.add"></span
-                ></span>
-              </button>
-              <div class="dropzone dropzone--filled" data-when="photo uploading">
-                <div class="photo" data-tone="3"><i data-icon="cat"></i></div>
-              </div>
-              <div class="notice" data-when="uploading">
-                <span class="spinner"></span>
-                <div class="notice__body"><span data-t="newspot.photo.uploading"></span></div>
-              </div>
-              <p class="field__hint" data-when="photo">
-                <span data-t="newspot.photo.review"></span>
-              </p>
-              <p class="field__hint" data-unless="photo uploading" data-t="newspot.photo.hint"></p>
-            </div>
-
             <fieldset class="field">
               <legend class="field__label" data-t="newspot.place.label"></legend>
               <div class="choices">
@@ -681,12 +650,64 @@
                 </div>
               </div>
             </div>
+
+            <div class="field">
+              <label class="field__label" for="spot-name"
+                ><span data-t="newspot.name.label"></span>
+                <span class="muted small" data-t="common.optionalLabel"></span
+              ></label>
+              <input
+                class="input"
+                id="spot-name"
+                data-t-attr="placeholder:newspot.name.placeholder"
+              />
+              <p class="field__hint" data-t="newspot.name.hint"></p>
+              <p class="field__error" data-when="refused">
+                <span data-t="newspot.name.refused"></span>
+              </p>
+            </div>
+
+            <div class="field">
+              <span class="field__label"
+                ><span data-t="newspot.photo.label"></span>
+                <span class="muted small" data-t="common.optionalLabel"></span
+              ></span>
+              <button
+                class="dropzone dropzone--compact"
+                type="button"
+                data-unless="photo uploading"
+              >
+                <span class="dropzone__inner"
+                  ><span class="dropzone__camera"><i data-icon="camera"></i></span
+                  ><span data-t="newspot.photo.add"></span
+                ></span>
+              </button>
+              <div class="dropzone dropzone--filled dropzone--compact" data-when="photo uploading">
+                <div class="photo" data-tone="3"><i data-icon="cat"></i></div>
+              </div>
+              <div class="notice" data-when="uploading">
+                <span class="spinner"></span>
+                <div class="notice__body"><span data-t="newspot.photo.uploading"></span></div>
+              </div>
+              <p class="field__hint" data-when="photo">
+                <span data-t="newspot.photo.review"></span>
+              </p>
+              <p class="field__hint" data-unless="photo uploading" data-t="newspot.photo.hint"></p>
+            </div>
           </form>
           <div class="footbar" data-unless="submitted limit">
             <button
               class="btn btn--lg"
               type="button"
               data-go="submitted"
+              data-when="photo mylocation"
+              data-t="newspot.submit"
+            ></button>
+            <button
+              class="btn btn--lg"
+              type="button"
+              disabled
+              data-unless="photo mylocation"
               data-t="newspot.submit"
             ></button>
           </div>

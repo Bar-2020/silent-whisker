@@ -1294,7 +1294,7 @@ button.row {
 .avatar--s {
   inline-size: 28px;
   block-size: 28px;
-  font-size: 0.75rem;
+  font-size: var(--fs-s);
 }
 
 .post__actions {

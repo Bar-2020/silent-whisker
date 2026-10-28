@@ -102,11 +102,11 @@
                     <span class="row__main"
                       ><span class="row__title" data-t="profile.settings.location"></span
                     ></span>
-                    <span class="chip" data-level="green" data-unless="noloc"
+                    <span class="chip chip--count" data-unless="noloc"
                       ><i data-icon="check"></i><span data-t="profile.location.on"></span
                     ></span>
-                    <span class="chip" data-level="red" data-when="noloc"
-                      ><i data-icon="x"></i><span data-t="profile.location.off"></span
+                    <span class="chip" data-level="none" data-when="noloc"
+                      ><i data-icon="locate-off"></i><span data-t="profile.location.off"></span
                     ></span>
                     <i class="row__chev" data-icon="chevron" data-class="icon--flip"></i>
                   </a>
@@ -259,7 +259,7 @@
               <i data-icon="locate"></i><span data-t="firstrun.location.allow"></span>
             </button>
 
-            <div class="notice" data-level="orange" data-unless="notasked">
+            <div class="notice" data-unless="notasked">
               <i data-icon="info"></i>
               <div class="notice__body">
                 <strong data-t="firstrun.location.always.title"></strong>
@@ -380,7 +380,7 @@
             <h1 class="topbar__title" data-t="profile.delete.title"></h1>
           </header>
           <div class="page page--narrow stack stack--5">
-            <p class="lead" data-t="profile.delete.lead"></p>
+            <p class="lead lead--strong" data-t="profile.delete.lead"></p>
             <ul class="why">
               <li><i data-icon="user"></i><span data-t="profile.delete.l1"></span></li>
               <li><i data-icon="cat"></i><span data-t="profile.delete.l2"></span></li>
@@ -396,10 +396,28 @@
             <button
               class="btn btn--danger btn--lg"
               type="button"
+              data-go="confirm"
               data-t="profile.delete.confirm"
             ></button>
           </div>
         </div>
+
+        <div class="scrim" data-when="confirm"></div>
+        <aside class="sheet sheet--modal" role="dialog" aria-modal="true" data-when="confirm">
+          <h2 class="sheet__title" data-t="profile.delete.confirm.title"></h2>
+          <p class="muted" data-t="profile.delete.confirm.text"></p>
+          <a
+            class="btn btn--lg btn--danger"
+            href="landing.html"
+            data-t="profile.delete.confirm"
+          ></a>
+          <button
+            class="btn btn--quiet"
+            type="button"
+            data-go="default"
+            data-t="common.cancel"
+          ></button>
+        </aside>
 
         <!-- ============ Admin: spots waiting for approval ============ -->
         <div data-screen="admin-spots" data-chrome="page" data-default-state="default">
@@ -484,10 +502,40 @@
                   ></a>
                 </div>
               </article>
+              <article class="alertrow">
+                <div class="alertrow__top">
+                  <div class="photo photo--square" data-tone="1"><i data-icon="cat"></i></div>
+                  <div class="alertrow__main">
+                    <span class="tag tag--pending"
+                      ><i data-icon="restrict" data-class="icon--s"></i
+                      ><span data-t="profile.admin.deactivateRequest"></span
+                    ></span>
+                    <h3 data-t="demo.spot1.name"></h3>
+                    <p class="small muted">
+                      <span data-t="profile.admin.inactiveBy" data-v='{"name":"Dana K."}'></span> ·
+                      <span class="num" data-t="spot.ago.hours" data-v='{"n":2}'></span>
+                    </p>
+                  </div>
+                </div>
+                <div class="alertrow__actions">
+                  <button
+                    class="btn btn--small"
+                    type="button"
+                    data-go="approve-inactive"
+                    data-t="spot.admin.approve"
+                  ></button>
+                  <button
+                    class="btn btn--small btn--secondary"
+                    type="button"
+                    data-go="reject-inactive"
+                    data-t="spot.admin.reject"
+                  ></button>
+                </div>
+              </article>
             </div>
           </div>
 
-          <div class="scrim" data-when="approve reject"></div>
+          <div class="scrim" data-when="approve reject approve-inactive reject-inactive"></div>
           <aside class="sheet sheet--modal" role="dialog" aria-modal="true" data-when="approve">
             <h2 class="sheet__title" data-t="spot.admin.approve.confirmTitle"></h2>
             <p class="muted" data-t="spot.admin.approve.confirmText"></p>
@@ -512,6 +560,48 @@
               type="button"
               data-go="default"
               data-t="spot.admin.reject.confirmYes"
+            ></button>
+            <button
+              class="btn btn--quiet"
+              type="button"
+              data-go="default"
+              data-t="common.cancel"
+            ></button>
+          </aside>
+          <aside
+            class="sheet sheet--modal"
+            role="dialog"
+            aria-modal="true"
+            data-when="approve-inactive"
+          >
+            <h2 class="sheet__title" data-t="spot.admin.inactive.approveTitle"></h2>
+            <p class="muted" data-t="spot.admin.inactive.approveText"></p>
+            <button
+              class="btn btn--lg"
+              type="button"
+              data-go="default"
+              data-t="spot.admin.inactive.approveYes"
+            ></button>
+            <button
+              class="btn btn--quiet"
+              type="button"
+              data-go="default"
+              data-t="common.cancel"
+            ></button>
+          </aside>
+          <aside
+            class="sheet sheet--modal"
+            role="dialog"
+            aria-modal="true"
+            data-when="reject-inactive"
+          >
+            <h2 class="sheet__title" data-t="spot.admin.inactive.rejectTitle"></h2>
+            <p class="muted" data-t="spot.admin.inactive.rejectText"></p>
+            <button
+              class="btn btn--lg btn--danger"
+              type="button"
+              data-go="default"
+              data-t="spot.admin.inactive.rejectYes"
             ></button>
             <button
               class="btn btn--quiet"

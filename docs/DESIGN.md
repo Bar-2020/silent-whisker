@@ -305,8 +305,10 @@ Every component below, with its states, is drawn in `design/mocks/design-system.
   `design/mocks/design-system.html`.
 - **Disabled:** sunk fill (#eef1f5), grey ink, no pointer, no hover; the same everywhere, on the
   pinned bar too. The reason is always on the page: a hint nearby, or the label itself ("Already
-  reported"). A dull button with no clue is a bug. A form's main button is disabled while a required
-  part is missing (no photo, a refused photo, a daily limit reached).
+  reported", "Reported empty"). A dull button with no clue is a bug. A form's main button is disabled
+  while a required part is missing and nothing on the form says so (no photo, no place, a refused photo,
+  a daily limit reached). A form that names each missing field after the press (the first-run profile)
+  keeps its button enabled.
 - **Pending:** every button that sends something to the server keeps its size and colour and shows
   **only a 20 px spinner**; the label stays in the page, invisible, so the width does not change and a
   screen reader still hears it. It takes no taps (`aria-busy="true"`) and still shows focus. In the
@@ -363,6 +365,8 @@ text, a thermometer for a sick cat.
   a line) or a primary button and a quiet Cancel. Used for the map "+" (new spot, or a cat alert),
   confirming approve or reject, confirming a report, the actions on a chat message (copy, report; an
   admin also restricts or bans) and the language.
+- **Confirming something that cannot be undone** (deleting the account) is a dialog with a red button and
+  a quiet Cancel, never a single tap on the pinned bar.
 - **Menu:** a small floating card of 44 px rows (never more than three), for the three dots of a
   top bar or of a photo. Anything that needs a confirmation or more than three rows is a dialog.
 
