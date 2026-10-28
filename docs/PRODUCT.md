@@ -35,7 +35,7 @@ Cognito. Terraform, deployed from GitHub Actions with a deploy-only key (D-02).
    the spot's timers. Anyone at the spot can report "this spot was empty" (D-19).
 4. **Cats and the feed**: photos of cats (each must contain one and has a required name of 1 to 40 characters, R-34), at a spot or random with a
    location tag, in an Instagram-style feed, never on the map. Others like and comment (D-44, D-45).
-5. **Cat alerts**: a sick cat, a cat in danger or, not urgent, a cat that needs spaying or neutering (D-63), with a photo and a
+5. **Cat alerts**: a sick cat, a cat in danger or, not urgent, a cat that needs spaying or neutering (D-64), with a photo and a
    note, tagged from where the member stands. On the map for 6 hours (7 days for spay or neuter), then in a past-alerts list every member sees for 7 days; admins resolve or extend (D-41, D-42, R-24).
 6. **Chat**: small, per spot only; cat posts have comments instead (D-48). Automatic moderation. An admin can pause a spot's chat (R-33).
 7. **Profile**: at first sign-in the app asks for the full name, the city (the map opens there) and whether to show the

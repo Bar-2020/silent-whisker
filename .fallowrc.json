@@ -8,7 +8,7 @@
     "design/mocks/styles/*.css"
   ],
   "ignorePatterns": ["design/**/*.js", "design/**/*.mjs"],
-  "dynamicallyLoaded": ["lint/silent-whisker-plugin.js"],
+  "dynamicallyLoaded": ["lint/silent-whisker-plugin.js", "infra/app/spa-fallback.js"],
   "duplicates": {
     "mode": "strict"
   },

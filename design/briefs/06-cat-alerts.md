@@ -8,7 +8,7 @@ members nearby see it and go. Admins resolve or extend it.
 
 ## Outcome and proof
 - **Raise**: choose "in danger" or "sick" (two large options) or, calmer, a full-width "spay or neuter"
-  (not urgent, stays 7 days, D-63, Q44), photo (required, from the phone's
+  (not urgent, stays 7 days, D-64, Q44), photo (required, from the phone's
   own picker), short note (required, with a counter), location read at submit (shown as a status
   line: locating, good, too vague). Submit stays disabled until all four hold. After submit the
   alert is **in review** and is not on the map yet; the screen says so plainly and says when it
