@@ -269,7 +269,7 @@ depth.
 displacement and edge light the CSS cannot, in Chromium; Safari and Firefox get its blur and edge
 light without the displacement. Wrap the same content in it, keep the CSS glass above as the
 fallback, and keep the dim-then-tint rule so labels stay legible (the library's glass is clear on
-its own). Side by side over a live map: `design/mocks/glass-react.html`. The library sets inline
+its own). The library sets inline
 styles itself, which the no-inline-styles rule forbids in our code: a question for the owner (Q35). Leaflet
 also writes inline `style` attributes on its map, so the content security policy must allow `style-src-attr`.
 

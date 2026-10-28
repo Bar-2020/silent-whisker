@@ -2,7 +2,7 @@
 // Usage: node design/serve.mjs   then open http://localhost:4173/design/mocks/
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
-import { extname, join, normalize, resolve } from 'node:path';
+import { extname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
@@ -18,13 +18,13 @@ const TYPES = {
 };
 
 createServer(async (req, res) => {
-  const path = decodeURIComponent(new URL(req.url ?? '/', 'http://localhost').pathname);
-  const file = normalize(join(ROOT, path.endsWith('/') ? `${path}index.html` : path));
-  if (!file.startsWith(ROOT)) {
-    res.writeHead(403).end();
-    return;
-  }
   try {
+    const path = decodeURIComponent(new URL(req.url ?? '/', 'http://localhost').pathname);
+    const file = normalize(join(ROOT, path.endsWith('/') ? `${path}index.html` : path));
+    if (!file.startsWith(ROOT + sep)) {
+      res.writeHead(403).end();
+      return;
+    }
     if (!(await stat(file)).isFile()) throw new Error('not a file');
     res.writeHead(200, {
       'content-type': TYPES[extname(file)] ?? 'application/octet-stream',

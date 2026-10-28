@@ -23,7 +23,7 @@
       return `⚠ ${key}`;
     }
     return Object.entries(vars || {}).reduce(
-      (text, [name, value]) => text.replaceAll(`{${name}}`, isolate(value)),
+      (text, [name, value]) => text.replaceAll(`{${name}}`, () => isolate(value)),
       raw
     );
   }
@@ -46,6 +46,8 @@
     root.querySelectorAll('[data-t]').forEach((el) => {
       el.textContent = t(el.dataset.t, parseVars(el));
     });
+    /* Locale text is trusted and written by us. The real app must not copy this: it would build
+       nodes, or escape the variables, so a typed name could never become markup. */
     root.querySelectorAll('[data-t-html]').forEach((el) => {
       el.innerHTML = t(el.dataset.tHtml, parseVars(el));
     });
@@ -347,36 +349,6 @@
     return spot.status === 'pending' ? t('map.legend.pending') : t(`map.legend.${spot.level}`);
   }
 
-  function mountMap(el, config) {
-    if (!window.L) {
-      el.dataset.failed = 'true';
-      return null;
-    }
-    const map = window.L.map(el, { zoomControl: false, attributionControl: false }).setView(
-      config.center,
-      config.zoom
-    );
-    window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(
-      map
-    );
-    const layers = [];
-    const add = (position, html, onClick) => {
-      const marker = window.L.marker(position, {
-        icon: window.L.divIcon({ className: '', html, iconSize: null }),
-        keyboard: true,
-        title: config.label || '',
-      }).addTo(map);
-      if (onClick) marker.on('click', onClick);
-      layers.push(marker);
-    };
-    (config.spots || []).forEach((spot) => add([spot.lat, spot.lng], pinHtml(spot), spot.onClick));
-    (config.alerts || []).forEach((item) =>
-      add([item.lat, item.lng], signHtml(item), item.onClick)
-    );
-    if (config.here) add(config.here, '<div class="here"></div>');
-    return map;
-  }
-
   /* The map credit OpenStreetMap asks for: visible on the map when it opens, folded into a small
      (i) button after five seconds (allowed by their attribution guidelines), and shown again by a tap. */
   const CREDIT_SECONDS = 5;
@@ -416,7 +388,6 @@
     getSub: () => sub,
     markerOptions,
     pinLabel,
-    mountMap,
     addCredit,
     pinHtml,
     signHtml,
