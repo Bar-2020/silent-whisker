@@ -128,7 +128,7 @@ One phase, one PR or smaller. Do not start a phase while the previous one is hal
    layer; municipal stations become loggable (D-35). Proposed: when several members dispute one
    member's logs, an admin gets a flag and that member's next logs need a photo.
 5. Cats, the feed, likes, comments, chat.
-6. Cat alerts, stats, landing-page ads, donation link, launch checklist (privacy policy, terms, Hebrew moderation test).
+6. Cat alerts, stats, landing-page ads, donation link, launch checklist (privacy policy, terms, Hebrew text moderation test).
 
 ## Evidence on Hand
 
@@ -145,5 +145,5 @@ system: Phase 2 picks the look and writes DESIGN.md. No reference apps yet; do n
    rather than relying on self-reported claims.
 4. Cost-bounded by design: every metered call runs through per-member limits and a daily circuit breaker, so growth in usage can
    never produce a surprise bill.
-5. Hebrew and Israel first: RTL and Hebrew moderation are launch requirements, not a later
-   localisation pass.
+5. Hebrew and Israel first: RTL and Hebrew text moderation are launch requirements, not a later
+   localisation pass. Writing inside a photo is checked in English only (D-50).
