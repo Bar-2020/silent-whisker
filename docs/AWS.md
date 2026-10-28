@@ -44,7 +44,7 @@ big decision.
 | Guardrails text content filters | $0.15 per 1,000 text units (1 unit is up to 1,000 characters), same for Classic and Standard, no free tier | S9 |
 | Cognito | 10,000 MAU always free on Lite or Essentials (Plus has none); Google is a social provider, so it counts here, not in the 50 MAU SAML/OIDC bucket | S11, S18 |
 | API Gateway HTTP API (D-38) | $1.00 per million calls up to 300M a month, then $0.90 (US prices in the page's examples; the Stockholm price was not read). The free tier is 1M calls a month for 12 months | S27 |
-| EventBridge Scheduler (D-53) | always free: 14,000,000 invocations a month, then $1.00 per million | S28 |
+| EventBridge Scheduler (D-53) | free tier: 14,000,000 invocations a month (the page does not say for how long), then $1.00 per million; we use about 30 | S28 |
 | Lambda | always free: 1M requests and 400,000 GB-seconds a month | S12, S14 |
 | DynamoDB | always free: 25 GB, 25 WCU, 25 RCU, but only for provisioned capacity. On-demand in Tel Aviv: $0.85 per million writes, $0.17 per million reads | S12, S15 |
 | S3 | no free allowance for a new account. Standard per GB-month: $0.0250 Tel Aviv, $0.0245 Frankfurt, $0.0230 Ireland | S12, S16 |
