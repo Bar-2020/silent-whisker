@@ -30,6 +30,16 @@ data "aws_cloudfront_cache_policy" "optimized" {
   name = "Managed-CachingOptimized"
 }
 
+# The app draws its own pages in the browser (/profile, /auth/callback), but the bucket holds one
+# page, index.html, and for an address with no file S3 answers "Access Denied". This function
+# serves index.html for those addresses (D-63). It is attached to the files only, never to /api.
+resource "aws_cloudfront_function" "spa_fallback" {
+  name    = "silent-whisker-spa-fallback"
+  runtime = "cloudfront-js-2.0"
+  publish = true
+  code    = file("${path.module}/spa-fallback.js")
+}
+
 resource "aws_cloudfront_distribution" "site" {
   enabled             = true
   default_root_object = "index.html"
@@ -49,6 +59,11 @@ resource "aws_cloudfront_distribution" "site" {
     cached_methods         = ["GET", "HEAD"]
     cache_policy_id        = data.aws_cloudfront_cache_policy.optimized.id
     compress               = true
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.spa_fallback.arn
+    }
   }
 
   restrictions {

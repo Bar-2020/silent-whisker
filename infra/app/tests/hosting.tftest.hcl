@@ -4,6 +4,11 @@ mock_provider "aws" {
   mock_data "aws_cloudfront_cache_policy" {
     defaults = { id = "658327ea-f89d-4fab-a63d-7e88639e58f6" }
   }
+
+  # The distribution checks the function ARN's shape, so the mock needs a realistic one.
+  mock_resource "aws_cloudfront_function" {
+    defaults = { arn = "arn:aws:cloudfront::123456789012:function/silent-whisker-spa-fallback" }
+  }
 }
 
 run "bucket_is_private" {
@@ -62,5 +67,22 @@ run "cloudfront_serves_index_over_https_at_the_cheapest_class" {
   assert {
     condition     = aws_cloudfront_distribution.site.price_class == "PriceClass_100"
     error_message = "Price Class 100: cheapest, and still covers Israel."
+  }
+}
+
+run "pages_without_a_file_serve_the_app" {
+  command = apply
+
+  assert {
+    condition = anytrue([
+      for f in one(aws_cloudfront_distribution.site.default_cache_behavior).function_association :
+      f.event_type == "viewer-request" && f.function_arn == aws_cloudfront_function.spa_fallback.arn
+    ])
+    error_message = "The files' behavior must run the page fallback on every request (D-63), or /auth/callback is Access Denied."
+  }
+
+  assert {
+    condition     = aws_cloudfront_function.spa_fallback.runtime == "cloudfront-js-2.0" && aws_cloudfront_function.spa_fallback.publish
+    error_message = "The fallback must be published and use the current runtime, or CloudFront keeps serving the old code."
   }
 }

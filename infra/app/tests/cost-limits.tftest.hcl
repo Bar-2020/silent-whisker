@@ -5,6 +5,11 @@ mock_provider "aws" {
     defaults = { id = "658327ea-f89d-4fab-a63d-7e88639e58f6" }
   }
 
+  # The distribution checks the function ARN's shape, so the mock needs a realistic one.
+  mock_resource "aws_cloudfront_function" {
+    defaults = { arn = "arn:aws:cloudfront::123456789012:function/silent-whisker-spa-fallback" }
+  }
+
   # A subscription checks the topic ARN's shape, so the mock needs a realistic one.
   mock_resource "aws_sns_topic" {
     defaults = { arn = "arn:aws:sns:eu-north-1:123456789012:silent-whisker-cost-alerts" }

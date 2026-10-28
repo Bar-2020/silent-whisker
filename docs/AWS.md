@@ -38,6 +38,7 @@ big decision.
 |---|---|---|
 | CloudFront, pay-as-you-go (the default) | always free: 1 TB out and 10,000,000 requests a month | S10 |
 | CloudFront flat-rate Free plan | $0. Includes WAF (5 rules) and IP-based rate limiting (block an IP over a set number of requests in 5 minutes). 1M requests and 100 GB a month are not hard limits: no overage charge, delivery may be adjusted above them. Pro is $15 a month for 10M requests. Appears impossible in this project: its API is not on the list its managed policies allow in us-east-1 (untested, D-38, D-49). 5 cache behaviors, 3 Free plans per account | S10, S21 |
+| CloudFront Functions (D-63) | always free on both plans: 2,000,000 invocations a month, then $0.10 per million. Lambda@Edge has no free tier and may not be used in this project | S10, S28 |
 | AWS WAF, pay-as-you-go | $5 per web ACL and $1 per rule a month, $0.60 per million requests, on top of CloudFront. A rate-based rule is an ordinary rule | S22 |
 | Rekognition DetectLabels, DetectModerationLabels | first 1M images a month: $1.00 per 1,000 in us-east-1 and Ireland, $1.20 in Tel Aviv and Frankfurt | S8 |
 | Rekognition free tier | the page still shows 12 months of 1,000 images a month; new accounts get credits instead, plan on none | S8, S12 |
@@ -129,3 +130,4 @@ member's daily allowance first. The profile is checked on the spot and refused w
   https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier-plans.html (read 2026-10-17)
 - S26: https://docs.aws.amazon.com/accounts/latest/reference/scps-and-rcps-for-projects.html (read 2026-10-18)
 - S27: https://aws.amazon.com/api-gateway/pricing/ (read 2026-10-28)
+- S28: https://aws.amazon.com/pm/cloudfront/ (read 2026-10-28)
