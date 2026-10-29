@@ -413,7 +413,7 @@
             ['confirm', 'Confirm dialog'],
           ],
           q: [25],
-          note: '`DELETE /profile` (D-71). A banned member asks by email instead.',
+          note: '`DELETE /profile` (D-71). A banned member can use it too; the ban stays.',
         },
         {
           title: 'Admin: waiting spots',

@@ -27,7 +27,7 @@ numbers: the numbers are tabular and the same size as the labels.
 ## States and ranges
 Photo chosen, not chosen, none from Google; location granted, denied, not asked; saving; city not
 found; text refused; empty admin list; banned member (a persistent notice that writes are off;
-reading still works, D-72). Name up to 60 characters.
+reading still works, and the account can still be deleted, D-72, D-71). Name up to 60 characters.
 
 ## Interaction and layout
 Phone: one scroll with grouped rows. Desktop: two columns, identity and stats at the inline-start,

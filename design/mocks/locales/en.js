@@ -491,7 +491,7 @@ window.MOCK_LOCALES.en = {
     'Anyone who feeds cats must follow the rules of the place: the city bylaws, the building or yard rules, and a licence where one is required. The app does not decide what is allowed.',
   'legal.terms.s4.h': 'Removal from the service',
   'legal.terms.s4.p':
-    'Admins can restrict chat or block members who break the terms. You can delete your account at any time in Profile; a blocked member asks by email.',
+    'Admins can restrict chat or block members who break the terms. You can delete your account at any time in Profile.',
   'legal.terms.s5.h': 'Changes to the terms',
   'legal.terms.s5.p':
     'When the terms change, the app asks you to accept the new version at your next visit. If you do not accept, you cannot keep using the app.',
@@ -733,7 +733,7 @@ window.MOCK_LOCALES.en = {
     'A photo of a cat that is not at a spot keeps only its neighbourhood, never an exact point. You can turn location off at any time in your browser settings: the app still works, and a log without a good location is saved as not verified.',
   'legal.privacy.s6.h': 'Your rights and deleting your account',
   'legal.privacy.s6.p':
-    'You can see your details in Profile and change your name, city and photo choice there. You can ask to see all the data we hold about you, to correct it or to delete it by writing to <a href="mailto:silentwhisker.ai@gmail.com" dir="ltr">silentwhisker.ai@gmail.com</a>; we answer within 30 days. You can delete your account yourself in Profile: your name and sign-in are deleted, your photos, comments, messages and cat alerts are removed, and the spots and logs you added stay without your name. You can withdraw your consent to location at any time in your browser. This policy is written under the Israeli Protection of Privacy Law, as amended. If you believe your privacy was harmed, you may complain to the Privacy Protection Authority.',
+    'You can see your details in Profile and change your name, city and photo choice there. You can ask to see all the data we hold about you, to correct it or to delete it by writing to <a href="mailto:silentwhisker.ai@gmail.com" dir="ltr">silentwhisker.ai@gmail.com</a>; we answer within 30 days. You can delete your account yourself in Profile: your name and sign-in are deleted, your photos, comments, messages and cat alerts are removed, and the spots and logs you added stay without your name. If the account was blocked, its sign-in stays switched off, so the block stays. You can withdraw your consent to location at any time in your browser. This policy is written under the Israeli Protection of Privacy Law, as amended. If you believe your privacy was harmed, you may complain to the Privacy Protection Authority.',
   'legal.privacy.s7.h': 'Changes to this policy',
   'legal.privacy.s7.p':
     'When the policy changes, the app asks you to accept the new version at your next visit.',

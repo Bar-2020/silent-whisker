@@ -3,7 +3,7 @@
 Draft. CloudFront in front of an API Gateway HTTP API and Lambda (D-38); every path below is served under `/api/` (D-60). JSON. Errors are `{ "code": "SOME_CODE" }` with the HTTP status. A per-member limit answers
 `RATE_LIMITED` (429, with `Retry-After`, R-21); the front door's own throttle answers a bare 429 (D-60).
 "Member" means a valid Google sign-in through Cognito, sent as the ID token (D-59). Every route needs one (R-22).
-A banned member can call only the reads: every `GET` and `POST /cats/feed` (R-08, D-72). A member who has not accepted the current terms can call only `GET`, `PATCH` and `DELETE /profile`; every other route answers `TERMS_REQUIRED` (R-36).
+A banned member can call only the reads, every `GET` and `POST /cats/feed`, and `DELETE /profile` (R-08, D-72, D-71). A member who has not accepted the current terms can call only `GET`, `PATCH` and `DELETE /profile`; every other route answers `TERMS_REQUIRED` (R-36).
 
 | Method and path | Who | Does | Refusals |
 |---|---|---|---|
@@ -31,7 +31,7 @@ A banned member can call only the reads: every `GET` and `POST /cats/feed` (R-08
 | `POST /reports` | member | Report content (`target_type`, `target_id`: it is hidden from the reporter at once), or a spot problem (`target_type` `spot`, a `reason`: `wrong_place`, `gone`, `duplicate` or `other`: nothing is hidden). One report per member per item (D-81) | `BANNED`, `INVALID_INPUT` |
 | `GET /profile` | member | The caller's profile: name, city, photo choice, `status` and whether the current terms were accepted. The first call after sign-in creates it from the token (D-59), with no name or city yet. A banned member still gets it, so the app can say so | |
 | `PATCH /profile` | member | Update profile: full name and city (2 to 35 characters each, D-61), show the Google photo (asked at first sign-in, D-27), and `accept_terms: true` (required on the first save, and again when the terms change, D-69). Name and city are checked on the spot and saved only if the check passes (D-62) | `BANNED`, `DAILY_LIMIT` (5 saves a day, D-61), `INVALID_INPUT` (also a missing `accept_terms`), `MODERATION_REJECTED`, `CITY_NOT_FOUND` (D-29), `CHECK_UNAVAILABLE` (503: the check cannot run, the spending cap is reached or AWS is down, D-62) |
-| `DELETE /profile` | member | Delete the account (D-71): the member's name and sign-in go, their content is removed or made anonymous. Works before the terms are accepted. A banned member asks by email instead (D-71) | `BANNED` |
+| `DELETE /profile` | member | Delete the account (D-71): the member's name and sign-in go, their content is removed or made anonymous. Works before the terms are accepted and for a banned member, whose ban stays (D-71) | |
 | `POST /admin/users/{id}/ban`, `.../unban`, `.../restrict-chat`, `.../unrestrict-chat` | admin | Ban or restrict chat, and undo either (D-81) | `FORBIDDEN` |
 | `GET /admin/reports?status=open` | admin | Open reports, content and spot problems, each with its `reason` and the target's exact point when it has one, so the app sorts them by distance (D-78, D-81) | `FORBIDDEN` |
 | `POST /admin/reports/{target_id}/hide`, `.../keep` | admin | Close every open report on an item: hide the item for everyone, or keep it. `hide` is for content only; a spot problem is closed with `keep` after the admin acted, for a custom spot through `PATCH /spots/{id}` (D-81) | `FORBIDDEN`, `INVALID_INPUT` |

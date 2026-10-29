@@ -12,7 +12,7 @@ proposed values that live in `shared/constants/` (see [DECISIONS.md](DECISIONS.m
 | R-05 | Every metered AWS call goes through one function, `meteredCall` in `backend/shared/metered-call.ts`, that checks the global circuit breaker (a lint rule fails a file that imports a paid AWS client without it), and every paid action is also under a per-member daily limit, counted when the action starts (D-52). Once the breaker has tripped, new content is saved pending and checked after the UTC day resets (D-53); nothing is refused for it and nothing is shown before it passes. The exception is the profile name and city: they are checked on the spot and refused when the check cannot run (D-62). | Lambda |
 | R-06 | Timestamps are stored in UTC. | Lambda |
 | R-07 | User content is never hard deleted. Status changes only. | Lambda |
-| R-08 | A banned user can read but not write: every write answers `BANNED`, and only reads work (the `GET` routes and the feed, which is a `POST` that writes nothing, D-72). Chat-restricted users cannot post chat messages or comments. | Lambda |
+| R-08 | A banned user can read but not write: every write answers `BANNED`, and only reads work (the `GET` routes and the feed, which is a `POST` that writes nothing, D-72), plus deleting their own account (D-71). Chat-restricted users cannot post chat messages or comments. | Lambda |
 | R-09 | A log counts toward a spot's timers only if it passes the proof checks (below). | Lambda |
 | R-10 | One counted feeding and one counted water log per spot per member per 3 hours. | Lambda |
 | R-11 | Photos are resized on the client to at most 1600 px and 500 KB before upload. | Lambda (size check) |
