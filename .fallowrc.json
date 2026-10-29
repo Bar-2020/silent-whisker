@@ -33,10 +33,17 @@
     "maxCognitive": 12,
     "maxUnitSize": 40
   },
-  // The areas meet only in shared/ (CLAUDE.md, Folder structure). frontend/src/features/<feature>
-  // zones are added with the first feature; __tests__/fallow-config.test.ts fails until they are.
+  // The areas meet only in shared/, and features never import each other (CLAUDE.md, Folder
+  // structure). autoDiscover makes every folder in frontend/src/features its own zone. The two
+  // "matched 0 files" warnings stop with the first file in features/ and in frontend/src/shared/.
   "boundaries": {
     "zones": [
+      {
+        "name": "features",
+        "patterns": ["frontend/src/features/**"],
+        "autoDiscover": ["frontend/src/features"]
+      },
+      { "name": "frontend-shared", "patterns": ["frontend/src/shared/**"] },
       { "name": "frontend", "patterns": ["frontend/**"] },
       { "name": "backend", "patterns": ["backend/**"] },
       { "name": "shared", "patterns": ["shared/**"] },
@@ -46,12 +53,25 @@
       { "name": "design", "patterns": ["design/**"] }
     ],
     "rules": [
-      { "from": "frontend", "allow": ["shared"] },
+      { "from": "features", "allow": ["frontend-shared", "shared"] },
+      { "from": "frontend-shared", "allow": ["shared"] },
+      { "from": "frontend", "allow": ["features", "frontend-shared", "shared"] },
       { "from": "backend", "allow": ["shared"] },
       { "from": "shared", "allow": [] },
       { "from": "infra", "allow": [] },
       { "from": "tooling", "allow": ["shared"] },
-      { "from": "tests", "allow": ["frontend", "backend", "shared", "infra", "tooling"] },
+      {
+        "from": "tests",
+        "allow": [
+          "frontend",
+          "features",
+          "frontend-shared",
+          "backend",
+          "shared",
+          "infra",
+          "tooling"
+        ]
+      },
       { "from": "design", "allow": [] }
     ],
     // A new top-level folder must be given a zone, not slip past the rules above.

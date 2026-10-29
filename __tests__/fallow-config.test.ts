@@ -1,5 +1,5 @@
 import { spawnSync } from 'child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { dirname, join, resolve } from 'path';
 import { describe, expect, it } from 'vite-plus/test';
@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vite-plus/test';
 /**
  * A boundary zone whose pattern matches nothing only warns, so a typo in .fallowrc.json would
  * switch a rule off and nobody would see it. This lays out a project with one import across each
- * line the areas must not cross and asserts the real config refuses exactly those.
+ * line the areas and features must not cross and asserts the real config refuses exactly those.
  */
 
 const REPO_ROOT = resolve(__dirname, '..');
@@ -18,9 +18,16 @@ const FILES: Record<string, string> = {
   'shared/constants.ts': 'export const C = 1;',
   'backend/handler.ts': 'export const B = 1;',
   'frontend/src/screen.ts': "import { C } from '../../shared/constants';\nexport const S = C;",
-  // Allowed: the areas meet in shared/, and tests may reach everything.
+  // Allowed: the areas meet in shared/, a feature may use frontend/src/shared and its own files,
+  // the app shell may use features, and tests may reach everything.
+  'frontend/src/shared/button.ts':
+    "import { C } from '../../../shared/constants';\nexport const U = C;",
+  'frontend/src/features/map/marker.ts': 'export type Marker = number;\nexport const M = 1;',
+  'frontend/src/features/map/index.ts':
+    "import { U } from '../../shared/button';\nimport { M } from './marker';\nexport const F = [U, M];",
+  'frontend/src/main.ts': "import { F } from './features/map/index';\nexport const A = F;",
   '__tests__/all.test.ts':
-    "import { B } from '../backend/handler';\nimport { S } from '../frontend/src/screen';\nexport const T = [B, S];",
+    "import { B } from '../backend/handler';\nimport { S } from '../frontend/src/screen';\nimport { F } from '../frontend/src/features/map/index';\nexport const T = [B, S, F];",
   // Refused.
   'frontend/src/reads-backend.ts':
     "import { B } from '../../backend/handler';\nexport const R = B;",
@@ -28,6 +35,11 @@ const FILES: Record<string, string> = {
   'shared/reads-backend.ts': "import { B } from '../backend/handler';\nexport const R = B;",
   'infra/app/reads-shared.js':
     "import { C } from '../../shared/constants.js';\nexport const R = C;",
+  'frontend/src/features/spots/index.ts': "import { F } from '../map/index';\nexport const R = F;",
+  'frontend/src/features/spots/types.ts':
+    "import type { Marker } from '../map/marker';\nexport type R = Marker;",
+  'frontend/src/shared/reads-feature.ts':
+    "import { F } from '../features/map/index';\nexport const R = F;",
   // A new top-level folder with no zone.
   'newarea/orphan.ts': 'export const O = 1;',
 };
@@ -62,13 +74,16 @@ function analyseFixture(): Report {
 const report = analyseFixture();
 
 describe('the architecture boundaries in .fallowrc.json', () => {
-  it('refuse an import between the areas, and only those', () => {
+  it('refuse an import between the areas or between features, and only those', () => {
     const refused = report.boundary_violations
       .map((v) => `${v.from_path} -> ${v.to_path}`)
       .sort((a, b) => a.localeCompare(b));
     expect(refused).toEqual([
       'backend/reads-frontend.ts -> frontend/src/screen.ts',
+      'frontend/src/features/spots/index.ts -> frontend/src/features/map/index.ts',
+      'frontend/src/features/spots/types.ts -> frontend/src/features/map/marker.ts',
       'frontend/src/reads-backend.ts -> backend/handler.ts',
+      'frontend/src/shared/reads-feature.ts -> frontend/src/features/map/index.ts',
       'infra/app/reads-shared.js -> shared/constants.ts',
       'shared/reads-backend.ts -> backend/handler.ts',
     ]);
@@ -76,13 +91,5 @@ describe('the architecture boundaries in .fallowrc.json', () => {
 
   it('refuse a source file in a folder no zone covers', () => {
     expect(report.boundary_coverage_violations.map((v) => v.path)).toEqual(['newarea/orphan.ts']);
-  });
-
-  it('get a zone per feature as soon as frontend/src/features exists', () => {
-    // Without autoDiscover a feature could import another one. Add the zones (see
-    // .claude/instructions/extensibility.md) in the same change that creates the first feature.
-    const needsZones = existsSync(join(REPO_ROOT, 'frontend/src/features'));
-    const hasZones = readFileSync(CONFIG, 'utf8').includes('"autoDiscover"');
-    expect({ needsZones, hasZones }).not.toEqual({ needsZones: true, hasZones: false });
   });
 });
