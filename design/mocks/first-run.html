@@ -84,12 +84,10 @@
         </fieldset>
 
         <div class="field">
-          <label class="choice choice--row">
-            <input type="checkbox" name="terms" aria-required="true" />
-            <span class="choice__tile">
-              <span data-t-html="firstrun.terms.label"></span>
-              <span class="choice__mark"><i data-icon="check"></i></span>
-            </span>
+          <label class="check">
+            <input type="checkbox" id="terms" name="terms" aria-required="true" />
+            <span class="check__box"><i data-icon="check"></i></span>
+            <span class="check__text" data-t-html="firstrun.terms.label"></span>
           </label>
           <p class="field__error" data-when="errors">
             <span data-t="firstrun.terms.required"></span>

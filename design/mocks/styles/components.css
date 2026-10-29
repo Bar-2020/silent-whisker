@@ -572,6 +572,92 @@ body[data-chrome='tabs'] .main {
   margin-inline-start: auto;
 }
 
+/* ---------- Checkbox: the box always shows, the words sit beside it ---------- */
+.check {
+  position: relative;
+  display: flex;
+  gap: var(--s-3);
+  align-items: flex-start;
+  padding-block: var(--s-2);
+  cursor: pointer;
+}
+
+.check input {
+  position: absolute;
+  inset-block-start: var(--s-2);
+  inset-inline-start: 0;
+  inline-size: 28px;
+  block-size: 28px;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.check__box {
+  display: grid;
+  flex: none;
+  place-items: center;
+  inline-size: 28px;
+  block-size: 28px;
+  border: 2px solid var(--line-strong);
+  border-radius: var(--r-s);
+  background: var(--surface);
+  color: var(--dado-ink);
+  transition:
+    background-color var(--dur-1) var(--ease),
+    border-color var(--dur-1) var(--ease);
+}
+
+.check__box .icon {
+  inline-size: 20px;
+  block-size: 20px;
+  stroke-width: 3;
+  opacity: 0;
+}
+
+.check__text {
+  padding-block-start: var(--s-1);
+  line-height: 1.4;
+}
+
+.check__text a {
+  font-weight: 600;
+}
+
+.check:hover .check__box,
+.check input:checked + .check__box {
+  border-color: var(--dado);
+}
+
+.check input:checked + .check__box {
+  background: var(--dado);
+}
+
+.check input:checked + .check__box .icon {
+  opacity: 1;
+}
+
+.check input:focus-visible + .check__box {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.check input[aria-invalid='true'] + .check__box {
+  border-color: var(--bad);
+  background: var(--bad-tint);
+}
+
+.check input:disabled + .check__box {
+  border-color: var(--line);
+  background: var(--surface-sunk);
+  color: var(--ink-3);
+}
+
+.check:has(input:disabled) {
+  color: var(--ink-3);
+  cursor: not-allowed;
+}
+
 /* ---------- Lists ---------- */
 .rows {
   border-block: 1px solid var(--line);

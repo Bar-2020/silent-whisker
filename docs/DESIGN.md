@@ -126,6 +126,13 @@ components:
   choice-tile-chosen:
     backgroundColor: "{colors.slate-blue-tint}"
     textColor: "{colors.ink}"
+  checkbox:
+    backgroundColor: "{colors.wall}"
+    rounded: "{rounded.sm}"
+    height: "28px"
+  checkbox-ticked:
+    backgroundColor: "{colors.slate-blue}"
+    textColor: "{colors.wall}"
   nav-glass-item-active:
     textColor: "{colors.wall}"
     rounded: "24px"
@@ -335,7 +342,15 @@ separated by space (24 px between posts) or by a hairline between rows.
 - **Placeholder:** follows the page direction (at the right in Hebrew); words typed in the box choose
   their own direction.
 - **Choice tiles:** a real radio drawn as a large tile; chosen = slate mist fill, slate ring and a
-  check mark. Used for log kind, alert kind, address or location. A checkbox that must be ticked, such as the terms on the sign-up form (D-69), is the same tile with a real checkbox and the links inside its label; unticked on submit it shows the ordinary field error.
+  check mark. Used for log kind, alert kind, address or location.
+
+### Checkbox
+A yes that must be given on purpose, such as the terms on the sign-up form (D-69). A 28 px rounded box
+with a 2 px grey-blue edge that **always shows**, empty, before it is ticked; ticked is a slate blue fill
+and a white check. The words sit beside it, the box at the inline-start; a link inside the words keeps
+its own tap, and the rest of the line toggles the box. Unticked on submit, the box takes a red edge and
+a pale red fill and the ordinary field error appears below it; disabled is grey. It is never a tile: a
+tile hides its mark until it is chosen, so an unchosen tile does not look like a checkbox.
 
 ### Navigation (the glass)
 - **Phone bar:** 4 items (Map, Explore, Alerts, Profile), icon over a 13 px label, active item on a lighter pill (`rgb(255 255 255
