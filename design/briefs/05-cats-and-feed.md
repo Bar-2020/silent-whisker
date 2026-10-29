@@ -37,7 +37,7 @@ works" note (7 days, about 25 km, most liked first).
 ## Boundaries
 No follows, no hashtags, no shares, no profile pages of other members. An author can remove their
 own photo (menu on the photo) and their own comment (a button on it), each with a confirmation dialog
-(R-37, D-76).
+(R-38, D-80).
 
 ## Open decisions
 Q16 (the spot picker), Q18, Q20.

@@ -11,12 +11,12 @@ Four steps, each one screen, each skippable only where the spec says so:
 
 1. **Sign in with Google** (button on the landing page; Cognito's hosted Google screen follows,
    which we cannot restyle fully, Q7).
-2. **Sign-up form** (one screen, three fields and the terms checkbox, D-65): full name (required free text, with a line saying every member sees it, D-66), city
+2. **Sign-up form** (one screen, three fields and the terms checkbox, D-69): full name (required free text, with a line saying every member sees it, D-70), city
    (required free text, looked up by the server on submit, no autocomplete), and "show my Google
    photo?" with two choices and **no pre-selected answer**. Without a Google photo the second
    question is hidden and initials are used. Last, a required checkbox: "accept the terms of use and the
    privacy policy", both linked; an unticked box gives an inline error like the other fields. A refused
-   name says so and offers the contact address (D-70).
+   name says so and offers the contact address (D-74).
 3. **Install from the browser** (D-01): one screen with the same per-browser guide as Profile (iPhone,
    Android, Chrome or Edge, Safari on a Mac), one Continue button, and a line saying it can be done
    later from Profile.

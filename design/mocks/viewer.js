@@ -51,7 +51,7 @@
             ['nophoto', 'No Google photo'],
           ],
           q: [12, 27],
-          note: 'Three questions and the terms checkbox (D-65); no answer to the photo question is pre-selected.',
+          note: 'Three questions and the terms checkbox (D-69); no answer to the photo question is pre-selected.',
         },
         {
           title: 'Install from the browser',
@@ -165,7 +165,7 @@
           screen: 'detail',
           states: [['red/report-problem', 'Choose a reason']],
           q: [],
-          note: 'Wrong place, gone, duplicate or other, then a short toast. It hides nothing: the report waits in the admin list (D-77).',
+          note: 'Wrong place, gone, duplicate or other, then a short toast. It hides nothing: the report waits in the admin list (D-81).',
         },
         {
           title: 'New spot',
@@ -409,7 +409,7 @@
             ['confirm', 'Confirm dialog'],
           ],
           q: [25],
-          note: '`DELETE /profile` (D-67). A banned member asks by email instead.',
+          note: '`DELETE /profile` (D-71). A banned member asks by email instead.',
         },
         {
           title: 'Admin: waiting spots',
@@ -435,7 +435,7 @@
             ['empty', 'Empty'],
           ],
           q: [6],
-          note: 'Content reports and spot problems, nearest first (D-74, D-77). `GET /admin/reports`.',
+          note: 'Content reports and spot problems, nearest first (D-78, D-81). `GET /admin/reports`.',
         },
       ],
     },
@@ -571,7 +571,7 @@
           ['filled', 'Filled'],
         ],
         q: [12],
-        note: 'With the terms checkbox (D-65).',
+        note: 'With the terms checkbox (D-69).',
       },
       {
         title: '3. Install from the browser',

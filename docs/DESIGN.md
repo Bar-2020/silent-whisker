@@ -265,7 +265,7 @@ depth.
   bottom rim and a soft inner glow. The map and the page show through it. It falls back to a solid
   slate blue #2d4467 when `backdrop-filter` is unsupported or `prefers-reduced-transparency` is set.
 
-**In the React app** the glass navigation is the library `liquid-glass-react` (MIT, D-69), used in one wrapper
+**In the React app** the glass navigation is the library `liquid-glass-react` (MIT, D-73), used in one wrapper
 component. It adds the lens-like bend and edge light the CSS cannot, in Chromium; Safari and Firefox get its blur and
 edge light without the bend. The mocks are plain HTML, so they show only the CSS glass above; the real app wraps
 the same content in the library. The CSS above stays as the fallback (blur off, reduced transparency) and as the
@@ -335,7 +335,7 @@ separated by space (24 px between posts) or by a hairline between rows.
 - **Placeholder:** follows the page direction (at the right in Hebrew); words typed in the box choose
   their own direction.
 - **Choice tiles:** a real radio drawn as a large tile; chosen = slate mist fill, slate ring and a
-  check mark. Used for log kind, alert kind, address or location. A checkbox that must be ticked, such as the terms on the sign-up form (D-65), is the same tile with a real checkbox and the links inside its label; unticked on submit it shows the ordinary field error.
+  check mark. Used for log kind, alert kind, address or location. A checkbox that must be ticked, such as the terms on the sign-up form (D-69), is the same tile with a real checkbox and the links inside its label; unticked on submit it shows the ordinary field error.
 
 ### Navigation (the glass)
 - **Phone bar:** 4 items (Map, Explore, Alerts, Profile), icon over a 13 px label, active item on a lighter pill (`rgb(255 255 255
@@ -392,7 +392,7 @@ Each of food and water is a two-line row: icon in a tinted circle, label and lev
 hours ago, full bowl" in tabular figures and a small "the bowl is empty" button. When the level is
 already red the button is disabled and reads "Already reported". The log form is three tiles (full
 bowl, partial bowl, water) and the Save button on the pinned bar, which turns pending while it
-sends; the result is a notice, never a distance. For 10 minutes the notice has a **Cancel this log** button and the member's own row in History a quiet Cancel: both open a confirmation dialog (a red button, and "Keep the log" as the quiet one), then a grey notice says the spot is back as it was (R-36).
+sends; the result is a notice, never a distance. For 10 minutes the notice has a **Cancel this log** button and the member's own row in History a quiet Cancel: both open a confirmation dialog (a red button, and "Keep the log" as the quiet one), then a grey notice says the spot is back as it was (R-37).
 
 ### Spot page
 One screen on a phone: a top bar (back, name, share, menu), a head row (photo, address, **Navigate**), four
@@ -401,7 +401,7 @@ words. The Log tab fits 360 x 740 with no scrolling: two state rows, three tiles
 text and the pinned bar. **Cats:** a small "Share a photo here" button beside the title, then a
 three-column grid of square photos. **Chat:** the real thread right in the tab, with the composer
 pinned at the bottom: there is no button to another page. **History:** who logged what and when; a log
-that was not verified is not listed. The share button sends the name and the link through the phone's share sheet (D-79). The menu has "Report a problem with this spot" (a dialog with four reasons: wrong place, gone, listed twice, something else; it hides nothing, D-77); the creator and every admin also get Edit,
+that was not verified is not listed. The share button sends the name and the link through the phone's share sheet (D-83). The menu has "Report a problem with this spot" (a dialog with four reasons: wrong place, gone, listed twice, something else; it hides nothing, D-81); the creator and every admin also get Edit,
 and "Mark inactive": for a creator it is a request that needs an admin's approval (the spot stays
 active meanwhile), for an admin it applies at once. **Navigate** is a small secondary button, a plain link to Google Maps
 directions to the spot (`https://www.google.com/maps/dir/?api=1&destination=lat,lng`, new tab): on a
@@ -477,22 +477,22 @@ heart is an icon, not an emoji).
   from the action buttons when a map opens, folds into a small (i) button after five seconds, and the (i)
   shows it again (OpenStreetMap's attribution guidelines allow this; their tile policy forbids hiding it
   behind a toggle from the start, so it never starts hidden). The legend repeats it.
-- **Spots list:** a round list button at the head of the map controls swaps the map for the list of the same spots (needing help first, then nearest), each row a real link with its state chip (icon and word) and its distance; the same button, now a map icon, goes back (D-78).
+- **Spots list:** a round list button at the head of the map controls swaps the map for the list of the same spots (needing help first, then nearest), each row a real link with its state chip (icon and word) and its distance; the same button, now a map icon, goes back (D-82).
 - **Alert row:** photo and words on top (kind chip, "reported N hours ago", the note cut at two lines,
   distance and area), then **Details** and **Show on map** side by side, full width. A countdown is
   never shown for helping a cat; only a gentle "leaves the map in N minutes" when it is about to go.
   Past alerts (the last 7 days) are one tap away, visible to everyone. In the raise form "sick" has a
   thermometer; a vague or missing location offers **Try again**; a refused note says so under the box.
-  One alert: it has its own address and a share button in the top bar (D-79); the member who raised it sees "Mark as handled" under it, an admin sees the admin actions (D-80), **Navigate** and **Show on map** are on the pinned bar.
+  One alert: it has its own address and a share button in the top bar (D-83); the member who raised it sees "Mark as handled" under it, an admin sees the admin actions (D-84), **Navigate** and **Show on map** are on the pinned bar.
   **Spay or neuter** is the third kind in the raise form (D-64): a calm full-width row under the two
   urgent tiles, a medical-cross icon, "not urgent". It stays 7 days instead of 6 hours, so its row says
   "reported N days ago" and its in-review screen says "7 days"; it has its own paler sign on the map and a
   line in the legend.
 - **Profile:** a pencil in the top bar edits; "My activity" is a tinted card with no dividers and 24 px at
   the sides; one
-  list holds language (a dialog of four), location, **Install as an app** (a guide per browser; the same guide is a screen of the first run, D-01), sign out and delete. The support group starts with **Contact**, the public email (D-70).
+  list holds language (a dialog of four), location, **Install as an app** (a guide per browser; the same guide is a screen of the first run, D-01), sign out and delete. The support group starts with **Contact**, the public email (D-74).
   Location help shows, per browser (Android Chrome, iPhone Safari, Chrome, Edge, Firefox, Safari on a
-  Mac), how to allow it **permanently**, not "this time". Lists in the admin screens use the same row layout, sorted nearest first with a distance on each row (D-74), and a report card is a grid: decisions on one row, member actions on the next (lifting a chat restriction or a block when there is one, D-77). A report of a spot problem shows its reason and the buttons "Edit" and "Close the report".
+  Mac), how to allow it **permanently**, not "this time". Lists in the admin screens use the same row layout, sorted nearest first with a distance on each row (D-78), and a report card is a grid: decisions on one row, member actions on the next (lifting a chat restriction or a block when there is one, D-81). A report of a spot problem shows its reason and the buttons "Edit" and "Close the report".
 
 ### Photo placeholders
 In the mocks a photo is a pale placeholder in one of four tones (#dfe4ec, #e6e2d8, #d9e4de,

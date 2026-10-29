@@ -4,7 +4,7 @@ The design of every screen, made before any screen is built. The look itself is
 [docs/DESIGN.md](../docs/DESIGN.md); this folder holds the evidence and the mocks. Nothing here is
 imported by `frontend/`, `backend/` or `infra/`, and the dead-code audit skips it. The mocks are plain
 HTML, so their glass navigation is CSS only; the real app uses the `liquid-glass-react` library for it
-([DESIGN.md](../docs/DESIGN.md), D-69).
+([DESIGN.md](../docs/DESIGN.md), D-73).
 
 ## Look at it
 

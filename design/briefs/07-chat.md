@@ -9,8 +9,8 @@ Volunteers who feed the same spot coordinate in short messages ("fed at 7, bowl 
 ## Outcome and proof
 A plain thread opened from the spot page: messages oldest to newest with the composer at the
 bottom, "earlier messages" at the top (Q23). Each message: initials or Google photo, name (the
-full name, D-66), time, text. Tapping a message opens a dialog: copy, report; for admins also
-restrict chat and ban the author; on the member's own message: copy and remove, with a confirmation (R-37). Admins have a three-dots menu at the end of the top bar (Q39).
+full name, D-70), time, text. Tapping a message opens a dialog: copy, report; for admins also
+restrict chat and ban the author; on the member's own message: copy and remove, with a confirmation (R-38). Admins have a three-dots menu at the end of the top bar (Q39).
 
 ## Selected direction
 No bubbles with tails and no colours per person; own messages sit at the inline-end with a tinted

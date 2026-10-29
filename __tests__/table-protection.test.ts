@@ -5,11 +5,11 @@ import { describe, expect, it } from 'vite-plus/test';
 const APP_DIR = resolve(__dirname, '../infra/app');
 
 /**
- * Every DynamoDB table the app's Terraform makes has delete protection on (D-73), so a mistaken
+ * Every DynamoDB table the app's Terraform makes has delete protection on (D-77), so a mistaken
  * `terraform destroy` or a replacement cannot drop user data. A Terraform test could only check the
  * tables that exist today; this reads every `.tf` file, so a table added later is checked too.
  */
-describe('DynamoDB tables (D-73)', () => {
+describe('DynamoDB tables (D-77)', () => {
   const tables = readdirSync(APP_DIR)
     .filter((file) => file.endsWith('.tf'))
     .flatMap((file) => {

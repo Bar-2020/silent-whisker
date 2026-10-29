@@ -87,7 +87,7 @@
   --measure: 65ch;
 
   /* Liquid glass: the shell's tinted, blurred pane. It is solid where blur is unavailable.
-     The mocks use CSS only; the real app wraps it in the liquid-glass-react library (D-69). */
+     The mocks use CSS only; the real app wraps it in the liquid-glass-react library (D-73). */
   --glass: rgb(36 60 103 / 0.58);
   --glass-solid: #2d4467;
   --glass-edge: rgb(255 255 255 / 0.42);
