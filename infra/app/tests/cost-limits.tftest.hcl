@@ -29,6 +29,11 @@ run "counters_table_is_free_and_cleans_itself" {
   }
 
   assert {
+    condition     = aws_dynamodb_table.daily_usage_counters.deletion_protection_enabled
+    error_message = "Every table has delete protection on (D-73)."
+  }
+
+  assert {
     condition = (
       one(aws_dynamodb_table.daily_usage_counters.ttl).enabled &&
       one(aws_dynamodb_table.daily_usage_counters.ttl).attribute_name == "expires_at"
