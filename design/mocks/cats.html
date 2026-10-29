@@ -17,7 +17,6 @@
   <body data-title="cats.title" data-chrome="tabs">
     <div class="shell">
       <main class="main">
-        <!-- ============ Feed ============ -->
         <div data-screen="feed" data-chrome="tabs" data-default-state="default">
           <header class="topbar">
             <h1 class="topbar__title" data-t="cats.feed.title"></h1>
@@ -100,7 +99,6 @@
           </div>
         </div>
 
-        <!-- ============ Post a photo of a cat ============ -->
         <div data-screen="post" data-chrome="page" data-default-state="choose">
           <header class="topbar">
             <a class="iconbtn" href="cats.html" data-t-attr="aria-label:common.back"
@@ -126,7 +124,6 @@
             <a class="btn" href="cats.html?state=ownreview" data-t="cats.post.review.back"></a>
           </div>
 
-          <!-- Where was the photo taken: pick a feeding spot on the map or in the list, or say it was not at one. -->
           <div class="page page--narrow stack stack--4" data-when="picker picker-general">
             <div class="stack stack--2">
               <h2 data-t="cats.picker.title"></h2>
@@ -299,7 +296,6 @@
           </div>
         </div>
 
-        <!-- ============ One cat: photo and comments ============ -->
         <div data-screen="cat" data-chrome="page" data-default-state="default">
           <header class="topbar">
             <a class="iconbtn" href="cats.html" data-t-attr="aria-label:common.back"
@@ -413,7 +409,6 @@
             <div class="notice__body"><span data-t="common.refusedText"></span></div>
           </div>
 
-          <!-- The photo, full screen. -->
           <div
             class="lightbox"
             role="dialog"

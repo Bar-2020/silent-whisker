@@ -33,7 +33,6 @@ writeFileSync(
 const sleep = (ms) => new Promise((done) => setTimeout(done, ms));
 const fileUri = (path) => `file://${path.replaceAll('\\', '/')}`;
 
-/** One Converse call (the image and the prompt in one message). Returns the model's text. */
 function ask(photoPath) {
   const message = [
     {
@@ -65,7 +64,6 @@ function ask(photoPath) {
   return { text, tokens: reply.usage.inputTokens };
 }
 
-/** Asks once; after a throttling error waits 30 seconds and asks once more. */
 async function askWithRetry(photoPath) {
   try {
     return ask(photoPath);

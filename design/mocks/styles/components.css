@@ -1,6 +1,6 @@
 /* Components. Mobile first; everything wider lives in responsive.css. */
 
-/* ---------- State levels: one set of custom properties every component reads ---------- */
+/* State levels: one set of custom properties every component reads. */
 [data-level='green'] {
   --lvl: var(--ok);
   --lvl-ink: var(--ok-ink);
@@ -31,7 +31,6 @@
   --lvl-tint: var(--alert-tint);
 }
 
-/* ---------- Shell: a floating pane of tinted glass (bar on a phone, rail from 768px) ---------- */
 .shell {
   display: grid;
   grid-template-rows: minmax(0, 1fr);
@@ -203,7 +202,6 @@ body[data-chrome='tabs'] .main {
   padding-block-start: 0;
 }
 
-/* ---------- Buttons: the dado colour means "you can tap this" ---------- */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -298,7 +296,6 @@ body[data-chrome='tabs'] .main {
   background: var(--dado-tint);
 }
 
-/* ---------- Chips and tags ---------- */
 .chip {
   display: inline-flex;
   align-items: center;
@@ -337,7 +334,6 @@ body[data-chrome='tabs'] .main {
   border-color: var(--dado);
 }
 
-/* ---------- Notices: tinted block, icon plus words ---------- */
 .notice {
   display: flex;
   gap: var(--s-3);
@@ -365,7 +361,6 @@ body[data-chrome='tabs'] .main {
   color: var(--lvl-ink, var(--dado));
 }
 
-/* ---------- Forms ---------- */
 .field {
   display: flex;
   flex-direction: column;
@@ -571,7 +566,6 @@ body[data-chrome='tabs'] .main {
   margin-inline-start: auto;
 }
 
-/* ---------- Lists ---------- */
 .rows {
   border-block: 1px solid var(--line);
   background: var(--surface);
@@ -641,7 +635,6 @@ button.row {
   color: var(--ink-2);
 }
 
-/* ---------- People ---------- */
 .avatar {
   display: inline-grid;
   place-items: center;
@@ -668,7 +661,7 @@ button.row {
   border: 1px solid var(--line);
 }
 
-/* ---------- Photos: placeholders for real photos, never decoration ---------- */
+/* Photos: placeholders for real photos, never decoration. */
 .photo {
   position: relative;
   display: grid;
@@ -730,7 +723,6 @@ button.row {
   inset-inline-start: var(--s-2);
 }
 
-/* ---------- Map and its markers ---------- */
 .stage {
   --sheet-h: 268px;
   position: relative;
@@ -1032,7 +1024,7 @@ button.row {
   color: var(--bad-ink);
 }
 
-/* ---------- Card (phone) and panel (wide): the same content, two homes. No drag handle: a web app. ---------- */
+/* Card (phone) and panel (wide): the same content, two homes. No drag handle: a web app. */
 .sheet {
   position: absolute;
   inset-inline: 0;
@@ -1101,7 +1093,6 @@ button.row {
   font-size: var(--fs-l);
 }
 
-/* The whiter light glass: dialogs and the map search results. */
 .results,
 .sheet.sheet--modal,
 .stage .sheet.sheet--modal {
@@ -1115,7 +1106,6 @@ button.row {
     inset 0 1.5px 0 rgb(255 255 255 / 0.9);
 }
 
-/* A modal is a dialog in the middle of the screen, over everything, with a scrim behind it. */
 .sheet.sheet--modal,
 .stage .sheet.sheet--modal {
   position: fixed;
@@ -1145,7 +1135,6 @@ button.row {
   background: rgb(20 32 52 / 0.3);
 }
 
-/* ---------- Spot: state rows ---------- */
 .state {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -1182,7 +1171,6 @@ button.row {
   margin-block-start: var(--s-2);
 }
 
-/* ---------- Spot: log history ---------- */
 .log {
   display: flex;
   align-items: center;
@@ -1200,7 +1188,6 @@ button.row {
   min-inline-size: 0;
 }
 
-/* ---------- Cats ---------- */
 .post {
   position: relative;
   background: var(--surface);
@@ -1272,7 +1259,6 @@ button.row {
   overflow-wrap: anywhere;
 }
 
-/* When it was posted: the last line of the post. */
 .post__time {
   margin-block-start: calc(var(--s-1) * -1);
 }
@@ -1390,7 +1376,6 @@ button.row {
   }
 }
 
-/* ---------- Chat ---------- */
 .thread {
   display: flex;
   flex-direction: column;
@@ -1460,7 +1445,6 @@ button.msg__bubble:hover {
   flex: 1;
 }
 
-/* ---------- Stats ---------- */
 .stat {
   display: flex;
   align-items: center;
@@ -1489,7 +1473,6 @@ button.msg__bubble:hover {
   font-weight: 700;
 }
 
-/* ---------- Global states ---------- */
 .empty {
   display: flex;
   flex-direction: column;
@@ -1615,7 +1598,6 @@ body[data-chrome='tabs'] .shell--map .main {
   position: relative;
 }
 
-/* Fixes found in the first review pass. */
 .stack > .chip,
 .stack > .tag {
   align-self: flex-start;
@@ -1638,7 +1620,6 @@ body[data-chrome='tabs'] .shell--map .main {
   align-self: flex-start;
 }
 
-/* Second review pass. */
 .toast .notice__body,
 .toast .notice__body strong {
   color: #fff;
@@ -1655,7 +1636,6 @@ body[data-chrome='tabs'] .shell--map .main {
   --lvl-ink: var(--dado);
 }
 
-/* ---------- Button states: every variant has the same six ---------- */
 .btn.is-hover,
 .btn.is-pressed {
   background: var(--dado-deep);
@@ -1690,8 +1670,7 @@ body[data-chrome='tabs'] .shell--map .main {
   opacity: 1;
 }
 
-/* Pending: an asynchronous action is in flight. The label says what is happening, a spinner turns,
-   the button keeps its size and colour and takes no taps. */
+/* Pending: an action is in flight. The button keeps its size and colour and takes no taps. */
 .btn[aria-busy='true'] {
   position: relative;
   cursor: progress;

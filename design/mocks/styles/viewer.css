@@ -217,7 +217,6 @@
   box-shadow: none;
 }
 
-/* ---------- Design system page (tooling) ---------- */
 .ds {
   background: var(--wall);
   color: var(--ink);
@@ -599,7 +598,6 @@
   cursor: not-allowed;
 }
 
-/* Samples added for the dialogs, the map search, the icons and the lists. */
 .ds .sheet.sheet--modal {
   position: static;
   inset: auto;

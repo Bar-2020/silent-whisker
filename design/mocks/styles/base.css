@@ -121,7 +121,6 @@ svg {
   outline-color: var(--dado-ink);
 }
 
-/* Times and counts line up in columns. */
 .num {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
