@@ -22,6 +22,12 @@
       food: ['green', 5, 'full'],
       water: ['green', 3],
     },
+    kittens: {
+      name: 'demo.spot1.name',
+      address: 'demo.spot1.address',
+      food: ['orange', 19, 'full'],
+      water: ['green', 6],
+    },
     none: {
       name: 'demo.spot1.name',
       address: 'demo.spot1.address',
@@ -107,6 +113,9 @@
     Mock.refresh(document.querySelector('[data-screen="detail"]'));
   }
 
+  /* Substates where the form is filled in: ready, no connection (the form is kept), and every answer. */
+  const FILLED = ['ready', 'offline', ...LOG_RESULTS];
+
   /* The log form: pick one of three, then the button wakes up. */
   const submit = document.getElementById('log-submit');
   document.querySelectorAll('input[name="kind"]').forEach((input) => {
@@ -118,14 +127,14 @@
   function applySub() {
     const sub = Mock.getSub();
     const form = document.getElementById('log');
-    if (form && (sub === 'ready' || LOG_RESULTS.includes(sub))) {
+    if (form && FILLED.includes(sub)) {
       const first = form.querySelector('input[name="kind"]');
       first.checked = true;
       submit.disabled = LOG_RESULTS.includes(sub);
     }
     /* A counted or unverified log reports at the top, beside the rows it changes; refusals stay at the form. */
-    if (sub === 'counted' || sub === 'unverified') window.scrollTo(0, 0);
-    else if (form && (sub === 'ready' || LOG_RESULTS.includes(sub))) form.scrollIntoView();
+    if (sub === 'counted' || sub === 'unverified' || sub === 'kittens-done') window.scrollTo(0, 0);
+    else if (form && (FILLED.includes(sub) || sub === 'kittens-refused')) form.scrollIntoView();
   }
 
   /* New spot and edit. */
