@@ -7,7 +7,7 @@ imported by `frontend/`, `backend/` or `infra/`, and the dead-code audit skips i
 ## Look at it
 
 ```bash
-node design/serve.mjs
+npm run design
 ```
 
 Open <http://localhost:4173/design/mocks/> (the screen viewer). It lists every screen and state,
