@@ -128,8 +128,8 @@ components:
     textColor: "{colors.ink}"
   checkbox:
     backgroundColor: "{colors.wall}"
-    rounded: "{rounded.sm}"
-    height: "28px"
+    rounded: "6px"
+    height: "20px"
   checkbox-ticked:
     backgroundColor: "{colors.slate-blue}"
     textColor: "{colors.wall}"
@@ -345,10 +345,12 @@ separated by space (24 px between posts) or by a hairline between rows.
   check mark. Used for log kind, alert kind, address or location.
 
 ### Checkbox
-A yes that must be given on purpose, such as the terms on the sign-up form (D-69). A 28 px rounded box
+A yes that must be given on purpose, such as the terms on the sign-up form (D-69). A 20 px rounded box
 with a 2 px grey-blue edge that **always shows**, empty, before it is ticked; ticked is a slate blue fill
-and a white check. The words sit beside it, the box at the inline-start; a link inside the words keeps
-its own tap, and the rest of the line toggles the box. Unticked on submit, the box takes a red edge and
+and a white check. The words sit beside it at 14 px, the box at the inline-start, one line of words as
+tall as the box so the two stay centred together; the whole row is 48 px tall and a link inside the
+words keeps its own tap while the rest of the line toggles the box. Keep the words short enough for one
+line at 360 px in all four languages (the Russian reads "Принимаю условия и политику"). Unticked on submit, the box takes a red edge and
 a pale red fill and the ordinary field error appears below it; disabled is grey. It is never a tile: a
 tile hides its mark until it is chosen, so an unchosen tile does not look like a checkbox.
 

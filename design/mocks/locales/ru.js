@@ -729,7 +729,7 @@ window.MOCK_LOCALES.ru = {
   'chat.admin.unrestrict': 'Снять ограничение чата',
   'chat.admin.unban': 'Снять запрет',
   'firstrun.terms.label':
-    'Принимаю <a href="legal.html?screen=terms">условия использования</a> и <a href="legal.html?screen=privacy">политику конфиденциальности</a>.',
+    'Принимаю <a href="legal.html?screen=terms">условия</a> и <a href="legal.html?screen=privacy">политику</a>.',
   'firstrun.terms.required':
     'Чтобы продолжить, нужно принять условия использования и политику конфиденциальности.',
   'firstrun.install.h1': 'Добавьте приложение на главный экран',
