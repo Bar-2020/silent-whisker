@@ -7,7 +7,7 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import { STATUS_OK, STATUS_UNAUTHORIZED } from '../../shared/constants/http';
 import { GOOGLE_IMAGE_HOST_SUFFIX, TERMS_VERSION } from '../../shared/constants/profile';
-import type { ApiResult, Member, ProfileEvent, UserRow } from './handler.types';
+import type { ApiResult, Member, Profile, ProfileEvent, UserRow } from './handler.types';
 
 // GET /api/profile (D-59): `user_id` is always the token's `sub`, never anything in the request.
 
@@ -100,7 +100,7 @@ async function loadUser({ userId, photo }: Member): Promise<UserRow> {
 }
 
 /** The photo goes out only if the member chose to show it (D-21). */
-const profileOf = (user: UserRow) => ({
+const profileOf = (user: UserRow): Profile => ({
   display_name: user.display_name ?? null,
   city: user.city ?? null,
   avatar_url: user.show_google_photo ? (user.avatar_url ?? null) : null,

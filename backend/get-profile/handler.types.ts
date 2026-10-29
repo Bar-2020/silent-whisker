@@ -7,6 +7,16 @@ export interface Member {
   photo: string | undefined;
 }
 
+/** The answer body of `GET /profile` (API.md). */
+export interface Profile {
+  display_name: string | null;
+  city: string | null;
+  avatar_url: string | null;
+  show_google_photo: boolean;
+  status: UserRow['status'];
+  terms_accepted: boolean;
+}
+
 export interface ApiResult {
   statusCode: number;
   headers: Record<string, string>;
