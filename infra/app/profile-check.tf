@@ -26,7 +26,11 @@ resource "aws_bedrock_guardrail" "profile_text" {
       content {
         type            = filters_config.value
         input_strength  = "HIGH"
+        input_action    = "BLOCK"
+        input_enabled   = true
         output_strength = "HIGH"
+        output_action   = "BLOCK"
+        output_enabled  = true
       }
     }
   }

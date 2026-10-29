@@ -31,9 +31,9 @@ run "only_the_five_harm_filters_at_high_strength_and_no_personal_data_filter" {
   assert {
     condition = alltrue([
       for f in one(aws_bedrock_guardrail.profile_text.content_policy_config).filters_config :
-      f.input_strength == "HIGH"
+      f.input_strength == "HIGH" && f.input_action == "BLOCK" && f.input_enabled
     ])
-    error_message = "D-62: every filter at high strength."
+    error_message = "D-62: every filter at high strength and blocking: with the action left to AWS's default, a hit might only be reported and the check would never refuse."
   }
 
   assert {
