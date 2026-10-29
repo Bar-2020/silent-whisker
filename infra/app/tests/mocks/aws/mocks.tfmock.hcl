@@ -27,6 +27,13 @@ mock_resource "aws_apigatewayv2_api" {
   }
 }
 
+mock_resource "aws_bedrock_guardrail" {
+  defaults = {
+    guardrail_arn = "arn:aws:bedrock:eu-north-1:123456789012:guardrail/abc123def456"
+    guardrail_id  = "abc123def456"
+  }
+}
+
 mock_resource "aws_sns_topic" {
   defaults = { arn = "arn:aws:sns:eu-north-1:123456789012:silent-whisker-cost-alerts" }
 }
