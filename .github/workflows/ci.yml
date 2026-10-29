@@ -50,14 +50,8 @@ jobs:
           terraform_version: 1.16.6
           terraform_wrapper: false
 
-      # The AWS provider (about 800 MB unpacked) is kept between runs. The lock files hold a hash
-      # for Linux, which Terraform needs before it reuses a cached provider instead of downloading
-      # it again for each module. The key changes when a lock file does.
-      - uses: actions/cache@v6
-        with:
-          path: ~/.terraform.d/plugin-cache
-          key: terraform-plugins-${{ runner.os }}-${{ hashFiles('infra/*/.terraform.lock.hcl') }}
-
+      # The lock files hold a hash for Linux, which Terraform needs before it reuses a cached
+      # provider. Without it each module downloads the AWS provider again.
       - run: npm run verify:iac
 
   # Every merge to main goes online (D-02). The repository variable DEPLOY_ENABLED switches it
