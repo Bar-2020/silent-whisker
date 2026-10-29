@@ -9,7 +9,7 @@ HTML, so their glass navigation is CSS only; the real app uses the `liquid-glass
 ## Look at it
 
 ```bash
-node design/serve.mjs
+npm run design
 ```
 
 Open <http://localhost:4173/design/mocks/> (the screen viewer). It lists every screen and state,
