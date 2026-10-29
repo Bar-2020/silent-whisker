@@ -2,6 +2,11 @@ export interface ProfileEvent {
   requestContext: { authorizer?: { jwt?: { claims?: Record<string, string | undefined> } } };
 }
 
+export interface Member {
+  userId: string;
+  photo: string | undefined;
+}
+
 export interface ApiResult {
   statusCode: number;
   headers: Record<string, string>;
