@@ -1,6 +1,6 @@
 # AWS facts
 
-The facts behind D-13, D-15, D-22 and D-49. Every page below was read on 2026-10-13. The per-region
+The facts behind D-13, D-15, D-22, D-49 and D-50. Every page below was read on 2026-10-13. The per-region
 prices on aws.amazon.com pricing pages are drawn by script, so they were read from the data feed
 each page loads (published 2026-09-11 to 2026-10-12). Prices are USD. Re-read the source before a
 big decision.
@@ -43,6 +43,8 @@ big decision.
 | Rekognition DetectLabels, DetectModerationLabels | first 1M images a month: $1.00 per 1,000 in us-east-1 and Ireland, $1.20 in Tel Aviv and Frankfurt | S8 |
 | Rekognition free tier | the page still shows 12 months of 1,000 images a month; new accounts get credits instead, plan on none | S8, S12 |
 | Guardrails text content filters | $0.15 per 1,000 text units (1 unit is up to 1,000 characters), same for Classic and Standard, no free tier | S9 |
+| Bedrock Amazon Nova Lite (the photo check, D-50), on demand, called from Stockholm | $0.000065 per 1,000 input tokens and $0.00026 per 1,000 output tokens. A photo is about 1,950 input tokens (measured, up to 2,700) and one output word, so about $0.00013 a photo, $0.13 per 1,000 photos. The EU inference profile costs nothing extra and is billed at the price of the Region you call from (AWS's docs say so; the price list has no separate EU-profile entry, so compare the first bill with this figure) | S29, S30 |
+| Bedrock Claude Haiku 4.5 (the later photo option, D-50), EU profile, called from Stockholm | $1.10 per million input tokens and $5.50 per million output tokens (the global profile is $1.00 and $5.00). A photo is about 1,660 input tokens, so about $0.0018 a photo: about 14 times Nova Lite. Billed through AWS Marketplace | S29, S30 |
 | Cognito | 10,000 MAU always free on Lite or Essentials (Plus has none); Google is a social provider, so it counts here, not in the 50 MAU SAML/OIDC bucket | S11, S18 |
 | API Gateway HTTP API (D-38) | $1.00 per million calls up to 300M a month, then $0.90 (US prices in the page's examples; the Stockholm price was not read). The free tier is 1M calls a month for 12 months | S27 |
 | Lambda | always free: 1M requests and 400,000 GB-seconds a month | S12, S14 |
@@ -79,9 +81,9 @@ writes per member per day of 1 text unit each, 30 days.
 | | 100 members | 1,000 members |
 |---|---|---|
 | Photo checks | 200 | 2,000 |
-| Photo check price | from the photo test | from the photo test |
+| Photo check price at $0.00013 each (Nova Lite) | $0.03 | $0.25 |
 | Guardrails at $0.15 per 1,000 units (6,000 and 60,000) | $0.90 | $9.00 |
-| Moderation total | about $0.90 plus photos | about $9 plus photos |
+| Moderation total | about $0.93 | about $9.25 |
 | S3, DynamoDB on-demand, Lambda, CloudFront, Cognito | under $1 | under $1 |
 
 Per-member limits keep one person from driving this up. The circuit breaker at $2 a day (D-52) caps
@@ -131,3 +133,9 @@ member's daily allowance first. The profile is checked on the spot and refused w
 - S26: https://docs.aws.amazon.com/accounts/latest/reference/scps-and-rcps-for-projects.html (read 2026-10-18)
 - S27: https://aws.amazon.com/api-gateway/pricing/ (read 2026-10-28)
 - S28: https://aws.amazon.com/pm/cloudfront/ (read 2026-10-28)
+- S29: https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/eu-north-1/index.json
+  (Nova, published 2026-10-28) and
+  https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/current/eu-north-1/index.json
+  (Claude, published 2026-10-12). AWS's public price list, the data S9 draws its tables from (the
+  page's own text has no Nova tables). Read 2026-10-28
+- S30: https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html (read 2026-10-28)
