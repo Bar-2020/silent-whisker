@@ -153,9 +153,7 @@ const asErrors = (names: string[]) =>
 const SONARJS_RULES = sonarjs.configs.recommended.rules as Record<string, 'error' | 'off'>;
 
 export default defineConfig({
-  // `npm run build:backend`: each Lambda handler becomes one self-contained folder (its code and
-  // the AWS SDK parts it uses), which Terraform zips. Add a handler as one more entry, with its
-  // own outDir, so its zip never depends on a file another handler shares.
+  // One entry and outDir per handler, so its zip never depends on a file another handler shares.
   pack: {
     entry: { handler: 'backend/get-profile/handler.ts' },
     outDir: 'backend/dist/get-profile',

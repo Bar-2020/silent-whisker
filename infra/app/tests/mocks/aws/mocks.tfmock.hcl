@@ -1,5 +1,4 @@
-# One mock AWS for every test file in infra/app/tests/ (see infra/README.md): the values a real AWS
-# would return, where the provider checks their shape or a data source looks something up.
+# One mock AWS for every test file here: real-looking values where the provider checks their shape.
 
 mock_data "aws_cloudfront_cache_policy" {
   defaults = { id = "658327ea-f89d-4fab-a63d-7e88639e58f6" }

@@ -1,6 +1,4 @@
-# The API front door against a mock AWS (see infra/README.md). It cannot be called past its limit
-# without a deployed API and a real sign-in, so these tests prove the settings that make it refuse
-# (D-60). Each run's error message says what rule it guards.
+# The front door cannot be called past its limit offline, so these prove the settings that make it refuse (D-60).
 
 mock_provider "aws" {
   source = "./tests/mocks/aws"

@@ -10,7 +10,6 @@ terraform {
       version = "~> 6.0"
     }
 
-    # Zips the built Lambda handlers (api.tf).
     archive = {
       source  = "hashicorp/archive"
       version = "~> 2.0"

@@ -1,2 +1,2 @@
-/** Google serves account photos from hosts under this domain; only these are stored (D-21). */
+/** Only photos on this domain are stored (D-21). */
 export const GOOGLE_IMAGE_HOST_SUFFIX = '.googleusercontent.com';

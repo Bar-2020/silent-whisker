@@ -26,8 +26,7 @@ data "aws_cloudfront_cache_policy" "optimized" {
   name = "Managed-CachingOptimized"
 }
 
-# For /api/*: nothing is cached (every answer is about one member), and every header but Host,
-# `Authorization` included, goes to the API, whose Host header must be its own.
+# /api/*: never cached (every answer is about one member); Authorization is forwarded, Host is not.
 data "aws_cloudfront_cache_policy" "disabled" {
   name = "Managed-CachingDisabled"
 }
@@ -58,7 +57,6 @@ resource "aws_cloudfront_distribution" "site" {
     origin_access_control_id = aws_cloudfront_origin_access_control.site.id
   }
 
-  # The API (api.tf), reached over HTTPS at its own address, without the `https://`.
   origin {
     origin_id   = "api"
     domain_name = replace(aws_apigatewayv2_api.api.api_endpoint, "https://", "")
@@ -71,8 +69,7 @@ resource "aws_cloudfront_distribution" "site" {
     }
   }
 
-  # Everything under /api/ goes to the API, with the page fallback kept away from it (D-63). The
-  # pattern `/api/*` does not match a bare `/api`, so that has its own, or it would get the web page.
+  # No page fallback here (D-63). `/api/*` does not match a bare `/api`, which would get the web page.
   dynamic "ordered_cache_behavior" {
     for_each = ["/api", "/api/*"]
 

@@ -1,20 +1,15 @@
-# The API (D-38, D-60): an API Gateway HTTP API in front of Lambda handlers, reached through the same
-# CloudFront address as the app under /api/ (hosting.tf). The JWT authorizer checks the Cognito
-# sign-in before any of our code runs (R-22). The routes and their throttles are in
-# shared/constants/api.json; the handlers are built by `npm run build:backend` into backend/dist/.
+# The API (D-38, D-60): routes and their throttles are in shared/constants/api.json.
 
 locals {
   api = jsondecode(file("${path.module}/../../shared/constants/api.json"))
 
-  # The Lambda behind each route. A route is added here and in api.json, nowhere else: the loops
-  # below give it the authorizer and its throttle, and a test fails if one is missing.
+  # A new route goes here and in api.json; a test fails if it lacks the authorizer or a throttle.
   route_functions = {
     "GET /api/profile" = aws_lambda_function.get_profile
   }
 }
 
-# One row per member (DATA.md). Provisioned, inside the always-free allowance (D-26). The rows are
-# the members' data, so AWS refuses to delete the table until this is switched off.
+# Provisioned, inside the always-free units (D-26).
 resource "aws_dynamodb_table" "users" {
   name                        = "users"
   billing_mode                = "PROVISIONED"
@@ -29,8 +24,7 @@ resource "aws_dynamodb_table" "users" {
   }
 }
 
-# GET /api/profile (backend/get-profile/). Terraform zips what the build made; a handler that has
-# not been built fails the plan, which is why every deploy builds first.
+# A handler that has not been built fails the plan, so every deploy builds first.
 data "archive_file" "get_profile" {
   type        = "zip"
   source_dir  = "${path.module}/../../backend/dist/get-profile"
@@ -42,7 +36,6 @@ resource "aws_cloudwatch_log_group" "get_profile" {
   retention_in_days = local.api.lambda.log_retention_days
 }
 
-# The handler may read and write only the users table, and write only its own log group.
 resource "aws_iam_role" "get_profile" {
   name = "silent-whisker-get-profile"
   assume_role_policy = jsonencode({
@@ -101,8 +94,7 @@ resource "aws_apigatewayv2_api" "api" {
   protocol_type = "HTTP"
 }
 
-# Checks the signature, issuer, audience and expiry of the token before any Lambda runs. It also
-# accepts access tokens, so the handlers insist on the ID token themselves (D-59).
+# It also accepts access tokens, so the handlers insist on the ID token themselves (D-59).
 resource "aws_apigatewayv2_authorizer" "members" {
   api_id           = aws_apigatewayv2_api.api.id
   name             = "cognito-members"
@@ -135,7 +127,6 @@ resource "aws_apigatewayv2_route" "route" {
   authorizer_id      = aws_apigatewayv2_authorizer.members.id
 }
 
-# Only the API may start the function, and only for its own route.
 resource "aws_lambda_permission" "route" {
   for_each = local.route_functions
 
@@ -146,7 +137,7 @@ resource "aws_lambda_permission" "route" {
   source_arn    = "${aws_apigatewayv2_api.api.execution_arn}/*/${replace(each.key, " ", "")}"
 }
 
-# The front door's own limit per route (R-21), a cost backstop that answers a bare 429 (D-60).
+# The front door's own limit per route (R-21); it answers a bare 429 (D-60).
 resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.api.id
   name        = "$default"

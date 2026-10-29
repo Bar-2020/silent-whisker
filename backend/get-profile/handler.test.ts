@@ -22,7 +22,6 @@ const eventWith = (claims?: Record<string, string>): ProfileEvent => ({
   requestContext: { authorizer: claims ? { jwt: { claims } } : undefined },
 });
 
-/** The claims of a valid ID token, as the API's JWT authorizer hands them over. */
 const idToken = (extra: Record<string, string> = {}) =>
   eventWith({ sub: 'user-1', token_use: 'id', picture: PHOTO, ...extra });
 

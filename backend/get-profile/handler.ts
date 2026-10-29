@@ -9,8 +9,7 @@ import { STATUS_OK, STATUS_UNAUTHORIZED } from '../../shared/constants/http';
 import { GOOGLE_IMAGE_HOST_SUFFIX } from '../../shared/constants/profile';
 import type { ApiResult, ProfileEvent, UserRow } from './handler.types';
 
-// GET /api/profile (D-59): the caller's profile. The first call after sign-in creates the `users`
-// row from the token's claims. `user_id` is always the token's `sub`, never anything in the request.
+// GET /api/profile (D-59): `user_id` is always the token's `sub`, never anything in the request.
 
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
@@ -26,7 +25,7 @@ function usersTable(): string {
   return name;
 }
 
-/** The `picture` claim if it is an https address on Google's image host (D-21), else nothing. */
+/** Only an https address on Google's image host is kept (D-21). */
 function googlePhoto(picture: string | undefined): string | undefined {
   try {
     const url = new URL(picture ?? '');
@@ -103,8 +102,7 @@ export async function handler(event: ProfileEvent): Promise<ApiResult> {
     user = { ...user, avatar_url: photo };
   }
 
-  // A banned member still gets the profile, so the app can say so (API.md). The Google photo goes
-  // out only when the member chose to show it (D-21); the stored copy stays either way.
+  // A banned member still gets the profile (API.md). The photo goes out only if shown (D-21).
   return reply(STATUS_OK, {
     display_name: user.display_name ?? null,
     city: user.city ?? null,
