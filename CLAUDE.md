@@ -46,5 +46,7 @@ import from each other.**
 @.claude/instructions/working-style.md
 
 ### Current state
-Phase 1: AWS infra and deploy pipeline (Terraform in `infra/`, one-time setup in
-[infra/README.md](infra/README.md)). No app screens yet.
+Phase 1 is done: AWS infra and deploy pipeline (Terraform in `infra/`, one-time setup in
+[infra/README.md](infra/README.md)), cost limits, and the text and photo checks. Phase 2 is under way:
+the design of every screen (`design/`, [DESIGN.md](docs/DESIGN.md)) and Google sign-in on the AWS
+side (`infra/app/auth.tf`). No app screens yet.
