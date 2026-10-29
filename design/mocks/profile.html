@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link rel="stylesheet" href="styles/tokens.css" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/screens.css" />
+    <link rel="stylesheet" href="styles/responsive.css" />
+  </head>
+  <body data-title="profile.title" data-chrome="tabs">
+    <div class="shell">
+      <main class="main">
+        <!-- ============ Profile tab ============ -->
+        <div data-screen="me" data-chrome="tabs" data-default-state="member">
+          <header class="topbar">
+            <h1 class="topbar__title" data-t="profile.heading"></h1>
+            <a
+              class="iconbtn"
+              href="profile.html?screen=edit"
+              data-t-attr="aria-label:profile.edit.title"
+            >
+              <i data-icon="edit"></i>
+            </a>
+          </header>
+          <div class="profile-grid">
+            <div class="page stack stack--5">
+              <div class="notice" data-level="red" data-when="banned">
+                <i data-icon="restrict"></i>
+                <div class="notice__body">
+                  <strong data-t="common.banned.title"></strong
+                  ><span data-t="common.banned.text"></span>
+                </div>
+              </div>
+
+              <div class="identity">
+                <span class="avatar avatar--l" data-t="demo.me.initials"></span>
+                <div class="identity__text">
+                  <h2><bdi data-t="demo.fullName"></bdi></h2>
+                  <p class="muted" data-t="demo.city"></p>
+                </div>
+              </div>
+
+              <section class="stats" aria-labelledby="stats-h">
+                <h2 id="stats-h" data-t="profile.stats.title"></h2>
+                <div class="stat">
+                  <i class="stat__icon" data-icon="cat"></i
+                  ><span class="stat__label" data-t="profile.stats.cats"></span
+                  ><span class="stat__value num">3</span>
+                </div>
+                <div class="stat">
+                  <i class="stat__icon" data-icon="bowl"></i
+                  ><span class="stat__label" data-t="profile.stats.feedings"></span
+                  ><span class="stat__value num">41</span>
+                </div>
+                <div class="stat">
+                  <i class="stat__icon" data-icon="drop"></i
+                  ><span class="stat__label" data-t="profile.stats.waters"></span
+                  ><span class="stat__value num">29</span>
+                </div>
+              </section>
+            </div>
+
+            <div class="page stack stack--5">
+              <section data-when="admin">
+                <div class="heading-bar"><h2 data-t="profile.admin.title"></h2></div>
+                <div class="rows">
+                  <a class="row" href="profile.html?screen=admin-spots">
+                    <i class="row__icon" data-icon="pin"></i>
+                    <span class="row__main"
+                      ><span class="row__title" data-t="profile.admin.spots"></span
+                    ></span>
+                    <span class="chip chip--count"><span class="num">3</span></span>
+                    <i class="row__chev" data-icon="chevron" data-class="icon--flip"></i>
+                  </a>
+                  <a class="row" href="profile.html?screen=admin-reports">
+                    <i class="row__icon" data-icon="flag"></i>
+                    <span class="row__main"
+                      ><span class="row__title" data-t="profile.admin.reports"></span
+                    ></span>
+                    <span class="chip chip--count"><span class="num">2</span></span>
+                    <i class="row__chev" data-icon="chevron" data-class="icon--flip"></i>
+                  </a>
+                </div>
+              </section>
+
+              <section>
+                <div class="heading-bar"><h2 data-t="profile.settings.title"></h2></div>
+                <div class="rows">
+                  <button class="row" type="button" data-go="/lang" aria-haspopup="dialog">
+                    <i class="row__icon" data-icon="globe"></i>
+                    <span class="row__main"
+                      ><span class="row__title" data-t="profile.settings.language"></span
+                      ><br /><span class="row__value" data-t="lang.current"></span
+                    ></span>
+                    <i class="row__chev" data-icon="chevron" data-class="icon--flip"></i>
+                  </button>
+                  <a class="row" href="profile.html?screen=location-help">
+                    <i class="row__icon" data-icon="locate"></i>
+                    <span class="row__main"
+                      ><span class="row__title" data-t="profile.settings.location"></span
+                    ></span>
+                    <span class="chip chip--count" data-unless="noloc"
+                      ><i data-icon="check"></i><span data-t="profile.location.on"></span
+                    ></span>
+                    <span class="chip" data-level="none" data-when="noloc"
+                      ><i data-icon="locate-off"></i><span data-t="profile.location.off"></span
+                    ></span>
+                    <i class="row__chev" data-icon="chevron" data-class="icon--flip"></i>
+                  </a>
+                  <a class="row" href="profile.html?screen=install">
+                    <i class="row__icon" data-icon="phone"></i>
+                    <span class="row__main"
+                      ><span class="row__title" data-t="profile.settings.install"></span><br /><span
+                        class="row__value"
+                        data-t="profile.settings.installHint"
+                      ></span
+                    ></span>
+                    <i class="row__chev" data-icon="chevron" data-class="icon--flip"></i>
+                  </a>
+                  <a class="row" href="landing.html"
+                    ><i class="row__icon" data-icon="signout"></i
+                    ><span class="row__main"
+                      ><span class="row__title" data-t="profile.signOut"></span></span
+                  ></a>
+                  <a class="row row--bad" href="profile.html?screen=delete"
+                    ><i class="row__icon" data-icon="trash"></i
+                    ><span class="row__main"
+                      ><span class="row__title" data-t="profile.delete.row"></span></span
+                  ></a>
+                </div>
+              </section>
+
+              <section>
+                <div class="heading-bar"><h2 data-t="profile.support.title"></h2></div>
+                <div class="rows">
+                  <a class="row" href="#"
+                    ><i class="row__icon" data-icon="heart"></i
+                    ><span class="row__main"
+                      ><span class="row__title" data-t="landing.donate"></span></span
+                    ><i class="row__chev" data-icon="external" data-class="icon--s"></i
+                  ></a>
+                  <a class="row" href="#"
+                    ><i class="row__icon" data-icon="code"></i
+                    ><span class="row__main"
+                      ><span class="row__title" data-t="landing.source"></span></span
+                    ><i class="row__chev" data-icon="external" data-class="icon--s"></i
+                  ></a>
+                  <a class="row" href="legal.html?screen=terms"
+                    ><i class="row__icon" data-icon="info"></i
+                    ><span class="row__main"
+                      ><span class="row__title" data-t="legal.terms.title"></span></span
+                    ><i class="row__chev" data-icon="chevron" data-class="icon--flip"></i
+                  ></a>
+                  <a class="row" href="legal.html?screen=privacy"
+                    ><i class="row__icon" data-icon="shield"></i
+                    ><span class="row__main"
+                      ><span class="row__title" data-t="legal.privacy.title"></span></span
+                    ><i class="row__chev" data-icon="chevron" data-class="icon--flip"></i
+                  ></a>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ Edit name, city, photo choice ============ -->
+        <div data-screen="edit" data-chrome="page" data-default-state="default">
+          <header class="topbar">
+            <a class="iconbtn" href="profile.html" data-t-attr="aria-label:common.back"
+              ><i data-icon="back" data-class="icon--flip"></i
+            ></a>
+            <h1 class="topbar__title" data-t="profile.edit.title"></h1>
+          </header>
+          <form class="page page--narrow stack stack--5" novalidate>
+            <div class="edit-avatar">
+              <span class="avatar avatar--l avatar--photo" data-when="default refused cityerror"
+                ><i data-icon="user"></i
+              ></span>
+              <span class="small muted" data-t="profile.edit.photoNow"></span>
+            </div>
+            <div class="field">
+              <label class="field__label" for="edit-fullname" data-t="firstrun.name.label"></label>
+              <input class="input" id="edit-fullname" autocomplete="name" />
+              <p class="field__hint" data-t="firstrun.name.hint"></p>
+              <p class="field__error" data-when="refused">
+                <span data-t="firstrun.name.refused"></span>
+              </p>
+            </div>
+            <div class="field">
+              <label class="field__label" for="edit-city" data-t="firstrun.city.label"></label>
+              <input class="input" id="edit-city" autocomplete="address-level2" />
+              <p class="field__hint" data-t="firstrun.city.hint"></p>
+              <p class="field__error" data-when="cityerror">
+                <span data-t="firstrun.city.notFound"></span>
+              </p>
+            </div>
+            <fieldset class="field">
+              <legend class="field__label" data-t="firstrun.photo.label"></legend>
+              <div class="choices">
+                <label class="choice choice--row">
+                  <input type="radio" name="photo" value="yes" checked />
+                  <span class="choice__tile"
+                    ><span class="avatar avatar--photo"><i data-icon="user"></i></span
+                    ><span data-t="firstrun.photo.yes"></span
+                    ><span class="choice__mark"><i data-icon="check"></i></span
+                  ></span>
+                </label>
+                <label class="choice choice--row">
+                  <input type="radio" name="photo" value="no" />
+                  <span class="choice__tile"
+                    ><span class="avatar" data-t="demo.initials"></span
+                    ><span data-t="firstrun.photo.no"></span
+                    ><span class="choice__mark"><i data-icon="check"></i></span
+                  ></span>
+                </label>
+              </div>
+              <p class="field__hint" data-t="profile.edit.photoHint"></p>
+            </fieldset>
+          </form>
+          <div class="footbar">
+            <button class="btn btn--lg" type="button" data-t="common.save"></button>
+          </div>
+        </div>
+
+        <!-- ============ Location: status and how to turn it on for good ============ -->
+        <div data-screen="location-help" data-chrome="page" data-default-state="denied">
+          <header class="topbar">
+            <a class="iconbtn" href="profile.html" data-t-attr="aria-label:common.back"
+              ><i data-icon="back" data-class="icon--flip"></i
+            ></a>
+            <h1 class="topbar__title" data-t="profile.location.title"></h1>
+          </header>
+          <div class="page page--narrow stack stack--5">
+            <div class="notice" data-level="green" data-when="granted">
+              <i data-icon="checkcircle"></i>
+              <div class="notice__body">
+                <strong data-t="profile.location.grantedTitle"></strong
+                ><span data-t="profile.location.grantedText"></span>
+              </div>
+            </div>
+            <div class="notice" data-level="red" data-when="denied">
+              <i data-icon="locate"></i>
+              <div class="notice__body">
+                <strong data-t="profile.location.deniedTitle"></strong
+                ><span data-t="profile.location.deniedText"></span>
+              </div>
+            </div>
+            <div class="notice" data-when="notasked">
+              <i data-icon="locate"></i>
+              <div class="notice__body">
+                <strong data-t="profile.location.notAskedTitle"></strong
+                ><span data-t="profile.location.notAskedText"></span>
+              </div>
+            </div>
+            <button class="btn btn--lg" type="button" data-when="notasked">
+              <i data-icon="locate"></i><span data-t="firstrun.location.allow"></span>
+            </button>
+
+            <div class="notice" data-unless="notasked">
+              <i data-icon="info"></i>
+              <div class="notice__body">
+                <strong data-t="firstrun.location.always.title"></strong>
+                <span data-t="firstrun.location.always.text"></span>
+              </div>
+            </div>
+
+            <section class="stack stack--3" data-unless="notasked">
+              <h2 data-t="profile.location.stepsTitle"></h2>
+              <details class="howto" open>
+                <summary data-t="profile.location.android"></summary>
+                <ol class="steps-list">
+                  <li data-t="profile.location.android1"></li>
+                  <li data-t="profile.location.android2"></li>
+                  <li data-t="profile.location.android3"></li>
+                </ol>
+              </details>
+              <details class="howto">
+                <summary data-t="profile.location.iphone"></summary>
+                <ol class="steps-list">
+                  <li data-t="profile.location.iphone1"></li>
+                  <li data-t="profile.location.iphone2"></li>
+                  <li data-t="profile.location.iphone3"></li>
+                  <li data-t="profile.location.iphone4"></li>
+                </ol>
+              </details>
+              <details class="howto">
+                <summary data-t="profile.location.chrome"></summary>
+                <ol class="steps-list">
+                  <li data-t="profile.location.chrome1"></li>
+                  <li data-t="profile.location.chrome2"></li>
+                  <li data-t="profile.location.chrome3"></li>
+                </ol>
+              </details>
+              <details class="howto">
+                <summary data-t="profile.location.edge"></summary>
+                <ol class="steps-list">
+                  <li data-t="profile.location.edge1"></li>
+                  <li data-t="profile.location.edge2"></li>
+                  <li data-t="profile.location.edge3"></li>
+                </ol>
+              </details>
+              <details class="howto">
+                <summary data-t="profile.location.firefox"></summary>
+                <ol class="steps-list">
+                  <li data-t="profile.location.firefox1"></li>
+                  <li data-t="profile.location.firefox2"></li>
+                  <li data-t="profile.location.firefox3"></li>
+                </ol>
+              </details>
+              <details class="howto">
+                <summary data-t="profile.location.safari"></summary>
+                <ol class="steps-list">
+                  <li data-t="profile.location.safari1"></li>
+                  <li data-t="profile.location.safari2"></li>
+                </ol>
+              </details>
+            </section>
+            <p class="small muted" data-t="profile.location.without"></p>
+          </div>
+        </div>
+
+        <!-- ============ Install as an app ============ -->
+        <div data-screen="install" data-chrome="page" data-default-state="default">
+          <header class="topbar">
+            <a class="iconbtn" href="profile.html" data-t-attr="aria-label:common.back"
+              ><i data-icon="back" data-class="icon--flip"></i
+            ></a>
+            <h1 class="topbar__title" data-t="profile.install.title"></h1>
+          </header>
+          <div class="page page--narrow stack stack--5">
+            <div class="stack stack--3">
+              <span class="illus illus--start"><i data-icon="phone"></i></span>
+              <p class="lead" data-t="profile.install.lead"></p>
+            </div>
+            <section class="stack stack--3">
+              <details class="howto" open>
+                <summary data-t="profile.install.iphone"></summary>
+                <ol class="steps-list">
+                  <li data-t="profile.install.iphone1"></li>
+                  <li data-t="profile.install.iphone2"></li>
+                  <li data-t="profile.install.iphone3"></li>
+                </ol>
+              </details>
+              <details class="howto">
+                <summary data-t="profile.install.android"></summary>
+                <ol class="steps-list">
+                  <li data-t="profile.install.android1"></li>
+                  <li data-t="profile.install.android2"></li>
+                  <li data-t="profile.install.android3"></li>
+                </ol>
+              </details>
+              <details class="howto">
+                <summary data-t="profile.install.chrome"></summary>
+                <ol class="steps-list">
+                  <li data-t="profile.install.chrome1"></li>
+                  <li data-t="profile.install.chrome2"></li>
+                </ol>
+              </details>
+              <details class="howto">
+                <summary data-t="profile.install.safari"></summary>
+                <ol class="steps-list">
+                  <li data-t="profile.install.safari1"></li>
+                  <li data-t="profile.install.safari2"></li>
+                </ol>
+              </details>
+            </section>
+            <p class="small muted" data-t="profile.install.note"></p>
+          </div>
+        </div>
+
+        <!-- ============ Delete account (needs a decision) ============ -->
+        <div data-screen="delete" data-chrome="page" data-default-state="default">
+          <header class="topbar">
+            <a class="iconbtn" href="profile.html" data-t-attr="aria-label:common.back"
+              ><i data-icon="back" data-class="icon--flip"></i
+            ></a>
+            <h1 class="topbar__title" data-t="profile.delete.title"></h1>
+          </header>
+          <div class="page page--narrow stack stack--5">
+            <p class="lead lead--strong" data-t="profile.delete.lead"></p>
+            <ul class="why">
+              <li><i data-icon="user"></i><span data-t="profile.delete.l1"></span></li>
+              <li><i data-icon="cat"></i><span data-t="profile.delete.l2"></span></li>
+              <li><i data-icon="trash"></i><span data-t="profile.delete.l3"></span></li>
+            </ul>
+          </div>
+          <div class="footbar">
+            <button
+              class="btn btn--secondary btn--lg"
+              type="button"
+              data-t="common.cancel"
+            ></button>
+            <button
+              class="btn btn--danger btn--lg"
+              type="button"
+              data-go="confirm"
+              data-t="profile.delete.confirm"
+            ></button>
+          </div>
+        </div>
+
+        <div class="scrim" data-when="confirm"></div>
+        <aside class="sheet sheet--modal" role="dialog" aria-modal="true" data-when="confirm">
+          <h2 class="sheet__title" data-t="profile.delete.confirm.title"></h2>
+          <p class="muted" data-t="profile.delete.confirm.text"></p>
+          <a
+            class="btn btn--lg btn--danger"
+            href="landing.html"
+            data-t="profile.delete.confirm"
+          ></a>
+          <button
+            class="btn btn--quiet"
+            type="button"
+            data-go="default"
+            data-t="common.cancel"
+          ></button>
+        </aside>
+
+        <!-- ============ Admin: spots waiting for approval ============ -->
+        <div data-screen="admin-spots" data-chrome="page" data-default-state="default">
+          <header class="topbar">
+            <a class="iconbtn" href="profile.html?state=admin" data-t-attr="aria-label:common.back"
+              ><i data-icon="back" data-class="icon--flip"></i
+            ></a>
+            <h1 class="topbar__title" data-t="profile.admin.spots"></h1>
+          </header>
+          <div class="page page--wide stack stack--4 page--fill">
+            <div class="empty" data-when="empty">
+              <i data-icon="checkcircle" data-class="icon--l"></i>
+              <h2 data-t="profile.admin.spotsEmpty"></h2>
+            </div>
+            <div class="alerts" data-unless="empty">
+              <article class="alertrow">
+                <div class="alertrow__top">
+                  <div class="photo photo--square" data-tone="3"><i data-icon="cat"></i></div>
+                  <div class="alertrow__main">
+                    <h2 class="alertrow__title" data-t="demo.spot2.name"></h2>
+                    <p class="small muted" data-t="demo.spot2.address"></p>
+                    <p class="small muted">
+                      <span data-t="profile.admin.addedBy" data-v='{"name":"Dana K."}'></span> ·
+                      <span class="num" data-t="spot.ago.hours" data-v='{"n":3}'></span>
+                    </p>
+                  </div>
+                </div>
+                <div class="alertrow__actions">
+                  <button
+                    class="btn btn--small"
+                    type="button"
+                    data-go="approve"
+                    data-t="spot.admin.approve"
+                  ></button>
+                  <button
+                    class="btn btn--small btn--secondary"
+                    type="button"
+                    data-go="reject"
+                    data-t="spot.admin.reject"
+                  ></button>
+                </div>
+                <div class="alertrow__actions">
+                  <a
+                    class="btn btn--small btn--quiet"
+                    href="map.html?state=spot-pending"
+                    data-t="alerts.showOnMap"
+                  ></a>
+                </div>
+              </article>
+              <article class="alertrow">
+                <div class="alertrow__top">
+                  <div class="photo photo--square photo--none"><i data-icon="image"></i></div>
+                  <div class="alertrow__main">
+                    <h2 class="alertrow__title" data-t="demo.spot3.name"></h2>
+                    <p class="small muted" data-t="demo.spot3.address"></p>
+                    <p class="small muted">
+                      <span data-t="profile.admin.addedBy" data-v='{"name":"Ron M."}'></span> ·
+                      <span class="num" data-t="spot.ago.hours" data-v='{"n":20}'></span> ·
+                      <span data-t="profile.admin.noPhoto"></span>
+                    </p>
+                  </div>
+                </div>
+                <div class="alertrow__actions">
+                  <button
+                    class="btn btn--small"
+                    type="button"
+                    data-go="approve"
+                    data-t="spot.admin.approve"
+                  ></button>
+                  <button
+                    class="btn btn--small btn--secondary"
+                    type="button"
+                    data-go="reject"
+                    data-t="spot.admin.reject"
+                  ></button>
+                </div>
+                <div class="alertrow__actions">
+                  <a
+                    class="btn btn--small btn--quiet"
+                    href="map.html?state=spot-pending"
+                    data-t="alerts.showOnMap"
+                  ></a>
+                </div>
+              </article>
+              <article class="alertrow">
+                <div class="alertrow__top">
+                  <div class="photo photo--square" data-tone="1"><i data-icon="cat"></i></div>
+                  <div class="alertrow__main">
+                    <span class="tag tag--pending"
+                      ><i data-icon="restrict" data-class="icon--s"></i
+                      ><span data-t="profile.admin.deactivateRequest"></span
+                    ></span>
+                    <h2 class="alertrow__title" data-t="demo.spot1.name"></h2>
+                    <p class="small muted">
+                      <span data-t="profile.admin.inactiveBy" data-v='{"name":"Dana K."}'></span> ·
+                      <span class="num" data-t="spot.ago.hours" data-v='{"n":2}'></span>
+                    </p>
+                  </div>
+                </div>
+                <div class="alertrow__actions">
+                  <button
+                    class="btn btn--small"
+                    type="button"
+                    data-go="approve-inactive"
+                    data-t="spot.admin.approve"
+                  ></button>
+                  <button
+                    class="btn btn--small btn--secondary"
+                    type="button"
+                    data-go="reject-inactive"
+                    data-t="spot.admin.reject"
+                  ></button>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div class="scrim" data-when="approve reject approve-inactive reject-inactive"></div>
+          <aside class="sheet sheet--modal" role="dialog" aria-modal="true" data-when="approve">
+            <h2 class="sheet__title" data-t="spot.admin.approve.confirmTitle"></h2>
+            <p class="muted" data-t="spot.admin.approve.confirmText"></p>
+            <button
+              class="btn btn--lg"
+              type="button"
+              data-go="default"
+              data-t="spot.admin.approve.confirmYes"
+            ></button>
+            <button
+              class="btn btn--quiet"
+              type="button"
+              data-go="default"
+              data-t="common.cancel"
+            ></button>
+          </aside>
+          <aside class="sheet sheet--modal" role="dialog" aria-modal="true" data-when="reject">
+            <h2 class="sheet__title" data-t="spot.admin.reject.confirmTitle"></h2>
+            <p class="muted" data-t="spot.admin.reject.confirmText"></p>
+            <button
+              class="btn btn--lg btn--danger"
+              type="button"
+              data-go="default"
+              data-t="spot.admin.reject.confirmYes"
+            ></button>
+            <button
+              class="btn btn--quiet"
+              type="button"
+              data-go="default"
+              data-t="common.cancel"
+            ></button>
+          </aside>
+          <aside
+            class="sheet sheet--modal"
+            role="dialog"
+            aria-modal="true"
+            data-when="approve-inactive"
+          >
+            <h2 class="sheet__title" data-t="spot.admin.inactive.approveTitle"></h2>
+            <p class="muted" data-t="spot.admin.inactive.approveText"></p>
+            <button
+              class="btn btn--lg"
+              type="button"
+              data-go="default"
+              data-t="spot.admin.inactive.approveYes"
+            ></button>
+            <button
+              class="btn btn--quiet"
+              type="button"
+              data-go="default"
+              data-t="common.cancel"
+            ></button>
+          </aside>
+          <aside
+            class="sheet sheet--modal"
+            role="dialog"
+            aria-modal="true"
+            data-when="reject-inactive"
+          >
+            <h2 class="sheet__title" data-t="spot.admin.inactive.rejectTitle"></h2>
+            <p class="muted" data-t="spot.admin.inactive.rejectText"></p>
+            <button
+              class="btn btn--lg btn--danger"
+              type="button"
+              data-go="default"
+              data-t="spot.admin.inactive.rejectYes"
+            ></button>
+            <button
+              class="btn btn--quiet"
+              type="button"
+              data-go="default"
+              data-t="common.cancel"
+            ></button>
+          </aside>
+        </div>
+
+        <!-- ============ Admin: reported content (needs a decision) ============ -->
+        <div data-screen="admin-reports" data-chrome="page" data-default-state="default">
+          <header class="topbar">
+            <a class="iconbtn" href="profile.html?state=admin" data-t-attr="aria-label:common.back"
+              ><i data-icon="back" data-class="icon--flip"></i
+            ></a>
+            <h1 class="topbar__title" data-t="profile.admin.reports"></h1>
+          </header>
+          <div class="page page--wide stack stack--4 page--fill">
+            <div class="empty" data-when="empty">
+              <i data-icon="checkcircle" data-class="icon--l"></i>
+              <h2 data-t="profile.admin.reportsEmpty"></h2>
+            </div>
+            <div class="reports" data-unless="empty">
+              <article class="report">
+                <div class="report__head">
+                  <span class="chip" data-level="none"
+                    ><i data-icon="comment"></i><span data-t="profile.admin.kind.message"></span
+                  ></span>
+                  <span class="small muted" data-t="profile.admin.reported" data-v='{"n":2}'></span>
+                </div>
+                <div class="report__body">
+                  <div class="report__content">
+                    <p data-t="demo.badMsg"></p>
+                    <p class="small muted">
+                      <bdi data-t="demo.user3.name"></bdi> · <span data-t="demo.spot1.name"></span>
+                    </p>
+                  </div>
+                </div>
+                <div class="report__actions">
+                  <button class="btn btn--small" type="button" data-t="profile.admin.hide"></button>
+                  <button
+                    class="btn btn--small btn--secondary"
+                    type="button"
+                    data-t="profile.admin.keep"
+                  ></button>
+                </div>
+                <div class="report__member">
+                  <span class="report__label small muted" data-t="profile.admin.member"></span>
+                  <div class="report__actions">
+                    <button
+                      class="btn btn--small btn--quiet"
+                      type="button"
+                      data-t="chat.admin.restrict"
+                    ></button>
+                    <button
+                      class="btn btn--small btn--quiet"
+                      type="button"
+                      data-t="chat.admin.ban"
+                    ></button>
+                  </div>
+                </div>
+              </article>
+              <article class="report">
+                <div class="report__head">
+                  <span class="chip" data-level="none"
+                    ><i data-icon="image"></i><span data-t="profile.admin.kind.photo"></span
+                  ></span>
+                  <span class="small muted" data-t="profile.admin.reported" data-v='{"n":1}'></span>
+                </div>
+                <div class="report__body">
+                  <div class="photo photo--square" data-tone="4"><i data-icon="cat"></i></div>
+                  <div class="report__content">
+                    <p data-t="demo.cat1.name"></p>
+                    <p class="small muted">
+                      <bdi data-t="demo.user2.name"></bdi> · <span data-t="demo.area1"></span>
+                    </p>
+                  </div>
+                </div>
+                <div class="report__actions">
+                  <button class="btn btn--small" type="button" data-t="profile.admin.hide"></button>
+                  <button
+                    class="btn btn--small btn--secondary"
+                    type="button"
+                    data-t="profile.admin.keep"
+                  ></button>
+                </div>
+                <div class="report__member">
+                  <span class="report__label small muted" data-t="profile.admin.member"></span>
+                  <div class="report__actions">
+                    <button
+                      class="btn btn--small btn--quiet"
+                      type="button"
+                      data-t="chat.admin.restrict"
+                    ></button>
+                    <button
+                      class="btn btn--small btn--quiet"
+                      type="button"
+                      data-t="chat.admin.ban"
+                    ></button>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div class="scrim" data-sub="lang"></div>
+        <aside
+          class="sheet sheet--modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="lang-title"
+          data-sub="lang"
+        >
+          <h2 class="sheet__title" id="lang-title" data-t="lang.choose"></h2>
+          <div class="rows">
+            <a class="row" href="?lang=he" lang="he" data-lang-option="he">
+              <span class="row__main"><span class="row__title" data-t="lang.he"></span></span>
+            </a>
+            <a class="row" href="?lang=en" lang="en" data-lang-option="en">
+              <span class="row__main"><span class="row__title" data-t="lang.en"></span></span>
+            </a>
+          </div>
+          <button class="btn btn--quiet" type="button" data-go="/" data-t="common.close"></button>
+        </aside>
+      </main>
+      <nav data-nav="me"></nav>
+    </div>
+
+    <script src="locales/he.js"></script>
+    <script src="locales/en.js"></script>
+    <script src="icons.js"></script>
+    <script src="mock.js"></script>
+    <script src="pages/profile.js"></script>
+  </body>
+</html>

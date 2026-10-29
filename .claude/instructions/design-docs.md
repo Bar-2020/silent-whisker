@@ -1,6 +1,6 @@
 ## Design docs
 
-**`docs/` is the source of truth.** Six short files, each capped at 150 lines (a test enforces it):
+**`docs/` is the source of truth.** Short files, each capped at 150 lines (a test enforces it; `DESIGN.md` is exempt):
 
 | File | What it holds |
 |---|---|
@@ -10,6 +10,7 @@
 | [docs/API.md](../../docs/API.md) | Endpoint table, static CDN files |
 | [docs/SOURCES.md](../../docs/SOURCES.md) | Where municipal feeding stations come from and how they are imported |
 | [docs/DECISIONS.md](../../docs/DECISIONS.md) | The `D-nn` log: accepted, proposed, open |
+| [docs/DESIGN.md](../../docs/DESIGN.md) | The look: colours, type, shapes, components. Exempt from the 150-line cap. Mocks in `design/` |
 | [docs/AWS.md](../../docs/AWS.md) | AWS regions, prices and free-tier facts, with sources and dates |
 
 Read PRODUCT and RULES first, then only the file your task touches. If you edit a spec, keep it

@@ -201,6 +201,12 @@ export default defineConfig({
         rules: { 'sonarjs/super-linear-regex': 'off' },
       },
       {
+        // The test runs infra/app/spa-fallback.js, the repo's own CloudFront Function, to check
+        // what it does with real addresses; it never runs anything from outside the repo.
+        files: ['__tests__/spa-fallback.test.ts'],
+        rules: { 'sonarjs/code-eval': 'off' },
+      },
+      {
         // RuleTester generates its cases at runtime, so sonarjs cannot see any tests here.
         files: ['__tests__/lint-rules.test.ts'],
         rules: { 'sonarjs/no-empty-test-file': 'off' },

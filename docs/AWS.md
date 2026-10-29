@@ -38,13 +38,15 @@ big decision.
 |---|---|---|
 | CloudFront, pay-as-you-go (the default) | always free: 1 TB out and 10,000,000 requests a month | S10 |
 | CloudFront flat-rate Free plan | $0. Includes WAF (5 rules) and IP-based rate limiting (block an IP over a set number of requests in 5 minutes). 1M requests and 100 GB a month are not hard limits: no overage charge, delivery may be adjusted above them. Pro is $15 a month for 10M requests. Appears impossible in this project: its API is not on the list its managed policies allow in us-east-1 (untested, D-38, D-49). 5 cache behaviors, 3 Free plans per account | S10, S21 |
+| CloudFront Functions (D-63) | always free on both plans: 2,000,000 invocations a month, then $0.10 per million. One invocation per request to the site, files included, so this runs out before the 10,000,000 free requests. Lambda@Edge has no free tier and may not be used in this project | S10, S28 |
 | AWS WAF, pay-as-you-go | $5 per web ACL and $1 per rule a month, $0.60 per million requests, on top of CloudFront. A rate-based rule is an ordinary rule | S22 |
 | Rekognition DetectLabels, DetectModerationLabels | first 1M images a month: $1.00 per 1,000 in us-east-1 and Ireland, $1.20 in Tel Aviv and Frankfurt | S8 |
 | Rekognition free tier | the page still shows 12 months of 1,000 images a month; new accounts get credits instead, plan on none | S8, S12 |
 | Guardrails text content filters | $0.15 per 1,000 text units (1 unit is up to 1,000 characters), same for Classic and Standard, no free tier | S9 |
-| Bedrock Amazon Nova Lite (the photo check, D-50), on demand, called from Stockholm | $0.000065 per 1,000 input tokens and $0.00026 per 1,000 output tokens. A photo is about 1,950 input tokens (measured, up to 2,700) and one output word, so about $0.00013 a photo, $0.13 per 1,000 photos. The EU inference profile costs nothing extra and is billed at the price of the Region you call from (AWS's docs say so; the price list has no separate EU-profile entry, so compare the first bill with this figure) | S27, S28 |
-| Bedrock Claude Haiku 4.5 (the later photo option, D-50), EU profile, called from Stockholm | $1.10 per million input tokens and $5.50 per million output tokens (the global profile is $1.00 and $5.00). A photo is about 1,660 input tokens, so about $0.0018 a photo: about 14 times Nova Lite. Billed through AWS Marketplace | S27, S28 |
+| Bedrock Amazon Nova Lite (the photo check, D-50), on demand, called from Stockholm | $0.000065 per 1,000 input tokens and $0.00026 per 1,000 output tokens. A photo is about 1,950 input tokens (measured, up to 2,700) and one output word, so about $0.00013 a photo, $0.13 per 1,000 photos. The EU inference profile costs nothing extra and is billed at the price of the Region you call from (AWS's docs say so; the price list has no separate EU-profile entry, so compare the first bill with this figure) | S29, S30 |
+| Bedrock Claude Haiku 4.5 (the later photo option, D-50), EU profile, called from Stockholm | $1.10 per million input tokens and $5.50 per million output tokens (the global profile is $1.00 and $5.00). A photo is about 1,660 input tokens, so about $0.0018 a photo: about 14 times Nova Lite. Billed through AWS Marketplace | S29, S30 |
 | Cognito | 10,000 MAU always free on Lite or Essentials (Plus has none); Google is a social provider, so it counts here, not in the 50 MAU SAML/OIDC bucket | S11, S18 |
+| API Gateway HTTP API (D-38) | $1.00 per million calls up to 300M a month, then $0.90 (US prices in the page's examples; the Stockholm price was not read). The free tier is 1M calls a month for 12 months | S27 |
 | Lambda | always free: 1M requests and 400,000 GB-seconds a month | S12, S14 |
 | DynamoDB | always free: 25 GB, 25 WCU, 25 RCU, but only for provisioned capacity. On-demand in Tel Aviv: $0.85 per million writes, $0.17 per million reads | S12, S15 |
 | S3 | no free allowance for a new account. Standard per GB-month: $0.0250 Tel Aviv, $0.0245 Frankfurt, $0.0230 Ireland | S12, S16 |
@@ -91,7 +93,7 @@ act on. The AWS Budget is only a backup: it alerts, and is not instant.
 Phase 1 builds the cost limits, but no phase 1 code calls them. The first phase that moderates
 anything, text or photo (the profile name in phase 2, or the photo upload in phase 3), wraps its
 paid check in `meteredCall` ([metered-call.ts](../backend/shared/metered-call.ts)), takes the
-member's daily allowance first, and builds the re-check of deferred content (D-53, proposed).
+member's daily allowance first. The profile is checked on the spot and refused when the check cannot run (D-62); the re-check of deferred content (D-53) comes with the photo upload in phase 3.
 
 ## Sources
 
@@ -129,9 +131,11 @@ member's daily allowance first, and builds the re-check of deferred content (D-5
 - S25: https://docs.aws.amazon.com/accounts/latest/reference/activate-advanced-features.html and
   https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier-plans.html (read 2026-10-17)
 - S26: https://docs.aws.amazon.com/accounts/latest/reference/scps-and-rcps-for-projects.html (read 2026-10-18)
-- S27: https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/eu-north-1/index.json
+- S27: https://aws.amazon.com/api-gateway/pricing/ (read 2026-10-28)
+- S28: https://aws.amazon.com/pm/cloudfront/ (read 2026-10-28)
+- S29: https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/eu-north-1/index.json
   (Nova, published 2026-10-28) and
   https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/current/eu-north-1/index.json
   (Claude, published 2026-10-12). AWS's public price list, the data S9 draws its tables from (the
   page's own text has no Nova tables). Read 2026-10-28
-- S28: https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html (read 2026-10-28)
+- S30: https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html (read 2026-10-28)

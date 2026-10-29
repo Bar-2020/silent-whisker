@@ -4,10 +4,17 @@
     "__tests__/**/*.test.ts",
     "frontend/src/**/*.test.{ts,tsx}",
     "backend/**/*.test.ts",
-    "scripts/*.mjs"
+    "scripts/*.mjs",
+    "design/mocks/styles/*.css"
   ],
-  "dynamicallyLoaded": ["lint/silent-whisker-plugin.js"],
+  "ignorePatterns": ["design/**/*.js", "design/**/*.mjs"],
+  "dynamicallyLoaded": ["lint/silent-whisker-plugin.js", "infra/app/spa-fallback.js"],
   "duplicates": {
     "mode": "strict"
+  },
+  "rules": {
+    "css-duplicate-block": "error",
+    "css-token-drift": "error",
+    "css-broken-reference": "error"
   }
 }

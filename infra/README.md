@@ -78,10 +78,18 @@ clear the terminal.
    `AWS_DEPLOY_ROLE_ARN` (the printed `deployer_role_arn`) and `DEPLOY_ENABLED` with the value
    `true`. The deploy job checks `DEPLOY_ENABLED` before the environment loads, so set it last.
 
+**5. Google sign-in (Phase 2, D-59).** In Google Cloud, Google Auth Platform: a consent screen
+(External, only the scopes `openid`, `email`, `profile`) and a Web application client whose
+redirect address is `https://silent-whisker-auth.auth.eu-north-1.amazoncognito.com/oauth2/idpresponse`
+(Cognito's address; its prefix is `domain_prefix` in `shared/constants/auth.json`, change both
+together). Put the client id in a repository variable `GOOGLE_CLIENT_ID` and the client secret in
+a `production` environment secret `GOOGLE_CLIENT_SECRET`. Until both exist, Terraform leaves Google
+sign-in off. While the consent screen is in Testing, only the listed test users can sign in.
+
 ## Every merge to `main`
 
 The CI deploy job logs in as the deploy user, switches into the deployer role, builds the app,
-runs `terraform apply` in `app/` (today: the private bucket and CloudFront, D-36), uploads `frontend/dist/`
+runs `terraform apply` in `app/` (today: the private bucket, CloudFront and the Cognito sign-in, D-36, D-59), uploads `frontend/dist/`
 with `aws s3 sync`, clears CloudFront's cache, removes old files, and prints the address as
 `Live at https://...`.
 
