@@ -21,4 +21,6 @@ export interface UserRow {
   avatar_url?: string;
   display_name?: string;
   city?: string;
+  terms_accepted_at?: string;
+  terms_version?: number;
 }

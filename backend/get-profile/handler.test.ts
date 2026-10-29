@@ -7,6 +7,7 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
+import { TERMS_VERSION } from '../../shared/constants/profile';
 import { handler } from './handler';
 import type { ProfileEvent, UserRow } from './handler.types';
 
@@ -127,6 +128,7 @@ describe('GET /api/profile creates the row on the first call (D-59)', () => {
       avatar_url: null,
       show_google_photo: false,
       status: 'active',
+      terms_accepted: false,
     });
   });
 
@@ -211,6 +213,20 @@ describe('GET /api/profile and the Google photo (D-21)', () => {
       ExpressionAttributeValues: { ':photo': newer },
     });
     expect(body(result)).toMatchObject({ avatar_url: newer });
+  });
+});
+
+describe('GET /api/profile and the terms (R-36)', () => {
+  it.each([
+    ['never accepted', {}, false],
+    ['accepted an older version', { terms_version: TERMS_VERSION - 1 }, false],
+    ['accepted the current version', { terms_version: TERMS_VERSION }, true],
+  ])('says terms_accepted for a member who %s', async (_name, accepted, expected) => {
+    dbMock.on(GetCommand).resolves({ Item: row(accepted) });
+
+    const result = await handler(idToken());
+
+    expect(body(result)).toMatchObject({ terms_accepted: expected });
   });
 });
 

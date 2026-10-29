@@ -6,7 +6,7 @@ import {
   UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
 import { STATUS_OK, STATUS_UNAUTHORIZED } from '../../shared/constants/http';
-import { GOOGLE_IMAGE_HOST_SUFFIX } from '../../shared/constants/profile';
+import { GOOGLE_IMAGE_HOST_SUFFIX, TERMS_VERSION } from '../../shared/constants/profile';
 import type { ApiResult, ProfileEvent, UserRow } from './handler.types';
 
 // GET /api/profile (D-59): `user_id` is always the token's `sub`, never anything in the request.
@@ -109,5 +109,6 @@ export async function handler(event: ProfileEvent): Promise<ApiResult> {
     avatar_url: user.show_google_photo ? (user.avatar_url ?? null) : null,
     show_google_photo: user.show_google_photo,
     status: user.status,
+    terms_accepted: user.terms_version === TERMS_VERSION,
   });
 }
