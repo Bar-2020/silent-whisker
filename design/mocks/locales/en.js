@@ -198,7 +198,7 @@ window.MOCK_LOCALES.en = {
   'newspot.privacy':
     'The spot is shown only to members who are close to it, or when it needs food or water. An admin approves it first.',
   'newspot.tip':
-    'Choose a quiet, out-of-the-way place that bothers no one: not at a door, a playground or a shared yard. Use a bowl, take it with you and clean up. Follow the local rules.',
+    'Choose a quiet, out-of-the-way place that bothers no one: not at a door, a playground or a shared yard. Use a bowl and clean up. Follow the local rules.',
   'newspot.name.label': 'Spot name',
   'newspot.name.placeholder': 'For example: the yard behind the library',
   'newspot.name.hint': 'Without a name we use the street.',
