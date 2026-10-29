@@ -1483,7 +1483,11 @@ button.msg__bubble:hover {
   flex: 1;
 }
 
+/* Digits read left to right in both languages, so the number gets its own column and its ones digits line up on the right edge. */
 .stat__value {
+  min-inline-size: 3ch;
+  direction: ltr;
+  text-align: end;
   font-size: var(--fs-l);
   font-weight: 700;
 }
