@@ -1,4 +1,3 @@
-# The photo check's Bedrock permission against a mock AWS (see infra/README.md).
 # The expected values are built from shared/constants/photo-check.json, so switching model there
 # does not break these tests.
 

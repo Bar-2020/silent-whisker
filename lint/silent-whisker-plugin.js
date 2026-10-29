@@ -1,6 +1,5 @@
-// The project's own hard rules, enforced as lint rules so the error names the fix.
-// Each rule reports every AST node matching one of its selectors. Plain objects, no
-// import: definePlugin/defineRule from vite-plus only add types to this same shape.
+// Plain objects, no import: definePlugin/defineRule from vite-plus only add types to this same
+// shape.
 function restrictSyntax(entries) {
   return {
     create(context) {
@@ -14,11 +13,8 @@ function restrictSyntax(entries) {
   };
 }
 
-// Hebrew is the primary language and the layout is fully right-to-left, so
-// physical edges are always wrong in styles. `start`/`end` (CSS logical
-// properties) flip with the writing direction; `left`/`right` do not. See
-// .claude/instructions/hard-rules.md "RTL-safe styles". Plain .css files get the same check
-// from stylelint once the web app exists.
+// Physical edges do not flip in RTL, and Hebrew is the primary language (hard-rules.md, "RTL-safe
+// styles"). Plain .css files get the same check from stylelint once the web app exists.
 const PHYSICAL_EDGE_PROPS = [
   'left',
   'right',
@@ -48,8 +44,6 @@ const rtlLogicalProperties = restrictSyntax(
   }))
 );
 
-// Styles live in a .css file beside the component, never in the markup or on
-// an element. See .claude/instructions/hard-rules.md "No inline styles".
 const noInlineStyles = restrictSyntax(
   ['JSXAttribute[name.name="style"]', 'MemberExpression[property.name="style"]'].map(
     (selector) => ({
@@ -63,8 +57,6 @@ const noInlineStyles = restrictSyntax(
 // `no-magic-numbers` lets `const LIMIT = 30` through anywhere, which would
 // leave limits scattered across logic files. Constants belong in
 // shared/constants/, so a numeric top-level const is rejected everywhere else.
-// Any number but 0 and 1, fractions included, and the same behind a unary minus.
-// A string such as '10' is not a number and passes.
 const numericConstantsLiveInConstants = restrictSyntax(
   [
     'Program > VariableDeclaration > VariableDeclarator',
@@ -81,11 +73,9 @@ const numericConstantsLiveInConstants = restrictSyntax(
     }))
 );
 
-// Every metered AWS call goes through `meteredCall` (R-05). The paid call is written as a function
-// handed to it, so the paid client is imported where that function is written. A file that imports
-// a paid client must therefore also import metered-call. A reminder, not a proof: it cannot see
-// that every call is wrapped, and only static imports are checked. Add a client here when a new
-// paid service is chosen.
+// R-05: the paid call is a function handed to `meteredCall`, so a file that imports a paid client
+// must also import metered-call. A reminder, not a proof: it cannot see that every call is wrapped,
+// and only static imports are checked. Add a client here when a new paid service is chosen.
 const PAID_AWS_CLIENTS = [
   '@aws-sdk/client-bedrock-runtime',
   '@aws-sdk/client-bedrock-agent-runtime',

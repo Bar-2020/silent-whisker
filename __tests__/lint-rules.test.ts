@@ -3,10 +3,8 @@ import { describe, it } from 'vite-plus/test';
 import plugin from '../lint/silent-whisker-plugin.js';
 
 /**
- * The hard rules in .claude/instructions/hard-rules.md are enforced by selector rules in
- * lint/silent-whisker-plugin.js. A selector that stops matching reports nothing, so
- * `npm run verify` would stay green with the rule dead. Each rule is pinned here to code it must
- * flag and code it must leave alone.
+ * A selector that stops matching reports nothing, so `npm run verify` would stay green with the
+ * rule dead. Each rule is pinned here to code it must flag and code it must leave alone.
  */
 RuleTester.describe = describe;
 RuleTester.it = it;

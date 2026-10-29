@@ -116,7 +116,6 @@
   /* Substates where the form is filled in: ready, no connection (the form is kept), and every answer. */
   const FILLED = ['ready', 'offline', ...LOG_RESULTS];
 
-  /* The log form: pick one of three, then the button wakes up. */
   const submit = document.getElementById('log-submit');
   document.querySelectorAll('input[name="kind"]').forEach((input) => {
     input.addEventListener('change', () => {
@@ -137,7 +136,6 @@
     else if (form && (FILLED.includes(sub) || sub === 'kittens-refused')) form.scrollIntoView();
   }
 
-  /* New spot and edit. */
   function applyForms(state) {
     const address = document.getElementById('place-address');
     const here = document.getElementById('place-here');
@@ -167,7 +165,6 @@
     }
   }
 
-  /* Wide screens show the spot on a map next to the panel. */
   let map = null;
   function mountSideMap() {
     const host = document.getElementById('spot-map');
@@ -232,7 +229,6 @@
 
   if (submit) {
     submit.addEventListener('click', () => {
-      /* The save takes a moment; then the result comes back. */
       window.setTimeout(() => {
         if (Mock.getSub() === 'sending') Mock.setState('/counted');
       }, 1600);

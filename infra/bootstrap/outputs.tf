@@ -1,4 +1,4 @@
-# Printed after `terraform apply`. Neither is a secret: they are names, not keys.
+# Neither is a secret: they are names, not keys.
 
 output "deploy_user_name" {
   description = "Make this user's access key by hand (infra/README.md)."

@@ -1,5 +1,4 @@
-/* The design system page: tokens and every component with its states, drawn with the real classes.
-   Design tooling, not the app. */
+/* The design system page: tokens and every component with its states, drawn with the real classes. */
 (() => {
   /* English by default: this page is tooling. */
   if (!new URLSearchParams(window.location.search).has('lang')) {
@@ -15,7 +14,6 @@
   const grid = (html, wide) =>
     `<div class="ds__grid${wide ? ' ds__grid--wide' : ''}">${html}</div>`;
 
-  /* ----- colour ----- */
   const swatch = (token, dark) =>
     `<div class="sw sw--${token}${dark ? ' sw--dark' : ''}">${token}</div>`;
   const colour = section(
@@ -34,7 +32,6 @@
     )}`
   );
 
-  /* ----- type, space, radius ----- */
   const sizes = ['xs', 's', 'm', 'l', 'xl', '2xl', 'display'];
   const type = section(
     'type',
@@ -51,7 +48,6 @@
         .join('')}<span class="ds__box ds__box--lift">lift</span></div>`
   );
 
-  /* ----- buttons ----- */
   const variants = [
     ['Primary', 'btn'],
     ['Secondary', 'btn btn--secondary'],
@@ -94,7 +90,6 @@
     `<h3>States by variant</h3>${matrix}<h3>On the pinned bar of a form: default, disabled, pending</h3><p class="muted">The bar is white and flat, pinned to the bottom of the screen, with no line, shadow or glass. On a wide screen it sits under the form.</p>${onBar}<h3>Sizes and round buttons</h3><div class="ds__sample"><button class="btn btn--small" type="button">Small 44</button><button class="btn" type="button">Default 48</button><button class="btn btn--lg" type="button">Large 56</button><button class="iconbtn" type="button" aria-label="Menu">${icon('more')}</button><button class="round" type="button" aria-label="Locate">${icon('locate')}</button><button class="round round--primary" type="button" aria-label="Add">${icon('plus')}</button><button class="round" type="button" disabled aria-label="Locate (disabled)">${icon('locate')}</button><button class="round round--primary" type="button" aria-busy="true" aria-label="Adding"><span class="spinner spinner--btn"></span></button></div>`
   );
 
-  /* ----- forms ----- */
   const field = (label, control, hint) =>
     `<div class="field"><span class="field__label">${label}</span>${control}${hint || ''}</div>`;
   const tile = (name, checked, disabled, text) =>
@@ -130,7 +125,6 @@
     )}<h3>Tabs</h3><div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true">Log</button><button type="button" role="tab" aria-selected="false">Cats</button><button type="button" role="tab" aria-selected="false">Chat</button><button type="button" role="tab" aria-selected="false">History</button></div>`
   );
 
-  /* ----- feedback ----- */
   const notice = (level, ic, title, text) =>
     `<div class="notice" data-level="${level}">${icon(ic)}<div class="notice__body"><strong>${title}</strong><span>${text}</span></div></div>`;
   const chip = (level, ic, text) =>
@@ -151,7 +145,6 @@
       `<h3>Toast: a refusal or a short confirmation that does not move the page</h3><div class="ds__sample"><div class="toast" role="status">${icon('check')}<div class="notice__body"><span>Report sent.</span></div></div><div class="toast" role="alert">${icon('xcircle')}<div class="notice__body"><span>The text did not pass the check. Try rewording it.</span></div></div></div>`
   );
 
-  /* ----- map markers ----- */
   const pins = ['green', 'orange', 'red', 'none']
     .map((level) =>
       cell(
@@ -168,7 +161,6 @@
     `${grid(pins)}<h3>Cat alert sign</h3><div class="ds__sample">${window.Mock.signHtml({ kind: 'danger' })}${window.Mock.signHtml({ kind: 'danger', selected: true })}${window.Mock.signHtml({ kind: 'neuter' })}</div><h3>Your position</h3><div class="ds__sample ds__sample--pad"><span class="here" aria-label="Your position"></span></div>`
   );
 
-  /* ----- glass and surfaces ----- */
   const glass = section(
     'glass',
     'Glass and surfaces',
@@ -179,7 +171,6 @@
       `<h3>Map search and its results</h3><div class="ds__sample ds__sample--map"><div class="maptop ds__maptop"><div class="mapsearch" role="search">${icon('search')}<input class="mapsearch__input" placeholder="City, street, address or spot" /></div><button class="round" type="button" aria-label="Legend">${icon('help')}</button></div></div>`
   );
 
-  /* ----- lists and cards ----- */
   const lists = section(
     'lists',
     'Lists and cards',
@@ -191,7 +182,6 @@
       `<h3>Photos in a grid: three to a row</h3><div class="cat-grid ds__grid-photos">${[1, 2, 3, 4, 3, 2].map((tone) => `<div class="photo photo--square" data-tone="${tone}">${icon('cat')}</div>`).join('')}</div>`
   );
 
-  /* ----- brand and icons ----- */
   const brand = section(
     'icons',
     'Brand mark and icons',

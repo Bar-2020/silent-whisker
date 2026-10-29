@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 # Offline checks for the Terraform code in infra/. Nothing here reaches AWS or the real state.
-#   lint: terraform fmt, then for each module a backend-less init and `validate` (types, references)
-#   test: `terraform test` for each module, against a mock AWS (the modules' tests/ folders)
-# `npm run lint:iac` and `npm run test:iac` call it; both are part of `npm run verify`, so the Stop
-# hook and CI run them too.
+# Called by `npm run lint:iac` and `npm run test:iac`.
 set -euo pipefail
 
 mode="${1:-}"
@@ -14,7 +11,6 @@ fi
 
 cd "$(dirname "$0")"
 
-# One shared download of the AWS provider for all modules, instead of one per module.
 export TF_PLUGIN_CACHE_DIR="${TF_PLUGIN_CACHE_DIR:-$HOME/.terraform.d/plugin-cache}"
 mkdir -p "$TF_PLUGIN_CACHE_DIR"
 

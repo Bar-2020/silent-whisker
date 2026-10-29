@@ -27,9 +27,8 @@ jobs:
           run-install: |
             - args: ['--frozen-lockfile']
 
-      # typecheck · vp check (oxfmt + oxlint) · vp test · fallow audit. With the `iac` job below
-      # it is `npm run verify`, the command the Stop hook and every phase's Verification section
-      # refer to.
+      # With the `iac` job below this is `npm run verify`, the command the Stop hook and every
+      # phase's Verification section refer to.
       - run: npm run verify:code
 
       # The deploy builds too; failing here keeps a broken build out of main.
@@ -81,8 +80,7 @@ jobs:
           terraform_version: 1.16.6
           terraform_wrapper: false
 
-      # Log in as the deploy user (infra/bootstrap/), then switch into the deployer role for at
-      # most an hour. The user's key can do nothing else.
+      # The deploy user's key (infra/bootstrap/) can do nothing but switch into the deployer role.
       - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -110,9 +108,8 @@ jobs:
           terraform init -input=false -backend-config="bucket=silent-whisker-tfstate-$ACCOUNT"
           terraform apply -input=false -auto-approve
 
-      # Terraform builds the place; this puts the site in it. Order matters: add the new files,
-      # clear CloudFront's cache and wait until it is clear, and only then remove old files, so a
-      # page still cached never points at a file that is already gone.
+      # Order matters: add the new files, clear CloudFront's cache and wait until it is clear, and
+      # only then remove old files, so a page still cached never points at a file that is gone.
       - name: Upload the site
         working-directory: infra/app
         run: |

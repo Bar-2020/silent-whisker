@@ -7,5 +7,9 @@
 - **When the spec and the code disagree, the spec wins.** Fix the code or raise it.
 - **When the spec disagrees with itself, or a decision is missing, stop and ask.** Add it to
   DECISIONS.md with a recommendation.
+- **Comment only when the code cannot say it.** Only a *why* that is not visible: a rule or decision
+  it enforces (`R-nn`, `D-nn`), a workaround, a limit, a trap. One short line beats a block. Never
+  restate the code or leave commented-out code. Applies to new and changed code; leave other
+  comments alone unless asked. The `R-nn` citation in a test and the `ponytail:` marker stay.
 - Commits follow [Conventional Commits](https://www.conventionalcommits.org/). Small commits, small
   PRs.
