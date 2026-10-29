@@ -115,13 +115,13 @@ Code first, no Figma (D-40). The tool is Impeccable (`.claude/skills/impeccable`
 
 One phase, one PR or smaller. Do not start a phase while the previous one is half built.
 
-0. Repo and harness: `npm run verify` green, CI, Stop hook.
+0. Repo and harness: `npm run verify` green, CI, Stop hook. **Done.**
 1. AWS infra and deploy pipeline in Stockholm (Terraform, GitHub deploy key, the text and photo tests D-49 and
    D-50, AWS Budget of $10 a month, cost limits, D-52). CloudFront serves the app and `/locales/`
-   (D-38, D-49).
+   (D-38, D-49). **Done** (live since 2026-10-21; the Budget was made by hand, not in Terraform).
 2. Design of every screen, approved (UI and UX design, `DESIGN.md`), then Google sign-in, the sign-up form and profile,
    the public landing and legal pages, the four-language shell, responsive shell. Sign-in is required
-   (D-39), so it comes before the map.
+   (D-39), so it comes before the map. **Under way.**
 3. Map and spots (exact; custom spots per D-47), municipal stations loaded into `spots`, custom spots
    (a separate form, admin approval, D-43), the spots list (D-82), the admin list in Profile (D-78), moderated photo upload.
 4. Feeding and water logs (no photo), the first-run location screen and the "needs food/water"
