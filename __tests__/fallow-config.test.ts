@@ -2,16 +2,17 @@ import { spawnSync } from 'child_process';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { dirname, join, resolve } from 'path';
+import ts from 'typescript';
 import { describe, expect, it } from 'vite-plus/test';
 
 /**
- * A boundary zone whose pattern matches nothing only warns, so a typo in .fallowrc.json would
+ * A boundary zone whose pattern matches nothing only warns, so a typo in .fallowrc.jsonc would
  * switch a rule off and nobody would see it. This lays out a project with one import across each
  * line the areas and features must not cross and asserts the real config refuses exactly those.
  */
 
 const REPO_ROOT = resolve(__dirname, '..');
-const CONFIG = join(REPO_ROOT, '.fallowrc.json');
+const CONFIG = join(REPO_ROOT, '.fallowrc.jsonc');
 const FALLOW = join(REPO_ROOT, 'node_modules/fallow/bin/fallow');
 
 const FILES: Record<string, string> = {
@@ -53,7 +54,7 @@ function analyseFixture(): Report {
   const root = mkdtempSync(join(tmpdir(), 'fallow-config-'));
   try {
     writeFileSync(join(root, 'package.json'), '{"name":"fixture","private":true,"type":"module"}');
-    writeFileSync(join(root, '.fallowrc.json'), readFileSync(CONFIG));
+    writeFileSync(join(root, '.fallowrc.jsonc'), readFileSync(CONFIG));
     for (const [path, source] of Object.entries(FILES)) {
       mkdirSync(dirname(join(root, path)), { recursive: true });
       writeFileSync(join(root, path), source);
@@ -73,7 +74,7 @@ function analyseFixture(): Report {
 
 const report = analyseFixture();
 
-describe('the architecture boundaries in .fallowrc.json', () => {
+describe('the architecture boundaries in .fallowrc.jsonc', () => {
   it('refuse an import between the areas or between features, and only those', () => {
     const refused = report.boundary_violations
       .map((v) => `${v.from_path} -> ${v.to_path}`)
@@ -91,5 +92,29 @@ describe('the architecture boundaries in .fallowrc.json', () => {
 
   it('refuse a source file in a folder no zone covers', () => {
     expect(report.boundary_coverage_violations.map((v) => v.path)).toEqual(['newarea/orphan.ts']);
+  });
+});
+
+describe('the rule names in .fallowrc.jsonc', () => {
+  // Fallow stops on any other misspelling (a setting, a severity, a zone), but a misspelled rule
+  // name is ignored without a word, so the rule it was meant to set silently stays at its default.
+  it('are all rules this version of fallow knows', () => {
+    interface Config {
+      rules: Record<string, string>;
+      overrides: { rules: Record<string, string> }[];
+    }
+    // TypeScript's parser reads comments and trailing commas, which the formatter adds to .jsonc.
+    const parsed = ts.parseConfigFileTextToJson(CONFIG, readFileSync(CONFIG, 'utf8'));
+    if (parsed.error) throw new Error(`${CONFIG} does not parse`);
+    const config = parsed.config as Config;
+    const schema = JSON.parse(
+      readFileSync(join(REPO_ROOT, 'node_modules/fallow/schema.json'), 'utf8')
+    ) as { $defs: { RulesConfig: { properties: Record<string, unknown> } } };
+    const known = Object.keys(schema.$defs.RulesConfig.properties);
+    const named = [
+      ...Object.keys(config.rules),
+      ...config.overrides.flatMap((override) => Object.keys(override.rules)),
+    ];
+    expect(named.filter((rule) => !known.includes(rule))).toEqual([]);
   });
 });

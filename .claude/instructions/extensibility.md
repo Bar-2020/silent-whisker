@@ -7,7 +7,7 @@ This does not override [simplicity-first.md](simplicity-first.md).
 1. **Boundaries are checks, not advice.** A feature owns its screens, hooks and data access and is
    used only through its `index.ts`. `fallow` (in `npm run verify`) already fails an import between
    `frontend/`, `backend/` and `infra/`, and an import from one feature into another, type-only
-   ones too (the zones in `.fallowrc.json`; every folder in `frontend/src/features` becomes its own
+   ones too (the zones in `.fallowrc.jsonc`; every folder in `frontend/src/features` becomes its own
    zone). `frontend/src/shared/` is for code a second feature needs, and it never imports a
    feature. Before editing a file, `npx fallow guard <file>` lists the rules that apply to it.
 2. **What will grow is data, not code.** Languages (`shared/constants/`), municipal sources
