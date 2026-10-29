@@ -103,11 +103,12 @@ export async function handler(event: ProfileEvent): Promise<ApiResult> {
     user = { ...user, avatar_url: photo };
   }
 
-  // A banned member still gets the profile, so the app can say so (API.md).
+  // A banned member still gets the profile, so the app can say so (API.md). The Google photo goes
+  // out only when the member chose to show it (D-21); the stored copy stays either way.
   return reply(STATUS_OK, {
     display_name: user.display_name ?? null,
     city: user.city ?? null,
-    avatar_url: user.avatar_url ?? null,
+    avatar_url: user.show_google_photo ? (user.avatar_url ?? null) : null,
     show_google_photo: user.show_google_photo,
     status: user.status,
   });

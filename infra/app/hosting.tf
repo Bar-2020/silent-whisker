@@ -75,15 +75,20 @@ resource "aws_cloudfront_distribution" "site" {
     }
   }
 
-  # Everything under /api/ goes to the API, with the page fallback kept away from it (D-63).
-  ordered_cache_behavior {
-    path_pattern             = "/api/*"
-    target_origin_id         = "api"
-    viewer_protocol_policy   = "redirect-to-https"
-    allowed_methods          = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
-    cached_methods           = ["GET", "HEAD"]
-    cache_policy_id          = data.aws_cloudfront_cache_policy.disabled.id
-    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host.id
+  # Everything under /api/ goes to the API, with the page fallback kept away from it (D-63). The
+  # pattern `/api/*` does not match a bare `/api`, so that has its own, or it would get the web page.
+  dynamic "ordered_cache_behavior" {
+    for_each = ["/api", "/api/*"]
+
+    content {
+      path_pattern             = ordered_cache_behavior.value
+      target_origin_id         = "api"
+      viewer_protocol_policy   = "redirect-to-https"
+      allowed_methods          = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+      cached_methods           = ["GET", "HEAD"]
+      cache_policy_id          = data.aws_cloudfront_cache_policy.disabled.id
+      origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host.id
+    }
   }
 
   default_cache_behavior {

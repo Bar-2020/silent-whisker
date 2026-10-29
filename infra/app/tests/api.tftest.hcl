@@ -71,14 +71,17 @@ run "api_calls_go_through_cloudfront_uncached_and_without_the_page_fallback" {
   command = apply
 
   assert {
-    condition = anytrue([
-      for b in aws_cloudfront_distribution.site.ordered_cache_behavior :
-      b.path_pattern == "/api/*" &&
-      b.cache_policy_id == data.aws_cloudfront_cache_policy.disabled.id &&
-      b.origin_request_policy_id == data.aws_cloudfront_origin_request_policy.all_viewer_except_host.id &&
-      length(b.function_association) == 0
+    condition = alltrue([
+      for p in ["/api", "/api/*"] : anytrue([
+        for b in aws_cloudfront_distribution.site.ordered_cache_behavior :
+        b.path_pattern == p &&
+        b.target_origin_id == "api" &&
+        b.cache_policy_id == data.aws_cloudfront_cache_policy.disabled.id &&
+        b.origin_request_policy_id == data.aws_cloudfront_origin_request_policy.all_viewer_except_host.id &&
+        length(b.function_association) == 0
+      ])
     ])
-    error_message = "/api/* must reach the API uncached, with every header but Host, and without the page fallback (D-60, D-63)."
+    error_message = "Both /api and /api/* must reach the API uncached, with every header but Host, and without the page fallback (D-60, D-63): the bare /api would otherwise get the web page."
   }
 
   assert {

@@ -125,7 +125,7 @@ describe('GET /api/profile creates the row on the first call (D-59)', () => {
     expect(body(result)).toEqual({
       display_name: null,
       city: null,
-      avatar_url: PHOTO,
+      avatar_url: null,
       show_google_photo: false,
       status: 'active',
     });
@@ -165,8 +165,23 @@ describe('GET /api/profile and the Google photo (D-21)', () => {
     expect(body(result)).toMatchObject({ avatar_url: null });
   });
 
+  it('sends the picture only once the member chose to show it, and never before', async () => {
+    dbMock
+      .on(GetCommand)
+      .resolvesOnce({ Item: row() })
+      .resolvesOnce({
+        Item: row({ show_google_photo: true }),
+      });
+
+    const hidden = await handler(idToken());
+    const shown = await handler(idToken());
+
+    expect(body(hidden)).toMatchObject({ avatar_url: null, show_google_photo: false });
+    expect(body(shown)).toMatchObject({ avatar_url: PHOTO, show_google_photo: true });
+  });
+
   it('keeps the stored picture when the new one is not on Google', async () => {
-    dbMock.on(GetCommand).resolves({ Item: row() });
+    dbMock.on(GetCommand).resolves({ Item: row({ show_google_photo: true }) });
 
     const result = await handler(idToken({ picture: 'https://evil.example.com/a/photo' }));
 
@@ -185,7 +200,7 @@ describe('GET /api/profile and the Google photo (D-21)', () => {
 
   it('copies a changed Google picture into avatar_url', async () => {
     const newer = 'https://lh3.googleusercontent.com/a/newer=s96-c';
-    dbMock.on(GetCommand).resolves({ Item: row() });
+    dbMock.on(GetCommand).resolves({ Item: row({ show_google_photo: true }) });
     dbMock.on(UpdateCommand).resolves({});
 
     const result = await handler(idToken({ picture: newer }));
