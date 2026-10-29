@@ -125,7 +125,7 @@
           screen: 'detail',
           states: [
             ['red/ready', 'Chosen'],
-            ['red/sending', 'Saving (pending button)'],
+            ['red/sending', 'Saving (pending button, toast)'],
             ['red/counted', 'Counted'],
             ['red/unverified', 'Unverified'],
             ['red/toosoon', 'Too soon'],
