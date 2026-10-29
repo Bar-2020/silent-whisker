@@ -1,5 +1,5 @@
 // Serves the repo over http://localhost:4173 so the mocks can load their map tiles and strings.
-// Usage: node design/serve.mjs   then open http://localhost:4173/design/mocks/
+// Usage: npm run design   then open http://localhost:4173/design/mocks/
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize, resolve, sep } from 'node:path';

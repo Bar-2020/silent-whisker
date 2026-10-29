@@ -22,7 +22,8 @@
     "lint:iac": "bash infra/iac-offline-checks.sh lint",
     "test:iac": "bash infra/iac-offline-checks.sh test",
     "build": "npm run build -w silent-whisker-frontend && npm run build:backend",
-    "build:backend": "vp pack"
+    "build:backend": "vp pack",
+    "design": "node design/serve.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.20.1",
