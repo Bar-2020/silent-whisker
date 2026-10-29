@@ -17,7 +17,7 @@
     "lint": "vp check",
     "lint:fix": "vp check --fix",
     "test": "vp test run",
-    "fallow": "fallow audit",
+    "fallow": "fallow dead-code --fail-on-issues --quiet && fallow dupes --fail-on-issues --quiet && fallow health --complexity --fail-on-issues --quiet && fallow audit --quiet",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run fallow && npm run lint:iac && npm run test:iac",
     "lint:iac": "bash infra/iac-offline-checks.sh lint",
     "test:iac": "bash infra/iac-offline-checks.sh test",
@@ -27,7 +27,7 @@
   "devDependencies": {
     "@types/node": "^22.20.1",
     "eslint-plugin-sonarjs": "^4.2.1",
-    "fallow": "^3.28.0",
+    "fallow": "^3.37.0",
     "typescript": "~6.0.3",
     "vite-plus": "1.2.0"
   }

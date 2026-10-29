@@ -1,20 +1,97 @@
 {
   "$schema": "./node_modules/fallow/schema.json",
+  // weakened-tests, added-suppression and test-only-branch need 3.37.
+  "minimumVersion": "3.37.0",
+  // A remote or out-of-tree `extends` fails at load, so an agent cannot pull in a weaker base.
+  "sealed": true,
+  "failOnParseError": true,
   "entry": [
     "__tests__/**/*.test.ts",
     "frontend/src/**/*.test.{ts,tsx}",
     "backend/**/*.test.ts",
+    // One folder per handler (backend/README.md); Terraform, not an import, points at the file.
+    "backend/*/handler.ts",
     "scripts/*.mjs",
     "design/mocks/styles/*.css"
   ],
   "ignorePatterns": ["design/**/*.js", "design/**/*.mjs"],
   "dynamicallyLoaded": ["lint/silent-whisker-plugin.js", "infra/app/spa-fallback.js"],
+  // Checker-backed proof of what uses an export; `tsc` stays the type check.
+  "typeAware": { "enabled": true, "require": "best-effort" },
   "duplicates": {
-    "mode": "strict"
+    "mode": "strict",
+    // Catches a copy with renamed variables, which `semantic` would also do but at the price of
+    // flagging every list of string literals.
+    "near": true,
+    "minTokens": 30,
+    "minLines": 4,
+    // css-duplicate-block checks the mocks' stylesheets.
+    "ignore": ["design/**"]
+  },
+  "health": {
+    "maxCyclomatic": 10,
+    "maxCognitive": 12,
+    "maxUnitSize": 40
+  },
+  // The areas meet only in shared/ (CLAUDE.md, Folder structure). frontend/src/features/<feature>
+  // zones are added with the first feature; __tests__/fallow-config.test.ts fails until they are.
+  "boundaries": {
+    "zones": [
+      { "name": "frontend", "patterns": ["frontend/**"] },
+      { "name": "backend", "patterns": ["backend/**"] },
+      { "name": "shared", "patterns": ["shared/**"] },
+      { "name": "infra", "patterns": ["infra/**"] },
+      { "name": "tooling", "patterns": ["lint/**", "scripts/**", "vite.config.ts"] },
+      { "name": "tests", "patterns": ["__tests__/**"] },
+      { "name": "design", "patterns": ["design/**"] }
+    ],
+    "rules": [
+      { "from": "frontend", "allow": ["shared"] },
+      { "from": "backend", "allow": ["shared"] },
+      { "from": "shared", "allow": [] },
+      { "from": "infra", "allow": [] },
+      { "from": "tooling", "allow": ["shared"] },
+      { "from": "tests", "allow": ["frontend", "backend", "shared", "infra", "tooling"] },
+      { "from": "design", "allow": [] }
+    ],
+    // A new top-level folder must be given a zone, not slip past the rules above.
+    "coverage": { "requireAllFiles": true }
   },
   "rules": {
+    // Every rule that defaults to warn and applies to this stack gates.
+    "unused-dev-dependencies": "error",
+    "unused-optional-dependencies": "error",
+    "type-only-dependencies": "error",
+    "test-only-dependencies": "error",
+    "dev-dependencies-in-production": "error",
+    "re-export-cycle": "error",
+    "package-cycle": "error",
+    "unused-dependency-overrides": "error",
+    "unused-component-props": "error",
+    "stale-suppressions": "error",
     "css-duplicate-block": "error",
     "css-token-drift": "error",
-    "css-broken-reference": "error"
-  }
+    "css-broken-reference": "error",
+    "css-selector-complexity": "error",
+    "css-dead-surface": "error",
+    // Opt-in rules.
+    "private-type-leaks": "error",
+    "deprecated-exports-in-use": "error",
+    // Every suppression carries a reason, and an agent cannot add one, weaken a test or branch on
+    // the test environment without a human seeing it: `fallow audit` fails the change.
+    "require-suppression-reason": "error",
+    "added-suppression": "error",
+    "weakened-tests": "error",
+    "test-only-branch": "error",
+    // Blocking would stop every legitimate dependency; the audit shows each new one for review.
+    "added-dependency": "warn"
+  },
+  "overrides": [
+    {
+      // Many classes are written by mock.js, which fallow cannot read, and CSS-only checked tiles
+      // need long selectors (design/README.md).
+      "files": ["design/**"],
+      "rules": { "css-selector-complexity": "warn", "css-dead-surface": "warn" }
+    }
+  ]
 }

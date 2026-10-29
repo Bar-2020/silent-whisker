@@ -75,7 +75,7 @@ flowchart LR
 | App | React, Vite, TypeScript, react-leaflet, react-i18next, installable PWA |
 | Backend | AWS Lambda behind CloudFront, DynamoDB, Cognito, S3 |
 | Infrastructure | Terraform, deployed from GitHub Actions on every merge |
-| Quality | `npm run verify`: typecheck, Vite+ (Oxlint and Oxfmt), Vitest, fallow audit |
+| Quality | `npm run verify`: typecheck, Vite+ (Oxlint and Oxfmt), Vitest, fallow |
 
 ## Roadmap
 
@@ -97,7 +97,7 @@ Vite+ binaries and `npm run verify` fails with "Cannot find native binding": upg
 
 ```
 npm ci
-npm run verify   # typecheck, lint, tests, fallow audit
+npm run verify   # typecheck, lint, tests, fallow
 ```
 
 Development is spec driven. [docs/](docs/PRODUCT.md) is the source of truth, and
