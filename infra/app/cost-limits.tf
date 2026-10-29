@@ -15,6 +15,9 @@ resource "aws_dynamodb_table" "daily_usage_counters" {
   write_capacity = local.capacity.daily_usage_counters.write
   hash_key       = "key"
 
+  # Free; a mistaken `terraform destroy` or a replacement cannot drop the table (D-77).
+  deletion_protection_enabled = true
+
   attribute {
     name = "key"
     type = "S"

@@ -1,8 +1,8 @@
 /* Mock runtime. Not the app: it only stands in for what the app's shell does, so the screens can be
-   looked at. It reads ?lang=he|en&screen=<id>&state=<id>. */
+   looked at. It reads ?lang=he|en|ar|ru&screen=<id>&state=<id>. */
 (function () {
   const DEFAULT_LANG = 'he';
-  const LANGS = { he: { dir: 'rtl' }, en: { dir: 'ltr' } };
+  const LANGS = { he: { dir: 'rtl' }, en: { dir: 'ltr' }, ar: { dir: 'rtl' }, ru: { dir: 'ltr' } };
 
   const params = new URLSearchParams(window.location.search);
   const lang = Object.hasOwn(LANGS, params.get('lang')) ? params.get('lang') : DEFAULT_LANG;
