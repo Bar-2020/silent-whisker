@@ -6,8 +6,6 @@ on:
   pull_request:
 
 jobs:
-  # `npm run verify` is `verify:code` plus `verify:iac`. They run as two jobs side by side: the
-  # Terraform checks need no Node or Vite+ install, and the code checks need no Terraform.
   verify:
     runs-on: ubuntu-latest
     permissions:
@@ -52,9 +50,14 @@ jobs:
           terraform_version: 1.16.6
           terraform_wrapper: false
 
-      # The lock files in infra/ hold the Linux provider hash, so the AWS provider is downloaded
-      # once and every module then reuses it from the plugin cache. Without that hash each
-      # module downloads it again.
+      # The AWS provider (about 800 MB unpacked) is kept between runs. The lock files hold a hash
+      # for Linux, which Terraform needs before it reuses a cached provider instead of downloading
+      # it again for each module. The key changes when a lock file does.
+      - uses: actions/cache@v6
+        with:
+          path: ~/.terraform.d/plugin-cache
+          key: terraform-plugins-${{ runner.os }}-${{ hashFiles('infra/*/.terraform.lock.hcl') }}
+
       - run: npm run verify:iac
 
   # Every merge to main goes online (D-02). The repository variable DEPLOY_ENABLED switches it
