@@ -110,11 +110,10 @@ body[data-chrome='tabs'] .main {
 }
 
 .nav__item[aria-current='page'] {
-  font-weight: 800;
   background: var(--glass-active);
   color: var(--glass-active-ink);
   box-shadow:
-    inset 0 0 0 1px rgb(255 255 255 / 0.32),
+    inset 0 0 0 1px rgb(255 255 255 / 0.5),
     inset 0 1px 0 rgb(255 255 255 / 0.3);
 }
 
@@ -1467,8 +1466,10 @@ button.msg__bubble:hover {
   flex: 1;
 }
 
+/* Digits read left to right in both languages, so the ones digits line up on the right edge of the number column. Same size as the label. */
 .stat__value {
-  font-size: var(--fs-l);
+  direction: ltr;
+  text-align: end;
   font-weight: 700;
 }
 
