@@ -5,6 +5,10 @@ mock_data "aws_cloudfront_cache_policy" {
   defaults = { id = "658327ea-f89d-4fab-a63d-7e88639e58f6" }
 }
 
+mock_data "aws_caller_identity" {
+  defaults = { account_id = "123456789012" }
+}
+
 mock_data "aws_cloudfront_origin_request_policy" {
   defaults = { id = "b689b0a8-53d0-40ab-baf2-68738e2966ac" }
 }
