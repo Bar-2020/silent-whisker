@@ -129,11 +129,11 @@ One phase, one PR or smaller. Do not start a phase while the previous one is hal
    member's logs, an admin gets a flag and that member's next logs need a photo.
 5. Cats, the feed, likes, comments, chat.
 6. Cat alerts, stats, landing-page ads, donation link, launch checklist (privacy policy, terms, Hebrew text moderation test).
+7. Automated testing of the whole app, frontend and backend (D-89): every scenario of [TESTING.md](TESTING.md) becomes a test, written from the specs, plus browser journeys, mutation checks and a deployed smoke test.
 
 ## Evidence on Hand
 
-Repo art (cat-pin logo, README images) lives in `.github/assets/`. It is not the app's design
-system, which is [DESIGN.md](DESIGN.md). No reference apps yet; do not invent any.
+Repo art (cat-pin logo, README images) lives in `.github/assets/`. It is not the app's design system, which is [DESIGN.md](DESIGN.md). No reference apps yet; do not invent any.
 
 ## Product Principles
 
