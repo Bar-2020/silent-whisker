@@ -32,13 +32,14 @@ Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether 
 | PROF-06 | i | `PATCH /profile` where the text check says rejected | `MODERATION_REJECTED`, nothing saved, the day's allowance stays spent | D-62 |
 | PROF-07 | i | The check cannot run: breaker tripped, the call throws, times out or answers nonsense | `503 CHECK_UNAVAILABLE`, nothing saved, allowance given back | D-62, R-05 |
 | PROF-08 | i | Six saves in one UTC day, then one at 00:00:00 UTC; six at once | Sixth `DAILY_LIMIT`; reset at midnight; exactly five of the six at once pass | D-61 |
-| PROF-09 | i | A city the geocoder does not know; the same city twice; the geocoder down | `CITY_NOT_FOUND`, the check does not run, no spend; the second call is served from `geocode_cache`; never a made-up centre | D-29, D-62 |
+| PROF-09 | i | A city the geocoder does not know, twice; a known city twice; the geocoder down | `CITY_NOT_FOUND`, the check does not run, no spend; the unknown city is not saved, so typos never fill `geocode_cache`, and each try uses the member's allowance; the known city's second call comes from the cache; never a made-up centre | D-29, D-62, D-87 |
 | PROF-10 | i | Count the paid calls of one successful `PATCH` | One check for name and city together, through `meteredCall`, after the allowance and the city lookup | D-62, R-05 |
 | PROF-11 | i | First save without `accept_terms`, with `false`, with `true` | `INVALID_INPUT`, `INVALID_INPUT`, then UTC `terms_accepted_at` and `terms_version` stored | D-69, R-36 |
 | PROF-12 | i | `DELETE /profile` for an active member with photos, comments, messages, alerts, spots, logs and likes | Row and sign-in gone; their photos, comments, messages and alerts `removed`; spots, logs and likes stay with the member id cleared; stats gone (effect proposed: D-91) | D-71, R-07, D-91 |
 | PROF-13 | i | `DELETE /profile` before the terms are accepted | Works | R-36 |
 | PROF-14 | i | After `DELETE`, call `GET /profile` with the old, still valid ID token | A fresh empty row is made and the member must accept the terms again (accepted: D-91) | D-59, D-71, D-91 |
 | PROF-15 | i | Look at the headers of `GET /profile` | Never cached (`Cache-Control: no-store`) | D-59 |
+| PROF-16 | i | Ten lookups of different cities in the same second, from several handler instances | One request a second reaches the geocoder (one `geocoder#<second>` row each); the losers wait for the next second, up to 3 tries, then fail; the route decides what the member sees | D-87 |
 
 ## Admin and reports (ADM)
 

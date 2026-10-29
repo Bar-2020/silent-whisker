@@ -25,7 +25,7 @@ Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether 
 | SPOT-17 | i | A city station: rename, deactivate, delete, as a member and as an admin | `FORBIDDEN`, nothing changed | R-20 |
 | SPOT-18 | i | The creator renames, asks `active: false`; an admin approves the request, rejects another | Rename moderated; the spot stays active with `inactive_requested`; approve makes it inactive; reject clears the flag | R-32 |
 | SPOT-19 | i | A member who is not creator or admin `PATCH`es a spot | `FORBIDDEN`; an unknown spot `NOT_FOUND` | R-32 |
-| SPOT-20 | i | `GET /search?q=` for names, in Hebrew, Arabic, Russian; with and without `places=1`; no match; a 1,000 character query; regex characters | Only spots R-03 allows, kittens seen first; places from the cache; no match `[]`; never a `500` | R-03, R-35 |
+| SPOT-20 | i | `GET /search?q=` for names, in Hebrew, Arabic, Russian; with a stray `places=1`; no match; a 1,000 character query; regex characters | Only spots R-03 allows, kittens seen first; spots only, since places are searched on the phone (D-88); no match `[]`; never a `500` | R-03, R-35 |
 | SPOT-21 | i | `POST /spots/{id}/logs` at a hidden, pending, rejected and missing spot | Refused, nothing saved; hidden and missing give the same answer (the code for pending is D-91) | R-27, R-03 |
 
 ## Logs, empty reports, kittens (LOG)

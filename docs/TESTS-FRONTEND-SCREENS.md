@@ -11,7 +11,7 @@ unless a row says otherwise. The screens are in `design/briefs/`.
 | MAP-02 | c | Render spots from the golden colour table of SPOT-06 | Same colour as the server for every row; grey only with no data; inactive quiet, pending dashed (creator and admin); selected larger | D-14, D-17, D-47 |
 | MAP-03 | e | Every marker's accessible name, and cat alert markers | The state in words; alerts have their own silhouette and a word label; no cat photo on the map | D-57, D-45 |
 | MAP-04 | e | Tap a marker on a phone and at 1024 px | A sheet, then a 400 px panel, with photo, two chips, last log, a details button; the close X at the inline end; the action buttons hide while it is open | D-58 |
-| MAP-05 | e | The "+" menu; the search box; type ten letters; submit | New spot and Report a cat; spot names as you type; places only after submit (`places=1` once, never per key); no match shows an empty state | D-29, D-58 |
+| MAP-05 | e | The "+" menu; the search box; type ten letters; submit | New spot and Report a cat; spot names as you type, from our server; cities, streets and addresses only after submit, asked of the geocoder by the phone itself and never per key (D-88); no match shows an empty state | D-88, D-58 |
 | MAP-06 | e | Pan and zoom for 5 seconds; a view over the cell limit; an empty area | A debounced request per settled move (under a constant); a "zoom in" hint; "no spots here yet" | D-39, DATA.md |
 | MAP-07 | e | The list view | The same request as the map; kittens first, then red, orange, no data, green, then distance (the map centre with no location); every row a real button | D-82 |
 | MAP-08 | e | Location unavailable, or accuracy 120 m | The locate control explains and never nags; the app sends only what the phone reports | D-31 |
