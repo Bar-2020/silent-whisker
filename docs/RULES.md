@@ -19,7 +19,7 @@ proposed values that live in `shared/constants/` (see [DECISIONS.md](DECISIONS.m
 | R-12 | A member can create at most 5 spots a day. | Lambda |
 | R-13 | A member has at most 30 counted feeding and water logs in any rolling 24 hours. | Lambda |
 | R-16 | A "this spot was empty" report needs the reporter within the proof radius of the spot, never disputes the reporter's own log, and is allowed once per spot per type (food or water) per member per 3 hours. | Lambda |
-| R-17 | A member can make at most 60 log or empty-report attempts a day, counted or not, and a refused empty report gets one identical answer whatever check failed. | Lambda |
+| R-17 | A member can make at most 60 log, empty-report or kittens-report attempts a day, counted or not, and a refused empty report gets one identical answer whatever check failed. | Lambda |
 | R-18 | From 360 px wide up to desktop, no screen scrolls sideways or is cut off, at phone, tablet and desktop widths. The iPhone XS (375 x 812 px) is the smallest iPhone tested. | CI viewport test |
 | R-19 | Every locale file (`he`, `en`, `ar`, `ru`, D-85) has the same keys, and every `t()` key is type-checked against them. | Test, `tsc` |
 | R-20 | Municipal stations cannot be renamed, deactivated or deleted by members. Only the import changes them. | Lambda |
@@ -37,6 +37,7 @@ proposed values that live in `shared/constants/` (see [DECISIONS.md](DECISIONS.m
 | R-32 | A creator's request to mark a custom spot inactive takes effect only when an admin approves it, and the spot stays active meanwhile. An admin's own change to a spot's name or status takes effect at once (D-58). | Lambda |
 | R-33 | An admin can pause the chat of a spot. While it is paused nobody can post there, and members can still read it (D-58). | Lambda |
 | R-34 | A cat photo post needs a name of 1 to 40 characters (a constant), moderated like other text. The place is optional (D-58). | Lambda |
+| R-35 | A member whose phone is within the proof radius of a spot (the same checks and one identical refusal answer as R-16) can report that kittens were seen there, with no log needed. The spot shows it for 14 days (a constant), nobody can report again while it shows, the server decides whether it is active when it answers, and a spot with it comes first in lists of spots (D-67). | Lambda |
 | R-36 | A member who has not accepted the current terms of use and privacy policy (`terms_version`, a constant) can call only `GET /profile`, `PATCH /profile` with `accept_terms: true` and `DELETE /profile`; every other route answers `TERMS_REQUIRED` (D-69). | Lambda |
 | R-37 | A member can cancel their own feeding or water log within 10 minutes (a constant) of making it. The log becomes `removed` (R-07): it stops counting for the spot's timers, the stats, R-10 and R-13, and the timers return to the latest log that still counts. It still counts toward R-17. After the window it cannot be cancelled (D-79). | Lambda |
 | R-38 | A member can remove their own cat photo, comment or chat message at any time, also while chat-restricted. It becomes `removed` (R-07) and disappears for everyone; a removed photo takes its likes and comments with it (D-80). | Lambda |

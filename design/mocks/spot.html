@@ -94,6 +94,13 @@
                   <a href="profile.html?screen=location-help" data-t="spot.log.unverified.help"></a>
                 </div>
               </div>
+              <div class="notice" data-level="green" data-sub="kittens-done">
+                <i data-icon="checkcircle"></i>
+                <div class="notice__body">
+                  <strong data-t="spot.kittens.done.title"></strong
+                  ><span data-t="spot.kittens.done.text" data-v='{"n":14}'></span>
+                </div>
+              </div>
               <div class="notice" data-when="pending-creator">
                 <i data-icon="clock"></i>
                 <div class="notice__body">
@@ -132,7 +139,7 @@
                 </div>
               </div>
 
-              <div class="cluster" data-when="station inactive">
+              <div class="cluster" data-when="station inactive kittens">
                 <span class="tag" data-when="station"
                   ><i data-icon="shield" data-class="icon--s"></i
                   ><span data-t="spot.tag.station"></span
@@ -140,13 +147,17 @@
                 <span class="tag" data-when="inactive"
                   ><span data-t="spot.tag.inactive"></span
                 ></span>
+                <span class="tag" data-when="kittens"
+                  ><i data-icon="paw" data-class="icon--s"></i
+                  ><span data-t="spot.tag.kittens"></span
+                ></span>
               </div>
 
               <div class="spot-head" data-unless="notfound">
                 <div
                   class="photo photo--square photo--round spot-head__photo"
                   data-tone="3"
-                  data-when="red orange green creator inactive pending-creator pending-admin"
+                  data-when="red orange green kittens creator inactive pending-creator pending-admin"
                 >
                   <i data-icon="cat"></i>
                 </div>
@@ -233,7 +244,22 @@
                         </label>
                       </div>
                     </fieldset>
-                    <p class="small muted" data-t="spot.log.proof"></p>
+                    <div class="choices choices--2">
+                      <button
+                        class="btn btn--secondary"
+                        type="button"
+                        data-unless="kittens"
+                        data-go="kittens/kittens-done"
+                      >
+                        <i data-icon="paw"></i><span data-t="spot.log.kittens"></span>
+                      </button>
+                      <button class="btn btn--secondary" type="button" disabled data-when="kittens">
+                        <i data-icon="paw"></i><span data-t="spot.kittens.already"></span>
+                      </button>
+                      <a class="btn btn--secondary" href="alerts.html?screen=raise&back=spot.html"
+                        ><i data-icon="siren"></i><span data-t="spot.log.injured"></span
+                      ></a>
+                    </div>
                     <div class="notice" data-level="none" data-sub="toosoon">
                       <i data-icon="clock"></i>
                       <div class="notice__body">
@@ -260,6 +286,20 @@
                       <div class="notice__body">
                         <strong data-t="common.rateLimit.title"></strong
                         ><span data-t="common.rateLimit.text" data-v='{"n":30}'></span>
+                      </div>
+                    </div>
+                    <div class="notice" data-level="none" data-sub="kittens-refused">
+                      <i data-icon="clock"></i>
+                      <div class="notice__body">
+                        <strong data-t="spot.empty.refused.title"></strong
+                        ><span data-t="spot.empty.refused.text"></span>
+                      </div>
+                    </div>
+                    <div class="notice" data-level="none" data-sub="offline">
+                      <i data-icon="offline"></i>
+                      <div class="notice__body">
+                        <strong data-t="states.offline.title"></strong
+                        ><span data-t="spot.log.offline.text"></span>
                       </div>
                     </div>
                     <div class="notice" data-level="red" data-sub="banned">
@@ -627,6 +667,10 @@
                 data-t="common.cancel"
               ></button>
             </aside>
+            <div class="toast toast--quiet" role="status" data-sub="sending">
+              <i data-icon="locate"></i>
+              <div class="notice__body"><span data-t="spot.log.proof"></span></div>
+            </div>
             <div class="toast toast--quiet" role="status" id="report-toast" hidden>
               <i data-icon="checkcircle"></i>
               <div class="notice__body"><span data-t="common.report.done.title"></span></div>
@@ -665,6 +709,10 @@
             <div class="notice">
               <i data-icon="shield"></i>
               <div class="notice__body"><span data-t="newspot.privacy"></span></div>
+            </div>
+            <div class="notice">
+              <i data-icon="info"></i>
+              <div class="notice__body"><span data-t="newspot.tip"></span></div>
             </div>
 
             <fieldset class="field">

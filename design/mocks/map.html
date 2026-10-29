@@ -65,11 +65,14 @@
             <div class="results" id="map-results" role="listbox" data-when="search">
               <div class="results__group" role="group" aria-labelledby="results-spots-h">
                 <h2 class="results__title" id="results-spots-h" data-t="map.search.spots"></h2>
-                <a class="results__item" role="option" href="spot.html?screen=detail&state=red">
+                <a class="results__item" role="option" href="spot.html?screen=detail&state=kittens">
                   <span class="results__icon"><i data-icon="pin"></i></span>
                   <span class="results__text"
                     ><strong data-t="demo.spot1.name"></strong
                     ><span class="small muted" data-t="demo.spot1.address"></span
+                    ><span class="tag"
+                      ><i data-icon="paw" data-class="icon--s"></i
+                      ><span data-t="spot.tag.kittens"></span></span
                   ></span>
                 </a>
                 <a class="results__item" role="option" href="spot.html?screen=detail&state=green">
@@ -115,18 +118,22 @@
               <span class="small muted" data-t="map.search.noneHint"></span>
             </div>
 
-            <!-- The list view: the spots of the current map view, needing help first, then nearest (D-82). -->
+            <!-- The list view: the spots of the current map view, kittens seen first, then needing help, then nearest (D-82). -->
             <div class="results" id="spot-list" data-when="list">
               <div class="results__group" role="group" aria-labelledby="list-h">
                 <h2 class="results__title" id="list-h" data-t="map.list.title"></h2>
                 <p class="small muted" data-t="map.list.sorted"></p>
-                <a class="results__item" href="spot.html?screen=detail&state=red">
+                <a class="results__item" href="spot.html?screen=detail&state=kittens">
                   <span class="results__icon"><i data-icon="pin"></i></span>
                   <span class="results__text"
                     ><strong data-t="demo.spot1.name"></strong
                     ><span class="small muted"
                       ><span class="chip" data-level="red"
                         ><i data-icon="bowl-empty"></i><span data-t="map.legend.red"></span
+                      ></span>
+                      <span class="tag"
+                        ><i data-icon="paw" data-class="icon--s"></i
+                        ><span data-t="spot.tag.kittens"></span
                       ></span>
                       <span class="num" data-t="alerts.distance.m" data-v='{"n":80}'></span></span
                   ></span>

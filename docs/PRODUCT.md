@@ -32,7 +32,7 @@ D-73). AWS: S3 + CloudFront, Lambda, DynamoDB, Cognito. Terraform, deployed from
    every spot is an exact point (D-47). Active or inactive. The app adds only custom spots, each approved by an admin (D-43); city stations come only from the import pipeline (D-34). A spot has its own page address that a member can share (D-83), and anyone can report a problem with it (D-81).
 3. **Feeding and water logs**: no photo. The volunteer picks a full or partial bowl (D-16). A log
    counts when the phone is within the proof radius of the spot and the limits pass (R-09), and then updates
-   the spot's timers. Anyone at the spot can report "this spot was empty" (D-19); the logger can cancel their own log for 10 minutes (D-79).
+   the spot's timers. Anyone at the spot can report "this spot was empty" (D-19) or "kittens seen" (shown for 14 days, R-35); the logger can cancel their own log for 10 minutes (D-79). A button opens the cat alert form (D-67).
 4. **Cats and the feed**: photos of cats (each must contain one and has a required name of 1 to 40 characters, R-34), at a spot or random with a
    location tag, in an Instagram-style feed, never on the map. Others like and comment (D-44, D-45); an author can remove their own photo or comment (D-80).
 5. **Cat alerts**: a sick cat, a cat in danger or, not urgent, a cat that needs spaying or neutering (D-64), with a photo and a
@@ -78,7 +78,7 @@ alerts and "my location" spots. One tap starts the browser prompt, which asks fo
 blocks the app: a log without a good enough location is saved as unverified (R-09); only a cat alert needs it (R-23). The profile
 explains how to turn the permission back on. Nothing else needs a permission: logs have no photo
 (D-18), and photos come from the phone's own picker, which has no browser prompt.
-No notification permission in v1 (D-12, D-86). See D-31.
+No notification permission in v1 (D-12, D-66). See D-31.
 
 ## Location privacy
 
@@ -97,7 +97,7 @@ code in this repo.
 
 ## Non-goals for v1
 
-Push notifications (planned; when is open, D-86). Phone or Apple login. A native app. A separate admin site. Payments. Offline
+Push notifications (planned for after v1, D-66, D-86). Phone or Apple login. A native app. A separate admin site. Payments. Offline
 mode. Live (realtime) updates. A public map for signed-out visitors. Changing the profile picture in the app
 (v2). Vets, volunteering events and adoption events on the map (after v1, D-46).
 

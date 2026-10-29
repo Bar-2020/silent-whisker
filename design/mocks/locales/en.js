@@ -120,6 +120,7 @@ window.MOCK_LOCALES.en = {
   'spot.title': 'Feeding spot | Silent Whisker',
   'spot.tag.station': 'City station',
   'spot.tag.inactive': 'Inactive',
+  'spot.tag.kittens': 'Kittens seen',
   'spot.station.source': 'A station the city installed. It cannot be renamed or switched off.',
   'spot.state.title': 'Food and water status',
   'spot.state.food': 'Food',
@@ -146,6 +147,13 @@ window.MOCK_LOCALES.en = {
   'spot.log.water': 'Water',
   'spot.log.waterHint': 'Fine for 24 h',
   'spot.log.proof': 'A log counts only when the phone is at the spot. The location is not stored.',
+  'spot.log.kittens': 'I saw kittens',
+  'spot.log.injured': 'Injured or sick cat',
+  'spot.log.offline.text':
+    'We could not confirm that the log was saved. Your choices are kept: try again when the connection is back.',
+  'spot.kittens.already': 'Kittens already reported',
+  'spot.kittens.done.title': 'Kittens reported',
+  'spot.kittens.done.text': 'Thank you. The spot shows “Kittens seen” for {n} days.',
   'spot.log.submit': 'Save the log',
   'spot.log.counted.title': 'Log counted',
   'spot.log.counted.text': 'Thank you. The spot is updated and its colour changes accordingly.',
@@ -192,6 +200,8 @@ window.MOCK_LOCALES.en = {
   'newspot.title': 'New feeding spot',
   'newspot.privacy':
     'The spot is shown only to members who are close to it, or when it needs food or water. An admin approves it first.',
+  'newspot.tip':
+    'Choose a quiet, out-of-the-way place that bothers no one: not at a door, a playground or a shared yard. Use a bowl, take it with you and clean up. Follow the local rules.',
   'newspot.name.label': 'Spot name',
   'newspot.name.placeholder': 'For example: the yard behind the library',
   'newspot.name.hint': 'Without a name we use the street.',
@@ -445,7 +455,7 @@ window.MOCK_LOCALES.en = {
 
   'legal.title': 'Legal | Silent Whisker',
   'legal.toc': 'Contents',
-  'legal.sample': 'Draft. A lawyer reads this text before the app launches.',
+  'legal.sample': 'Sample structure. The binding legal text is written by the owner before launch.',
   'legal.backHome': 'Home',
   'legal.privacy.title': 'Privacy policy',
   'legal.privacy.s1.h': 'Who we are and what we keep',
@@ -479,11 +489,14 @@ window.MOCK_LOCALES.en = {
   'legal.terms.s2.l2': 'Offensive or harassing content.',
   'legal.terms.s2.l3':
     'Locations that are wrong on purpose, or a feeding log for a feeding that did not happen.',
-  'legal.terms.s3.h': 'Removal from the service',
+  'legal.terms.s3.h': 'Local rules',
   'legal.terms.s3.p':
-    'Admins can restrict chat or block members who break the terms. You can delete your account at any time in Profile.',
-  'legal.terms.s4.h': 'Changes to the terms',
+    'Anyone who feeds cats must follow the rules of the place: the city bylaws, the building or yard rules, and a licence where one is required. The app does not decide what is allowed.',
+  'legal.terms.s4.h': 'Removal from the service',
   'legal.terms.s4.p':
+    'Admins can restrict chat or block members who break the terms. You can delete your account at any time in Profile.',
+  'legal.terms.s5.h': 'Changes to the terms',
+  'legal.terms.s5.p':
     'When the terms change, the app asks you to accept the new version at your next visit. If you do not accept, you cannot keep using the app.',
 
   'states.title': 'Silent Whisker',
@@ -699,7 +712,7 @@ window.MOCK_LOCALES.en = {
   'map.list': 'List of spots',
   'map.showMap': 'Show the map',
   'map.list.title': 'Spots in this view',
-  'map.list.sorted': 'Needing help first, then nearest.',
+  'map.list.sorted': 'Kittens seen first, then needing help, then nearest.',
   'alerts.reporter.resolve': 'Mark as handled',
   'alerts.reporter.hint':
     'Use it when the cat was helped or is no longer there. The alert leaves the map for everyone.',

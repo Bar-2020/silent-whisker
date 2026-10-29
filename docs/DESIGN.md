@@ -389,16 +389,18 @@ one (no pointer).
 
 ### State row, log tiles, history
 Each of food and water is a two-line row: icon in a tinted circle, label and level chip; then "14
-hours ago, full bowl" in tabular figures and a small "the bowl is empty" button. When the level is
-already red the button is disabled and reads "Already reported". The log form is three tiles (full
-bowl, partial bowl, water) and the Save button on the pinned bar, which turns pending while it
-sends; the result is a notice, never a distance. For 10 minutes the notice has a **Cancel this log** button and the member's own row in History a quiet Cancel: both open a confirmation dialog (a red button, and "Keep the log" as the quiet one), then a grey notice says the spot is back as it was (R-37).
+hours ago, full bowl" in tabular figures. A small "the bowl is empty" button sits at the end of the
+row, centred on both lines. When the level is already red the button is disabled and reads "Already
+reported". The log form is three tiles (full bowl, partial bowl, water), two buttons ("I saw
+kittens", "Injured or sick cat") and the Save button on the pinned bar, which turns pending while it
+sends, with a toast saying the log counts only at the spot and the location is not stored; the
+result is a notice, never a distance. For 10 minutes the notice has a **Cancel this log** button and the member's own row in History a quiet Cancel: both open a confirmation dialog (a red button, and "Keep the log" as the quiet one), then a grey notice says the spot is back as it was (R-37).
 
 ### Spot page
 One screen on a phone: a top bar (back, name, share, menu), a head row (photo, address, **Navigate**), four
 tabs (Log, Cats, Chat, History) and one panel. The tabs are four equal columns of 14 px centred
-words. The Log tab fits 360 x 740 with no scrolling: two state rows, three tiles, a line of proof
-text and the pinned bar. **Cats:** a small "Share a photo here" button beside the title, then a
+words. The Log tab fits 360 x 740 with nothing hidden under the pinned bar: two state rows, three
+tiles, two buttons and the bar. **Cats:** a small "Share a photo here" button beside the title, then a
 three-column grid of square photos. **Chat:** the real thread right in the tab, with the composer
 pinned at the bottom: there is no button to another page. **History:** who logged what and when; a log
 that was not verified is not listed. The share button sends the name and the link through the phone's share sheet (D-83). The menu has "Report a problem with this spot" (a dialog with four reasons: wrong place, gone, listed twice, something else; it hides nothing, D-81); the creator and every admin also get Edit,
@@ -477,7 +479,7 @@ heart is an icon, not an emoji).
   from the action buttons when a map opens, folds into a small (i) button after five seconds, and the (i)
   shows it again (OpenStreetMap's attribution guidelines allow this; their tile policy forbids hiding it
   behind a toggle from the start, so it never starts hidden). The legend repeats it.
-- **Spots list:** a round list button at the head of the map controls swaps the map for the list of the same spots (needing help first, then nearest), each row a real link with its state chip (icon and word) and its distance; the same button, now a map icon, goes back (D-82).
+- **Spots list:** a round list button at the head of the map controls swaps the map for the list of the same spots (kittens seen first, then needing help, then nearest), each row a real link with its state chip (icon and word) and its distance; the same button, now a map icon, goes back (D-82).
 - **Alert row:** photo and words on top (kind chip, "reported N hours ago", the note cut at two lines,
   distance and area), then **Details** and **Show on map** side by side, full width. A countdown is
   never shown for helping a cat; only a gentle "leaves the map in N minutes" when it is about to go.

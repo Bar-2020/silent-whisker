@@ -28,7 +28,7 @@ Full-bleed OpenStreetMap tiles softened by a CSS filter (Q4), the glass nav, two
 Markers are the loudest thing on the screen; chrome stays quiet.
 
 ## States and ranges
-Default; list view (the spots of the current view: needing help first, then nearest, each row a real button, D-82); spot selected; cat alert selected; many pins (zoom hint when the area holds more than the
+Default; list view (the spots of the current view: kittens seen first, then needing help, then nearest, each row a real button, D-82); spot selected; cat alert selected; many pins (zoom hint when the area holds more than the
 cell limit: "zoom in to see spots"); location unavailable (the "my location" control explains,
 does not nag); map tiles failing (grey ground, markers still work); empty area ("no spots here
 yet"); admin view (pending spots dashed, with approve and reject in the sheet). Ranges: 0 to about
