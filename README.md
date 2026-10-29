@@ -122,7 +122,8 @@ Development is spec driven. [docs/](docs/PRODUCT.md) is the source of truth, and
 
 ## Contributing
 
-Every PR runs `npm run verify` in CI. The automatic Claude review (`[R1]`, `[R2]`, ... findings,
+Every PR runs the code checks and the Terraform checks in CI, as two jobs (`npm run verify` runs
+both locally). The automatic Claude review (`[R1]`, `[R2]`, ... findings,
 checked against CLAUDE.md) is currently disabled. See [.github/workflows/ci.yml](.github/workflows/ci.yml)
 and [.github/claude-review-prompt.md](.github/claude-review-prompt.md).
 
