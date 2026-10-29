@@ -13,3 +13,6 @@ export const GEOCODER_SLOT_MS = 1000;
 
 /** Tries to get a free slot before giving up, one per slot. */
 export const GEOCODER_SLOT_TRIES = 3;
+
+/** Longer text is no address, and it keeps the cache key far under DynamoDB's 2 KB key limit. */
+export const GEOCODER_QUERY_MAX_LENGTH = 200;

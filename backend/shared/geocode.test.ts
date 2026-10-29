@@ -1,13 +1,14 @@
 import { ConditionalCheckFailedException, DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock';
-import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import {
   GEOCODER_LANGUAGES,
+  GEOCODER_QUERY_MAX_LENGTH,
   GEOCODER_SLOT_TRIES,
   GEOCODER_USER_AGENT,
 } from '../../shared/constants/geocode';
-import { GeocoderUnavailable, lookupPlace, normaliseQuery } from './geocode';
+import { GeocoderUnavailable, lookupPlace } from './geocode';
 import type { GeocodeDeps, Place } from './geocode.types';
 
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({ region: 'eu-north-1' }));
@@ -26,16 +27,7 @@ const conditionFailed = () =>
   new ConditionalCheckFailedException({ message: 'The conditional request failed', $metadata: {} });
 
 const fetchMock = vi.fn<typeof fetch>();
-const sleepMock = vi.fn<(ms: number) => Promise<void>>();
-
-const deps: GeocodeDeps = {
-  db,
-  cacheTable: CACHE,
-  counterTable: COUNTERS,
-  fetch: fetchMock,
-  sleep: sleepMock,
-  now: () => NOW,
-};
+const deps: GeocodeDeps = { db, cacheTable: CACHE, counterTable: COUNTERS };
 
 const putsTo = (table: string) =>
   dbMock.commandCalls(PutCommand).filter((call) => call.args[0].input.TableName === table);
@@ -43,19 +35,16 @@ const putsTo = (table: string) =>
 beforeEach(() => {
   dbMock.reset();
   fetchMock.mockReset();
-  sleepMock.mockReset().mockResolvedValue();
+  vi.stubGlobal('fetch', fetchMock);
+  vi.useFakeTimers({ toFake: ['Date', 'setTimeout'] });
+  vi.setSystemTime(NOW);
   dbMock.on(GetCommand).resolves({});
   dbMock.on(PutCommand).resolves({});
 });
 
-describe('normaliseQuery', () => {
-  it.each([
-    ['  Haifa ', 'haifa'],
-    ['Tel   Aviv', 'tel aviv'],
-    ['תל   אביב ', 'תל אביב'],
-  ])('turns %j into %j, so the same city is one cache row', (typed, key) => {
-    expect(normaliseQuery(typed)).toBe(key);
-  });
+afterEach(() => {
+  vi.useRealTimers();
+  vi.unstubAllGlobals();
 });
 
 describe('lookupPlace asks the cache first (D-29: no question is sent twice)', () => {
@@ -69,11 +58,15 @@ describe('lookupPlace asks the cache first (D-29: no question is sent twice)', (
     expect(dbMock.commandCalls(PutCommand)).toHaveLength(0);
   });
 
-  it('looks the cache up by the normalised text', async () => {
-    await lookupPlace(deps, '  HAIFA ').catch(() => undefined);
+  it.each([
+    ['  HAIFA ', 'haifa'],
+    ['Tel   Aviv', 'tel aviv'],
+    ['תל   אביב ', 'תל אביב'],
+  ])('looks %j up as %j, so the same city is one cache row', async (typed, key) => {
+    await lookupPlace(deps, typed).catch(() => undefined);
 
     const [read] = dbMock.commandCalls(GetCommand);
-    expect(read.args[0].input).toMatchObject({ TableName: CACHE, Key: { query: 'haifa' } });
+    expect(read.args[0].input).toMatchObject({ TableName: CACHE, Key: { query: key } });
   });
 
   it('makes no second request for a city it has already found', async () => {
@@ -95,8 +88,11 @@ describe('lookupPlace asks the cache first (D-29: no question is sent twice)', (
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
-  it('returns nothing for empty text, without a single call', async () => {
-    expect(await lookupPlace(deps, '   ')).toBeUndefined();
+  it.each([
+    ['empty text', '   '],
+    ['text too long to be an address', 'a'.repeat(GEOCODER_QUERY_MAX_LENGTH + 1)],
+  ])('returns nothing for %s, without a single call', async (_name, text) => {
+    expect(await lookupPlace(deps, text)).toBeUndefined();
 
     expect(dbMock.calls()).toHaveLength(0);
     expect(fetchMock).not.toHaveBeenCalled();
@@ -145,20 +141,23 @@ describe('one request a second for the whole app (D-87)', () => {
     dbMock.on(PutCommand, { TableName: COUNTERS }).rejectsOnce(conditionFailed()).resolves({});
     fetchMock.mockResolvedValue(answer(hits));
 
-    const found = await lookupPlace(deps, 'Haifa');
+    const pending = lookupPlace(deps, 'Haifa');
+    await vi.advanceTimersByTimeAsync(749);
+    expect(fetchMock).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1);
 
-    expect(found).toEqual(HAIFA);
-    expect(sleepMock).toHaveBeenCalledExactlyOnceWith(750);
+    expect(await pending).toEqual(HAIFA);
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it('gives up without asking when no slot comes free', async () => {
     dbMock.on(PutCommand, { TableName: COUNTERS }).rejects(conditionFailed());
 
-    await expect(lookupPlace(deps, 'Haifa')).rejects.toBeInstanceOf(GeocoderUnavailable);
+    const outcome = expect(lookupPlace(deps, 'Haifa')).rejects.toBeInstanceOf(GeocoderUnavailable);
+    await vi.runAllTimersAsync();
+    await outcome;
 
     expect(putsTo(COUNTERS)).toHaveLength(GEOCODER_SLOT_TRIES);
-    expect(sleepMock).toHaveBeenCalledTimes(GEOCODER_SLOT_TRIES - 1);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -177,6 +176,9 @@ describe('lookupPlace when the geocoder fails (D-87)', () => {
     ['refuses with 429', () => answer({}, 429)],
     ['answers with something that is not a list', () => answer({ error: 'x' })],
     ['answers with a hit that has no point', () => answer([{ display_name: 'Haifa' }])],
+    ['answers with a hit that is not an object', () => answer([null])],
+    ['answers with a point that is not text', () => answer([{ ...hits[0], lat: null }])],
+    ['answers with an empty point', () => answer([{ ...hits[0], lon: '' }])],
     ['answers with text that is not JSON', () => new Response('<html>', { status: 200 })],
   ])('is unavailable when it %s, and saves nothing', async (_name, reply) => {
     fetchMock.mockResolvedValue(reply());

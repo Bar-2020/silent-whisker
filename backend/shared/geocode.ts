@@ -3,30 +3,24 @@ import { GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { COUNTER_TTL_SECONDS, MS_PER_SECOND } from '../../shared/constants/cost';
 import {
   GEOCODER_LANGUAGES,
+  GEOCODER_QUERY_MAX_LENGTH,
   GEOCODER_SLOT_MS,
   GEOCODER_SLOT_TRIES,
   GEOCODER_TIMEOUT_MS,
   GEOCODER_URL,
   GEOCODER_USER_AGENT,
 } from '../../shared/constants/geocode';
-import type { GeocodeDeps, NominatimHit, Place } from './geocode.types';
+import type { GeocodeDeps, Place } from './geocode.types';
 
 /** The geocoder cannot be reached, is too busy, or gave an answer this app does not understand. */
 export class GeocoderUnavailable extends Error {}
 
-type Live = Required<GeocodeDeps>;
-
-const withDefaults = (deps: GeocodeDeps): Live => ({
-  fetch,
-  sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
-  now: () => new Date(),
-  ...deps,
-});
-
-export const normaliseQuery = (text: string): string =>
+const normaliseQuery = (text: string): string =>
   text.normalize('NFC').trim().replaceAll(/\s+/gu, ' ').toLowerCase();
 
-async function readCache(deps: Live, query: string): Promise<Place | undefined> {
+const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function readCache(deps: GeocodeDeps, query: string): Promise<Place | undefined> {
   const { Item } = await deps.db.send(
     new GetCommand({ TableName: deps.cacheTable, Key: { query } })
   );
@@ -35,7 +29,7 @@ async function readCache(deps: Live, query: string): Promise<Place | undefined> 
 }
 
 /** One row per second, written only if absent, so every instance together sends one request a second (D-87). */
-async function takeSlot(deps: Live, nowMs: number): Promise<boolean> {
+async function takeSlot(deps: GeocodeDeps, nowMs: number): Promise<boolean> {
   const second = Math.floor(nowMs / MS_PER_SECOND);
   try {
     await deps.db.send(
@@ -53,17 +47,17 @@ async function takeSlot(deps: Live, nowMs: number): Promise<boolean> {
   }
 }
 
-async function waitForSlot(deps: Live): Promise<void> {
+async function waitForSlot(deps: GeocodeDeps): Promise<void> {
   for (let attempt = 0; attempt < GEOCODER_SLOT_TRIES; attempt += 1) {
-    const nowMs = deps.now().getTime();
+    const nowMs = Date.now();
     if (await takeSlot(deps, nowMs)) return;
     if (attempt < GEOCODER_SLOT_TRIES - 1)
-      await deps.sleep(GEOCODER_SLOT_MS - (nowMs % GEOCODER_SLOT_MS));
+      await sleep(GEOCODER_SLOT_MS - (nowMs % GEOCODER_SLOT_MS));
   }
   throw new GeocoderUnavailable('No geocoder slot was free in time');
 }
 
-async function fetchHits(deps: Live, query: string): Promise<unknown> {
+async function fetchHits(query: string): Promise<unknown> {
   const url = new URL(GEOCODER_URL);
   url.search = new URLSearchParams({
     q: query,
@@ -72,7 +66,7 @@ async function fetchHits(deps: Live, query: string): Promise<unknown> {
     'accept-language': GEOCODER_LANGUAGES,
   }).toString();
   try {
-    const response = await deps.fetch(url, {
+    const response = await fetch(url, {
       headers: { 'user-agent': GEOCODER_USER_AGENT },
       signal: AbortSignal.timeout(GEOCODER_TIMEOUT_MS),
     });
@@ -85,31 +79,39 @@ async function fetchHits(deps: Live, query: string): Promise<unknown> {
   }
 }
 
+/** A hit with a point and a name, else nothing: the answer comes from outside, so every field is checked. */
+function readHit(hit: unknown): Place | undefined {
+  if (typeof hit !== 'object' || hit === null) return undefined;
+  const { lat, lon, display_name: name } = hit as Record<string, unknown>;
+  if (typeof lat !== 'string' || typeof lon !== 'string' || typeof name !== 'string') {
+    return undefined;
+  }
+  const point = { lat: Number.parseFloat(lat), lng: Number.parseFloat(lon) };
+  return Number.isFinite(point.lat) && Number.isFinite(point.lng) && name
+    ? { ...point, place: name }
+    : undefined;
+}
+
 /** No hit is a normal answer (undefined); a shape this app does not know is an outage. */
 function placeFrom(hits: unknown): Place | undefined {
   if (!Array.isArray(hits)) throw new GeocoderUnavailable('The geocoder answer was not a list');
   if (hits.length === 0) return undefined;
-  const [hit] = hits as NominatimHit[];
-  const lat = Number(hit.lat);
-  const lng = Number(hit.lon);
-  if (!Number.isFinite(lat) || !Number.isFinite(lng) || !hit.display_name) {
-    throw new GeocoderUnavailable('The geocoder answer had no point');
-  }
-  return { lat, lng, place: hit.display_name };
+  const place = readHit(hits[0]);
+  if (!place) throw new GeocoderUnavailable('The geocoder answer had no point');
+  return place;
 }
 
 /**
  * The point of a typed place (D-29): the cache first, Nominatim only on a miss. A place the
  * geocoder does not know is `undefined` and is not saved, so typos never fill the cache (D-87).
  */
-export async function lookupPlace(given: GeocodeDeps, text: string): Promise<Place | undefined> {
-  const deps = withDefaults(given);
+export async function lookupPlace(deps: GeocodeDeps, text: string): Promise<Place | undefined> {
   const query = normaliseQuery(text);
-  if (!query) return undefined;
+  if (!query || query.length > GEOCODER_QUERY_MAX_LENGTH) return undefined;
   const cached = await readCache(deps, query);
   if (cached) return cached;
   await waitForSlot(deps);
-  const place = placeFrom(await fetchHits(deps, query));
+  const place = placeFrom(await fetchHits(query));
   if (place) {
     await deps.db.send(new PutCommand({ TableName: deps.cacheTable, Item: { query, ...place } }));
   }

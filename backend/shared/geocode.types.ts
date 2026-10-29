@@ -13,15 +13,4 @@ export interface GeocodeDeps {
   readonly cacheTable: string;
   /** The `daily_usage_counters` table, which holds the one-request-a-second slots. */
   readonly counterTable: string;
-  /** Given by tests; the real ones are used when left out. */
-  readonly fetch?: typeof fetch;
-  readonly sleep?: (ms: number) => Promise<void>;
-  readonly now?: () => Date;
-}
-
-/** The parts of a Nominatim hit this app reads. */
-export interface NominatimHit {
-  readonly lat?: string;
-  readonly lon?: string;
-  readonly display_name?: string;
 }

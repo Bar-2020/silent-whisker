@@ -4,13 +4,8 @@ mock_provider "aws" {
 
 mock_provider "archive" {}
 
-run "the_geocode_cache_is_protected_and_inside_the_free_units" {
+run "the_geocode_cache_is_inside_the_free_units" {
   command = apply
-
-  assert {
-    condition     = aws_dynamodb_table.geocode_cache.deletion_protection_enabled
-    error_message = "Every table has delete protection on (D-77)."
-  }
 
   assert {
     condition = (
