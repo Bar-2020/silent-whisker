@@ -6,6 +6,8 @@ on:
   pull_request:
 
 jobs:
+  # `npm run verify` is `verify:code` plus `verify:iac`. They run as two jobs side by side: the
+  # Terraform checks need no Node or Vite+ install, and the code checks need no Terraform.
   verify:
     runs-on: ubuntu-latest
     permissions:
@@ -13,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          # fallow audit (part of `npm run verify`) diffs against the merge-base
+          # fallow audit (part of `npm run verify:code`) diffs against the merge-base
           # with origin/main, which needs real history, not the default
           # single-commit shallow clone.
           fetch-depth: 0
@@ -27,25 +29,39 @@ jobs:
           run-install: |
             - args: ['--frozen-lockfile']
 
-      # Terraform for `npm run lint:iac` and `test:iac` (offline: fmt, validate, mock-AWS tests).
+      # typecheck · vp check (oxfmt + oxlint) · vp test · fallow audit. With the `iac` job below
+      # it is `npm run verify`, the command the Stop hook and every phase's Verification section
+      # refer to.
+      - run: npm run verify:code
+
+      # The deploy builds too; failing here keeps a broken build out of main.
+      - run: npm run build
+
+  # The Terraform half of `npm run verify`: fmt, validate, mock-AWS tests (offline). Needs only
+  # Terraform and a shell, so it skips the Node and Vite+ install and runs beside `verify`.
+  iac:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+
       # Pinned by commit SHA; the version matches the one used locally, bumped by hand.
       - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
         with:
           terraform_version: 1.16.6
           terraform_wrapper: false
 
-      # typecheck · vp check (oxfmt + oxlint) · vp test · fallow audit · Terraform checks. The
-      # same command the Stop hook and every phase's Verification section refer to.
-      - run: npm run verify
-
-      # The deploy builds too; failing here keeps a broken build out of main.
-      - run: npm run build
+      # The lock files in infra/ hold the Linux provider hash, so the AWS provider is downloaded
+      # once and every module then reuses it from the plugin cache. Without that hash each
+      # module downloads it again.
+      - run: npm run verify:iac
 
   # Every merge to main goes online (D-02). The repository variable DEPLOY_ENABLED switches it
   # on (set in the one-time setup, infra/README.md); set it to anything but true to pause deploys.
   # It must be a repository variable: a job's `if` runs before the environment's secrets load.
   deploy:
-    needs: verify
+    needs: [verify, iac]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
     runs-on: ubuntu-latest
     # The key is a secret of this environment, which only main may use.
@@ -112,7 +128,7 @@ jobs:
           echo "Live at $(terraform output -raw site_url)"
 
   review:
-    needs: verify
+    needs: [verify, iac]
     # Disabled. To re-enable, restore:
     # if: success() && github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize')
     if: false
