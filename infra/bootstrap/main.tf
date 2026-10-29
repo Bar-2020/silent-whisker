@@ -17,7 +17,7 @@ terraform {
   backend "s3" {
     key          = "bootstrap.tfstate"
     region       = "eu-north-1" # = selected_region in shared/constants/aws.json
-    use_lockfile = true
+    use_lockfile = true         # a lock file in the bucket stops two runs at once
   }
 }
 

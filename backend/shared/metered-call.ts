@@ -39,8 +39,9 @@ function assertPositiveWhole(amount: number): void {
 }
 
 /**
- * One conditional write, so two requests at once cannot both pass. Returns false when it would go
- * over; any other failure throws: no allowance is ever assumed.
+ * Adds `amount` to today's `name` counter if the total stays within `max`, in one conditional write
+ * so two requests at once cannot both pass. Returns false when it would go over; any other failure
+ * throws: no allowance is ever assumed.
  */
 export async function takeDailyAllowance(
   guard: CostGuard,
