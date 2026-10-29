@@ -134,7 +134,8 @@
       submit.disabled = LOG_RESULTS.includes(sub);
     }
     /* A counted or unverified log reports at the top, beside the rows it changes; refusals stay at the form. */
-    if (sub === 'counted' || sub === 'cancelled' || sub === 'unverified' || sub === 'kittens-done') window.scrollTo(0, 0);
+    if (sub === 'counted' || sub === 'cancelled' || sub === 'unverified' || sub === 'kittens-done')
+      window.scrollTo(0, 0);
     else if (form && (FILLED.includes(sub) || sub === 'kittens-refused')) form.scrollIntoView();
   }
 
