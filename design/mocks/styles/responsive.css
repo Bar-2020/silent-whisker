@@ -10,7 +10,6 @@
     min-block-size: 0;
   }
 
-  /* The bar becomes a rail of the same glass, floating at the inline-start. */
   body[data-chrome='tabs'] .main {
     padding-block-end: 0;
   }
@@ -97,7 +96,6 @@
     block-size: 100dvh;
   }
 
-  /* The sheet becomes a panel at the inline-start of the map, beside the rail. */
   .stage .sheet {
     inset-block: var(--s-4);
     inset-inline: calc(var(--rail-offset) + var(--s-2)) auto;
@@ -157,7 +155,6 @@
     inline-size: 24rem;
   }
 
-  /* On a wide screen the bar is not pinned: it sits under the form, on the page. */
   .footbar {
     position: static;
     inline-size: 100%;

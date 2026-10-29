@@ -3,12 +3,8 @@ import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { join, dirname, resolve, relative, extname } from 'path';
 
 /**
- * docs/ is the source of truth and is navigated by following links. A dead
- * link sends a reader, human or agent, to the wrong rule, so the
- * cross-references are checked rather than trusted.
- *
- * This is also the check that proves `npm run verify` works end to end while the
- * repo still has no application code.
+ * docs/ is the source of truth and is navigated by following links. A dead link sends a reader,
+ * human or agent, to the wrong rule, so the cross-references are checked rather than trusted.
  */
 
 const REPO_ROOT = resolve(__dirname, '..');
@@ -32,9 +28,8 @@ function markdownFiles(): string[] {
 }
 
 /**
- * Fenced code blocks hold example links that are not meant to resolve. Each
- * block is replaced by the newlines it spanned rather than by nothing, so the
- * line numbers in a failure message still point at the real line.
+ * Fenced code blocks hold example links that are not meant to resolve. Each block becomes the
+ * newlines it spanned, so the line numbers in a failure message still point at the real line.
  */
 function stripFencedCode(markdown: string): string {
   return markdown.replace(/^```[\s\S]*?^```/gm, (block) =>
@@ -42,12 +37,7 @@ function stripFencedCode(markdown: string): string {
   );
 }
 
-/**
- * GitHub's heading-anchor algorithm: lowercase, drop HTML tags and inline
- * markdown punctuation, keep letters, numbers, underscores and hyphens, then
- * turn each remaining space into a hyphen. Repeated hyphens are kept, which is
- * why "A - B" anchors as "a---b".
- */
+/** GitHub's heading-anchor algorithm. Repeated hyphens are kept: "A - B" anchors as "a---b". */
 function slugify(headingText: string): string {
   return headingText
     .replace(/<[^>]*>/g, '')
@@ -132,10 +122,7 @@ describe('documentation cross-references', () => {
   });
 });
 
-/**
- * The specs must stay simple. A section that outgrows its budget gets split or
- * cut, not stretched.
- */
+/** A spec that outgrows its budget gets split or cut, not stretched. */
 const MAX_SPEC_LINES = 150;
 // The design-token file the design tool reads (a YAML block and eight fixed sections): its size
 // follows that format, not the prose-spec budget.
@@ -152,10 +139,7 @@ describe('spec size budget', () => {
   });
 });
 
-/**
- * A cited rule or decision that does not exist sends a reader to nothing. Every R-nn and D-nn a
- * spec mentions must have a row in RULES.md or DECISIONS.md.
- */
+/** A cited rule or decision that does not exist sends a reader to nothing. */
 function definedIds(file: string, prefix: string): Set<string> {
   const ids = new Set<string>();
   const source = readFileSync(join(REPO_ROOT, 'docs', file), 'utf8');

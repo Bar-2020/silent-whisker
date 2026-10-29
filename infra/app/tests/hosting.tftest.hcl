@@ -1,5 +1,3 @@
-# The hosting setup against a mock AWS: no account, no cost (see infra/README.md).
-
 mock_provider "aws" {
   source = "./tests/mocks/aws"
 }

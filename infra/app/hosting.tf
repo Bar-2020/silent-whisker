@@ -1,13 +1,12 @@
-# The app's files: a private S3 bucket that only CloudFront may read, on CloudFront's default
-# `*.cloudfront.net` address (D-36). The deploy job uploads `frontend/dist/` after `terraform apply`.
-# No WAF for now (untested whether the project allows it, D-38), so files have no per-IP limit.
+# A private S3 bucket that only CloudFront may read, on CloudFront's default `*.cloudfront.net`
+# address (D-36). No WAF for now (untested whether the project allows it, D-38), so files have no
+# per-IP limit.
 
 # Build output only: every deploy rewrites it from git, so it has no versioning.
 resource "aws_s3_bucket" "site" {
   bucket_prefix = "silent-whisker-site-"
 }
 
-# Nobody reaches the bucket directly, whatever a later policy or ACL says.
 resource "aws_s3_bucket_public_access_block" "site" {
   bucket                  = aws_s3_bucket.site.id
   block_public_acls       = true
@@ -16,8 +15,6 @@ resource "aws_s3_bucket_public_access_block" "site" {
   restrict_public_buckets = true
 }
 
-# Origin Access Control: CloudFront signs each request to the bucket, so the bucket policy below
-# can tell this distribution from anyone else.
 resource "aws_cloudfront_origin_access_control" "site" {
   name                              = "silent-whisker-site"
   origin_access_control_origin_type = "s3"
@@ -25,7 +22,6 @@ resource "aws_cloudfront_origin_access_control" "site" {
   signing_protocol                  = "sigv4"
 }
 
-# One of AWS's ready-made cache settings; `data` looks it up instead of creating anything.
 data "aws_cloudfront_cache_policy" "optimized" {
   name = "Managed-CachingOptimized"
 }
@@ -117,7 +113,6 @@ resource "aws_cloudfront_distribution" "site" {
   }
 }
 
-# Who may read the bucket: only this distribution, and only over HTTPS.
 resource "aws_s3_bucket_policy" "site" {
   bucket = aws_s3_bucket.site.id
   policy = jsonencode({

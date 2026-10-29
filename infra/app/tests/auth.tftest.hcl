@@ -1,5 +1,5 @@
-# The sign-in pieces against a mock AWS (see infra/README.md). Each run's error message says what
-# rule it guards, because a failure here means a way into the app that was not meant to exist.
+# Each run's error message says what rule it guards, because a failure here means a way into the
+# app that was not meant to exist.
 
 mock_provider "aws" {
   source = "./tests/mocks/aws"

@@ -9,13 +9,12 @@ locals {
   state_bucket_arn = "arn:aws:s3:::silent-whisker-tfstate-${data.aws_caller_identity.current.account_id}"
 }
 
-# Step 1: the identity GitHub logs in as. Its access key is made by hand and kept only as a GitHub
-# secret: this file never creates one, so the key never sits in Terraform's state.
+# Its access key is made by hand and kept only as a GitHub secret: this file never creates one, so
+# the key never sits in Terraform's state.
 resource "aws_iam_user" "deploy" {
   name = "silent-whisker-deploy"
 }
 
-# The user's only right: switch into the deployer role.
 resource "aws_iam_user_policy" "deploy" {
   name = "assume-deployer"
   user = aws_iam_user.deploy.name
@@ -29,7 +28,6 @@ resource "aws_iam_user_policy" "deploy" {
   })
 }
 
-# Step 2: the role each deploy switches into. The trust policy says who may switch in: the user.
 resource "aws_iam_role" "deployer" {
   name = "silent-whisker-deployer"
   assume_role_policy = jsonencode({
@@ -42,8 +40,8 @@ resource "aws_iam_role" "deployer" {
   })
 }
 
-# What a deploy may do: everything, because it creates buckets, CloudFront, and later Lambdas,
-# tables and their roles; the lock below keeps it from changing itself.
+# Everything, because a deploy creates buckets, CloudFront, and later Lambdas, tables and their
+# roles; the lock below keeps it from changing itself.
 resource "aws_iam_role_policy_attachment" "deployer_admin" {
   role       = aws_iam_role.deployer.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"

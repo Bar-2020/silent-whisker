@@ -1,5 +1,5 @@
-# The app module: everything the app runs on. GitHub Actions applies it on every merge to `main`,
-# as the deployer role from infra/bootstrap/ (D-02).
+# GitHub Actions applies this module on every merge to `main`, as the deployer role from
+# infra/bootstrap/ (D-02).
 
 terraform {
   required_version = ">= 1.10"
@@ -17,8 +17,8 @@ terraform {
     }
   }
 
-  # Same state bucket as bootstrap/, its own file. The bucket name is passed at `terraform init`
-  # (-backend-config); a backend block cannot read variables or files.
+  # The bucket name is passed at `terraform init` (-backend-config); a backend block cannot read
+  # variables or files.
   backend "s3" {
     key          = "app.tfstate"
     region       = "eu-north-1" # = selected_region in shared/constants/aws.json

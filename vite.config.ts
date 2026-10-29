@@ -172,8 +172,7 @@ export default defineConfig({
     rules: asErrors(CORE_RULES),
     overrides: [
       {
-        // The type-aware and project rules apply to TypeScript only; plain .js
-        // (tooling) gets ESLint's recommended set and nothing more.
+        // Plain .js (tooling) gets only the core set.
         files: ['**/*.{ts,tsx}'],
         rules: {
           ...asErrors(TYPESCRIPT_RULES),
@@ -183,9 +182,7 @@ export default defineConfig({
         },
       },
       {
-        // Business logic holds no magic numbers: limits, timeouts, sizes and counts
-        // are named in shared/constants/. 0, 1 and -1 stay readable in place. Tests
-        // use literals freely.
+        // Limits, timeouts, sizes and counts are named in shared/constants/; tests use literals.
         files: ['frontend/src/**/*.{ts,tsx}', 'backend/**/*.ts', 'shared/**/*.ts'],
         excludeFiles: ['shared/constants/**', '**/*.test.{ts,tsx}'],
         rules: {
@@ -216,8 +213,8 @@ export default defineConfig({
         rules: { 'sonarjs/no-clear-text-protocols': 'off' },
       },
       {
-        // The test runs infra/app/spa-fallback.js, the repo's own CloudFront Function, to check
-        // what it does with real addresses; it never runs anything from outside the repo.
+        // The test runs infra/app/spa-fallback.js, the repo's own CloudFront Function; it never runs
+        // anything from outside the repo.
         files: ['__tests__/spa-fallback.test.ts'],
         rules: { 'sonarjs/code-eval': 'off' },
       },

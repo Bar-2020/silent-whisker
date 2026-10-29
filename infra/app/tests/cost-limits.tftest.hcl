@@ -1,5 +1,3 @@
-# The cost-limit pieces against a mock AWS (see infra/README.md).
-
 mock_provider "aws" {
   source = "./tests/mocks/aws"
 }
