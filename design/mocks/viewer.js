@@ -104,6 +104,7 @@
             ['red', 'Food needed'],
             ['orange', 'Running low'],
             ['green', 'All fine'],
+            ['kittens', 'Kittens seen'],
             ['none', 'No data'],
             ['inactive', 'Inactive'],
             ['station', 'City station'],
@@ -124,6 +125,7 @@
           screen: 'detail',
           states: [
             ['red/ready', 'Chosen'],
+            ['red/ready-kittens', 'Chosen, kittens ticked'],
             ['red/sending', 'Saving (pending button)'],
             ['red/counted', 'Counted'],
             ['red/unverified', 'Unverified'],
@@ -131,6 +133,7 @@
             ['red/dailycap', 'Daily cap'],
             ['red/attempts', 'Attempt cap'],
             ['red/ratelimit', 'Rate limit'],
+            ['red/offline', 'No connection (form kept)'],
             ['red/banned', 'Banned'],
           ],
           q: [13],

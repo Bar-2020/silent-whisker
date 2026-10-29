@@ -30,9 +30,9 @@ Cognito. Terraform, deployed from GitHub Actions with a deploy-only key (D-02).
    (D-45). Spots that most need food or water are highlighted, based on time since the last counted log and whether the spot is active. A search finds a city, street, address or spot name (D-58); the OpenStreetMap credit stays visible on the map.
 2. **Spot**: name (the custom spot creator's, or generated from the street), photo, exact address. On the map,
    every spot is an exact point (D-47). Active or inactive. The app adds only custom spots, each approved by an admin (D-43); city stations come only from the import pipeline (D-34).
-3. **Feeding and water logs**: no photo. The volunteer picks a full or partial bowl (D-16). A log
-   counts when the phone is within the proof radius of the spot and the limits pass (R-09), and then updates
-   the spot's timers. Anyone at the spot can report "this spot was empty" (D-19).
+3. **Feeding and water logs**: no photo. The volunteer picks a full or partial bowl (D-16) and can tick "kittens seen",
+   which the spot shows for 14 days (R-35). A log counts when the phone is within the proof radius of the spot and the limits
+   pass (R-09), and then updates the spot's timers. Anyone at the spot can report "this spot was empty" (D-19). A link opens the cat alert form (D-67).
 4. **Cats and the feed**: photos of cats (each must contain one and has a required name of 1 to 40 characters, R-34), at a spot or random with a
    location tag, in an Instagram-style feed, never on the map. Others like and comment (D-44, D-45).
 5. **Cat alerts**: a sick cat, a cat in danger or, not urgent, a cat that needs spaying or neutering (D-64), with a photo and a

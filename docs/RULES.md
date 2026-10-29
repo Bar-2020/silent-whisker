@@ -37,6 +37,7 @@ proposed values that live in `shared/constants/` (see [DECISIONS.md](DECISIONS.m
 | R-32 | A creator's request to mark a custom spot inactive takes effect only when an admin approves it, and the spot stays active meanwhile. An admin's own change to a spot's name or status takes effect at once (D-58). | Lambda |
 | R-33 | An admin can pause the chat of a spot. While it is paused nobody can post there, and members can still read it (D-58). | Lambda |
 | R-34 | A cat photo post needs a name of 1 to 40 characters (a constant), moderated like other text. The place is optional (D-58). | Lambda |
+| R-35 | A log can carry "kittens seen". The spot shows it for 14 days (a constant) from the latest counted log that carries it; the flag of an unverified log is ignored (D-67). | Lambda |
 
 ## Proof checks (R-09)
 
