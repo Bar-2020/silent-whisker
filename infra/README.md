@@ -89,7 +89,7 @@ sign-in off. While the consent screen is in Testing, only the listed test users 
 ## Every merge to `main`
 
 The CI deploy job logs in as the deploy user, switches into the deployer role, builds the app,
-runs `terraform apply` in `app/` (today: the private bucket, CloudFront and the Cognito sign-in, D-36, D-59), uploads `frontend/dist/`
+runs `terraform apply` in `app/` (today: the private bucket, CloudFront, the Cognito sign-in and the API, D-36, D-59, D-60), uploads `frontend/dist/`
 with `aws s3 sync`, clears CloudFront's cache, removes old files, and prints the address as
 `Live at https://...`.
 

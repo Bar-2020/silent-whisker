@@ -2,15 +2,10 @@
 # app that was not meant to exist.
 
 mock_provider "aws" {
-  mock_data "aws_cloudfront_cache_policy" {
-    defaults = { id = "658327ea-f89d-4fab-a63d-7e88639e58f6" }
-  }
-
-  # The distribution checks the function ARN's shape, so the mock needs a realistic one.
-  mock_resource "aws_cloudfront_function" {
-    defaults = { arn = "arn:aws:cloudfront::123456789012:function/silent-whisker-spa-fallback" }
-  }
+  source = "./tests/mocks/aws"
 }
+
+mock_provider "archive" {}
 
 run "google_is_the_only_way_in" {
   command = apply

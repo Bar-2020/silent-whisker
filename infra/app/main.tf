@@ -9,6 +9,11 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.0"
     }
+
+    archive = {
+      source  = "hashicorp/archive"
+      version = "~> 2.0"
+    }
   }
 
   # The bucket name is passed at `terraform init` (-backend-config); a backend block cannot read

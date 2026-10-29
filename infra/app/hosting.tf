@@ -26,6 +26,15 @@ data "aws_cloudfront_cache_policy" "optimized" {
   name = "Managed-CachingOptimized"
 }
 
+# /api/*: never cached (every answer is about one member); Authorization is forwarded, Host is not.
+data "aws_cloudfront_cache_policy" "disabled" {
+  name = "Managed-CachingDisabled"
+}
+
+data "aws_cloudfront_origin_request_policy" "all_viewer_except_host" {
+  name = "Managed-AllViewerExceptHostHeader"
+}
+
 # The app draws its own pages in the browser (/profile, /auth/callback), but the bucket holds one
 # page, index.html, and for an address with no file S3 answers "Access Denied". This function
 # serves index.html for those addresses (D-63). It is attached to the files only, never to /api.
@@ -46,6 +55,33 @@ resource "aws_cloudfront_distribution" "site" {
     origin_id                = "site"
     domain_name              = aws_s3_bucket.site.bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.site.id
+  }
+
+  origin {
+    origin_id   = "api"
+    domain_name = replace(aws_apigatewayv2_api.api.api_endpoint, "https://", "")
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+
+  # No page fallback here (D-63). `/api/*` does not match a bare `/api`, which would get the web page.
+  dynamic "ordered_cache_behavior" {
+    for_each = ["/api", "/api/*"]
+
+    content {
+      path_pattern             = ordered_cache_behavior.value
+      target_origin_id         = "api"
+      viewer_protocol_policy   = "redirect-to-https"
+      allowed_methods          = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+      cached_methods           = ["GET", "HEAD"]
+      cache_policy_id          = data.aws_cloudfront_cache_policy.disabled.id
+      origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host.id
+    }
   }
 
   default_cache_behavior {
