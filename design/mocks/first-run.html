@@ -34,7 +34,7 @@
             <span data-t="firstrun.name.required"></span>
           </p>
           <p class="field__error" data-when="refused">
-            <span data-t="firstrun.name.refused"></span>
+            <span data-t-html="firstrun.name.refused"></span>
           </p>
         </div>
 
@@ -81,6 +81,17 @@
             <span data-t="firstrun.photo.required"></span>
           </p>
         </fieldset>
+
+        <div class="field">
+          <label class="check">
+            <input type="checkbox" id="terms" name="terms" aria-required="true" />
+            <span class="check__box"><i data-icon="check"></i></span>
+            <span class="check__text" data-t-html="firstrun.terms.label"></span>
+          </label>
+          <p class="field__error" data-when="errors">
+            <span data-t="firstrun.terms.required"></span>
+          </p>
+        </div>
       </div>
       <div class="footbar">
         <button class="btn btn--lg" type="button" data-unless="saving">
@@ -91,6 +102,52 @@
         </button>
       </div>
     </form>
+
+    <div role="main" class="firstrun" data-screen="install" data-default-state="default">
+      <div class="firstrun__body">
+        <span class="illus"><i data-icon="phone"></i></span>
+        <div class="stack stack--3">
+          <h1 data-t="firstrun.install.h1"></h1>
+          <p class="muted" data-t="firstrun.install.lead"></p>
+        </div>
+        <section class="stack stack--3">
+          <details class="howto" open>
+            <summary data-t="profile.install.iphone"></summary>
+            <ol class="steps-list">
+              <li data-t="profile.install.iphone1"></li>
+              <li data-t="profile.install.iphone2"></li>
+              <li data-t="profile.install.iphone3"></li>
+            </ol>
+          </details>
+          <details class="howto">
+            <summary data-t="profile.install.android"></summary>
+            <ol class="steps-list">
+              <li data-t="profile.install.android1"></li>
+              <li data-t="profile.install.android2"></li>
+              <li data-t="profile.install.android3"></li>
+            </ol>
+          </details>
+          <details class="howto">
+            <summary data-t="profile.install.chrome"></summary>
+            <ol class="steps-list">
+              <li data-t="profile.install.chrome1"></li>
+              <li data-t="profile.install.chrome2"></li>
+            </ol>
+          </details>
+          <details class="howto">
+            <summary data-t="profile.install.safari"></summary>
+            <ol class="steps-list">
+              <li data-t="profile.install.safari1"></li>
+              <li data-t="profile.install.safari2"></li>
+            </ol>
+          </details>
+        </section>
+        <p class="small muted" data-t="firstrun.install.later"></p>
+      </div>
+      <div class="footbar">
+        <a class="btn btn--lg" href="first-run.html?screen=location" data-t="common.continue"></a>
+      </div>
+    </div>
 
     <!-- Why the browser is about to ask for the location. -->
     <div role="main" class="firstrun" data-screen="location" data-default-state="ask">
@@ -147,6 +204,8 @@
 
     <script src="locales/he.js"></script>
     <script src="locales/en.js"></script>
+    <script src="locales/ar.js"></script>
+    <script src="locales/ru.js"></script>
     <script src="icons.js"></script>
     <script src="mock.js"></script>
     <script src="pages/first-run.js"></script>

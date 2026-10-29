@@ -1,4 +1,4 @@
-### Hard rules, no exceptions
+### Hard rules, no exceptions beyond the one written in its rule
 - **Server enforces every rule.** Auth, privacy, moderation, caps, bans: all in Lambda or IAM.
   Client checks are UX, never enforcement. A rule that only exists in the client is not implemented.
 - **Every user-facing string goes through `t('key')`.** No hardcoded strings, not even placeholders.
@@ -7,7 +7,9 @@
 - **RTL-safe styles.** CSS logical properties (`margin-inline-start`, `inset-inline-end`,
   `text-align: start`), never `left`/`right`. Hebrew is the primary language.
 - **No inline styles.** No `style` attribute, no `element.style`. Styles live in a `.css` file beside
-  the component (CSS Modules). To vary a style, switch a class or a `data-*` attribute.
+  the component (CSS Modules). To vary a style, switch a class or a `data-*` attribute. The one
+  exception is a library's own inline styles (the map, the glass navigation: D-59, D-73); our code
+  still writes none.
 - **Responsive from 360 px.** Mobile first; phone, tablet and desktop (R-18). Breakpoints are written
   once, in `frontend/src/styles/`.
 - **All timestamps stored in UTC.** Convert at display time only.

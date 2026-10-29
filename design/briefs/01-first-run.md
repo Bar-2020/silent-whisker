@@ -1,4 +1,4 @@
-# 1. First run: sign-in, profile questions, location screen
+# 1. First run: sign-in, sign-up form, install guide, location screen
 
 Mode: Operate (short forms; the sign-in screen itself is the landing page, see area 2).
 
@@ -7,25 +7,30 @@ A volunteer who just heard about the app from a Facebook group or a friend, phon
 wants to get to the map in under a minute without handing over more than the spec asks.
 
 ## Outcome and proof
-Three steps, each one screen, each skippable only where the spec says so:
+Four steps, each one screen, each skippable only where the spec says so:
 
 1. **Sign in with Google** (button on the landing page; Cognito's hosted Google screen follows,
    which we cannot restyle fully, Q7).
-2. **Profile questions** (one screen, three fields): full name (required free text), city
+2. **Sign-up form** (one screen, three fields and the terms checkbox, D-69): full name (required free text, with a line saying every member sees it, D-70), city
    (required free text, looked up by the server on submit, no autocomplete), and "show my Google
    photo?" with two choices and **no pre-selected answer**. Without a Google photo the second
-   question is hidden and initials are used.
-3. **Location screen** (once per device, skipped when the browser already granted it): one short
+   question is hidden and initials are used. Last, a required checkbox (the design system's Checkbox, its box always visible): "accept the terms of
+   use and the privacy policy", both linked; an unticked box turns red and gives an inline error like the other fields. A refused
+   name says so and offers the contact address (D-74).
+3. **Install from the browser** (D-01): one screen with the same per-browser guide as Profile (iPhone,
+   Android, Chrome or Edge, Safari on a Mac), one Continue button, and a line saying it can be done
+   later from Profile.
+4. **Location screen** (once per device, skipped when the browser already granted it): one short
    explanation, a notice telling the member to pick the lasting answer ("Always allow", not "this time"),
    one button that starts the browser prompt. While the prompt is open, "continue without location" is
    disabled. Refusing never blocks the app.
 
 ## Selected direction
-Inherit the stairwell wall. A progress hint ("1 of 2") is not needed: two screens. Large title,
+Inherit the stairwell wall. A progress hint is not needed: short screens. Large title,
 one paragraph of why, form, one primary button pinned to the thumb zone.
 
 ## States and ranges
-- Profile: empty, filled, field error (required), name or city refused by text moderation, city
+- Sign-up form: empty, filled, field error (required, including the terms), name or city refused by text moderation, city
   not found (the lookup failed), submitting, saved. City names run 2 to 40 characters in Hebrew
   or English.
 - Location: not asked (default), the browser prompt open (the screen waits, nothing to draw),
@@ -42,4 +47,4 @@ No notification permission (not in v1). No camera prompt. Never block on locatio
 on these screens.
 
 ## Open decisions
-Q7 (hosted sign-in look), Q8 (terms line), Q9 ("continue without location" button).
+Q7 (hosted sign-in look), Q9 ("continue without location" button).

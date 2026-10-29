@@ -39,10 +39,11 @@
     },
   ];
 
-  /* The context menu of a photo: report for everyone, hide and restrict for admins. */
+  /* The context menu of a photo: report for everyone, hide and restrict for admins, remove for its author. */
   const MENU =
-    '<div class="menu post__menu" id="post-menu" data-when="menu menu-admin">' +
-    `<button class="menu__item" type="button"><i data-icon="flag"></i><span data-t="cats.menu.report"></span></button>` +
+    '<div class="menu post__menu" id="post-menu" data-when="menu menu-admin menu-own">' +
+    `<button class="menu__item" type="button" data-when="menu menu-admin"><i data-icon="flag"></i><span data-t="cats.menu.report"></span></button>` +
+    `<button class="menu__item menu__item--bad" type="button" data-when="menu-own" data-go="remove-photo"><i data-icon="trash"></i><span data-t="cats.menu.remove"></span></button>` +
     `<button class="menu__item menu__item--bad" type="button" data-when="menu-admin"><i data-icon="restrict"></i><span data-t="cats.menu.hide"></span></button>` +
     `<button class="menu__item menu__item--bad" type="button" data-when="menu-admin"><i data-icon="lock"></i><span data-t="chat.admin.restrict"></span></button>` +
     '</div>';

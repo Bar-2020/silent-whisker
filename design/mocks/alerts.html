@@ -456,6 +456,9 @@
                 ><i data-icon="back" data-class="icon--flip"></i
               ></a>
               <h1 class="topbar__title" data-t="alerts.detail.title"></h1>
+              <button class="iconbtn" type="button" data-t-attr="aria-label:alerts.share">
+                <i data-icon="share"></i>
+              </button>
               <button class="iconbtn" type="button" data-t-attr="aria-label:common.report">
                 <i data-icon="flag"></i>
               </button>
@@ -484,12 +487,12 @@
                 <p class="lead lead--strong" data-unless="neuter" data-t="demo.alert1.note"></p>
                 <p class="lead lead--strong" data-when="neuter" data-t="demo.alert4.note"></p>
                 <p class="small muted" data-unless="neuter">
-                  <span data-t="alerts.detail.by" data-v='{"name":"Dana K."}'></span> ·
+                  <span data-t="alerts.detail.by" data-v='{"name":"Dana Katz"}'></span> ·
                   <span class="num" data-t="alerts.reportedAgo" data-v='{"n":2}'></span> ·
                   <span class="num" data-t="alerts.distance.m" data-v='{"n":320}'></span>
                 </p>
                 <p class="small muted" data-when="neuter">
-                  <span data-t="alerts.detail.by" data-v='{"name":"Dana K."}'></span> ·
+                  <span data-t="alerts.detail.by" data-v='{"name":"Dana Katz"}'></span> ·
                   <span class="num" data-t="alerts.reportedDaysAgo" data-v='{"n":3}'></span> ·
                   <span class="num" data-t="alerts.distance.km" data-v='{"n":"2.1"}'></span>
                 </p>
@@ -511,6 +514,18 @@
                     ></button>
                   </div>
                   <p class="small muted" data-t="alerts.admin.hint"></p>
+                </div>
+              </section>
+              <section class="section" data-when="reporter">
+                <div class="stack stack--3">
+                  <div class="adminrow">
+                    <button
+                      class="btn btn--secondary"
+                      type="button"
+                      data-t="alerts.reporter.resolve"
+                    ></button>
+                  </div>
+                  <p class="small muted" data-t="alerts.reporter.hint"></p>
                 </div>
               </section>
             </div>
@@ -539,6 +554,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script src="locales/he.js"></script>
     <script src="locales/en.js"></script>
+    <script src="locales/ar.js"></script>
+    <script src="locales/ru.js"></script>
     <script src="icons.js"></script>
     <script src="mock.js"></script>
     <script src="demo.js"></script>

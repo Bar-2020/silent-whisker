@@ -566,6 +566,94 @@ body[data-chrome='tabs'] .main {
   margin-inline-start: auto;
 }
 
+.check {
+  --check: 20px;
+  --check-pad: calc((var(--tap) - var(--check)) / 2);
+
+  position: relative;
+  display: flex;
+  gap: var(--s-3);
+  align-items: flex-start;
+  padding-block: var(--check-pad);
+  font-size: var(--fs-s);
+  cursor: pointer;
+}
+
+.check input {
+  position: absolute;
+  inset-block-start: var(--check-pad);
+  inset-inline-start: 0;
+  inline-size: var(--check);
+  block-size: var(--check);
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.check__box {
+  display: grid;
+  flex: none;
+  place-items: center;
+  inline-size: var(--check);
+  block-size: var(--check);
+  border: 2px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--dado-ink);
+  transition:
+    background-color var(--dur-1) var(--ease),
+    border-color var(--dur-1) var(--ease);
+}
+
+.check__box .icon {
+  inline-size: 14px;
+  block-size: 14px;
+  stroke-width: 3;
+  opacity: 0;
+}
+
+/* A line as tall as the box keeps the box centred on the first line. */
+.check__text {
+  line-height: var(--check);
+}
+
+.check__text a {
+  font-weight: 600;
+}
+
+.check:hover .check__box,
+.check input:checked + .check__box {
+  border-color: var(--dado);
+}
+
+.check input:checked + .check__box {
+  background: var(--dado);
+}
+
+.check input:checked + .check__box .icon {
+  opacity: 1;
+}
+
+.check input:focus-visible + .check__box {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.check input[aria-invalid='true'] + .check__box {
+  border-color: var(--bad);
+  background: var(--bad-tint);
+}
+
+.check input:disabled + .check__box {
+  border-color: var(--line);
+  background: var(--surface-sunk);
+  color: var(--ink-3);
+}
+
+.check:has(input:disabled) {
+  color: var(--ink-3);
+  cursor: not-allowed;
+}
 .rows {
   border-block: 1px solid var(--line);
   background: var(--surface);

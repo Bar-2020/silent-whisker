@@ -146,7 +146,11 @@
             <div class="notice__body"><span data-t="chat.rejected"></span></div>
           </div>
 
-          <div class="scrim" data-when="message message-admin" data-go="default"></div>
+          <div
+            class="scrim"
+            data-when="message message-admin message-own message-own-confirm"
+            data-go="default"
+          ></div>
           <aside
             class="sheet sheet--modal"
             role="dialog"
@@ -193,6 +197,59 @@
               data-t="common.cancel"
             ></button>
           </aside>
+
+          <aside
+            class="sheet sheet--modal"
+            role="dialog"
+            aria-modal="true"
+            data-t-attr="aria-label:chat.message.dialogLabel"
+            data-when="message-own"
+          >
+            <div class="dialog__quote">
+              <strong><bdi data-t="demo.me.name"></bdi></strong>
+              <span class="muted" data-t="demo.msg3"></span>
+            </div>
+            <button class="dialog__option" type="button" data-go="default">
+              <span class="dialog__icon"><i data-icon="copy"></i></span>
+              <strong data-t="chat.message.copy"></strong>
+            </button>
+            <button
+              class="dialog__option"
+              data-level="red"
+              type="button"
+              data-go="message-own-confirm"
+            >
+              <span class="dialog__icon"><i data-icon="trash"></i></span>
+              <strong data-t="chat.message.remove"></strong>
+            </button>
+            <button
+              class="btn btn--quiet"
+              type="button"
+              data-go="default"
+              data-t="common.cancel"
+            ></button>
+          </aside>
+          <aside
+            class="sheet sheet--modal"
+            role="dialog"
+            aria-modal="true"
+            data-when="message-own-confirm"
+          >
+            <h2 class="sheet__title" data-t="common.remove.title"></h2>
+            <p class="muted" data-t="common.remove.text"></p>
+            <button
+              class="btn btn--lg btn--danger"
+              type="button"
+              data-go="default"
+              data-t="common.remove.yes"
+            ></button>
+            <button
+              class="btn btn--quiet"
+              type="button"
+              data-go="default"
+              data-t="common.cancel"
+            ></button>
+          </aside>
         </div>
       </main>
       <nav data-nav="map"></nav>
@@ -200,6 +257,8 @@
 
     <script src="locales/he.js"></script>
     <script src="locales/en.js"></script>
+    <script src="locales/ar.js"></script>
+    <script src="locales/ru.js"></script>
     <script src="icons.js"></script>
     <script src="mock.js"></script>
     <script src="pages/chat.js"></script>
