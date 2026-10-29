@@ -94,6 +94,8 @@
     `<div class="field"><span class="field__label">${label}</span>${control}${hint || ''}</div>`;
   const tile = (name, checked, disabled, text) =>
     `<label class="choice"><input type="radio" name="${name}"${checked ? ' checked' : ''}${disabled ? ' disabled' : ''} /><span class="choice__tile">${icon('bowl')}<span>${text}</span><small>for 24 hours</small><span class="choice__mark">${icon('check')}</span></span></label>`;
+  const box = (checked, disabled, invalid) =>
+    `<label class="check"><input type="checkbox"${checked ? ' checked' : ''}${disabled ? ' disabled' : ''}${invalid ? ' aria-invalid="true"' : ''} /><span class="check__box">${icon('check')}</span><span class="check__text">I accept the <a href="#">terms of use</a> and the <a href="#">privacy policy</a>.</span></label>`;
   const forms = section(
     'forms',
     'Forms',
@@ -122,6 +124,15 @@
       cell('Default', `<div class="choices">${tile('a', false, false, 'Full bowl')}</div>`) +
         cell('Selected', `<div class="choices">${tile('b', true, false, 'Full bowl')}</div>`) +
         cell('Disabled', `<div class="choices">${tile('c', false, true, 'Full bowl')}</div>`)
+    )}<h3>Checkbox</h3><p class="muted">For a yes that must be given on purpose, such as the terms at sign-up. The box shows before it is ticked; the whole line is the target, except a link inside it.</p>${grid(
+      cell('Default', box(false, false)) +
+        cell('Ticked', box(true, false)) +
+        cell(
+          'Error',
+          box(false, false, true) +
+            '<span class="field__error">To continue, accept the terms.</span>'
+        ) +
+        cell('Disabled', box(false, true))
     )}<h3>Tabs</h3><div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true">Log</button><button type="button" role="tab" aria-selected="false">Cats</button><button type="button" role="tab" aria-selected="false">Chat</button><button type="button" role="tab" aria-selected="false">History</button></div>`
   );
 

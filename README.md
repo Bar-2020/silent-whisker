@@ -5,9 +5,9 @@
 **The stray-cat feeding map that checks someone really showed up.**
 
 [![CI](https://github.com/Bar-2020/silent-whisker/actions/workflows/ci.yml/badge.svg)](https://github.com/Bar-2020/silent-whisker/actions/workflows/ci.yml)
-![Status: early, phase 0](https://img.shields.io/badge/status-early%2C%20phase%200-f59e42?style=flat-square)
+![Status: early, phase 2](https://img.shields.io/badge/status-early%2C%20phase%202-f59e42?style=flat-square)
 ![License: MIT](https://img.shields.io/badge/license-MIT-4ade80?style=flat-square)
-![Languages: Hebrew and English](https://img.shields.io/badge/languages-Hebrew%20%2B%20English-8f9bff?style=flat-square)
+![Languages: Hebrew, English, Arabic and Russian](https://img.shields.io/badge/languages-Hebrew%20%2B%20English%20%2B%20Arabic%20%2B%20Russian-8f9bff?style=flat-square)
 
 </div>
 
@@ -17,8 +17,9 @@ danger, and chat.
 Free and open source. Built by a cat lover.
 
 > [!NOTE]
-> Silent Whisker is early. Phase 0 is done: the verification harness and CI are in place. The app
-> itself is not built yet, so this page describes what v1 will do. The plan and build order are in
+> Silent Whisker is early. Phases 0 and 1 are done (the verification harness, CI, the AWS
+> infrastructure and the deploy pipeline) and phase 2, Google sign-in, the profile and the look of the
+> app, is under way. The app screens are not built yet, so this page describes what v1 will do. The plan and build order are in
 > [docs/PRODUCT.md](docs/PRODUCT.md#build-order).
 
 ## Why not a Facebook group?
@@ -33,26 +34,30 @@ there.
 
 | | |
 |---|---|
-| 🗺️ **Map** | Every feeding spot is located on the map. Pins go green, orange or red depending on it's condition. |
+| 🗺️ **Map** | Every feeding spot is located on the map. Pins go green, orange or red depending on its condition, and a list view shows the same spots by need and distance. |
 | 🥣 **Feeding and water logs** | Pick a full or partial bowl or report it empty if needed. |
 | 🚨 **Alerts** | Flag a cat that is in danger or sick. |
 | 🐈 **Cats** | Photograph a cat you love at a spot. Others can like and comment. |
 | 💬 **Chat** | Each spot has a chat, moderated automatically. |
-| 🏥 **Places** | Vets and organisations that help strays, are located on the map for convenience. |
 | 🏙️ **Municipal stations** | Feeding stations that cities already installed, imported from public sources. |
 | 📈 **Profile** | Your stats: cats helped, feedings and water given. |
-| 🌍 **Hebrew and English** | Hebrew and English support, with more langauges coming in the future. |
+| 🌍 **Four languages** | Hebrew, English, Arabic and Russian. |
+
+After v1: vets, volunteering events and adoption events on the map, and push notifications.
 
 ## Privacy and trust
 
-- **Approximate by default.** The map shows a circle of about 300 m, not a pin on someone's door.
-  Exact addresses go only to signed-in members, up to 30 lookups a day each.
+- **Exact, but shown with care.** City stations and cat alerts are shown to every member. A spot a
+  member adds, often by someone's door, is shown only to members within 150 m of it, or while it needs
+  food or water. Nothing is shown to people who are not signed in.
 - **Your location stays yours.** Your phone's position is used once, to check the distance. Only
   the distance, rounded to 10 m, is kept.
 - **Moderated before public.** Photos are checked by an AI model on Amazon Bedrock and text by
   Bedrock Guardrails. Nothing is public until it passes, and if the check fails it stays hidden.
 - **The server decides.** Every rule is enforced in the backend, never only in the app. See
   [docs/RULES.md](docs/RULES.md).
+- **Yours to delete.** You can remove your own photos, comments and messages at any time, and delete
+  your account.
 - **No surprise bills.** Every metered AWS call goes through one function that checks per-member limits and a daily circuit breaker.
 
 ## Under the hood
@@ -72,7 +77,7 @@ flowchart LR
 
 | Layer | Choice |
 |---|---|
-| App | React, Vite, TypeScript, react-leaflet, react-i18next, installable PWA |
+| App | React, Vite, TypeScript, react-leaflet, react-i18next; a website the browser can install |
 | Backend | AWS Lambda behind CloudFront, DynamoDB, Cognito, S3 |
 | Infrastructure | Terraform, deployed from GitHub Actions on every merge |
 | Quality | `npm run verify`: typecheck, Vite+ (Oxlint and Oxfmt), Vitest, fallow |
@@ -82,12 +87,12 @@ flowchart LR
 | Phase | What ships | Status |
 |---|---|---|
 | 0 | Repo, verification harness and CI | ✅ Done |
-| 1 | AWS infrastructure and deploy pipeline, with the daily cost cap | Next |
-| 2 | Google sign-in, profile, landing page, Hebrew and English shell, the look of the app | Planned |
+| 1 | AWS infrastructure and deploy pipeline, with the daily cost cap | ✅ Done |
+| 2 | Google sign-in, sign-up form, profile, landing page, four-language shell, the look of the app | In progress |
 | 3 | Map and spots, municipal stations, moderated photo upload | Planned |
 | 4 | Feeding and water logs, first-run location screen, the needs-food-and-water layer | Planned |
 | 5 | Cats, likes, comments, chat | Planned |
-| 6 | Alerts, places, stats, donation link, launch checklist | Planned |
+| 6 | Alerts, stats, donation link, launch checklist | Planned |
 
 ## Develop
 
@@ -122,7 +127,8 @@ Development is spec driven. [docs/](docs/PRODUCT.md) is the source of truth, and
 
 ## Contributing
 
-Every PR runs `npm run verify` in CI. The automatic Claude review (`[R1]`, `[R2]`, ... findings,
+Every PR runs the code checks and the Terraform checks in CI, as two jobs (`npm run verify` runs
+both locally). The automatic Claude review (`[R1]`, `[R2]`, ... findings,
 checked against CLAUDE.md) is currently disabled. See [.github/workflows/ci.yml](.github/workflows/ci.yml)
 and [.github/claude-review-prompt.md](.github/claude-review-prompt.md).
 

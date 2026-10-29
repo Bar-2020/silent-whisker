@@ -35,8 +35,9 @@ plus a context column at the inline-end with the "post a cat" button and a short
 works" note (7 days, about 25 km, most liked first).
 
 ## Boundaries
-No follows, no hashtags, no shares, no profile pages of other members. No delete route in the spec
-(Q19).
+No follows, no hashtags, no shares, no profile pages of other members. An author can remove their
+own photo (menu on the photo) and their own comment (a button on it), each with a confirmation dialog
+(R-38, D-80).
 
 ## Open decisions
-Q16 (the spot picker), Q18, Q19, Q20.
+Q16 (the spot picker), Q18, Q20.

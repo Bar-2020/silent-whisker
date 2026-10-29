@@ -103,7 +103,7 @@ R-05 cap, and storing results costs more), GovMap (could not reach it from here)
 
 No licence text was found for any source. Treat each as unlicensed until a municipality confirms in
 writing. Before launch (Phase 6 checklist): write to each source's vet department, record the answer
-in `permission`, and show "Data: <municipality>" on the map. If a municipality asks, remove it.
+in `permission`, and show "Data: <municipality>" on the map. If a municipality asks (it can write to the contact address, D-74), remove it.
 
 ## Order of work
 

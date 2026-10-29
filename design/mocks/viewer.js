@@ -38,20 +38,28 @@
       area: 'First run',
       items: [
         {
-          title: 'Profile questions',
+          title: 'Sign-up form',
           page: 'first-run.html',
           screen: 'profile',
           states: [
             ['empty', 'Empty'],
             ['filled', 'Filled'],
-            ['errors', 'Required errors'],
+            ['errors', 'Required errors (including the terms)'],
             ['refused', 'Name refused'],
             ['citynotfound', 'City not found'],
             ['saving', 'Saving'],
             ['nophoto', 'No Google photo'],
           ],
           q: [12, 27],
-          note: 'Three questions; no answer to the photo question is pre-selected.',
+          note: 'Three questions and the terms checkbox (D-69); no answer to the photo question is pre-selected.',
+        },
+        {
+          title: 'Install from the browser',
+          page: 'first-run.html',
+          screen: 'install',
+          states: [['default', 'Default']],
+          q: [28],
+          note: 'The same guide as in Profile (D-01).',
         },
         {
           title: 'Location screen',
@@ -80,6 +88,7 @@
             ['plus', '“+” dialog'],
             ['search', 'Search results'],
             ['search-none', 'Search: nothing found'],
+            ['list', 'List view (kittens seen first, then needing help, then nearest)'],
             ['legend', 'Legend'],
             ['zoom', 'Zoom-in hint'],
             ['empty', 'No spots here'],
@@ -127,6 +136,8 @@
             ['red/ready', 'Chosen'],
             ['red/sending', 'Saving (pending button, toast)'],
             ['red/counted', 'Counted'],
+            ['red/cancel-log', 'Cancel my log (dialog)'],
+            ['red/cancelled', 'Log cancelled'],
             ['red/unverified', 'Unverified'],
             ['red/toosoon', 'Too soon'],
             ['red/dailycap', 'Daily cap'],
@@ -153,12 +164,12 @@
           note: 'One identical message for every refusal.',
         },
         {
-          title: 'Report a spot',
+          title: 'Report a problem with a spot',
           page: 'spot.html',
           screen: 'detail',
-          states: [['red/report-confirm', 'Confirm']],
+          states: [['red/report-problem', 'Choose a reason']],
           q: [],
-          note: 'One step: confirm, then a short toast. It hides the item from the reporter at once.',
+          note: 'Wrong place, gone, duplicate or other, then a short toast. It hides nothing: the report waits in the admin list (D-81).',
         },
         {
           title: 'New spot',
@@ -240,6 +251,8 @@
             ['default', 'Default'],
             ['fullscreen', 'Photo full screen'],
             ['review', 'Own comment in review'],
+            ['own-comment', 'Own comment (can remove)'],
+            ['remove-comment', 'Remove my comment (confirm)'],
             ['refused', 'Comment refused (toast)'],
             ['restricted', 'Chat restricted'],
             ['limit', 'Daily limit'],
@@ -304,6 +317,7 @@
           screen: 'detail',
           states: [
             ['member', 'Member'],
+            ['reporter', 'Member who raised it (can resolve)'],
             ['admin', 'Admin'],
             ['neuter', 'Spay or neuter (member)'],
             ['expired', 'Expired (everyone, for a week)'],
@@ -332,6 +346,8 @@
             ['banned', 'Banned'],
             ['message', 'Message actions (dialog)'],
             ['message-admin', 'Message actions (admin)'],
+            ['message-own', 'Own message actions (dialog)'],
+            ['message-own-confirm', 'Remove my message (confirm)'],
             ['admin', 'Admin'],
             ['admin-menu', 'Admin menu (top bar)'],
           ],
@@ -397,7 +413,7 @@
             ['confirm', 'Confirm dialog'],
           ],
           q: [25],
-          note: 'Not in the spec yet.',
+          note: '`DELETE /profile` (D-71). A banned member can use it too; the ban stays.',
         },
         {
           title: 'Admin: waiting spots',
@@ -423,7 +439,7 @@
             ['empty', 'Empty'],
           ],
           q: [6],
-          note: 'The spec has no route to list reports yet.',
+          note: 'Content reports and spot problems, nearest first (D-78, D-81). `GET /admin/reports`.',
         },
       ],
     },
@@ -520,7 +536,12 @@
     note: 'The log tab fits one screen; the rest are tabs, not a long scroll.',
   });
   const feed = group('Explore').items.find((item) => item.screen === 'feed');
-  feed.states.push(['menu', 'Photo menu'], ['menu-admin', 'Photo menu (admin)']);
+  feed.states.push(
+    ['menu', 'Photo menu'],
+    ['menu-admin', 'Photo menu (admin)'],
+    ['menu-own', 'Own photo menu'],
+    ['remove-photo', 'Remove my photo (confirm)']
+  );
   const post = group('Explore').items.find((item) => item.screen === 'post');
   post.states = post.states.filter(([id]) => id !== 'picker');
   group('Explore').items.push({
@@ -546,7 +567,7 @@
         note: 'Then the hosted Google sign-in, which is not our screen (Q7).',
       },
       {
-        title: '2. Profile questions',
+        title: '2. Sign-up form',
         page: 'first-run.html',
         screen: 'profile',
         states: [
@@ -554,10 +575,18 @@
           ['filled', 'Filled'],
         ],
         q: [12],
+        note: 'With the terms checkbox (D-69).',
+      },
+      {
+        title: '3. Install from the browser',
+        page: 'first-run.html',
+        screen: 'install',
+        states: [['default', 'Default']],
+        q: [28],
         note: '',
       },
       {
-        title: '3. Location',
+        title: '4. Location',
         page: 'first-run.html',
         screen: 'location',
         states: [['ask', 'Ask']],
@@ -565,7 +594,7 @@
         note: '',
       },
       {
-        title: '4. The first map',
+        title: '5. The first map',
         page: 'map.html',
         screen: 'map',
         states: [
@@ -628,6 +657,8 @@
   const LANGS = [
     ['he', 'עברית'],
     ['en', 'English'],
+    ['ar', 'العربية'],
+    ['ru', 'Русский'],
   ];
 
   const params = new URLSearchParams(window.location.hash.slice(1));
