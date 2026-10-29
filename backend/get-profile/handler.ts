@@ -26,14 +26,12 @@ function usersTable(): string {
 }
 
 /** Only an https address on Google's image host is kept (D-21). */
-function googlePhoto(picture: string | undefined): string | undefined {
+function checkIfGooglePhoto(picture: string | undefined): boolean {
   try {
     const url = new URL(picture ?? '');
-    return url.protocol === 'https:' && url.hostname.endsWith(GOOGLE_IMAGE_HOST_SUFFIX)
-      ? picture
-      : undefined;
+    return url.protocol === 'https:' && url.hostname.endsWith(GOOGLE_IMAGE_HOST_SUFFIX);
   } catch {
-    return undefined;
+    return false;
   }
 }
 
@@ -86,7 +84,7 @@ export async function handler(event: ProfileEvent): Promise<ApiResult> {
     return reply(STATUS_UNAUTHORIZED, { code: 'UNAUTHORIZED' });
   }
 
-  const photo = googlePhoto(claims.picture);
+  const photo = checkIfGooglePhoto(claims.picture) ? claims.picture : undefined;
   let user = await readUser(userId);
   if (!user) {
     user = await createUser(userId, photo);
