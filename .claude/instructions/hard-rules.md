@@ -1,4 +1,4 @@
-### Hard rules, no exceptions
+### Hard rules, no exceptions beyond the one written in its rule
 - **Server enforces every rule.** Auth, privacy, moderation, caps, bans: all in Lambda or IAM.
   Client checks are UX, never enforcement. A rule that only exists in the client is not implemented.
 - **Every user-facing string goes through `t('key')`.** No hardcoded strings, not even placeholders.

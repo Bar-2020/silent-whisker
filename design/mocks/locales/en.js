@@ -103,9 +103,6 @@ window.MOCK_LOCALES.en = {
   'common.rateLimit.text': 'Try again in {n} seconds.',
   'common.banned.title': 'Writing is turned off for this account',
   'common.banned.text': 'You can keep looking around, but you cannot log, post or write.',
-  'common.report.title': 'Report this?',
-  'common.report.text': 'It is hidden from you at once and sent to an admin to review.',
-  'common.report.yes': 'Report',
   'common.report.done.title': 'Report sent',
 
   'level.food.red': 'Food needed',
@@ -494,7 +491,7 @@ window.MOCK_LOCALES.en = {
     'Anyone who feeds cats must follow the rules of the place: the city bylaws, the building or yard rules, and a licence where one is required. The app does not decide what is allowed.',
   'legal.terms.s4.h': 'Removal from the service',
   'legal.terms.s4.p':
-    'Admins can restrict chat or block members who break the terms. You can delete your account at any time in Profile.',
+    'Admins can restrict chat or block members who break the terms. You can delete your account at any time in Profile; a blocked member asks by email.',
   'legal.terms.s5.h': 'Changes to the terms',
   'legal.terms.s5.p':
     'When the terms change, the app asks you to accept the new version at your next visit. If you do not accept, you cannot keep using the app.',
@@ -719,9 +716,6 @@ window.MOCK_LOCALES.en = {
   'profile.admin.sorted': 'Nearest first. Oldest first when location is off.',
   'profile.admin.kind.spot': 'Problem with a spot',
   'profile.admin.reason.wrong_place': 'In the wrong place',
-  'profile.admin.reason.gone': 'No longer there',
-  'profile.admin.reason.duplicate': 'Listed twice',
-  'profile.admin.reason.other': 'Something else',
   'profile.admin.close': 'Close the report',
   'profile.admin.spotReportHint':
     'Fix a custom spot with Edit, then close the report. A city station cannot be changed here.',

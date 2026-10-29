@@ -88,7 +88,7 @@
             ['plus', '“+” dialog'],
             ['search', 'Search results'],
             ['search-none', 'Search: nothing found'],
-            ['list', 'List view (needing help first, then nearest)'],
+            ['list', 'List view (kittens seen first, then needing help, then nearest)'],
             ['legend', 'Legend'],
             ['zoom', 'Zoom-in hint'],
             ['empty', 'No spots here'],

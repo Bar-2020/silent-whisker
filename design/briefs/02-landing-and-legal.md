@@ -37,7 +37,7 @@ heading list on phone.
 
 ## Boundaries
 Ads only here. No map and no spot data for signed-out people. The legal texts are written by the
-owner; the mocks carry a **draft** marked as such (a lawyer reads it before launch, D-75). The privacy policy lists what is kept, the
+owner; the mocks carry a **sample** marked as such (D-65, D-68). The privacy policy lists what is kept, the
   location uses, who sees names, where the data is stored and who else receives it, the member's rights and
   how to use them, and the contact address.
 
