@@ -120,6 +120,7 @@ window.MOCK_LOCALES.en = {
   'spot.title': 'Feeding spot | Silent Whisker',
   'spot.tag.station': 'City station',
   'spot.tag.inactive': 'Inactive',
+  'spot.tag.kittens': 'Kittens seen',
   'spot.station.source': 'A station the city installed. It cannot be renamed or switched off.',
   'spot.state.title': 'Food and water status',
   'spot.state.food': 'Food',
@@ -146,6 +147,13 @@ window.MOCK_LOCALES.en = {
   'spot.log.water': 'Water',
   'spot.log.waterHint': 'Fine for 24 h',
   'spot.log.proof': 'A log counts only when the phone is at the spot. The location is not stored.',
+  'spot.log.kittens': 'I saw kittens',
+  'spot.log.injured': 'Injured or sick cat',
+  'spot.log.offline.text':
+    'We could not confirm that the log was saved. Your choices are kept: try again when the connection is back.',
+  'spot.kittens.already': 'Kittens already reported',
+  'spot.kittens.done.title': 'Kittens reported',
+  'spot.kittens.done.text': 'Thank you. The spot shows “Kittens seen” for {n} days.',
   'spot.log.submit': 'Save the log',
   'spot.log.counted.title': 'Log counted',
   'spot.log.counted.text': 'Thank you. The spot is updated and its colour changes accordingly.',
@@ -192,6 +200,8 @@ window.MOCK_LOCALES.en = {
   'newspot.title': 'New feeding spot',
   'newspot.privacy':
     'The spot is shown only to members who are close to it, or when it needs food or water. An admin approves it first.',
+  'newspot.tip':
+    'Choose a quiet, out-of-the-way place that bothers no one: not at a door, a playground or a shared yard. Use a bowl, take it with you and clean up. Follow the local rules.',
   'newspot.name.label': 'Spot name',
   'newspot.name.placeholder': 'For example: the yard behind the library',
   'newspot.name.hint': 'Without a name we use the street.',
@@ -448,9 +458,9 @@ window.MOCK_LOCALES.en = {
   'legal.sample': 'Sample structure. The binding legal text is written by the owner before launch.',
   'legal.backHome': 'Home',
   'legal.privacy.title': 'Privacy policy',
-  'legal.privacy.s1.h': 'What we keep',
+  'legal.privacy.s1.h': 'What we keep, and why',
   'legal.privacy.s1.p':
-    'Your full name, your city, and your Google profile photo if you chose to show it.',
+    'Your full name and city, so others can see who helped and the map opens in your city. Your Google email address, to sign you in. Your Google profile photo, only if you choose to show it. Your logs, cat photos, names, alerts, comments and chat messages, so the app can show them. Your phone’s location is not stored, except where the Location section says so.',
   'legal.privacy.s2.h': 'Location',
   'legal.privacy.s2.p': 'Your phone’s location is used for three things:',
   'legal.privacy.s2.l1':
@@ -461,8 +471,9 @@ window.MOCK_LOCALES.en = {
   'legal.privacy.s3.h': 'Photos and text',
   'legal.privacy.s3.p':
     'Every photo and text is checked automatically before it is shown. Content that does not pass is never shown.',
-  'legal.privacy.s4.h': 'Sharing',
-  'legal.privacy.s4.p': 'This section will say where the data is stored and who it is shared with.',
+  'legal.privacy.s4.h': 'Where it is kept and who gets it',
+  'legal.privacy.s4.p':
+    'Your data is stored with Amazon Web Services in Stockholm, Sweden, which is outside Israel. Google handles sign-in. Photos and text are checked by Amazon’s automated services, which may run in other EU countries. The map comes from OpenStreetMap, which sees your IP address when the map loads. Ads on the public home page come from Google.',
   'legal.privacy.s5.h': 'Your rights and deleting your account',
   'legal.privacy.s5.p':
     'This section will explain how to ask to see, correct or delete your data, and how to get in touch.',
@@ -475,10 +486,13 @@ window.MOCK_LOCALES.en = {
   'legal.terms.s2.l1': 'Photos without a cat, in the feed and in alerts.',
   'legal.terms.s2.l2': 'Offensive or harassing content.',
   'legal.terms.s2.l3': 'Locations that are wrong on purpose.',
-  'legal.terms.s3.h': 'Removal from the service',
-  'legal.terms.s3.p': 'Admins can restrict chat or block users who break the terms.',
-  'legal.terms.s4.h': 'Changes to the terms',
-  'legal.terms.s4.p': 'This section will say how the terms are updated and how that is announced.',
+  'legal.terms.s3.h': 'Local rules',
+  'legal.terms.s3.p':
+    'Anyone who feeds cats must follow the rules of the place: the city bylaws, the building or yard rules, and a licence where one is required. The app does not decide what is allowed.',
+  'legal.terms.s4.h': 'Removal from the service',
+  'legal.terms.s4.p': 'Admins can restrict chat or block users who break the terms.',
+  'legal.terms.s5.h': 'Changes to the terms',
+  'legal.terms.s5.p': 'This section will say how the terms are updated and how that is announced.',
 
   'states.title': 'Silent Whisker',
   'states.offline.title': 'No internet connection',

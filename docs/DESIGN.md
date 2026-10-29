@@ -390,16 +390,18 @@ one (no pointer).
 
 ### State row, log tiles, history
 Each of food and water is a two-line row: icon in a tinted circle, label and level chip; then "14
-hours ago, full bowl" in tabular figures and a small "the bowl is empty" button. When the level is
-already red the button is disabled and reads "Already reported". The log form is three tiles (full
-bowl, partial bowl, water) and the Save button on the pinned bar, which turns pending while it
-sends; the result is a notice, never a distance.
+hours ago, full bowl" in tabular figures. A small "the bowl is empty" button sits at the end of the
+row, centred on both lines. When the level is already red the button is disabled and reads "Already
+reported". The log form is three tiles (full bowl, partial bowl, water), two buttons ("I saw
+kittens", "Injured or sick cat") and the Save button on the pinned bar, which turns pending while it
+sends, with a toast saying the log counts only at the spot and the location is not stored; the
+result is a notice, never a distance.
 
 ### Spot page
 One screen on a phone: a top bar (back, name, menu), a head row (photo, address, **Navigate**), four
 tabs (Log, Cats, Chat, History) and one panel. The tabs are four equal columns of 14 px centred
-words. The Log tab fits 360 x 740 with no scrolling: two state rows, three tiles, a line of proof
-text and the pinned bar. **Cats:** a small "Share a photo here" button beside the title, then a
+words. The Log tab fits 360 x 740 with nothing hidden under the pinned bar: two state rows, three
+tiles, two buttons and the bar. **Cats:** a small "Share a photo here" button beside the title, then a
 three-column grid of square photos. **Chat:** the real thread right in the tab, with the composer
 pinned at the bottom: there is no button to another page. **History:** who logged what and when; a log
 that was not verified is not listed. The menu has Report; the creator and every admin also get Edit,

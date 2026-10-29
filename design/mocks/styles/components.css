@@ -1715,7 +1715,7 @@ body[data-chrome='tabs'] .shell--map .main {
   border-block-start-color: currentColor;
 }
 
-/* The state row: icon, what and how bad on the first line; how long ago and the small "empty" report on the second. */
+/* The state row: icon, what and how bad on the first line, how long ago on the second; the small "empty" report button sits at the end, centred on both lines. */
 .state {
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
@@ -1728,7 +1728,7 @@ body[data-chrome='tabs'] .shell--map .main {
 }
 
 .state > .cluster {
-  grid-column: 2 / span 2;
+  grid-column: 2;
 }
 
 .state__when {
@@ -1737,6 +1737,7 @@ body[data-chrome='tabs'] .shell--map .main {
 
 .state__actions {
   grid-column: 3;
-  grid-row: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
   margin: 0;
 }
