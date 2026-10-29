@@ -113,8 +113,8 @@
     Mock.refresh(document.querySelector('[data-screen="detail"]'));
   }
 
-  /* Substates where the form is filled in: ready, ready with kittens ticked, no connection (the form is kept), and every answer. */
-  const FILLED = ['ready', 'ready-kittens', 'offline', ...LOG_RESULTS];
+  /* Substates where the form is filled in: ready, no connection (the form is kept), and every answer. */
+  const FILLED = ['ready', 'offline', ...LOG_RESULTS];
 
   /* The log form: pick one of three, then the button wakes up. */
   const submit = document.getElementById('log-submit');
@@ -130,12 +130,11 @@
     if (form && FILLED.includes(sub)) {
       const first = form.querySelector('input[name="kind"]');
       first.checked = true;
-      document.getElementById('log-kittens').checked = sub === 'ready-kittens';
       submit.disabled = LOG_RESULTS.includes(sub);
     }
     /* A counted or unverified log reports at the top, beside the rows it changes; refusals stay at the form. */
-    if (sub === 'counted' || sub === 'unverified') window.scrollTo(0, 0);
-    else if (form && FILLED.includes(sub)) form.scrollIntoView();
+    if (sub === 'counted' || sub === 'unverified' || sub === 'kittens-done') window.scrollTo(0, 0);
+    else if (form && (FILLED.includes(sub) || sub === 'kittens-refused')) form.scrollIntoView();
   }
 
   /* New spot and edit. */

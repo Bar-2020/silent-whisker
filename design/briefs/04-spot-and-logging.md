@@ -18,13 +18,15 @@ spot (navigation in the app on a phone, the route on the website otherwise, D-57
 three-column photo grid with a share button beside its title; the Chat tab is the real thread with its
 composer pinned; the History tab does not list unverified logs.
 
-**Log form** (inline, not a modal): three large choices (full bowl, partial bowl, water), an optional "I saw kittens" row (D-67), one
+**Log form** (inline, not a modal): three large choices (full bowl, partial bowl, water), one
 confirm button (the pinned bar, pending while it sends, so a double tap cannot log twice). A short note under it says the log counts only when the phone is at the spot and
 that the location is not stored. The answer is only **counted** or **saved as unverified**, never
 a distance. Refusals have their own plain messages: too soon (one counted feeding and one water
 log per spot per 3 hours), daily log cap, daily attempt cap, rate limit, banned. No connection: the form keeps
-its choices and says so; nothing is queued (D-67). Under the form, a link to the cat alert form for an
-injured or sick cat (D-67).
+its choices and says it could not confirm the save; nothing is queued (D-67). Under the three choices,
+two buttons (D-67): "I saw kittens", a report of its own that needs no log (disabled and reading "Kittens
+already reported" while the tag shows; the tag also appears on a search result), and "Injured or sick cat",
+which opens the cat alert form and returns to the spot.
 
 **Empty report**: "food is empty" or "water is empty", confirm, one neutral message whether it was
 accepted or refused for any reason (one identical answer).

@@ -125,7 +125,6 @@
           screen: 'detail',
           states: [
             ['red/ready', 'Chosen'],
-            ['red/ready-kittens', 'Chosen, kittens ticked'],
             ['red/sending', 'Saving (pending button)'],
             ['red/counted', 'Counted'],
             ['red/unverified', 'Unverified'],
@@ -134,6 +133,8 @@
             ['red/attempts', 'Attempt cap'],
             ['red/ratelimit', 'Rate limit'],
             ['red/offline', 'No connection (form kept)'],
+            ['kittens/kittens-done', 'Kittens reported'],
+            ['red/kittens-refused', 'Kittens report refused'],
             ['red/banned', 'Banned'],
           ],
           q: [13],

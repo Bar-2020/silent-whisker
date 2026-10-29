@@ -11,6 +11,12 @@
     refused: 'demo.badNote',
   };
 
+  /* The injured-cat button on a spot page comes here: back returns to that spot, not to the list. */
+  if (new URLSearchParams(window.location.search).get('back') === 'spot.html') {
+    const back = document.getElementById('raise-back');
+    back.href = back.href.replace('alerts.html', 'spot.html');
+  }
+
   let map = null;
   function mountSideMap() {
     const host = document.getElementById('alert-map');

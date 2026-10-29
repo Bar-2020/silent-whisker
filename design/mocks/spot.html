@@ -78,6 +78,13 @@
                   <a href="profile.html?screen=location-help" data-t="spot.log.unverified.help"></a>
                 </div>
               </div>
+              <div class="notice" data-level="green" data-sub="kittens-done">
+                <i data-icon="checkcircle"></i>
+                <div class="notice__body">
+                  <strong data-t="spot.kittens.done.title"></strong
+                  ><span data-t="spot.kittens.done.text" data-v='{"n":14}'></span>
+                </div>
+              </div>
               <div class="notice" data-when="pending-creator">
                 <i data-icon="clock"></i>
                 <div class="notice__body">
@@ -222,15 +229,18 @@
                       </div>
                     </fieldset>
                     <div class="choices choices--2">
-                      <label class="choice choice--row">
-                        <input type="checkbox" name="kittens" id="log-kittens" />
-                        <span class="choice__tile">
-                          <i data-icon="paw"></i>
-                          <span data-t="spot.log.kittens"></span>
-                          <span class="choice__mark"><i data-icon="check"></i></span>
-                        </span>
-                      </label>
-                      <a class="btn btn--secondary" href="alerts.html?screen=raise"
+                      <button
+                        class="btn btn--secondary"
+                        type="button"
+                        data-unless="kittens"
+                        data-go="kittens/kittens-done"
+                      >
+                        <i data-icon="paw"></i><span data-t="spot.log.kittens"></span>
+                      </button>
+                      <button class="btn btn--secondary" type="button" disabled data-when="kittens">
+                        <i data-icon="paw"></i><span data-t="spot.kittens.already"></span>
+                      </button>
+                      <a class="btn btn--secondary" href="alerts.html?screen=raise&back=spot.html"
                         ><i data-icon="siren"></i><span data-t="spot.log.injured"></span
                       ></a>
                     </div>
@@ -261,6 +271,13 @@
                       <div class="notice__body">
                         <strong data-t="common.rateLimit.title"></strong
                         ><span data-t="common.rateLimit.text" data-v='{"n":30}'></span>
+                      </div>
+                    </div>
+                    <div class="notice" data-level="none" data-sub="kittens-refused">
+                      <i data-icon="clock"></i>
+                      <div class="notice__body">
+                        <strong data-t="spot.empty.refused.title"></strong
+                        ><span data-t="spot.empty.refused.text"></span>
                       </div>
                     </div>
                     <div class="notice" data-level="none" data-sub="offline">

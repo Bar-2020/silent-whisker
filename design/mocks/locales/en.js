@@ -150,7 +150,10 @@ window.MOCK_LOCALES.en = {
   'spot.log.kittens': 'I saw kittens',
   'spot.log.injured': 'Injured or sick cat',
   'spot.log.offline.text':
-    'Nothing was saved. Your choices are kept: try again when the connection is back.',
+    'We could not confirm that the log was saved. Your choices are kept: try again when the connection is back.',
+  'spot.kittens.already': 'Kittens already reported',
+  'spot.kittens.done.title': 'Kittens reported',
+  'spot.kittens.done.text': 'Thank you. The spot shows “Kittens seen” for {n} days.',
   'spot.log.submit': 'Save the log',
   'spot.log.counted.title': 'Log counted',
   'spot.log.counted.text': 'Thank you. The spot is updated and its colour changes accordingly.',
@@ -457,7 +460,7 @@ window.MOCK_LOCALES.en = {
   'legal.privacy.title': 'Privacy policy',
   'legal.privacy.s1.h': 'What we keep, and why',
   'legal.privacy.s1.p':
-    'Your full name and city, so others can see who helped and the map opens in your city. Your Google profile photo, only if you choose to show it. Your logs, cat photos, names, alerts, comments and chat messages, so the app can show them. Your phone’s location is not stored, except where the Location section says so.',
+    'Your full name and city, so others can see who helped and the map opens in your city. Your Google email address, to sign you in. Your Google profile photo, only if you choose to show it. Your logs, cat photos, names, alerts, comments and chat messages, so the app can show them. Your phone’s location is not stored, except where the Location section says so.',
   'legal.privacy.s2.h': 'Location',
   'legal.privacy.s2.p': 'Your phone’s location is used for three things:',
   'legal.privacy.s2.l1':
