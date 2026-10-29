@@ -284,8 +284,8 @@ attributes themselves (the libraries', not ours, D-33), so the content security 
 shadow.
 **The Legible Glass Rule.** The glass is see-through, but the backdrop is dimmed before the tint
 is laid on, so its labels (#eef3fa, white when active) keep at least 4.5:1 even over a plain white
-page (5.3:1 for the inactive labels and 4.6:1 for the active one over plain white; the active tab is also
-bolder, not only lighter). If it is made clearer, dim the backdrop more; never trade away the
+page (5.3:1 for the inactive labels and 4.6:1 for the active one over plain white; the active pill is
+near that limit, so strengthen its edge, not its fill). If it is made clearer, dim the backdrop more; never trade away the
 contrast.
 
 ## Shapes
@@ -355,8 +355,8 @@ a pale red fill and the ordinary field error appears below it; disabled is grey.
 tile hides its mark until it is chosen, so an unchosen tile does not look like a checkbox.
 
 ### Navigation (the glass)
-- **Phone bar:** 4 items (Map, Explore, Alerts, Profile), icon over a 13 px label, active item on a lighter pill (`rgb(255 255 255
-  / 0.12)` with a 1 px light edge and weight 800), inactive labels in #eef3fa, all 14 px. **Rail** (768 px up): the same pane vertical, the logo above, the
+- **Phone bar:** 4 items (Map, Explore, Alerts, Profile), icon over a 14 px label, active item on a lighter pill (`rgb(255 255 255
+  / 0.12)` with a 1 px light edge, same label weight as the inactive items), inactive labels in #eef3fa, all 14 px. **Rail** (768 px up): the same pane vertical, the logo above, the
   language switch below. **Top bar:** white, a hairline below, the brand mark, then back arrow, title
   and at most two actions at the end (a plus to add, a pencil to edit, three dots for a menu).
 - **Pinned action bar:** the main button of a form (and a small group such as Navigate and Show on

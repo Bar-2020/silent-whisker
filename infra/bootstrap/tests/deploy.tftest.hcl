@@ -1,5 +1,4 @@
-# `terraform test` runs these against a fake AWS (mock_provider): no account, no cost. Every
-# computed value, such as an ARN, gets a made-up string, which is enough to check the wiring.
+# The mock gives every computed value, such as an ARN, a made-up string: enough to check the wiring.
 
 mock_provider "aws" {
   mock_data "aws_caller_identity" {

@@ -4,9 +4,9 @@ import { runInNewContext } from 'vm';
 import { describe, expect, it } from 'vite-plus/test';
 
 /**
- * infra/app/spa-fallback.js is the CloudFront Function that turns an address with no file behind it
- * into index.html (D-63). Terraform tests can only see that it is attached; this runs its code, so
- * a change that serves a page as a missing file, or a file as a page, fails here.
+ * infra/app/spa-fallback.js turns an address with no file behind it into index.html (D-63).
+ * Terraform tests can only see that it is attached; this runs its code, so a change that serves a
+ * page as a missing file, or a file as a page, fails here.
  */
 
 interface Request {

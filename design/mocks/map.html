@@ -118,7 +118,7 @@
               <span class="small muted" data-t="map.search.noneHint"></span>
             </div>
 
-            <!-- The list view: the spots of the current map view, kittens seen first, then needing help, then nearest (D-82). -->
+            <!-- List view: kittens seen, then need, then distance (D-82). -->
             <div class="results" id="spot-list" data-when="list">
               <div class="results__group" role="group" aria-labelledby="list-h">
                 <h2 class="results__title" id="list-h" data-t="map.list.title"></h2>
@@ -237,7 +237,6 @@
             </button>
           </div>
 
-          <!-- The "+" opens a dialog: what do you want to add? -->
           <div class="scrim" data-when="plus" data-go="default"></div>
           <aside class="sheet sheet--modal" role="dialog" aria-modal="true" data-when="plus">
             <h2 class="sheet__title" data-t="map.add.title"></h2>
@@ -263,7 +262,6 @@
             ></button>
           </aside>
 
-          <!-- A spot is selected: sheet on the phone, panel from 768px. -->
           <aside class="sheet sheet--peek" data-when="spot">
             <div class="sheet__head">
               <div class="sheet__top">
@@ -391,7 +389,6 @@
             ></button>
           </aside>
 
-          <!-- A cat alert is selected. -->
           <aside class="sheet sheet--peek" data-when="alert">
             <div class="sheet__head">
               <div class="stack stack--2">
@@ -425,7 +422,6 @@
             </div>
           </aside>
 
-          <!-- The legend. -->
           <aside class="sheet" data-when="legend">
             <div class="sheet__head">
               <h2 class="sheet__title" data-t="map.legend"></h2>

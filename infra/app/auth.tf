@@ -1,6 +1,5 @@
-# Who may sign in (D-59): a Cognito user pool, the list of members, where Google is the only way
-# in. The app sends the visitor straight to Google, so Cognito's own sign-in page is never seen.
-# The limits (the refresh token's life, the app's return address) are in shared/constants/auth.json.
+# Who may sign in (D-59): a Cognito user pool where Google is the only way in. The app sends the
+# visitor straight to Google, so Cognito's own sign-in page is never seen.
 
 locals {
   auth     = jsondecode(file("${path.module}/../../shared/constants/auth.json"))
@@ -11,10 +10,8 @@ locals {
   google_enabled = var.google_client_id != "" && nonsensitive(var.google_client_secret) != ""
 }
 
-# From the Google sign-in client made by hand (Google Auth Platform, Clients). The id is not secret
-# and is a repository variable; the secret is a secret of the production environment, never
-# committed (the repository is public). Terraform's state file holds a copy; that bucket is
-# private and only the deployer role reads it.
+# The secret is never committed (the repository is public). Terraform's state file holds a copy;
+# that bucket is private and only the deployer role reads it.
 variable "google_client_id" {
   description = "Google sign-in client id (GitHub variable GOOGLE_CLIENT_ID)."
   type        = string
@@ -31,7 +28,7 @@ variable "google_client_secret" {
 resource "aws_cognito_user_pool" "members" {
   name = "silent-whisker-members"
 
-  # Deleting the pool would delete every member, so AWS refuses until this is switched off.
+  # Deleting the pool would delete every member.
   deletion_protection = "ACTIVE"
 
   # Free for the first 10,000 active members a month, like Lite (AWS.md), and the plan that offers
@@ -44,8 +41,7 @@ resource "aws_cognito_user_pool" "members" {
   }
 }
 
-# The sign-in address: <prefix>.auth.<region>.amazoncognito.com. The prefix is part of the redirect
-# address registered in the Google client, so changing it means changing that too.
+# The prefix is part of the redirect address registered in the Google client; change both together.
 resource "aws_cognito_user_pool_domain" "members" {
   domain       = local.auth.domain_prefix
   user_pool_id = aws_cognito_user_pool.members.id
@@ -63,7 +59,7 @@ resource "aws_cognito_identity_provider" "google" {
     authorize_scopes = "openid email profile"
   }
 
-  # `picture` is what lets the app show the member's Google photo (D-21); it rides in the ID token.
+  # `picture` lets the app show the member's Google photo (D-21).
   attribute_mapping = {
     username = "sub"
     email    = "email"
@@ -87,8 +83,7 @@ resource "aws_cognito_identity_provider" "google" {
   }
 }
 
-# The web app's registration: a public client (a browser cannot keep a secret) using the
-# authorization code flow, which the app runs with PKCE.
+# A public client (a browser cannot keep a secret); the app runs the code flow with PKCE.
 resource "aws_cognito_user_pool_client" "web" {
   name         = "silent-whisker-web"
   user_pool_id = aws_cognito_user_pool.members.id
@@ -98,7 +93,6 @@ resource "aws_cognito_user_pool_client" "web" {
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes                 = ["openid", "email", "profile"]
 
-  # Exact addresses only: the live app and the developer's own machine.
   callback_urls = [
     "${local.site_url}${local.auth.callback_path}",
     "${local.auth.dev_origin}${local.auth.callback_path}",
@@ -111,11 +105,10 @@ resource "aws_cognito_user_pool_client" "web" {
   read_attributes  = ["email", "name", "picture"]
   write_attributes = ["email", "name", "picture"]
 
-  # No direct password flows. Refresh token rotation and ALLOW_REFRESH_TOKEN_AUTH do not go
-  # together; the app refreshes through the token endpoint.
+  # Refresh token rotation and ALLOW_REFRESH_TOKEN_AUTH do not go together; the app refreshes
+  # through the token endpoint.
   explicit_auth_flows = ["ALLOW_USER_SRP_AUTH"]
 
-  # Cognito's own hour for the ID and access tokens is kept; only the refresh token is set.
   refresh_token_validity = local.auth.refresh_token_days
   token_validity_units {
     refresh_token = "days"

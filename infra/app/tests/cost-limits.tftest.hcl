@@ -1,5 +1,3 @@
-# The cost-limit pieces against a mock AWS (see infra/README.md).
-
 mock_provider "aws" {
   mock_data "aws_cloudfront_cache_policy" {
     defaults = { id = "658327ea-f89d-4fab-a63d-7e88639e58f6" }

@@ -4,11 +4,7 @@ import { describe, expect, it } from 'vite-plus/test';
 
 const TERRAFORM_DIRS = ['../infra/app', '../infra/bootstrap'].map((dir) => resolve(__dirname, dir));
 
-/**
- * Every DynamoDB table the app's Terraform makes has delete protection on (D-77), so a mistaken
- * `terraform destroy` or a replacement cannot drop user data. A Terraform test could only check the
- * tables that exist today; this reads every `.tf` file in infra/app and infra/bootstrap, so a table added later is checked too.
- */
+/** Reads every `.tf` file, so a table added later is checked too (a Terraform test sees only today's). */
 describe('DynamoDB tables (D-77)', () => {
   const tables = TERRAFORM_DIRS.flatMap((dir) =>
     readdirSync(dir)

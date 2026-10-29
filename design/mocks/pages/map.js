@@ -77,7 +77,6 @@
     host.dataset.failed = 'true';
   }
 
-  /* The search box shows what was typed while a search is open. */
   const search = document.getElementById('map-search');
 
   Mock.onState = (state) => {
