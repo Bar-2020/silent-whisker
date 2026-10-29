@@ -1,8 +1,5 @@
 /* Mock runtime. Not the app: it only stands in for what the app's shell does, so the screens can be
-   looked at. It reads ?lang=he|en&screen=<id>&state=<id> and then:
-   - fills every [data-t] element from the locale object (every string goes through a key),
-   - shows the chosen screen and the elements that belong to the chosen state,
-   - draws icons, the navigation and the map markers. */
+   looked at. It reads ?lang=he|en&screen=<id>&state=<id>. */
 (function () {
   const DEFAULT_LANG = 'he';
   const LANGS = { he: { dir: 'rtl' }, en: { dir: 'ltr' } };
@@ -76,7 +73,6 @@
     { id: 'me', icon: 'user', href: 'profile.html' },
   ];
 
-  /* Moving between mock pages keeps the language. */
   function withLang(href) {
     return lang === DEFAULT_LANG ? href : `${href}${href.includes('?') ? '&' : '?'}lang=${lang}`;
   }
@@ -120,7 +116,6 @@
     return next.toString();
   }
 
-  /* A globe button that opens the list of languages. */
   let menuCount = 0;
   function drawLangMenu() {
     document.querySelectorAll('[data-langmenu]').forEach((host) => {
@@ -148,14 +143,12 @@
     });
   }
 
-  /* ----- screens and states ----- */
   const screens = [...document.querySelectorAll('[data-screen]')];
   const active = screens.find((el) => el.dataset.screen === params.get('screen')) || screens[0];
   let state = params.get('state') || (active && active.dataset.defaultState) || '';
   /* A second, optional dimension (for example the result shown under a form). */
   let sub = params.get('sub') || '';
 
-  /* The title of the page is the title of the screen being shown, so a tab or a history list names it. */
   function syncTitle() {
     const heading = active && active.querySelector('h1');
     const text = heading && heading.textContent.trim();
@@ -266,7 +259,6 @@
     if (event.target.matches && event.target.matches(TEXT_BOX)) syncDirection(event.target);
   });
 
-  /* A refusal or error that sits below the fold is brought into view. */
   function showFirstProblem() {
     if (!active) return;
     const problem = [
@@ -320,12 +312,10 @@
     if (event.key === 'Escape') closeLangMenus();
   });
 
-  /* Keep the language when moving between mock pages. */
   document.querySelectorAll('a[href$=".html"], a[href*=".html?"]').forEach((a) => {
     if (!a.closest('.nav')) a.setAttribute('href', withLang(a.getAttribute('href')));
   });
 
-  /* ----- map markers ----- */
   function glyph(name) {
     return `<svg class="pin__glyph" aria-hidden="true"><use href="#i-${name}-fill"></use></svg>`;
   }
@@ -407,7 +397,6 @@
     onState: null,
   };
 
-  /* ----- boot ----- */
   drawNav();
   drawTopbarBrand();
   drawLangMenu();

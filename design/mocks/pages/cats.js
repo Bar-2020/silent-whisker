@@ -82,7 +82,6 @@
   const city = document.getElementById('feed-city');
   if (city) city.textContent = Mock.t('cats.feed.city.title', { city: Mock.t('demo.city') });
 
-  /* ---------- The place picker: the map and the list are one choice ---------- */
   const SPOTS = [
     {
       id: 'red',
@@ -181,7 +180,6 @@
     drawPickerMarkers();
   }
 
-  /* ---------- The post form ---------- */
   const NAMED = ['ready-spot', 'ready-random', 'ready-fixed', 'uploading', 'nocat'];
 
   Mock.onState = (state) => {
