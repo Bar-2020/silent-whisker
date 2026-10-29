@@ -113,7 +113,7 @@ Code first, no Figma (D-40). The tool is Impeccable (`.claude/skills/impeccable`
 
 ## Build order
 
-One phase, one PR or smaller. Do not start a phase while the previous one is half built.
+One phase, one PR or smaller. Finish a phase before the next. Inside a phase, build the backend (endpoints and tables) before the screens that use it.
 
 0. Repo and harness: `npm run verify` green, CI, Stop hook. **Done.**
 1. AWS infra and deploy pipeline in Stockholm (Terraform, GitHub deploy key, the text and photo tests D-49 and

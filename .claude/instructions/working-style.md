@@ -1,5 +1,7 @@
 ### Working style
 - **One phase at a time.** The build order is in PRODUCT.md.
+- **Backend before screen.** Within a phase, build and test a screen's endpoints and tables before
+  the screen itself.
 - **Run `npm run verify` before saying anything is done.** Show the output. A Stop hook blocks the
   turn while it is red.
 - **A rule is done when the server refuses to break it**, not when the button is disabled. Test it
