@@ -65,6 +65,7 @@
   const LOG_RESULTS = [
     'sending',
     'counted',
+    'cancelled',
     'unverified',
     'toosoon',
     'dailycap',
@@ -124,7 +125,7 @@
       submit.disabled = LOG_RESULTS.includes(sub);
     }
     /* A counted or unverified log reports at the top, beside the rows it changes; refusals stay at the form. */
-    if (sub === 'counted' || sub === 'unverified') window.scrollTo(0, 0);
+    if (sub === 'counted' || sub === 'cancelled' || sub === 'unverified') window.scrollTo(0, 0);
     else if (form && (sub === 'ready' || LOG_RESULTS.includes(sub))) form.scrollIntoView();
   }
 

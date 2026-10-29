@@ -33,7 +33,7 @@ canvas itself stays left-to-right (geography does not mirror). Numbers, Latin na
 `dir="auto"` or `<bdi>` inside Hebrew text.
 
 ## Boundaries
-No hamburger drawer, no top search bar (the spec has none), no custom install banner (Q28).
+No hamburger drawer, no top search bar (the spec has none), no custom install banner (Q28). A spot and an alert are their own pages with their own address, so the route changes when one opens and its link can be shared (D-79). The language switch is a list of four.
 
 ## Open decisions
-Q5, Q26, Q28, Q29.
+Q5.

@@ -98,6 +98,30 @@
               </div>
             </aside>
           </div>
+
+          <!-- Remove my own photo: a confirmation dialog (R-37). -->
+          <div class="scrim" data-when="remove-photo" data-go="menu-own"></div>
+          <aside
+            class="sheet sheet--modal"
+            role="dialog"
+            aria-modal="true"
+            data-when="remove-photo"
+          >
+            <h2 class="sheet__title" data-t="common.remove.title"></h2>
+            <p class="muted" data-t="common.remove.text"></p>
+            <button
+              class="btn btn--lg btn--danger"
+              type="button"
+              data-go="default"
+              data-t="common.remove.yes"
+            ></button>
+            <button
+              class="btn btn--quiet"
+              type="button"
+              data-go="menu-own"
+              data-t="common.cancel"
+            ></button>
+          </aside>
         </div>
 
         <!-- ============ Post a photo of a cat ============ -->
@@ -363,6 +387,22 @@
                   <p data-t="demo.comment2"></p>
                 </div>
               </div>
+              <div class="comment" data-when="own-comment remove-comment">
+                <span class="avatar" data-t="demo.me.initials"></span>
+                <div class="comment__body">
+                  <div class="comment__meta">
+                    <strong><bdi data-t="demo.me.name"></bdi></strong
+                    ><span class="num" data-t="spot.last.justNow"></span>
+                  </div>
+                  <p data-t="demo.comment3"></p>
+                  <button
+                    class="btn btn--small btn--quiet"
+                    type="button"
+                    data-go="remove-comment"
+                    data-t="cats.comment.remove"
+                  ></button>
+                </div>
+              </div>
               <div class="comment" data-when="review">
                 <span class="avatar" data-t="demo.me.initials"></span>
                 <div class="comment__body">
@@ -413,6 +453,30 @@
             <div class="notice__body"><span data-t="common.refusedText"></span></div>
           </div>
 
+          <!-- Remove my own comment: a confirmation dialog (R-37). -->
+          <div class="scrim" data-when="remove-comment" data-go="own-comment"></div>
+          <aside
+            class="sheet sheet--modal"
+            role="dialog"
+            aria-modal="true"
+            data-when="remove-comment"
+          >
+            <h2 class="sheet__title" data-t="common.remove.title"></h2>
+            <p class="muted" data-t="common.remove.text"></p>
+            <button
+              class="btn btn--lg btn--danger"
+              type="button"
+              data-go="default"
+              data-t="common.remove.yes"
+            ></button>
+            <button
+              class="btn btn--quiet"
+              type="button"
+              data-go="own-comment"
+              data-t="common.cancel"
+            ></button>
+          </aside>
+
           <!-- The photo, full screen. -->
           <div
             class="lightbox"
@@ -439,6 +503,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script src="locales/he.js"></script>
     <script src="locales/en.js"></script>
+    <script src="locales/ar.js"></script>
+    <script src="locales/ru.js"></script>
     <script src="icons.js"></script>
     <script src="mock.js"></script>
     <script src="demo.js"></script>

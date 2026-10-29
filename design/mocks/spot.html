@@ -25,6 +25,9 @@
                 <i data-icon="back" data-class="icon--flip"></i>
               </a>
               <h1 class="topbar__title" id="spot-title"></h1>
+              <button class="iconbtn" type="button" data-t-attr="aria-label:spot.share">
+                <i data-icon="share"></i>
+              </button>
               <button
                 class="iconbtn"
                 type="button"
@@ -37,7 +40,7 @@
               </button>
             </header>
             <div class="menu menu--float" id="spot-menu" hidden>
-              <button class="menu__item" type="button" data-go="/report-confirm">
+              <button class="menu__item" type="button" data-go="/report-problem">
                 <i data-icon="flag"></i><span data-t="spot.menu.report"></span>
               </button>
               <a class="menu__item" href="spot.html?screen=edit" data-when="creator admin">
@@ -68,6 +71,19 @@
                 <div class="notice__body">
                   <strong data-t="spot.log.counted.title"></strong
                   ><span data-t="spot.log.counted.text"></span>
+                  <button
+                    class="btn btn--small btn--secondary"
+                    type="button"
+                    data-go="/cancel-log"
+                    data-t="spot.log.cancel"
+                  ></button>
+                </div>
+              </div>
+              <div class="notice" data-level="none" data-sub="cancelled">
+                <i data-icon="checkcircle"></i>
+                <div class="notice__body">
+                  <strong data-t="spot.log.cancelled.title"></strong
+                  ><span data-t="spot.log.cancelled.text"></span>
                 </div>
               </div>
               <div class="notice" data-level="none" data-sub="unverified">
@@ -90,7 +106,7 @@
                   <i data-icon="clock"></i>
                   <div class="notice__body">
                     <strong data-t="spot.pending.admin.title"></strong>
-                    <span data-t="spot.pending.admin.text" data-v='{"name":"Dana K."}'></span>
+                    <span data-t="spot.pending.admin.text" data-v='{"name":"Dana Katz"}'></span>
                   </div>
                 </div>
                 <div class="adminrow">
@@ -337,6 +353,22 @@
                   <h2 data-t="spot.history.title"></h2>
                   <ul>
                     <li class="log">
+                      <span class="avatar" data-t="demo.me.initials"></span>
+                      <div class="log__main">
+                        <div>
+                          <bdi data-t="demo.me.name"></bdi> ·
+                          <span data-t="spot.history.feedFull"></span>
+                        </div>
+                        <div class="small muted num" data-t="spot.last.justNow"></div>
+                      </div>
+                      <button
+                        class="btn btn--small btn--secondary"
+                        type="button"
+                        data-go="/cancel-log"
+                        data-t="spot.history.cancel"
+                      ></button>
+                    </li>
+                    <li class="log">
                       <span class="avatar" data-t="demo.user1.initials"></span>
                       <div class="log__main">
                         <div>
@@ -387,7 +419,7 @@
 
             <div
               data-panel-footer="log"
-              data-notsub="empty-food empty-water empty-done empty-refused report-confirm approve reject"
+              data-notsub="empty-food empty-water empty-done empty-refused report-problem report-sent cancel-log approve reject"
             >
               <div class="footbar" data-unless="pending-creator pending-admin inactive notfound">
                 <button
@@ -425,10 +457,10 @@
               </div>
             </div>
 
-            <!-- Dialogs: confirm an empty report, report the spot, approve or reject a pending spot. -->
+            <!-- Dialogs: confirm an empty report, report a problem with the spot, cancel a log, approve or reject a pending spot. -->
             <div
               class="scrim"
-              data-sub="empty-food empty-water empty-done empty-refused report-confirm approve reject"
+              data-sub="empty-food empty-water empty-done empty-refused report-problem report-sent cancel-log approve reject"
             ></div>
             <aside
               class="sheet sheet--modal"
@@ -499,22 +531,68 @@
               class="sheet sheet--modal"
               role="dialog"
               aria-modal="true"
-              data-sub="report-confirm"
+              data-sub="report-problem"
             >
-              <h2 class="sheet__title" data-t="common.report.title"></h2>
-              <p class="muted" data-t="common.report.text"></p>
+              <h2 class="sheet__title" data-t="spot.problem.title"></h2>
+              <p class="muted" data-t="spot.problem.text"></p>
+              <div class="choices">
+                <label class="choice choice--row">
+                  <input type="radio" name="problem" value="wrong_place" />
+                  <span class="choice__tile">
+                    <span data-t="spot.problem.wrongPlace"></span>
+                    <span class="choice__mark"><i data-icon="check"></i></span>
+                  </span>
+                </label>
+                <label class="choice choice--row">
+                  <input type="radio" name="problem" value="gone" />
+                  <span class="choice__tile">
+                    <span data-t="spot.problem.gone"></span>
+                    <span class="choice__mark"><i data-icon="check"></i></span>
+                  </span>
+                </label>
+                <label class="choice choice--row">
+                  <input type="radio" name="problem" value="duplicate" />
+                  <span class="choice__tile">
+                    <span data-t="spot.problem.duplicate"></span>
+                    <span class="choice__mark"><i data-icon="check"></i></span>
+                  </span>
+                </label>
+                <label class="choice choice--row">
+                  <input type="radio" name="problem" value="other" />
+                  <span class="choice__tile">
+                    <span data-t="spot.problem.other"></span>
+                    <span class="choice__mark"><i data-icon="check"></i></span>
+                  </span>
+                </label>
+              </div>
               <button
                 class="btn btn--lg"
                 type="button"
                 id="report-yes"
                 data-go="/"
-                data-t="common.report.yes"
+                data-t="spot.problem.send"
               ></button>
               <button
                 class="btn btn--quiet"
                 type="button"
                 data-go="/"
                 data-t="common.cancel"
+              ></button>
+            </aside>
+            <aside class="sheet sheet--modal" role="dialog" aria-modal="true" data-sub="cancel-log">
+              <h2 class="sheet__title" data-t="spot.log.cancel.title"></h2>
+              <p class="muted" data-t="spot.log.cancel.text" data-v='{"n":10}'></p>
+              <button
+                class="btn btn--lg btn--danger"
+                type="button"
+                data-go="/cancelled"
+                data-t="spot.log.cancel.yes"
+              ></button>
+              <button
+                class="btn btn--quiet"
+                type="button"
+                data-go="/"
+                data-t="spot.log.cancel.keep"
               ></button>
             </aside>
             <aside class="sheet sheet--modal" role="dialog" aria-modal="true" data-sub="approve">
@@ -781,6 +859,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script src="locales/he.js"></script>
     <script src="locales/en.js"></script>
+    <script src="locales/ar.js"></script>
+    <script src="locales/ru.js"></script>
     <script src="icons.js"></script>
     <script src="mock.js"></script>
     <script src="demo.js"></script>

@@ -26,7 +26,7 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
   for reported content, but no screen and no route to list reports. *Recommend: an admin-only
   group at the top of Me: "waiting for approval (n)" and "reported content (n)", each a plain
   list with approve/reject or hide/keep; the reports list needs a `GET /admin/reports` route
-  added to the API spec.*
+  added to the API spec.* *Decided (2026-10-29): yes, nearest first from the phone's location, plus `GET /admin/reports` (D-74, D-77).*
 
 ## First run and landing
 - **Q7. Hosted Google sign-in screen.** Cognito shows its own page between our landing and the
@@ -34,7 +34,7 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
   managed-login branding and check how far it goes; the landing page explains the step.*
 - **Q8. Terms consent.** The spec does not say how members accept the terms. *Recommend: one
   line under the sign-in button ("By continuing you accept the terms and the privacy policy"),
-  both linked, no checkbox. Owner to confirm with whoever writes the legal text.*
+  both linked, no checkbox. Owner to confirm with whoever writes the legal text.* *Decided (2026-10-29): a required checkbox on the sign-up form instead of a line, stored on the server (D-65).*
 - **Q9. "Continue without location" on the location screen.** The spec says one tap starts the
   prompt and refusing never blocks. *Recommend: add a quiet second button that skips the prompt;
   it leaves the permission "not asked", so the profile can still offer to ask later.*
@@ -48,7 +48,7 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
 ## Spots and logging
 - **Q12. How are members named to others?** The spec stores a full name and does not say who sees
   it. *Recommend: first name and last initial everywhere (logs, chat, comments, photos); the full
-  name stays visible to admins only.*
+  name stays visible to admins only.* *Decided (2026-10-29): every member sees the full name (D-66).*
 - **Q13. Show "you are 30 m from this spot"?** *Recommend: no. It would teach people how close
   the proof check needs them to be, and the spec says the answer shows only counted or
   unverified.*
@@ -66,7 +66,7 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
 - **Q18. Own photo while it waits for the photo check.** *Recommend: visible only to its poster
   at the top of the feed, tagged "in review".*
 - **Q19. Can a member remove their own photo or comment?** The spec has no route (status changes
-  only). *Recommend: add later; not in these designs.*
+  only). *Recommend: add later; not in these designs.* *Decided (2026-10-29): an author can remove their own photo, comment and chat message (D-76).*
 - **Q20. A note when the feed repeats seen photos.** *Recommend: a small line at the top of the
   repeated section: "you have seen everything nearby; showing it again".*
 - **Q21. Distance from the member on each alert in the list.** Computed on the phone from the
@@ -78,22 +78,22 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
   composer at the bottom and an "earlier messages" button; the app reverses each page.*
 - **Q24. What does "cats helped" count?** The spec stores the number and never defines it.
   *Recommend: approved cat alerts the member raised that an admin marked resolved. It is hard to
-  fake and means what it says.*
+  fake and means what it says.* *Open again (2026-10-29): the member who raised an alert can now resolve it (D-80), so counting resolved alerts can be gamed. Count something else, for example alerts an admin resolved and the reporter did not.*
 - **Q25. Delete my account.** Account deletion is allowed by the hard-delete exception but has no
   route or screen. *Recommend: add `DELETE /profile` and a row in Me; the design shows a confirm
-  sheet.*
+  sheet.* *Decided (2026-10-29): `DELETE /profile` and a row in Profile (D-67).*
 - **Q26. Where is the language switch?** *Recommend: landing page header, the Me tab, and the
-  bottom of the desktop rail.*
+  bottom of the desktop rail.* *Decided (2026-10-29): Hebrew, English, Arabic and Russian (D-81); the globe opens a list of four, never a toggle.*
 - **Q27. Gendered Hebrew.** Hebrew verbs address people as male or female. *Recommend: all copy
-  uses nouns, infinitives and plurals ("רישום האכלה", "לשמור"), never a "you" verb.*
+  uses nouns, infinitives and plurals ("רישום האכלה", "לשמור"), never a "you" verb.* *Decided (2026-10-29): the same rule in Arabic and Russian.*
 
 ## Shell and access
-- **Q28. Custom "install the app" banner?** *Decided: no banner; Profile has an "Install as an app" guide per browser.*
+- **Q28. Custom "install the app" banner?** *Decided: no banner; Profile has an "Install as an app" guide per browser.* *Also (2026-10-29): the onboarding has an install screen, as well as the Profile guide (D-01).*
 - **Q29. A banned member.** The spec says banned members cannot write, and is silent on reading.
   *Recommend: they keep reading; every write refusal shows a plain message, and Me shows a
-  permanent notice.*
+  permanent notice.* *Decided (2026-10-29): they keep reading, they cannot write (D-68).*
 - **Q30. A list of spots for people who cannot use a map** (screen readers, keyboard only).
-  *Recommend: a "spots near me" list after v1, and in v1 give markers real button semantics.*
+  *Recommend: a "spots near me" list after v1, and in v1 give markers real button semantics.* *Decided (2026-10-29): a list view of the map is in v1 (D-78).*
 - **Q31. Logs at an inactive spot.** The spec says an inactive spot is never marked as needing
   help and is silent on logging. *Recommend: logs are off while a spot is inactive; its creator can
   switch it back on.*
@@ -108,7 +108,7 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
 - **Q35. `liquid-glass-react` sets inline styles.** The library (MIT) is the way to get the real glass
   in React, but it styles itself with the `style` attribute, which the hard rules forbid in our code.
   *Recommend: allow it as the one documented exception, in one wrapper component, and keep the CSS glass
-  as the fallback.*
+  as the fallback.* *Decided (2026-10-29): use the library, in one wrapper component, with the CSS glass as the fallback (D-69).*
 - **Q36. Map pins with colour only.** The owner asked to drop the glyph and the badge, so a pin is a
   coloured teardrop. Red, orange, green and grey differ in lightness too, but a member with colour
   blindness may still confuse green and orange. *Recommend: keep it (the card, the legend and the marker's

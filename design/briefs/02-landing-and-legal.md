@@ -14,7 +14,8 @@ reachable from the landing page.
 - Then three steps (find a spot in need, feed, log at the spot) with the real marker designs, not
   stock art; a short privacy promise (exact positions, custom spots shown only to members who are
   close or when the spot needs help, phone location not stored); "free and open source"; donate
-  link; one reserved ad slot; footer with privacy, terms, source code.
+  link; one reserved ad slot; footer with privacy, terms, source code and the contact address (D-70). The
+  terms are accepted on the sign-up form, not here (D-65), so there is no "by continuing" line.
 - No numbers about users, spots or cats (none exist yet; claims are never invented).
 - On a phone the first screen is the pitch alone, on a slate gradient band; the phone frame starts below
   it and hangs over the band's edge. The three steps are numbered. A tinted closing section stands apart
@@ -26,7 +27,7 @@ viewport is the dado with the sign-in button on it. The top of the page is the w
 logo. The page is a real, quiet page, not a hero template.
 
 ## States and ranges
-Hebrew and English, 360 px to desktop. EU visitor consent banner (Q10). Ad slot with reserved
+Hebrew, English, Arabic and Russian (D-81), 360 px to desktop. EU visitor consent banner (Q10). Ad slot with reserved
 height so the page never jumps. Legal pages are long reading text, 65 characters wide at most.
 
 ## Interaction and layout
@@ -36,7 +37,9 @@ heading list on phone.
 
 ## Boundaries
 Ads only here. No map and no spot data for signed-out people. The legal texts are written by the
-owner; the mocks carry a **sample structure**, clearly marked, not legal wording.
+owner; the mocks carry a **draft** marked as such (a lawyer reads it before launch, D-71). The privacy policy lists what is kept, the
+  location uses, who sees names, where the data is stored and who else receives it, the member's rights and
+  how to use them, and the contact address.
 
 ## Open decisions
 Q10 (ads and the EU consent banner), Q11 (donation link home).

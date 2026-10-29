@@ -12,8 +12,8 @@ web
 
 ## Stack
 
-React, Vite, TypeScript, TanStack Query, react-leaflet, react-i18next. AWS: S3 + CloudFront, Lambda, DynamoDB,
-Cognito. Terraform, deployed from GitHub Actions with a deploy-only key (D-02).
+React, Vite, TypeScript, TanStack Query, react-leaflet, react-i18next, liquid-glass-react (the glass navigation,
+D-69). AWS: S3 + CloudFront, Lambda, DynamoDB, Cognito. Terraform, deployed from GitHub Actions with a deploy-only key (D-02).
 
 ## Who uses it
 
@@ -21,27 +21,27 @@ Cognito. Terraform, deployed from GitHub Actions with a deploy-only key (D-02).
   and custom spots when nearby or when they need food or water (D-47). Signed-out people see only a landing page,
   the privacy policy and the terms (D-39).
 - **Custom spot creator**: the member who added a custom spot. Can rename it, and ask an admin to mark it inactive (R-32).
-- **Admin**: a member with an admin flag. Approves custom spots, bans users, restricts chat, resolves or extends
-  cat alerts. No separate admin screens: the actions are buttons in the normal screens, shown only to admins.
+- **Admin**: a member with an admin flag, set by hand (D-74). Approves custom spots, bans and unbans, restricts chat,
+  extends cat alerts, works through reports. Buttons in the normal screens, plus one admin-only group in Profile listing what waits, nearest first (D-74, D-77).
 
 ## v1 scope
 
 1. **Map** (Leaflet + OpenStreetMap): feeding spots (official and custom) and cat alerts, never cat photos
-   (D-45). Spots that most need food or water are highlighted, based on time since the last counted log and whether the spot is active. A search finds a city, street, address or spot name (D-58); the OpenStreetMap credit stays visible on the map.
+   (D-45). Spots that most need food or water are highlighted, based on time since the last counted log and whether the spot is active. A search finds a city, street, address or spot name (D-58); a list view shows the same spots by need, then distance (D-78); the OpenStreetMap credit stays visible on the map.
 2. **Spot**: name (the custom spot creator's, or generated from the street), photo, exact address. On the map,
-   every spot is an exact point (D-47). Active or inactive. The app adds only custom spots, each approved by an admin (D-43); city stations come only from the import pipeline (D-34).
+   every spot is an exact point (D-47). Active or inactive. The app adds only custom spots, each approved by an admin (D-43); city stations come only from the import pipeline (D-34). A spot has its own page address that a member can share (D-79), and anyone can report a problem with it (D-77).
 3. **Feeding and water logs**: no photo. The volunteer picks a full or partial bowl (D-16). A log
    counts when the phone is within the proof radius of the spot and the limits pass (R-09), and then updates
-   the spot's timers. Anyone at the spot can report "this spot was empty" (D-19).
+   the spot's timers. Anyone at the spot can report "this spot was empty" (D-19); the logger can cancel their own log for 10 minutes (D-75).
 4. **Cats and the feed**: photos of cats (each must contain one and has a required name of 1 to 40 characters, R-34), at a spot or random with a
-   location tag, in an Instagram-style feed, never on the map. Others like and comment (D-44, D-45).
+   location tag, in an Instagram-style feed, never on the map. Others like and comment (D-44, D-45); an author can remove their own photo or comment (D-76).
 5. **Cat alerts**: a sick cat, a cat in danger or, not urgent, a cat that needs spaying or neutering (D-64), with a photo and a
-   note, tagged from where the member stands. On the map for 6 hours (7 days for spay or neuter), then in a past-alerts list every member sees for 7 days; admins resolve or extend (D-41, D-42, R-24).
+   note, tagged from where the member stands. On the map for 6 hours (7 days for spay or neuter), then in a past-alerts list every member sees for 7 days; the member who raised one, or an admin, resolves it; an admin extends it (D-41, D-42, D-80, R-24). An alert has its own page address too (D-79).
 6. **Chat**: small, per spot only; cat posts have comments instead (D-48). Automatic moderation. An admin can pause a spot's chat (R-33).
-7. **Profile**: at first sign-in the app asks for the full name, the city (the map opens there) and whether to show the
-   Google photo, otherwise initials (D-21, D-27). Stats: cats helped, feedings, water given.
-8. **Languages**: Hebrew (default, RTL) and English. Every string is in `he.json` and `en.json`,
-   served from the CDN (D-32, R-19).
+7. **Profile**: at first sign-in the app asks for the full name (shown to every member, D-66), the city (the map opens there), whether to show the
+   Google photo, otherwise initials, and to accept the terms and the privacy policy (D-21, D-27, D-65). Stats: cats helped, feedings, water given. Delete the account (D-67).
+8. **Languages**: Hebrew (default, RTL), English, Arabic (RTL) and Russian. Every string is in a locale file per language
+   (`he.json`, `en.json`, `ar.json`, `ru.json`), served from the CDN (D-32, D-81, R-19).
 9. **Municipal stations**: feeding stations cities have already installed, imported from public
     sources and shown as read-only spots ([SOURCES.md](SOURCES.md), D-34).
 
@@ -60,7 +60,7 @@ mechanism, not the map itself, is the thing a copycat can't fake.
 
 Volunteers use this outdoors, at the feeding spot, phone in hand, to log a feeding or water
 top-up on the spot (the proof-radius check requires it, R-09). Launch region is Israel
-(D-08). The product is Hebrew-first and RTL by default, with English as the secondary language.
+(D-08). The product is Hebrew-first and RTL by default, with English, Arabic and Russian beside it (D-81).
 
 ## Devices
 
@@ -70,22 +70,22 @@ Nothing scrolls sideways or is cut off from there up (R-18, D-30).
 
 ## First run
 
-Sign-in comes first: a signed-out visit shows only the landing page and the sign-in button.
-Right after the first sign-in, before the map, one short screen says the browser is about to ask
-for the phone's location, which checks that a log or an "empty" report was made at the spot (R-09, R-16),
-pins cat alerts and "my location" spots, and so keeps the map accurate. One tap starts the browser prompt, which asks for a precise position. Refusing never
+Sign-in comes first: a signed-out visit shows only the landing page and the sign-in button. Right after the
+first sign-in, before the map: the sign-up form (name, city, photo choice and the terms checkbox, D-65), a screen
+that explains how to install the app from the browser (D-01), then a short screen saying the browser is about to ask
+for the phone's location, which checks that a log or an "empty" report was made at the spot (R-09, R-16) and pins cat
+alerts and "my location" spots. One tap starts the browser prompt, which asks for a precise position. Refusing never
 blocks the app: a log without a good enough location is saved as unverified (R-09); only a cat alert needs it (R-23). The profile
 explains how to turn the permission back on. Nothing else needs a permission: logs have no photo
-(D-18), and photos for spots and cats come from the phone's own picker, which has no browser prompt.
-No notification permission in v1 (D-12). See D-31.
+(D-18), and photos come from the phone's own picker, which has no browser prompt.
+No notification permission in v1 (D-12, D-82). See D-31.
 
 ## Location privacy
 
-Every spot and cat alert is shown at its exact point. City stations, which cities publish, and cat alerts, which helpers must
-find, show to every member. A custom spot, often by a home or in a yard, shows only to a member within 150 m of it, or while it
-needs food or water, or to its creator (R-03, D-47). A member's own phone location is used for that check and
-for the proof radius checks (R-09, R-16) and is not stored; only a log's distance, rounded to 10 m, is kept. A cat alert's pin and a
-"my location" custom spot are the phone's location at submit, kept exact; a random cat photo keeps only its neighbourhood (R-28).
+Every spot and cat alert is shown at its exact point. City stations (cities publish them) and cat alerts (helpers must find the cat) show to every member. A custom spot,
+often by a home, shows only to a member within 150 m, or while it needs food or water, or to its creator and admins (R-03, D-47). A member's own phone
+location is used for that check and for the proof radius (R-09, R-16) and is not stored; only a log's distance, rounded to 10 m, is kept. A cat alert's pin and a
+"my location" spot are the phone's location at submit, kept exact; a random cat photo keeps only its neighbourhood (R-28).
 
 ## Money
 
@@ -97,7 +97,7 @@ code in this repo.
 
 ## Non-goals for v1
 
-Push notifications. Phone or Apple login. A native app. A separate admin site. Payments. Offline
+Push notifications (planned; when is open, D-82). Phone or Apple login. A native app. A separate admin site. Payments. Offline
 mode. Live (realtime) updates. A public map for signed-out visitors. Changing the profile picture in the app
 (v2). Vets, volunteering events and adoption events on the map (after v1, D-46).
 
@@ -119,11 +119,11 @@ One phase, one PR or smaller. Do not start a phase while the previous one is hal
 1. AWS infra and deploy pipeline in Stockholm (Terraform, GitHub deploy key, the text and photo tests D-49 and
    D-50, AWS Budget of $10 a month, cost limits, D-52). CloudFront serves the app and `/locales/`
    (D-38, D-49).
-2. Design of every screen, approved (UI and UX design, `DESIGN.md`), then Google sign-in and profile,
-   the public landing and legal pages, Hebrew/English shell, responsive shell. Sign-in is required
+2. Design of every screen, approved (UI and UX design, `DESIGN.md`), then Google sign-in, the sign-up form and profile,
+   the public landing and legal pages, the four-language shell, responsive shell. Sign-in is required
    (D-39), so it comes before the map.
 3. Map and spots (exact; custom spots per D-47), municipal stations loaded into `spots`, custom spots
-   (proposed: a separate form, admin approval, D-43), the admin approval buttons, moderated photo upload.
+   (a separate form, admin approval, D-43), the spots list (D-78), the admin list in Profile (D-74), moderated photo upload.
 4. Feeding and water logs (no photo), the first-run location screen and the "needs food/water"
    layer; municipal stations become loggable (D-35). Proposed: when several members dispute one
    member's logs, an admin gets a flag and that member's next logs need a photo.

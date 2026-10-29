@@ -265,13 +265,12 @@ depth.
   bottom rim and a soft inner glow. The map and the page show through it. It falls back to a solid
   slate blue #2d4467 when `backdrop-filter` is unsupported or `prefers-reduced-transparency` is set.
 
-**In the React app** the glass is the library `liquid-glass-react` (MIT): it adds the lens-like
-displacement and edge light the CSS cannot, in Chromium; Safari and Firefox get its blur and edge
-light without the displacement. Wrap the same content in it, keep the CSS glass above as the
-fallback, and keep the dim-then-tint rule so labels stay legible (the library's glass is clear on
-its own). The library sets inline
-styles itself, which the no-inline-styles rule forbids in our code: a question for the owner (Q35). Leaflet
-also writes inline `style` attributes on its map, so the content security policy must allow `style-src-attr`.
+**In the React app** the glass navigation is the library `liquid-glass-react` (MIT, D-69), used in one wrapper
+component. It adds the lens-like bend and edge light the CSS cannot, in Chromium; Safari and Firefox get its blur and
+edge light without the bend. The mocks are plain HTML, so they show only the CSS glass above; the real app wraps
+the same content in the library. The CSS above stays as the fallback (blur off, reduced transparency) and as the
+dim-then-tint around the library's clear glass, so labels stay legible. The library and Leaflet write inline `style`
+attributes themselves (the libraries', not ours, D-33), so the content security policy must allow `style-src-attr`.
 
 ### Named Rules
 **The Float-Only Rule.** Depth means "this sits over the content". A resting card never has a
@@ -336,7 +335,7 @@ separated by space (24 px between posts) or by a hairline between rows.
 - **Placeholder:** follows the page direction (at the right in Hebrew); words typed in the box choose
   their own direction.
 - **Choice tiles:** a real radio drawn as a large tile; chosen = slate mist fill, slate ring and a
-  check mark. Used for log kind, alert kind, address or location.
+  check mark. Used for log kind, alert kind, address or location. A checkbox that must be ticked, such as the terms on the sign-up form (D-65), is the same tile with a real checkbox and the links inside its label; unticked on submit it shows the ordinary field error.
 
 ### Navigation (the glass)
 - **Phone bar:** 4 items (Map, Explore, Alerts, Profile), icon over a 13 px label, active item on a lighter pill (`rgb(255 255 255
@@ -364,7 +363,7 @@ text, a thermometer for a sick cat.
 - **Dialog:** a centred pane of light glass (26 rem at most, 20 px radius) over a light scrim, above everything. A
   title, one or two lines, then choices or buttons: big option rows (icon in a circle, a bold title and
   a line) or a primary button and a quiet Cancel. Used for the map "+" (new spot, or a cat alert),
-  confirming approve or reject, confirming a report, the actions on a chat message (copy, report; an
+  confirming approve or reject, confirming a report, reporting a problem with a spot, cancelling a log, removing your own content, the actions on a chat message (copy, report; an
   admin also restricts or bans) and the language.
 - **Confirming something that cannot be undone** (deleting the account) is a dialog with a red button and
   a quiet Cancel, never a single tap on the pinned bar.
@@ -372,8 +371,8 @@ text, a thermometer for a sick cat.
   top bar or of a photo. Anything that needs a confirmation or more than three rows is a dialog.
 
 ### Language menu
-A globe icon button (never a toggle, never the word "English") opens a short list of languages with a
-check on the current one: on the landing and legal headers and at the foot of the rail. In the
+A globe icon button (never a toggle, never the word "English") opens a list of the four languages (עברית, English, العربية, Русский, each in its own
+script) with a check on the current one: on the landing and legal headers and at the foot of the rail. In the
 profile the language is a row that opens a choice dialog.
 
 ### Map markers (signature component)
@@ -393,16 +392,16 @@ Each of food and water is a two-line row: icon in a tinted circle, label and lev
 hours ago, full bowl" in tabular figures and a small "the bowl is empty" button. When the level is
 already red the button is disabled and reads "Already reported". The log form is three tiles (full
 bowl, partial bowl, water) and the Save button on the pinned bar, which turns pending while it
-sends; the result is a notice, never a distance.
+sends; the result is a notice, never a distance. For 10 minutes the notice has a **Cancel this log** button and the member's own row in History a quiet Cancel: both open a confirmation dialog (a red button, and "Keep the log" as the quiet one), then a grey notice says the spot is back as it was (R-36).
 
 ### Spot page
-One screen on a phone: a top bar (back, name, menu), a head row (photo, address, **Navigate**), four
+One screen on a phone: a top bar (back, name, share, menu), a head row (photo, address, **Navigate**), four
 tabs (Log, Cats, Chat, History) and one panel. The tabs are four equal columns of 14 px centred
 words. The Log tab fits 360 x 740 with no scrolling: two state rows, three tiles, a line of proof
 text and the pinned bar. **Cats:** a small "Share a photo here" button beside the title, then a
 three-column grid of square photos. **Chat:** the real thread right in the tab, with the composer
 pinned at the bottom: there is no button to another page. **History:** who logged what and when; a log
-that was not verified is not listed. The menu has Report; the creator and every admin also get Edit,
+that was not verified is not listed. The share button sends the name and the link through the phone's share sheet (D-79). The menu has "Report a problem with this spot" (a dialog with four reasons: wrong place, gone, listed twice, something else; it hides nothing, D-77); the creator and every admin also get Edit,
 and "Mark inactive": for a creator it is a request that needs an admin's approval (the spot stays
 active meanwhile), for an admin it applies at once. **Navigate** is a small secondary button, a plain link to Google Maps
 directions to the spot (`https://www.google.com/maps/dir/?api=1&destination=lat,lng`, new tab): on a
@@ -426,7 +425,7 @@ No coloured side stripes.
 Square photo with the place on it, then the name of the photo, who posted it, like and comment
 pills and the time as the last line. A liked paw fills slate blue, never red, because red means a need.
 Chat: others on the plain wall with an avatar, own messages tinted slate mist; a message in review has
-a dashed outline and an "in review" chip. A message is one tap target: it opens a dialog (copy, report),
+a dashed outline and an "in review" chip. A message is one tap target: it opens a dialog (copy, report; on the member's own message copy and remove, with a confirmation),
 there is no three-dots button on a message. The comment box and the chat composer are pinned to the
 bottom of the screen in every state, including a limit, a restriction and a ban, where it is a notice.
 
@@ -434,7 +433,7 @@ bottom of the screen in every state, including a limit, a restriction and a ban,
 Sharing starts from a **solid slate plus button at the end of the top bar** (like Instagram); there is
 no banner above the feed. Each **post** has no outline: a square photo (a glass place chip bottom-start,
 nothing else on it), then a title row with the photo's name (up to two lines) and the **three dots**
-(report; an admin also hides or restricts), who posted it, two pills and the time. The pills are
+(report; the author gets "Remove my photo" instead; an admin also hides or restricts), who posted it, two pills and the time. The pills are
 outlined when off and solid when on, so they never melt into the page: a **paw** to like (toes drawn
 apart so none merge) and a speech bubble. With location off the feed shows cats from the member's own
 city, and says so in a notice with a link to turn location on. Loading shows solid skeleton posts
@@ -465,7 +464,7 @@ box. Then **three numbered steps** (the order matters): a number, a dashed line 
 screen) to the next, the words, and a picture in the colour of the state it shows (a red pin, the bowl,
 a green pin; the pins do not act like buttons). Then the privacy band, a tinted closing section of its
 own, and a slate **footer** in the same colours as the hero, darker at the bottom: the mark and a one-line
-promise, six links in a grid, a hairline, the licence line and "Made with a drawn heart by Bar Almog" (the
+promise, seven links in a grid (the contact address among them), a hairline, the licence line and "Made with a drawn heart by Bar Almog" (the
 heart is an icon, not an emoji).
 
 ### Map search, alerts, profile
@@ -478,22 +477,22 @@ heart is an icon, not an emoji).
   from the action buttons when a map opens, folds into a small (i) button after five seconds, and the (i)
   shows it again (OpenStreetMap's attribution guidelines allow this; their tile policy forbids hiding it
   behind a toggle from the start, so it never starts hidden). The legend repeats it.
+- **Spots list:** a round list button at the head of the map controls swaps the map for the list of the same spots (needing help first, then nearest), each row a real link with its state chip (icon and word) and its distance; the same button, now a map icon, goes back (D-78).
 - **Alert row:** photo and words on top (kind chip, "reported N hours ago", the note cut at two lines,
   distance and area), then **Details** and **Show on map** side by side, full width. A countdown is
   never shown for helping a cat; only a gentle "leaves the map in N minutes" when it is about to go.
   Past alerts (the last 7 days) are one tap away, visible to everyone. In the raise form "sick" has a
   thermometer; a vague or missing location offers **Try again**; a refused note says so under the box.
-  One alert: the admin actions sit right under it, **Navigate** and **Show on map** are on the pinned bar.
+  One alert: it has its own address and a share button in the top bar (D-79); the member who raised it sees "Mark as handled" under it, an admin sees the admin actions (D-80), **Navigate** and **Show on map** are on the pinned bar.
   **Spay or neuter** is the third kind in the raise form (D-64): a calm full-width row under the two
   urgent tiles, a medical-cross icon, "not urgent". It stays 7 days instead of 6 hours, so its row says
   "reported N days ago" and its in-review screen says "7 days"; it has its own paler sign on the map and a
   line in the legend.
 - **Profile:** a pencil in the top bar edits; "My activity" is a tinted card with no dividers and 24 px at
   the sides; one
-  list holds language, location, **Install as an app** (a guide per browser), sign out and delete.
+  list holds language (a dialog of four), location, **Install as an app** (a guide per browser; the same guide is a screen of the first run, D-01), sign out and delete. The support group starts with **Contact**, the public email (D-70).
   Location help shows, per browser (Android Chrome, iPhone Safari, Chrome, Edge, Firefox, Safari on a
-  Mac), how to allow it **permanently**, not "this time". Lists in the admin screens use the same row
-  layout, and a reported-content card is a grid: decisions on one row, member actions on the next.
+  Mac), how to allow it **permanently**, not "this time". Lists in the admin screens use the same row layout, sorted nearest first with a distance on each row (D-74), and a report card is a grid: decisions on one row, member actions on the next (lifting a chat restriction or a block when there is one, D-77). A report of a spot problem shows its reason and the buttons "Edit" and "Close the report".
 
 ### Photo placeholders
 In the mocks a photo is a pale placeholder in one of four tones (#dfe4ec, #e6e2d8, #d9e4de,
@@ -506,7 +505,7 @@ sunk grey (#eef1f5) while one loads.
 - **Do** keep slate blue for things that can be tapped or chosen (The Tap Rule).
 - **Do** pair every state colour with an icon and a word, in chips and notices (map pins are the
   one exception: the card and the legend carry the words).
-- **Do** use gender-neutral Hebrew: nouns, infinitives and plurals, never a "you" verb.
+- **Do** use gender-neutral Hebrew, Arabic and Russian: nouns, infinitives and plurals, never a "you" verb.
 - **Do** write errors as what happened and what to do next, in one or two plain sentences.
 - **Do** keep targets at 48 px or more (44 px for small buttons) and primary actions on the pinned
   bar, inside the thumb's reach.

@@ -1,11 +1,11 @@
 /* Mock runtime. Not the app: it only stands in for what the app's shell does, so the screens can be
-   looked at. It reads ?lang=he|en&screen=<id>&state=<id> and then:
+   looked at. It reads ?lang=he|en|ar|ru&screen=<id>&state=<id> and then:
    - fills every [data-t] element from the locale object (every string goes through a key),
    - shows the chosen screen and the elements that belong to the chosen state,
    - draws icons, the navigation and the map markers. */
 (function () {
   const DEFAULT_LANG = 'he';
-  const LANGS = { he: { dir: 'rtl' }, en: { dir: 'ltr' } };
+  const LANGS = { he: { dir: 'rtl' }, en: { dir: 'ltr' }, ar: { dir: 'rtl' }, ru: { dir: 'ltr' } };
 
   const params = new URLSearchParams(window.location.search);
   const lang = Object.hasOwn(LANGS, params.get('lang')) ? params.get('lang') : DEFAULT_LANG;

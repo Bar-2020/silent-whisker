@@ -136,6 +136,16 @@
               <section>
                 <div class="heading-bar"><h2 data-t="profile.support.title"></h2></div>
                 <div class="rows">
+                  <a class="row" href="mailto:silentwhisker.ai@gmail.com"
+                    ><i class="row__icon" data-icon="comment"></i
+                    ><span class="row__main"
+                      ><span class="row__title" data-t="common.contact"></span><br /><span
+                        class="row__value"
+                        dir="ltr"
+                        >silentwhisker.ai@gmail.com</span
+                      ></span
+                    ><i class="row__chev" data-icon="external" data-class="icon--s"></i
+                  ></a>
                   <a class="row" href="#"
                     ><i class="row__icon" data-icon="heart"></i
                     ><span class="row__main"
@@ -433,6 +443,7 @@
               <h2 data-t="profile.admin.spotsEmpty"></h2>
             </div>
             <div class="alerts" data-unless="empty">
+              <p class="small muted" data-t="profile.admin.sorted"></p>
               <article class="alertrow">
                 <div class="alertrow__top">
                   <div class="photo photo--square" data-tone="3"><i data-icon="cat"></i></div>
@@ -440,8 +451,9 @@
                     <h2 class="alertrow__title" data-t="demo.spot2.name"></h2>
                     <p class="small muted" data-t="demo.spot2.address"></p>
                     <p class="small muted">
-                      <span data-t="profile.admin.addedBy" data-v='{"name":"Dana K."}'></span> ·
-                      <span class="num" data-t="spot.ago.hours" data-v='{"n":3}'></span>
+                      <span data-t="profile.admin.addedBy" data-v='{"name":"Dana Katz"}'></span> ·
+                      <span class="num" data-t="spot.ago.hours" data-v='{"n":3}'></span> ·
+                      <span class="num" data-t="alerts.distance.m" data-v='{"n":120}'></span>
                     </p>
                   </div>
                 </div>
@@ -474,7 +486,7 @@
                     <h2 class="alertrow__title" data-t="demo.spot3.name"></h2>
                     <p class="small muted" data-t="demo.spot3.address"></p>
                     <p class="small muted">
-                      <span data-t="profile.admin.addedBy" data-v='{"name":"Ron M."}'></span> ·
+                      <span data-t="profile.admin.addedBy" data-v='{"name":"Ron Mizrahi"}'></span> ·
                       <span class="num" data-t="spot.ago.hours" data-v='{"n":20}'></span> ·
                       <span data-t="profile.admin.noPhoto"></span>
                     </p>
@@ -512,8 +524,9 @@
                     ></span>
                     <h2 class="alertrow__title" data-t="demo.spot1.name"></h2>
                     <p class="small muted">
-                      <span data-t="profile.admin.inactiveBy" data-v='{"name":"Dana K."}'></span> ·
-                      <span class="num" data-t="spot.ago.hours" data-v='{"n":2}'></span>
+                      <span data-t="profile.admin.inactiveBy" data-v='{"name":"Dana Katz"}'></span>
+                      · <span class="num" data-t="spot.ago.hours" data-v='{"n":2}'></span> ·
+                      <span class="num" data-t="alerts.distance.m" data-v='{"n":480}'></span>
                     </p>
                   </div>
                 </div>
@@ -626,12 +639,16 @@
               <h2 data-t="profile.admin.reportsEmpty"></h2>
             </div>
             <div class="reports" data-unless="empty">
+              <p class="small muted" data-t="profile.admin.sorted"></p>
               <article class="report">
                 <div class="report__head">
                   <span class="chip" data-level="none"
                     ><i data-icon="comment"></i><span data-t="profile.admin.kind.message"></span
                   ></span>
-                  <span class="small muted" data-t="profile.admin.reported" data-v='{"n":2}'></span>
+                  <span class="small muted"
+                    ><span data-t="profile.admin.reported" data-v='{"n":2}'></span> ·
+                    <span class="num" data-t="alerts.distance.m" data-v='{"n":120}'></span
+                  ></span>
                 </div>
                 <div class="report__body">
                   <div class="report__content">
@@ -664,13 +681,63 @@
                     ></button>
                   </div>
                 </div>
+                <div class="report__member">
+                  <span
+                    class="report__label small muted"
+                    data-t="profile.admin.memberRestricted"
+                    data-v='{"date":"12.11"}'
+                  ></span>
+                  <div class="report__actions">
+                    <button
+                      class="btn btn--small btn--quiet"
+                      type="button"
+                      data-t="chat.admin.unrestrict"
+                    ></button>
+                  </div>
+                </div>
+              </article>
+              <article class="report">
+                <div class="report__head">
+                  <span class="chip" data-level="none"
+                    ><i data-icon="flag"></i><span data-t="profile.admin.kind.spot"></span
+                  ></span>
+                  <span class="small muted"
+                    ><span data-t="profile.admin.reported" data-v='{"n":1}'></span> ·
+                    <span class="num" data-t="alerts.distance.m" data-v='{"n":310}'></span
+                  ></span>
+                </div>
+                <div class="report__body">
+                  <div class="report__content">
+                    <p data-t="demo.spot3.name"></p>
+                    <p class="small muted">
+                      <span data-t="profile.admin.reason.wrong_place"></span> ·
+                      <bdi data-t="demo.user1.name"></bdi>
+                    </p>
+                  </div>
+                </div>
+                <div class="report__actions">
+                  <a
+                    class="btn btn--small"
+                    href="spot.html?screen=edit&state=admin"
+                    data-t="spot.menu.edit"
+                  ></a>
+                  <button
+                    class="btn btn--small btn--secondary"
+                    type="button"
+                    data-t="profile.admin.close"
+                  ></button>
+                </div>
+                <p class="small muted" data-t="profile.admin.spotReportHint"></p>
               </article>
               <article class="report">
                 <div class="report__head">
                   <span class="chip" data-level="none"
                     ><i data-icon="image"></i><span data-t="profile.admin.kind.photo"></span
                   ></span>
-                  <span class="small muted" data-t="profile.admin.reported" data-v='{"n":1}'></span>
+                  <span class="small muted"
+                    ><span data-t="profile.admin.reported" data-v='{"n":1}'></span> ·
+                    <span class="num" data-t="alerts.distance.km" data-v='{"n":"2.4"}'></span
+                  ></span>
                 </div>
                 <div class="report__body">
                   <div class="photo photo--square" data-tone="4"><i data-icon="cat"></i></div>
@@ -704,6 +771,19 @@
                     ></button>
                   </div>
                 </div>
+                <div class="report__member">
+                  <span
+                    class="report__label small muted"
+                    data-t="profile.admin.memberBanned"
+                  ></span>
+                  <div class="report__actions">
+                    <button
+                      class="btn btn--small btn--quiet"
+                      type="button"
+                      data-t="chat.admin.unban"
+                    ></button>
+                  </div>
+                </div>
               </article>
             </div>
           </div>
@@ -725,6 +805,12 @@
             <a class="row" href="?lang=en" lang="en" data-lang-option="en">
               <span class="row__main"><span class="row__title" data-t="lang.en"></span></span>
             </a>
+            <a class="row" href="?lang=ar" lang="ar" data-lang-option="ar">
+              <span class="row__main"><span class="row__title" data-t="lang.ar"></span></span>
+            </a>
+            <a class="row" href="?lang=ru" lang="ru" data-lang-option="ru">
+              <span class="row__main"><span class="row__title" data-t="lang.ru"></span></span>
+            </a>
           </div>
           <button class="btn btn--quiet" type="button" data-go="/" data-t="common.close"></button>
         </aside>
@@ -734,6 +820,8 @@
 
     <script src="locales/he.js"></script>
     <script src="locales/en.js"></script>
+    <script src="locales/ar.js"></script>
+    <script src="locales/ru.js"></script>
     <script src="icons.js"></script>
     <script src="mock.js"></script>
     <script src="pages/profile.js"></script>

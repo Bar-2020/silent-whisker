@@ -4,7 +4,7 @@ Mode: Operate, with the highest stakes in the app: a hurt animal and a stressed 
 
 ## Job and audience
 A member who stands next to a sick or endangered cat raises an alert in under a minute. Other
-members nearby see it and go. Admins resolve or extend it.
+members nearby see it and go. The member who raised it, or an admin, resolves it; an admin extends it (D-80).
 
 ## Outcome and proof
 - **Raise**: choose "in danger" or "sick" (two large options) or, calmer, a full-width "spay or neuter"
@@ -17,7 +17,7 @@ members nearby see it and go. Admins resolve or extend it.
   the note (two lines), distance and area (computed on the phone, Q21), and two buttons side by side:
   details and show on map. "Past alerts" (7 days, everyone, Q42) is a button under the list.
 - **Alert sheet on the map**: photo, kind, note, time left, report, and for admins: resolve and
-  extend by 12 hours. An ended alert is marked, visible to everyone for 7 days, and only an admin can
+  extend by 12 hours. The member who raised the alert sees "mark as handled" instead (D-80). An alert has its own page address, `/alerts/{id}`, and a share button (D-79). An ended alert is marked, visible to everyone for 7 days, and only an admin can
   extend it. On the alert's page Navigate and Show on map are on the pinned bar.
 
 ## Selected direction

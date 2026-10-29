@@ -114,6 +114,69 @@
               <strong data-t="map.search.none"></strong>
               <span class="small muted" data-t="map.search.noneHint"></span>
             </div>
+
+            <!-- The list view: the spots of the current map view, needing help first, then nearest (D-78). -->
+            <div class="results" id="spot-list" data-when="list">
+              <div class="results__group" role="group" aria-labelledby="list-h">
+                <h2 class="results__title" id="list-h" data-t="map.list.title"></h2>
+                <p class="small muted" data-t="map.list.sorted"></p>
+                <a class="results__item" href="spot.html?screen=detail&state=red">
+                  <span class="results__icon"><i data-icon="pin"></i></span>
+                  <span class="results__text"
+                    ><strong data-t="demo.spot1.name"></strong
+                    ><span class="small muted"
+                      ><span class="chip" data-level="red"
+                        ><i data-icon="bowl-empty"></i><span data-t="map.legend.red"></span
+                      ></span>
+                      <span class="num" data-t="alerts.distance.m" data-v='{"n":80}'></span></span
+                  ></span>
+                </a>
+                <a class="results__item" href="spot.html?screen=detail&state=red">
+                  <span class="results__icon"><i data-icon="pin"></i></span>
+                  <span class="results__text"
+                    ><strong data-t="demo.spot2.name"></strong
+                    ><span class="small muted"
+                      ><span class="chip" data-level="red"
+                        ><i data-icon="bowl-empty"></i><span data-t="map.legend.red"></span
+                      ></span>
+                      <span class="num" data-t="alerts.distance.m" data-v='{"n":410}'></span></span
+                  ></span>
+                </a>
+                <a class="results__item" href="spot.html?screen=detail&state=orange">
+                  <span class="results__icon"><i data-icon="pin"></i></span>
+                  <span class="results__text"
+                    ><strong data-t="demo.spot3.name"></strong
+                    ><span class="small muted"
+                      ><span class="chip" data-level="orange"
+                        ><i data-icon="clock"></i><span data-t="map.legend.orange"></span
+                      ></span>
+                      <span class="num" data-t="alerts.distance.m" data-v='{"n":210}'></span></span
+                  ></span>
+                </a>
+                <a class="results__item" href="spot.html?screen=detail&state=none">
+                  <span class="results__icon"><i data-icon="pin"></i></span>
+                  <span class="results__text"
+                    ><strong data-t="demo.station.name"></strong
+                    ><span class="small muted"
+                      ><span class="chip" data-level="none"
+                        ><i data-icon="dash"></i><span data-t="map.legend.none"></span
+                      ></span>
+                      <span class="num" data-t="alerts.distance.m" data-v='{"n":300}'></span></span
+                  ></span>
+                </a>
+                <a class="results__item" href="spot.html?screen=detail&state=green">
+                  <span class="results__icon"><i data-icon="pin"></i></span>
+                  <span class="results__text"
+                    ><strong data-t="demo.spot4.name"></strong
+                    ><span class="small muted"
+                      ><span class="chip" data-level="green"
+                        ><i data-icon="check"></i><span data-t="map.legend.green"></span
+                      ></span>
+                      <span class="num" data-t="alerts.distance.m" data-v='{"n":190}'></span></span
+                  ></span>
+                </a>
+              </div>
+            </div>
           </div>
 
           <div class="mapbanner" data-when="zoom">
@@ -135,6 +198,24 @@
           </div>
 
           <div class="mapctl">
+            <button
+              class="round"
+              type="button"
+              data-go="list"
+              data-unless="list"
+              data-t-attr="aria-label:map.list"
+            >
+              <i data-icon="list"></i>
+            </button>
+            <button
+              class="round"
+              type="button"
+              data-go="default"
+              data-when="list"
+              data-t-attr="aria-label:map.showMap"
+            >
+              <i data-icon="map"></i>
+            </button>
             <button class="round" type="button" data-t-attr="aria-label:map.locate">
               <i data-icon="locate"></i>
             </button>
@@ -243,7 +324,7 @@
                 <i data-icon="x"></i>
               </button>
             </div>
-            <p class="small muted" data-t="map.pendingBy" data-v='{"name":"Dana K."}'></p>
+            <p class="small muted" data-t="map.pendingBy" data-v='{"name":"Dana Katz"}'></p>
             <div class="adminrow">
               <button
                 class="btn"
@@ -362,6 +443,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script src="locales/he.js"></script>
     <script src="locales/en.js"></script>
+    <script src="locales/ar.js"></script>
+    <script src="locales/ru.js"></script>
     <script src="icons.js"></script>
     <script src="mock.js"></script>
     <script src="demo.js"></script>

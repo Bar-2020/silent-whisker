@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="styles/responsive.css" />
   </head>
   <body data-title="firstrun.title" data-chrome="firstrun">
-    <!-- Screen 1 of 2: three questions. -->
+    <!-- Screen 1 of 3: the sign-up form: three questions and the terms checkbox (D-65). -->
     <form role="main" class="firstrun" data-screen="profile" data-default-state="empty" novalidate>
       <div class="firstrun__body">
         <span class="illus"><i data-icon="user"></i></span>
@@ -35,7 +35,7 @@
             <span data-t="firstrun.name.required"></span>
           </p>
           <p class="field__error" data-when="refused">
-            <span data-t="firstrun.name.refused"></span>
+            <span data-t-html="firstrun.name.refused"></span>
           </p>
         </div>
 
@@ -82,6 +82,19 @@
             <span data-t="firstrun.photo.required"></span>
           </p>
         </fieldset>
+
+        <div class="field">
+          <label class="choice choice--row">
+            <input type="checkbox" name="terms" aria-required="true" />
+            <span class="choice__tile">
+              <span data-t-html="firstrun.terms.label"></span>
+              <span class="choice__mark"><i data-icon="check"></i></span>
+            </span>
+          </label>
+          <p class="field__error" data-when="errors">
+            <span data-t="firstrun.terms.required"></span>
+          </p>
+        </div>
       </div>
       <div class="footbar">
         <button class="btn btn--lg" type="button" data-unless="saving">
@@ -93,7 +106,54 @@
       </div>
     </form>
 
-    <!-- Screen 2 of 2: why the browser is about to ask for the location. -->
+    <!-- Screen 2 of 3: how to install the app from the browser (D-01). The same guide as in Profile. -->
+    <div role="main" class="firstrun" data-screen="install" data-default-state="default">
+      <div class="firstrun__body">
+        <span class="illus"><i data-icon="phone"></i></span>
+        <div class="stack stack--3">
+          <h1 data-t="firstrun.install.h1"></h1>
+          <p class="muted" data-t="firstrun.install.lead"></p>
+        </div>
+        <section class="stack stack--3">
+          <details class="howto" open>
+            <summary data-t="profile.install.iphone"></summary>
+            <ol class="steps-list">
+              <li data-t="profile.install.iphone1"></li>
+              <li data-t="profile.install.iphone2"></li>
+              <li data-t="profile.install.iphone3"></li>
+            </ol>
+          </details>
+          <details class="howto">
+            <summary data-t="profile.install.android"></summary>
+            <ol class="steps-list">
+              <li data-t="profile.install.android1"></li>
+              <li data-t="profile.install.android2"></li>
+              <li data-t="profile.install.android3"></li>
+            </ol>
+          </details>
+          <details class="howto">
+            <summary data-t="profile.install.chrome"></summary>
+            <ol class="steps-list">
+              <li data-t="profile.install.chrome1"></li>
+              <li data-t="profile.install.chrome2"></li>
+            </ol>
+          </details>
+          <details class="howto">
+            <summary data-t="profile.install.safari"></summary>
+            <ol class="steps-list">
+              <li data-t="profile.install.safari1"></li>
+              <li data-t="profile.install.safari2"></li>
+            </ol>
+          </details>
+        </section>
+        <p class="small muted" data-t="firstrun.install.later"></p>
+      </div>
+      <div class="footbar">
+        <a class="btn btn--lg" href="first-run.html?screen=location" data-t="common.continue"></a>
+      </div>
+    </div>
+
+    <!-- Screen 3 of 3: why the browser is about to ask for the location. -->
     <div role="main" class="firstrun" data-screen="location" data-default-state="ask">
       <div class="firstrun__body">
         <span class="illus"><i data-icon="locate"></i></span>
@@ -148,6 +208,8 @@
 
     <script src="locales/he.js"></script>
     <script src="locales/en.js"></script>
+    <script src="locales/ar.js"></script>
+    <script src="locales/ru.js"></script>
     <script src="icons.js"></script>
     <script src="mock.js"></script>
     <script src="pages/first-run.js"></script>
