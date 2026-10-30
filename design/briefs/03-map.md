@@ -19,7 +19,7 @@ alert is, then pick one and go. Used in glare, one-handed, often while moving.
   spot's most liked approved one, Q37; two state chips; the last log) and one button to the full
   page. The close X sits at the inline-end corner of the title row.
 - The "+" button opens a dialog: "New feeding spot" (the new spot form) and "Report a cat"
-  (the cat alert form: in danger, sick, or spay or neuter); both screens are in the mocks. A search box sits at the top (Q38), and a round button switches the map to a list of the same spots (D-82). The two
+  (the cat alert form: in danger, sick, or spay or neuter); both screens are in the mocks. A search box sits at the top (Q38), and a round button switches the map to a list of the spots to feed near the phone (D-103). The two
   action buttons sit at the right on a phone and hide while a card is open. The map credit shows in a
   corner and folds into an (i) after five seconds (Q43).
 
@@ -28,7 +28,7 @@ Full-bleed OpenStreetMap tiles softened by a CSS filter (Q4), the glass nav, two
 Markers are the loudest thing on the screen; chrome stays quiet.
 
 ## States and ranges
-Default; list view (the spots of the current view: kittens seen first, then needing help, then nearest, each row a real button, D-82); spot selected; cat alert selected; many pins (zoom hint when the area holds more than the
+Default; list view (the spots within 2 km of the phone that need help: red with kittens seen, then red, then the rest, nearest first inside each, each row a real button, D-103); list with nothing to feed; spot selected; cat alert selected; many pins (zoom hint when the area holds more than the
 cell limit: "zoom in to see spots"); location unavailable (the "my location" control explains,
 does not nag); map tiles failing (grey ground, markers still work); empty area ("no spots here
 yet"); admin view (pending spots dashed, with approve and reject in the sheet). Ranges: 0 to about
@@ -42,7 +42,7 @@ desktop: a side rail replaces the bottom bar; the sheet becomes a 400 px panel a
 of the map area.
 
 ## Boundaries
-No filters. The list view is the same data as the map, not a second source (Q30, D-82). The search is a box, not a list (Q38). No clustering decisions here: the
+No filters. The list view reads the same spots as the map, not a second source, but around the phone and not the view (Q30, D-103). The search is a box, not a list (Q38). No clustering decisions here: the
 spec's answer to too many pins is the zoom hint.
 
 ## Open decisions

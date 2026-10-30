@@ -518,7 +518,7 @@ heart is an icon, not an emoji).
   from the action buttons when a map opens, folds into a small (i) button after five seconds, and the (i)
   shows it again (OpenStreetMap's attribution guidelines allow this; their tile policy forbids hiding it
   behind a toggle from the start, so it never starts hidden). The legend repeats it.
-- **Spots list:** a round list button at the head of the map controls swaps the map for the list of the same spots (kittens seen first, then needing help, then nearest), each row a real link with its state chip (icon and word) and its distance; the same button, now a map icon, goes back (D-82).
+- **Spots list:** a round list button at the head of the map controls swaps the map for the spots near the phone that need a feeding (within 2 km, or of the map's centre with location off): red with kittens seen first, then red, then the rest (kittens seen, then running low, then no data), nearest first inside each. Each row is a real link with its state chip (icon and word) and its distance. With none, it says nothing near needs help right now. The same button, now a map icon, goes back (D-103).
 - **Alert row:** photo and words on top (kind chip, "reported N hours ago", the note cut at two lines,
   distance and area), then **Details** and **Show on map** side by side, full width. A countdown is
   never shown for helping a cat; only a gentle "leaves the map in N minutes" when it is about to go.

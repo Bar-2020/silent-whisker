@@ -118,7 +118,7 @@
               <span class="small muted" data-t="map.search.noneHint"></span>
             </div>
 
-            <!-- List view: kittens seen, then need, then distance (D-82). -->
+            <!-- List view: spots to feed near the phone; red with kittens, red, the rest (D-103). -->
             <div class="results" id="spot-list" data-when="list">
               <div class="results__group" role="group" aria-labelledby="list-h">
                 <h2 class="results__title" id="list-h" data-t="map.list.title"></h2>
@@ -171,18 +171,12 @@
                       <span class="num" data-t="alerts.distance.m" data-v='{"n":300}'></span></span
                   ></span>
                 </a>
-                <a class="results__item" href="spot.html?screen=detail&state=green">
-                  <span class="results__icon"><i data-icon="pin"></i></span>
-                  <span class="results__text"
-                    ><strong data-t="demo.spot4.name"></strong
-                    ><span class="small muted"
-                      ><span class="chip" data-level="green"
-                        ><i data-icon="check"></i><span data-t="map.legend.green"></span
-                      ></span>
-                      <span class="num" data-t="alerts.distance.m" data-v='{"n":190}'></span></span
-                  ></span>
-                </a>
               </div>
+            </div>
+            <div class="results results--none" role="status" data-when="list-empty">
+              <i data-icon="check" data-class="icon--l"></i>
+              <strong data-t="map.list.empty"></strong>
+              <span class="small muted" data-t="map.list.emptyHint"></span>
             </div>
           </div>
 
@@ -209,7 +203,7 @@
               class="round"
               type="button"
               data-go="list"
-              data-unless="list"
+              data-unless="list list-empty"
               data-t-attr="aria-label:map.list"
             >
               <i data-icon="list"></i>
@@ -218,7 +212,7 @@
               class="round"
               type="button"
               data-go="default"
-              data-when="list"
+              data-when="list list-empty"
               data-t-attr="aria-label:map.showMap"
             >
               <i data-icon="map"></i>

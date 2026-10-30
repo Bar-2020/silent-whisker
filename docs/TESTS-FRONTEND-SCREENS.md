@@ -13,11 +13,13 @@ unless a row says otherwise. The screens are in `design/briefs/`.
 | MAP-04 | e | Tap a marker on a phone and at 1024 px | A sheet, then a 400 px panel, with photo, two chips, last log, a details button; the close X at the inline end; the action buttons hide while it is open | D-58 |
 | MAP-05 | e | The "+" menu; the search box; type ten letters; submit | New spot and Report a cat; spot names as you type, from our server; cities, streets and addresses only after submit, asked of the geocoder by the phone itself and never per key (D-88); no match shows an empty state | D-88, D-58 |
 | MAP-06 | e | Pan and zoom for 5 seconds; a view over the cell limit; an empty area | A debounced request per settled move (under a constant); a "zoom in" hint; "no spots here yet" | D-39, DATA.md |
-| MAP-07 | e | The list view | The same request as the map; kittens first, then red, orange, no data, green, then distance (the map centre with no location); every row a real button | D-82 |
+| MAP-07 | e | The list view with spots inside and beyond 2 km: red with kittens, red, orange with kittens, orange, no data, green, green with kittens, inactive | A request for the box around the phone; inside 2 km: red with kittens, then red, then the rest (kittens seen, orange, no data), nearest first inside each; green without kittens and inactive spots absent; every row a real button | D-103, D-82, R-35 |
 | MAP-08 | e | Location unavailable, or accuracy 120 m | The locate control explains and never nags; the app sends only what the phone reports | D-31 |
 | MAP-09 | e | The admin view: pending spots, approve, reject | Dashed pins; each action asks to confirm; the list updates | R-27 |
 | MAP-10 | e | Move the phone 200 m; sign out and in as someone else | A custom spot appears and goes on the next fetch; no earlier member's pins appear | D-39, R-03 |
 | MAP-11 | e | The credit | Shown in a corner, folds into an (i) after 5 seconds, opens again, never removed | D-58 |
+| MAP-12 | e | The list with location on, then pan the map 5 km away; the same with location off or denied | With location on the list does not change; with it off, the box and the distances follow the map's centre | D-103, D-31 |
+| MAP-13 | e | The list when every spot inside 2 km is green with no kittens | The words that nothing near needs help right now, not an error or a blank screen | D-103 |
 
 ## Spot page and logging (SPOTUI, LOGUI)
 

@@ -34,7 +34,7 @@ there.
 
 | | |
 |---|---|
-| 🗺️ **Map** | Every feeding spot is located on the map. Pins go green, orange or red depending on its condition, and a list view shows the same spots by need and distance. |
+| 🗺️ **Map** | Every feeding spot is located on the map. Pins go green, orange or red depending on its condition, and a list view shows the spots near you that need a feeding, most urgent first. |
 | 🥣 **Feeding and water logs** | Pick a full or partial bowl or report it empty if needed. |
 | 🚨 **Alerts** | Flag a cat that is in danger or sick. |
 | 🐈 **Cats** | Photograph a cat you love at a spot. Others can like and comment. |

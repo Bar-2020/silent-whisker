@@ -51,7 +51,7 @@ allowance.
 
 ## Queries
 
-- Map view: spots by `geo_cell` for the viewport, exact positions; custom spots filtered by
+- Map view: spots by `geo_cell` for the viewport (the list: the box around the phone, D-103), exact positions; custom spots filtered by
   R-03 with the phone position the app sends, which is not stored. Served
   by the API to signed-in members, so CloudFront cannot cache it for everyone (D-39).
 - Needs-food/water layer: computed in the client from `last_fed_at`, `last_fed_amount`,

@@ -93,7 +93,7 @@ screen viewer tags it. Nothing here is decided until the owner says so. "Spec" m
   *Recommend: they keep reading; every write refusal shows a plain message, and Me shows a
   permanent notice.* *Decided (2026-10-29): they keep reading, they cannot write (D-72).*
 - **Q30. A list of spots for people who cannot use a map** (screen readers, keyboard only).
-  *Recommend: a "spots near me" list after v1, and in v1 give markers real button semantics.* *Decided (2026-10-29): a list view of the map is in v1 (D-82).*
+  *Recommend: a "spots near me" list after v1, and in v1 give markers real button semantics.* *Decided (2026-10-29): a list view of the map is in v1 (D-82).* *Changed (2026-10-30): the list shows the spots to feed near the phone (D-103).*
 - **Q31. Logs at an inactive spot.** The spec says an inactive spot is never marked as needing
   help and is silent on logging. *Recommend: logs are off while a spot is inactive; its creator can
   switch it back on.*
