@@ -18,8 +18,9 @@ Needs a network connection for the map tiles. A page also works on its own, for 
 `map.html?state=spot&lang=en`; `?screen=`, `?state=` and `?sub=` choose the screen and its state.
 
 On a phone, open the deployed copy: after a merge to `main` the deploy prints it as "Design mocks at
-https://….cloudfront.net" (D-89). The **Screen only** button shows the chosen screen alone, at the
-phone's own width, with none of the viewer's controls; the back gesture returns to the viewer.
+https://….cloudfront.net/design/", under the app's own address (D-89). The **Screen only** button
+shows the chosen screen alone, at the phone's own width, with none of the viewer's controls; the
+back gesture returns to the viewer.
 
 ## What is where
 

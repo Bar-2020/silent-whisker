@@ -15,7 +15,7 @@ output "distribution_id" {
 
 output "design_url" {
   description = "The design mocks' address (D-89)."
-  value       = "https://${aws_cloudfront_distribution.design.domain_name}"
+  value       = "https://${aws_cloudfront_distribution.site.domain_name}/design/"
 }
 
 output "design_bucket" {

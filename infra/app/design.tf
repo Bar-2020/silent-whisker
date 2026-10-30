@@ -1,6 +1,6 @@
-# The design mocks (design/mocks/) on a distribution of their own, so they open on a phone at an
-# address apart from the app (D-89). Same pattern as hosting.tf: a private bucket that only this
-# distribution may read.
+# The design mocks (design/mocks/) under /design/ on the app's distribution, so they open on a phone
+# at the app's own address (D-89). Same pattern as hosting.tf: a private bucket that only CloudFront
+# may read; the behavior that serves it is in hosting.tf.
 
 resource "aws_s3_bucket" "design" {
   bucket_prefix = "silent-whisker-design-"
@@ -38,35 +38,11 @@ resource "aws_cloudfront_cache_policy" "design" {
   }
 }
 
-resource "aws_cloudfront_distribution" "design" {
-  enabled             = true
-  default_root_object = "index.html"
-  price_class         = "PriceClass_100"
-
-  origin {
-    origin_id                = "design"
-    domain_name              = aws_s3_bucket.design.bucket_regional_domain_name
-    origin_access_control_id = aws_cloudfront_origin_access_control.site.id
-  }
-
-  default_cache_behavior {
-    target_origin_id       = "design"
-    viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "HEAD"]
-    cached_methods         = ["GET", "HEAD"]
-    cache_policy_id        = aws_cloudfront_cache_policy.design.id
-    compress               = true
-  }
-
-  restrictions {
-    geo_restriction {
-      restriction_type = "none"
-    }
-  }
-
-  viewer_certificate {
-    cloudfront_default_certificate = true
-  }
+resource "aws_cloudfront_function" "design_index" {
+  name    = "silent-whisker-design-index"
+  runtime = "cloudfront-js-2.0"
+  publish = true
+  code    = file("${path.module}/design-index.js")
 }
 
 resource "aws_s3_bucket_policy" "design" {
@@ -80,7 +56,7 @@ resource "aws_s3_bucket_policy" "design" {
         Principal = { Service = "cloudfront.amazonaws.com" }
         Action    = "s3:GetObject"
         Resource  = "${aws_s3_bucket.design.arn}/*"
-        Condition = { StringEquals = { "AWS:SourceArn" = aws_cloudfront_distribution.design.arn } }
+        Condition = { StringEquals = { "AWS:SourceArn" = aws_cloudfront_distribution.site.arn } }
       },
       {
         Sid       = "HttpsOnly"

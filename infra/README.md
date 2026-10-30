@@ -92,7 +92,7 @@ The CI deploy job logs in as the deploy user, switches into the deployer role, b
 runs `terraform apply` in `app/` (today: the private bucket, CloudFront, the Cognito sign-in and the API, D-36, D-59, D-60), uploads `frontend/dist/`
 with `aws s3 sync`, clears CloudFront's cache, removes old files, and prints the address as
 `Live at https://...`. Last it uploads `design/mocks/` to the design bucket (`design.tf`, D-89) and
-prints `Design mocks at https://...`: a second CloudFront address, for opening the mocks on a phone.
+prints `Design mocks at https://.../design/`: the mocks under the app's own address, for opening them on a phone.
 
 ## Replacing the key (about every 90 days)
 

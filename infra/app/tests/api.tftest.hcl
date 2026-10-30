@@ -93,7 +93,7 @@ run "api_calls_go_through_cloudfront_uncached_and_without_the_page_fallback" {
   assert {
     condition = alltrue([
       for b in aws_cloudfront_distribution.site.ordered_cache_behavior :
-      contains(b.allowed_methods, "POST") && contains(b.allowed_methods, "PATCH")
+      b.target_origin_id != "api" || (contains(b.allowed_methods, "POST") && contains(b.allowed_methods, "PATCH"))
     ])
     error_message = "/api/* must pass POST and PATCH through, or writes never reach the API."
   }

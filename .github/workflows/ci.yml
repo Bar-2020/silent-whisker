@@ -121,11 +121,12 @@ jobs:
           aws s3 sync ../../frontend/dist "$SITE" --delete
           echo "Live at $(terraform output -raw site_url)"
 
-      # Not cached (infra/app/design.tf), so no invalidation to wait for.
+      # Under design/, the path CloudFront serves them from. Cached one second (infra/app/design.tf),
+      # so no invalidation to wait for.
       - name: Upload the design mocks
         working-directory: infra/app
         run: |
-          aws s3 sync ../../design/mocks "s3://$(terraform output -raw design_bucket)" --delete
+          aws s3 sync ../../design/mocks "s3://$(terraform output -raw design_bucket)/design" --delete
           echo "Design mocks at $(terraform output -raw design_url)"
 
   review:
