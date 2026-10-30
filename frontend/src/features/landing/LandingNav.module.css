@@ -1,0 +1,79 @@
+@import '../../styles/breakpoints.css';
+
+.nav {
+  position: sticky;
+  inset-block-start: var(--nav-gap);
+  z-index: var(--z-nav);
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin: var(--nav-gap);
+  padding: var(--s-2) var(--s-3);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--r-glass);
+  background: var(--glass);
+  color: var(--glass-ink);
+  box-shadow: var(--lift), var(--glass-shine);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+/* Without blur, or with transparency turned down, the pane turns solid. */
+@supports not (backdrop-filter: blur(1px)) {
+  .nav {
+    background: var(--glass-solid);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .nav {
+    background: var(--glass-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+.brand {
+  flex: 1;
+}
+
+.links {
+  display: none;
+}
+
+.links a {
+  display: grid;
+  place-items: center;
+  min-block-size: var(--tap);
+  padding-inline: var(--s-3);
+  border-radius: var(--r-pill);
+  color: var(--glass-ink);
+  font: var(--type-body-strong);
+  text-decoration: none;
+}
+
+.links a:hover {
+  background: var(--glass-hover);
+}
+
+.end {
+  --language-menu-ink: var(--glass-ink);
+  --language-menu-hover: var(--glass-hover);
+
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+
+@media (--tablet) {
+  .nav {
+    inline-size: min(100% - var(--s-5), 70rem);
+    margin-inline: auto;
+    padding-inline: var(--s-4);
+  }
+
+  .links {
+    display: flex;
+    gap: var(--s-1);
+  }
+}

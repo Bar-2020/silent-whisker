@@ -1,0 +1,15 @@
+.brandmark {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-block-size: var(--tap);
+  color: var(--dado-ink);
+  font: var(--type-body-strong);
+  text-decoration: none;
+}
+
+.brandmark svg {
+  inline-size: 2rem;
+  block-size: 2rem;
+  stroke-width: 1.75;
+}

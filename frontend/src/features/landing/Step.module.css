@@ -1,0 +1,105 @@
+@import '../../styles/breakpoints.css';
+
+.step {
+  --level: var(--dado);
+  --level-tint: var(--dado-tint);
+
+  counter-increment: step;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--s-4);
+  align-items: start;
+}
+
+.step[data-level='red'] {
+  --level: var(--bad);
+  --level-tint: var(--bad-tint);
+}
+
+.step[data-level='green'] {
+  --level: var(--ok);
+  --level-tint: var(--ok-tint);
+}
+
+.number {
+  display: grid;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: 50%;
+  background: var(--dado);
+  color: var(--dado-ink);
+  font: var(--type-heading);
+}
+
+.number::before {
+  content: counter(step);
+}
+
+/* A dashed line to the next step, down on a phone and across from a tablet. */
+.line {
+  --dash-direction: bottom;
+
+  position: absolute;
+  inset-inline-start: 21px;
+  inset-block: 52px calc(var(--s-6) * -1 + 8px);
+  inline-size: 2px;
+  background: repeating-linear-gradient(
+    to var(--dash-direction),
+    var(--line-strong) 0 6px,
+    transparent 6px 12px
+  );
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  margin-block-start: var(--s-2);
+}
+
+.title {
+  margin: 0;
+  font: var(--type-heading);
+}
+
+.body {
+  color: var(--ink-2);
+}
+
+.visual {
+  --icon-size: 2.25rem;
+
+  display: grid;
+  place-items: center;
+  inline-size: 72px;
+  block-size: 72px;
+  grid-column: 3;
+  grid-row: 1;
+  border-radius: var(--r-l);
+  background: var(--level-tint);
+  color: var(--dado);
+}
+
+@media (--tablet) {
+  /* In a row: the number, then the picture, then the words. */
+  .step {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+
+  .visual {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .line {
+    --dash-direction: right;
+
+    inset-block: 21px auto;
+    inset-inline: 60px calc(var(--s-7) * -1 + 16px);
+    inline-size: auto;
+    block-size: 2px;
+  }
+}

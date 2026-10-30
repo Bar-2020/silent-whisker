@@ -1,0 +1,63 @@
+@import '../../styles/breakpoints.css';
+
+.read {
+  max-inline-size: var(--measure);
+  margin-inline: auto;
+  padding: var(--s-5) var(--s-4) var(--s-8);
+}
+
+.title {
+  font: var(--type-headline);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  margin-block-start: var(--s-6);
+}
+
+.section h2 {
+  scroll-margin-block-start: var(--s-5);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  list-style: disc;
+  padding-inline-start: var(--s-5);
+}
+
+.toc {
+  display: none;
+}
+
+@media (--desktop) {
+  .wrap {
+    display: grid;
+    grid-template-columns: 14rem minmax(0, var(--measure));
+    justify-content: center;
+    gap: var(--s-6);
+  }
+
+  .read {
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  .toc {
+    display: block;
+    position: sticky;
+    inset-block-start: var(--s-5);
+    align-self: start;
+    padding-block-start: var(--s-5);
+    font: var(--type-small);
+  }
+
+  .toc ol {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+  }
+}

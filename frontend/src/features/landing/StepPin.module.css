@@ -1,0 +1,8 @@
+/* The colour comes from the step that holds it. */
+.pin {
+  inline-size: 46px;
+  block-size: 56px;
+  fill: var(--level);
+  stroke: var(--surface);
+  stroke-width: 3;
+}
