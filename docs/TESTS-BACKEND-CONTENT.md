@@ -56,7 +56,7 @@ Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether 
 | COST-05 | i | Every paid action at its daily limit (uploads, cat photos, comments, alerts, chat, profile saves) | Boundary, race and midnight reset hold for each; a rejected photo's slot is not given back | R-05, R-30 |
 | COST-06 | i | 101 writes by one member in a day over many routes; reads after that | The 101st write `RATE_LIMITED` with `Retry-After`; reads unaffected | D-61, R-21 |
 | COST-07 | u | A counter row | Has `expires_at` in epoch seconds; no `status` or `created_at` | D-52 |
-| COST-08 | t | The text guardrail in Terraform | Standard tier through the EU profile; the five harm filters at high strength and blocking; no prompt-attack or personal-data filter; only the current version kept; its policy allows only `bedrock:ApplyGuardrail` on it and its profile | D-62, D-09 |
+| COST-08 | t | Text moderation in Terraform | Standard tier through the EU profile; the five harm filters at high strength and blocking; no prompt-attack or personal-data filter; only the current version kept; its policy allows only `bedrock:ApplyGuardrail` on it and its profile | D-62, D-09 |
 
 ## Rate limits (LIM)
 
