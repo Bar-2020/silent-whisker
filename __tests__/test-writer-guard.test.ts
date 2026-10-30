@@ -49,6 +49,12 @@ describe('test-writer guard', () => {
     ['Bash', { command: 'cat backend/get-profile/handler.ts' }],
     ['Bash', { command: 'npm test && cat backend/get-profile/handler.ts' }],
     ['Bash', { command: 'npm test | cat' }],
+    ['Bash', { command: 'npm run lint:fix' }],
+    ['Bash', { command: 'npm run lint -- --fix' }],
+    ['Bash', { command: 'npm test -- -u' }],
+    ['Grep', { pattern: 'handler', glob: '{*.test.ts,handler.ts}' }],
+    ['Glob', { pattern: 'x/__tests__/../../backend/**/*.ts' }],
+    ['Read', { file_path: resolve(ROOT, 'README.md') }],
   ])('refuses %s %j', (tool, input) => {
     expect(isDenied(tool, input)).toBe(true);
   });

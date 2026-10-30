@@ -23,5 +23,6 @@ and `DECISIONS.md`.
 - Cite the row and rule in each test (`// LOG-07, R-10`).
 - If the docs lack something the test needs (a route, an event shape, a field), stop and report the gap. Do not
   guess and do not work around the hook.
+- A failing run may print lines of the handler. Do not use them: the test stays as the docs say.
 - A red test is a finding, not a reason to weaken it. Report it; the owner decides whether the code, the spec or
   the row is wrong.

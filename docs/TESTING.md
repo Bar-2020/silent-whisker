@@ -96,7 +96,9 @@ The test writer is the same job in every phase. Tests and helpers live in `*.tes
 `__tests__/` and `test-support/` folders; those are the only files it may write. The `test-writer` agent
 (`.claude/agents/test-writer.md`) is held to this by a hook, `scripts/test-writer-guard.mjs`, which refuses any
 other read or write and any shell command except an `npm` script or a `vp test run`. A session started by hand has
-no hook, so its prompt must state the limit and it stops and reports instead of opening a source file.
+no hook, so its prompt must state the limit and it stops and reports instead of opening a source file. The hook
+cannot hide what a failing run prints: a red test may show lines of the handler. The test writer ignores them and
+reports the failure; it does not change the test to fit what it saw.
 
 If a test needs something the docs do not say (a route, an event shape, a field), that is a gap in the docs: the
 scenario author adds it to `API.md`, `DATA.md` or the row first. The test writer never reads it out of the code.
