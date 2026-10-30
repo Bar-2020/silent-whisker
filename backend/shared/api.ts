@@ -1,5 +1,8 @@
-import { STATUS_TOO_MANY_REQUESTS } from '../../shared/constants/http';
-import type { ApiEvent, ApiResult, Claims } from './api.types';
+import type { z } from 'zod';
+import { STATUS_BAD_REQUEST, STATUS_TOO_MANY_REQUESTS } from '../../shared/constants/http';
+import type { ApiEvent, ApiResult } from './api.types';
+import { idTokenClaimsSchema } from './schemas/claims';
+import type { IdTokenClaims } from './schemas/claims';
 
 export const reply = (
   statusCode: number,
@@ -29,11 +32,27 @@ export class Refusal extends Error {
   }
 }
 
+/** The one answer for a body that is not JSON or does not match its schema. */
+export const invalidInput = (): Refusal => new Refusal(refuse(STATUS_BAD_REQUEST, 'INVALID_INPUT'));
+
+/** A request body checked by its schema (`shared/schemas/`); any mismatch is `INVALID_INPUT`. */
+export function parseBody<S extends z.ZodType>(schema: S, body: string | undefined): z.infer<S> {
+  let json: unknown;
+  try {
+    json = JSON.parse(body ?? '');
+  } catch {
+    throw invalidInput();
+  }
+  const result = schema.safeParse(json);
+  if (!result.success) throw invalidInput();
+  return result.data;
+}
+
 /**
  * The claims of a member (R-22): a verified ID token with a subject. The authorizer also accepts
  * access tokens, but only the ID token carries the Google photo (D-59).
  */
-export function verifiedClaims(event: ApiEvent): Claims | undefined {
-  const claims = event.requestContext.authorizer?.jwt?.claims;
-  return claims?.token_use === 'id' && claims.sub ? { ...claims, sub: claims.sub } : undefined;
+export function verifiedClaims(event: ApiEvent): IdTokenClaims | undefined {
+  const result = idTokenClaimsSchema.safeParse(event.requestContext.authorizer?.jwt?.claims);
+  return result.success ? result.data : undefined;
 }

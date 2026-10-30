@@ -3,9 +3,9 @@ import { TEXT_CHECK_COST_MICRO_USD } from '../../shared/constants/cost';
 import { STATUS_UNPROCESSABLE } from '../../shared/constants/http';
 import { TEXT_CHECK_TIMEOUT_MS } from '../../shared/constants/profile';
 import { Refusal, refuse } from '../shared/api';
-import { requiredEnv } from '../shared/env';
 import { meteredCall } from '../shared/metered-call';
 import type { CostGuard } from '../shared/metered-call.types';
+import type { GuardrailSettings } from '../shared/schemas/settings';
 
 /** The check could not run: the breaker has tripped (R-05) or the call failed (R-04). */
 export class CheckUnavailable extends Error {}
@@ -13,11 +13,14 @@ export class CheckUnavailable extends Error {}
 const bedrock = new BedrockRuntimeClient({});
 
 /** One call of the text moderation guardrail; its answer is `NONE` or `GUARDRAIL_INTERVENED`. */
-const applyGuardrail = async (text: string): Promise<string | undefined> => {
+const applyGuardrail = async (
+  guardrail: GuardrailSettings,
+  text: string
+): Promise<string | undefined> => {
   const answer = await bedrock.send(
     new ApplyGuardrailCommand({
-      guardrailIdentifier: requiredEnv('GUARDRAIL_ID'),
-      guardrailVersion: requiredEnv('GUARDRAIL_VERSION'),
+      guardrailIdentifier: guardrail.GUARDRAIL_ID,
+      guardrailVersion: guardrail.GUARDRAIL_VERSION,
       source: 'INPUT',
       content: [{ text: { text } }],
     }),
@@ -27,10 +30,16 @@ const applyGuardrail = async (text: string): Promise<string | undefined> => {
 };
 
 /** Passes when the guardrail lets the text through; every other outcome stops the save. */
-export async function moderateText(guard: CostGuard, text: string): Promise<void> {
+export async function moderateText(
+  guard: CostGuard,
+  guardrail: GuardrailSettings,
+  text: string
+): Promise<void> {
   let action: string | undefined;
   try {
-    const outcome = await meteredCall(guard, TEXT_CHECK_COST_MICRO_USD, () => applyGuardrail(text));
+    const outcome = await meteredCall(guard, TEXT_CHECK_COST_MICRO_USD, () =>
+      applyGuardrail(guardrail, text)
+    );
     if (outcome.outcome === 'deferred') throw new CheckUnavailable();
     action = outcome.value;
   } catch (error) {

@@ -9,7 +9,7 @@ import { WRITES_PER_DAY } from '../../shared/constants/limits';
 import { PROFILE_SAVES_PER_DAY, TERMS_VERSION } from '../../shared/constants/profile';
 import type { ApiEvent } from '../shared/api.types';
 import { GeocoderUnavailable, lookupPlace } from '../shared/geocode';
-import type { UserRow } from '../shared/users.types';
+import type { UserRow } from '../shared/schemas/user-row';
 import { handler } from './handler';
 
 vi.mock('../shared/geocode', async (importOriginal) => ({

@@ -4,9 +4,10 @@ import { STATUS_OK, STATUS_UNAUTHORIZED } from '../../shared/constants/http';
 import { GOOGLE_IMAGE_HOST_SUFFIX } from '../../shared/constants/profile';
 import { refuse, reply, verifiedClaims } from '../shared/api';
 import type { ApiEvent, ApiResult } from '../shared/api.types';
-import { requiredEnv } from '../shared/env';
+import { readSettings } from '../shared/env';
+import { getProfileSettings } from '../shared/schemas/settings';
+import type { UserRow } from '../shared/schemas/user-row';
 import { buildProfileResponse, readUserRow } from '../shared/users';
-import type { UserRow } from '../shared/users.types';
 import type { Member } from './handler.types';
 
 // GET /api/profile (D-59): `user_id` is always the token's `sub`, never anything in the request.
@@ -82,6 +83,7 @@ async function loadUser(table: string, { userId, photo }: Member): Promise<UserR
 export async function handler(event: ApiEvent): Promise<ApiResult> {
   const member = memberFrom(event);
   if (!member) return refuse(STATUS_UNAUTHORIZED, 'UNAUTHORIZED');
+  const { USERS_TABLE } = readSettings(getProfileSettings);
   // A banned member still gets the profile (API.md).
-  return reply(STATUS_OK, buildProfileResponse(await loadUser(requiredEnv('USERS_TABLE'), member)));
+  return reply(STATUS_OK, buildProfileResponse(await loadUser(USERS_TABLE, member)));
 }

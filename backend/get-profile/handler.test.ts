@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { TERMS_VERSION } from '../../shared/constants/profile';
 import { handler } from './handler';
 import type { ApiEvent as ProfileEvent } from '../shared/api.types';
-import type { UserRow } from '../shared/users.types';
+import type { UserRow } from '../shared/schemas/user-row';
 
 const dbMock = mockClient(DynamoDBDocumentClient);
 
@@ -235,9 +235,7 @@ describe('GET /api/profile when the stored row is damaged', () => {
   it('fails loudly and says which fields are wrong, instead of passing bad data on', async () => {
     dbMock.on(GetCommand).resolves({ Item: { user_id: 'user-1', status: 'active' } });
 
-    await expect(handler(idToken())).rejects.toThrow(
-      'The users row of user-1 is broken: "show_google_photo" should be a boolean, not undefined'
-    );
+    await expect(handler(idToken())).rejects.toThrow(/user-1.*show_google_photo/s);
   });
 });
 
