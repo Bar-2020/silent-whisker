@@ -1,7 +1,8 @@
 import { useId, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LANGUAGES } from '../../../../../shared/constants/languages';
-import { Icon } from '../icon/Icon';
+import { LANGUAGES } from '@constants/languages';
+import { CheckIcon } from '@shared/components/icon/CheckIcon';
+import { GlobeIcon } from '@shared/components/icon/GlobeIcon';
 import styles from './LanguageMenu.module.css';
 
 /** A globe button that opens the four languages, each in its own script (DESIGN.md, Language menu). */
@@ -18,7 +19,7 @@ export function LanguageMenu() {
         aria-label={t('lang.choose')}
         onClick={() => dialog.current?.showModal()}
       >
-        <Icon name="globe" />
+        <GlobeIcon />
       </button>
       <dialog
         ref={dialog}
@@ -46,7 +47,7 @@ export function LanguageMenu() {
                   }}
                 >
                   {label}
-                  {i18n.language === code && <Icon name="check" />}
+                  {i18n.language === code && <CheckIcon />}
                 </button>
               </li>
             ))}

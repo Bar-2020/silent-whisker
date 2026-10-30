@@ -58,7 +58,7 @@
     min-block-size: var(--tap);
     color: var(--glass-ink);
     font-size: var(--fs-nav);
-    font-weight: 700;
+    font-weight: 600;
     text-decoration: none;
   }
 

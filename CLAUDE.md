@@ -44,7 +44,10 @@ The frontend is feature-based. `frontend/src/features/<feature>/` owns its scree
 hooks and data access. `frontend/src/shared/` only when a second feature needs it, split by kind
 (`components/`, `api/`, `utils/`) when a kind gets its first file. Types sit beside the file that owns them
 (`<name>.types.ts`); constants stay in the repo's `shared/constants/`. **Features never import from
-each other.**
+each other.** In the frontend a folder is imported through its alias (`@app`, `@features`, `@shared`,
+`@styles`, `@locales`, `@constants`, `@schemas`; the `paths` of `tsconfig.json`); one `../` is fine,
+two or more is a lint error. Text takes a `--type-*` variant whole and a `z-index` is a `--z-*` layer
+(`frontend/src/styles/tokens.css`); Stylelint refuses anything else.
 
 @.claude/instructions/working-style.md
 

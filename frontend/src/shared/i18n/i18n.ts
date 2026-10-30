@@ -1,11 +1,7 @@
 import i18n from 'i18next';
 import HttpBackend from 'i18next-http-backend';
 import { initReactI18next } from 'react-i18next';
-import {
-  DEFAULT_LANGUAGE,
-  LANGUAGES,
-  LANGUAGE_STORAGE_KEY,
-} from '../../../../shared/constants/languages';
+import { DEFAULT_LANGUAGE, LANGUAGES, LANGUAGE_STORAGE_KEY } from '@constants/languages';
 import { localeSchema } from './locale.schema';
 import { languageSchema } from './language.schema';
 

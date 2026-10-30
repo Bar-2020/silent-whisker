@@ -55,6 +55,27 @@
   --fs-display: clamp(1.875rem, 6.2vw, 2.875rem);
   --fs-nav: 0.875rem;
   --fs-xs: 0.75rem;
+  /* The type variants: a text takes one whole, `font: var(--type-body)` (DESIGN.md, Typography). */
+  --type-display: 700 clamp(1.875rem, 6.2vw, 2.875rem) / 1.15 var(--font);
+  --type-headline: 700 1.75rem / 1.25 var(--font);
+  --type-title: 700 1.375rem / 1.25 var(--font);
+  --type-heading: 700 1.125rem / 1.3 var(--font);
+  --type-body: 400 1rem / 1.5 var(--font);
+  --type-body-strong: 600 1rem / 1.5 var(--font);
+  --type-small: 400 0.875rem / 1.4 var(--font);
+  --type-label: 600 0.875rem / 1.2 var(--font);
+  --type-caption: 400 0.75rem / 1.3 var(--font);
+
+  /* Layers, lowest to highest. A z-index is always one of these (DESIGN.md, Layers). */
+  --z-raised: 1;
+  --z-map-ui: 500;
+  --z-sheet: 600;
+  --z-bar: 700;
+  --z-nav: 800;
+  --z-scrim: 850;
+  --z-modal: 860;
+  --z-lightbox: 880;
+  --z-top: 900;
 
   /* Space: a 4px step. */
   --s-1: 4px;

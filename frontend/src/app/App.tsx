@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router';
-import { AuthCallbackPage } from '../features/auth';
-import { LandingPage } from '../features/landing';
-import { ProfilePage } from '../features/profile';
+import { AuthCallbackPage } from '@features/auth';
+import { LandingPage } from '@features/landing';
+import { ProfilePage } from '@features/profile';
 import { NotFoundPage } from './NotFoundPage';
 import { Shell } from './Shell';
 

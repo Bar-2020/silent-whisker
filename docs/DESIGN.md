@@ -214,13 +214,27 @@ Noto Sans Hebrew), no download.
 only; letter-spacing is never set (it breaks Hebrew letterforms).
 
 ### Hierarchy
-- **Display** (700, clamp 1.875 to 2.875 rem, 1.15): the landing headline only.
-- **Headline** (700, 1.75 rem, 1.25): legal page titles.
-- **Title** (700, 1.375 rem, 1.25): screen titles, the first-run questions.
-- **Heading** (700, 1.125 rem, 1.3): section titles, top bar titles, sheet titles.
-- **Body** (400, 1 rem, 1.5): everything else; line length at most 65 characters in reading text.
-- **Label** (600, 0.875 rem, 1.2): chips, tags, hints, meta lines and the nav labels. Never below
-  14 px; the one exception is the map's OpenStreetMap attribution (12 px, set by their terms).
+Nine variants, each a token that holds the whole `font` (weight, size, line height, family), in
+`frontend/src/styles/tokens.css` and `design/mocks/styles/tokens.css`. A text takes one whole
+(`font: var(--type-body)`); no size, weight or line height is written on its own. Stylelint refuses
+`font-size`, `font-weight`, `line-height`, `font-family` and `letter-spacing`, and any `font` that is
+not a `--type-*` variant. A look that none has is added here first.
+
+| Token | Look | Used for |
+|---|---|---|
+| `--type-display` | 700, clamp 1.875 to 2.875 rem, 1.15 | the landing headline only |
+| `--type-headline` | 700, 1.75 rem, 1.25 | legal page titles |
+| `--type-title` | 700, 1.375 rem, 1.25 | screen titles, the first-run questions (`h1`) |
+| `--type-heading` | 700, 1.125 rem, 1.3 | section titles, top bar titles, sheet titles (`h2`) |
+| `--type-body` | 400, 1 rem, 1.5 | everything else; at most 65 characters a line in reading text |
+| `--type-body-strong` | 600, 1 rem, 1.5 | field labels, links in a sentence, buttons, emphasis |
+| `--type-small` | 400, 0.875 rem, 1.4 | hints, meta lines, descriptions |
+| `--type-label` | 600, 0.875 rem, 1.2 | chips, tags, errors, nav labels, initials |
+| `--type-caption` | 400, 0.75 rem, 1.3 | the map's OpenStreetMap attribution only (12 px, set by their terms); nothing else goes below 14 px |
+
+The mocks were scanned (2026-10-30): a weight of 700 on small text, 800, 0.8125 rem and the line heights
+1, 1.25 and 1.4 sat next to a variant and were moved onto it. The mock rules still write size and weight
+separately (they are plain CSS, not linted); the app may not.
 
 ### Named Rules
 **The Tabular Time Rule.** Times, counts and distances use tabular figures so a column of "last
@@ -287,6 +301,14 @@ is laid on, so its labels (#eef3fa, white when active) keep at least 4.5:1 even 
 page (5.3:1 for the inactive labels and 4.6:1 for the active one over plain white; the active pill is
 near that limit, so strengthen its edge, not its fill). If it is made clearer, dim the backdrop more; never trade away the
 contrast.
+
+### Layers
+A `z-index` is one of nine named layers, lowest to highest: `--z-raised` (1, a part lifted inside its own
+component), `--z-map-ui` (500, the map's buttons, banner and search), `--z-sheet` (600), `--z-bar` (700, top
+bar, pinned action bar, composer), `--z-nav` (800, the glass bar and rail, floating menus), `--z-scrim`
+(850), `--z-modal` (860), `--z-lightbox` (880), `--z-top` (900, toasts, the consent banner, the language
+menu). Never a number: Stylelint refuses it. A native `<dialog>` opened with `showModal()` sits in the browser's
+top layer and needs none. Leaflet's own panes stay below `--z-map-ui`.
 
 ## Shapes
 

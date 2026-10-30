@@ -12,7 +12,7 @@
   padding-inline: var(--s-5);
   border: 0;
   border-radius: var(--r-pill);
-  font-weight: 600;
+  font: var(--type-body-strong);
   background: var(--dado);
   color: var(--dado-ink);
   cursor: pointer;

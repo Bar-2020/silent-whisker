@@ -51,7 +51,7 @@
   border: 0;
   border-radius: var(--r-m);
   background: transparent;
-  font-size: var(--fs-l);
+  font: var(--type-body);
   text-align: start;
   cursor: pointer;
 }
@@ -68,6 +68,6 @@
   border-radius: var(--r-m);
   background: transparent;
   color: var(--dado);
-  font-weight: 600;
+  font: var(--type-body-strong);
   cursor: pointer;
 }

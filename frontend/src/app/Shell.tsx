@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link, Outlet } from 'react-router';
-import { Icon } from '../shared/components/icon/Icon';
-import { LanguageMenu } from '../shared/components/language-menu/LanguageMenu';
+import { CatIcon } from '@shared/components/icon/CatIcon';
+import { LanguageMenu } from '@shared/components/language-menu/LanguageMenu';
 import styles from './Shell.module.css';
 
 export function Shell() {
@@ -11,7 +11,7 @@ export function Shell() {
     <>
       <header className={styles.topbar}>
         <Link to="/" className={styles.brand} aria-label={t('nav.home')}>
-          <Icon name="cat" />
+          <CatIcon />
         </Link>
         <LanguageMenu />
       </header>

@@ -3,7 +3,7 @@
 .topbar {
   position: sticky;
   inset-block-start: 0;
-  z-index: 700;
+  z-index: var(--z-bar);
   display: flex;
   align-items: center;
   justify-content: space-between;

@@ -119,6 +119,29 @@ const paidCallsGoThroughMeteredCall = {
   },
 };
 
+// One step out ('../x') reads fine; two or more hides where a file lives and breaks on a move.
+// Every folder has an alias (the `paths` of tsconfig.json).
+const DEEP_RELATIVE_IMPORT = /^(\.\.\/){2,}/;
+
+const noDeepRelativeImports = {
+  create(context) {
+    const check = (node) => {
+      const source = node.source?.value;
+      if (typeof source !== 'string' || !DEEP_RELATIVE_IMPORT.test(source)) return;
+      context.report({
+        node,
+        message: `"${source}" climbs more than one folder. Import it through the folder's alias (@app, @features, @shared, @styles, @locales, @constants, @schemas; the paths of tsconfig.json). CLAUDE.md, Folder structure.`,
+      });
+    };
+    return {
+      ImportDeclaration: check,
+      ExportAllDeclaration: check,
+      ExportNamedDeclaration: check,
+      ImportExpression: check,
+    };
+  },
+};
+
 export default {
   meta: { name: 'silent-whisker' },
   rules: {
@@ -126,5 +149,6 @@ export default {
     'no-inline-styles': noInlineStyles,
     'numeric-constants-live-in-constants': numericConstantsLiveInConstants,
     'paid-calls-go-through-metered-call': paidCallsGoThroughMeteredCall,
+    'no-deep-relative-imports': noDeepRelativeImports,
   },
 };
