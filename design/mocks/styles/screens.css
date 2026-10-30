@@ -1898,3 +1898,9 @@ h2[id] {
     backdrop-filter: none;
   }
 }
+
+/* The field has its own clear button; hide the browser's native one. */
+.mapsearch__input::-webkit-search-cancel-button {
+  display: none;
+  appearance: none;
+}
