@@ -674,3 +674,46 @@
   justify-content: space-between;
   gap: var(--s-2) var(--s-3);
 }
+
+.viewer__toggle {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .viewer__toggle {
+    display: inline-flex;
+  }
+
+  /* The list is gone too, so the screen takes its row. */
+  .viewer[data-collapsed='true'] {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .viewer[data-collapsed='true'] .viewer__controls,
+  .viewer[data-collapsed='true'] .viewer__list,
+  .viewer[data-collapsed='true'] .viewer__title,
+  .viewer[data-collapsed='true'] .viewer__caption {
+    display: none;
+  }
+
+  /* Only the button is left of the bar; the mock takes the whole height below it. */
+  .viewer[data-collapsed='true'] .viewer__bar {
+    justify-content: flex-end;
+    padding-block: var(--s-1);
+  }
+
+  .viewer[data-collapsed='true'] .viewer__main {
+    padding: 0;
+  }
+
+  .viewer[data-collapsed='true'] .viewer__stage {
+    flex: 1;
+    min-block-size: 0;
+    align-items: stretch;
+  }
+
+  .viewer[data-collapsed='true'] .frame {
+    block-size: auto;
+    border-radius: 0;
+  }
+}

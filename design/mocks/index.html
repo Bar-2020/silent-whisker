@@ -13,6 +13,12 @@
     <!-- Design tooling, not the app: English only, so its text is not part of the app's strings. -->
     <header class="viewer__bar on-dado">
       <strong class="viewer__title">Silent Whisker · every screen</strong>
+      <!-- Phones only: the bar and the list leave no room for the screen itself. -->
+      <button
+        class="btn btn--small btn--on-dado viewer__toggle"
+        id="toggle-bar"
+        type="button"
+      ></button>
       <div class="viewer__controls">
         <div class="seg" role="group" aria-label="Device" id="seg-device"></div>
         <div class="seg" role="group" aria-label="Zoom" id="seg-zoom"></div>
