@@ -17,6 +17,7 @@ export const userRowSchema = z.object({
   city_lng: z.number().optional(),
   terms_accepted_at: z.string().optional(),
   terms_version: z.number().optional(),
+  chat_restricted_until: z.string().optional(),
 });
 export type UserRow = z.infer<typeof userRowSchema>;
 

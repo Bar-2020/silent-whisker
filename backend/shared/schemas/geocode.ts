@@ -1,7 +1,15 @@
 import { z } from 'zod';
 
-/** A `geocode_cache` row without its key (docs/DATA.md), and what the lookup returns. */
-export const placeSchema = z.object({ lat: z.number(), lng: z.number(), place: z.string() });
+/** One row of the `geocode_cache` table (docs/DATA.md). */
+const geocodeCacheRowSchema = z.object({
+  query: z.string(),
+  lat: z.number(),
+  lng: z.number(),
+  place: z.string(),
+});
+
+/** What a lookup returns: the row without its key. */
+export const placeSchema = geocodeCacheRowSchema.omit({ query: true });
 export type Place = z.infer<typeof placeSchema>;
 
 /** Nominatim writes its coordinates as text; an empty or non-numeric one is no point. */
