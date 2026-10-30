@@ -684,6 +684,17 @@
     display: inline-flex;
   }
 
+  /* The screen already is a phone: no size or zoom to choose, the frame takes its width. */
+  .viewer__device,
+  .viewer__zoom {
+    display: none;
+  }
+
+  .viewer__stage[data-device][data-zoom] .frame {
+    inline-size: 100%;
+    zoom: 1;
+  }
+
   /* The list is gone too, so the screen takes its row. */
   .viewer[data-collapsed='true'] {
     grid-template-rows: auto minmax(0, 1fr);
