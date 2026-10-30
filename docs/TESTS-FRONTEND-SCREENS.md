@@ -36,6 +36,7 @@ unless a row says otherwise. The screens are in `design/briefs/`.
 | LOGUI-06 | e | Kittens: report, report again; sick cat button | Disabled "already reported" with the tag, also in search; the sick cat button opens the alert form and back returns | R-35, D-67 |
 | LOGUI-07 | e | New spot: name 60 and 61 characters; address; "my location" with a vague reading; limit 5; refused text | Plain errors in words; submit shows "waiting for an admin" | D-43, D-58 |
 | LOGUI-08 | e | Pick a photo: a 12 MB 4000 x 3000 JPEG, PNG, WebP, HEIC, a 0 byte file, a text file renamed `.jpg`, a 30000 x 30000 image; cancel the picker | Resized to 1600 px and 500 KB; EXIF location gone; plain error for the rest; the tab never freezes | R-11 |
+| LOGUI-09 | e | The "what was left" tap on a feeding and on a water log: no answer, each of the three, a failed send while offline | Nothing is pre-selected and the form works with no answer; the request carries the choice; offline keeps it | D-93 |
 
 ## Cats and the feed (FEED)
 
