@@ -712,8 +712,7 @@
     align-items: stretch;
   }
 
-  .viewer[data-collapsed='true'] .viewer__stage[data-device='phone'] .frame,
-  .viewer[data-collapsed='true'] .viewer__stage[data-device='phone-xs'] .frame {
+  .viewer[data-collapsed='true'] .frame {
     block-size: auto;
     border-radius: 0;
   }
