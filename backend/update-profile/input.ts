@@ -5,6 +5,12 @@ import type { ProfileInput } from './handler.types';
 
 export const invalidInput = (): Refusal => new Refusal(refuse(STATUS_BAD_REQUEST, 'INVALID_INPUT'));
 
+/** Control characters (a newline too) and the ones that reverse text direction (U+202A to U+202E, U+2066 to U+2069). */
+const FORBIDDEN = /[\p{Cc}‪-‮⁦-⁩]/u;
+
+/** At least one character a reader can see: not a space, and not a control or invisible format character. */
+const VISIBLE = /[^\s\p{C}]/u;
+
 /** Trimmed and counted in characters, not bytes (D-61, D-92). */
 function textField(value: unknown): string | undefined {
   if (value === undefined) return undefined;
@@ -12,6 +18,7 @@ function textField(value: unknown): string | undefined {
   const text = value.normalize('NFC').trim();
   const length = Array.from(text).length;
   if (length < PROFILE_TEXT_MIN_LENGTH || length > PROFILE_TEXT_MAX_LENGTH) throw invalidInput();
+  if (FORBIDDEN.test(text) || !VISIBLE.test(text)) throw invalidInput();
   return text;
 }
 

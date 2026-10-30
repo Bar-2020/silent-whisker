@@ -5,6 +5,7 @@ import {
   STATUS_FORBIDDEN,
   STATUS_NOT_FOUND,
   STATUS_OK,
+  STATUS_TOO_MANY_REQUESTS,
   STATUS_UNAUTHORIZED,
   STATUS_UNAVAILABLE,
   STATUS_UNPROCESSABLE,
@@ -32,6 +33,10 @@ import { CheckUnavailable, moderateText } from './moderate';
 
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const sns = new SNSClient({});
+
+/** The names of the two daily counters this route takes from, beside the member's id (DATA.md). */
+const WRITE_BUDGET = 'write_budget';
+const PROFILE_SAVE = 'profile_save';
 
 interface Save {
   readonly userId: string;
@@ -85,14 +90,14 @@ async function cityPoint(city: string, user: UserRow): Promise<{ lat: number; ln
  * city keeps the allowance spent; a check or lookup that could not run gives it back.
  */
 async function vetText(save: Save, name: string, city: string): Promise<Changes> {
-  await spend(save, 'profile_save', PROFILE_SAVES_PER_DAY, 'PROFILE_SAVE_DAILY_LIMIT');
+  await spend(save, PROFILE_SAVE, PROFILE_SAVES_PER_DAY, 'PROFILE_SAVE_DAILY_LIMIT');
   try {
     const point = await cityPoint(city, save.user);
     await moderateText(save.guard, `${name}\n${city}`);
     return { display_name: name, city, city_lat: point.lat, city_lng: point.lng };
   } catch (error) {
     if (!(error instanceof CheckUnavailable || error instanceof GeocoderUnavailable)) throw error;
-    await giveBackDailyAllowance(save.guard, `profile_save#${save.userId}`, 1, save.now);
+    await giveBackDailyAllowance(save.guard, `${PROFILE_SAVE}#${save.userId}`, 1, save.now);
     throw new Refusal(refuse(STATUS_UNAVAILABLE, 'CHECK_UNAVAILABLE'));
   }
 }
@@ -115,10 +120,17 @@ function settingChanges({ user, input, now }: Save): Changes {
   return changes;
 }
 
-const changesFor = async (save: Save): Promise<Changes> => ({
-  ...(await textChanges(save)),
-  ...settingChanges(save),
-});
+/** A save the daily limit refused does not count as a write, so its unit goes back. */
+async function changesFor(save: Save): Promise<Changes> {
+  try {
+    return { ...(await textChanges(save)), ...settingChanges(save) };
+  } catch (error) {
+    if (error instanceof Refusal && error.result.statusCode === STATUS_TOO_MANY_REQUESTS) {
+      await giveBackDailyAllowance(save.guard, `${WRITE_BUDGET}#${save.userId}`, 1, save.now);
+    }
+    throw error;
+  }
+}
 
 const setClause = (key: string): string => `#${key} = :${key}`;
 
@@ -170,7 +182,7 @@ export async function handler(event: ApiEvent): Promise<ApiResult> {
       },
     };
     requireInputs(save);
-    await spend(save, 'write_budget', WRITES_PER_DAY, 'RATE_LIMITED');
+    await spend(save, WRITE_BUDGET, WRITES_PER_DAY, 'RATE_LIMITED');
     const changes = await changesFor(save);
     return reply(STATUS_OK, profileOf(await store(claims.sub, user, changes)));
   } catch (error) {

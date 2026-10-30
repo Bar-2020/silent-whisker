@@ -4,6 +4,7 @@ import { STATUS_OK, STATUS_UNAUTHORIZED } from '../../shared/constants/http';
 import { GOOGLE_IMAGE_HOST_SUFFIX } from '../../shared/constants/profile';
 import { refuse, reply, verifiedClaims } from '../shared/api';
 import type { ApiEvent, ApiResult } from '../shared/api.types';
+import { requiredEnv } from '../shared/env';
 import { profileOf, readUser } from '../shared/users';
 import type { UserRow } from '../shared/users.types';
 import type { Member } from './handler.types';
@@ -11,12 +12,6 @@ import type { Member } from './handler.types';
 // GET /api/profile (D-59): `user_id` is always the token's `sub`, never anything in the request.
 
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({}));
-
-function usersTable(): string {
-  const name = process.env.USERS_TABLE;
-  if (!name) throw new Error('USERS_TABLE is not set');
-  return name;
-}
 
 /** Only an https address on Google's image host is kept (D-21). */
 function checkIfGooglePhoto(picture: string | undefined): boolean {
@@ -44,7 +39,7 @@ async function createUser(userId: string, photo: string | undefined): Promise<Us
   try {
     await db.send(
       new PutCommand({
-        TableName: usersTable(),
+        TableName: requiredEnv('USERS_TABLE'),
         Item: row,
         ConditionExpression: 'attribute_not_exists(user_id)',
       })
@@ -52,7 +47,7 @@ async function createUser(userId: string, photo: string | undefined): Promise<Us
     return row;
   } catch (error) {
     if (!(error instanceof ConditionalCheckFailedException)) throw error;
-    const winner = await readUser(db, usersTable(), userId, true);
+    const winner = await readUser(db, requiredEnv('USERS_TABLE'), userId, true);
     if (!winner) throw error;
     return winner;
   }
@@ -66,12 +61,12 @@ function memberFrom(event: ApiEvent): Member | undefined {
 }
 
 async function loadUser({ userId, photo }: Member): Promise<UserRow> {
-  const user = await readUser(db, usersTable(), userId);
+  const user = await readUser(db, requiredEnv('USERS_TABLE'), userId);
   if (!user) return createUser(userId, photo);
   if (!photo || photo === user.avatar_url) return user;
   await db.send(
     new UpdateCommand({
-      TableName: usersTable(),
+      TableName: requiredEnv('USERS_TABLE'),
       Key: { user_id: userId },
       UpdateExpression: 'SET avatar_url = :photo',
       ExpressionAttributeValues: { ':photo': photo },

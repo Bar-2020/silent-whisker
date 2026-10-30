@@ -183,6 +183,11 @@ describe('PATCH /api/profile reads its input strictly (PROF-05, D-61, D-92)', ()
     ['a city of 36 characters', { city: 'x'.repeat(36) }],
     ['a name that is not text', { display_name: 7 }],
     ['show_google_photo that is not true or false', { show_google_photo: 'yes' }],
+    ['a name of only zero-width spaces', { display_name: '​​​' }],
+    ['a name with a control character', { display_name: 'Dana\u0007Levi' }],
+    ['a name with a line break', { display_name: 'Dana\nLevi' }],
+    ['a name with a text-direction override', { display_name: 'Dana‮Ivel' }],
+    ['a city with a text-direction isolate', { city: 'Hai⁧fa' }],
   ])('refuses %s, with nothing spent or saved', async (_name, extra) => {
     const result = await handler(patch({ ...FIRST_SAVE, ...extra }));
 
@@ -204,6 +209,9 @@ describe('PATCH /api/profile reads its input strictly (PROF-05, D-61, D-92)', ()
     ['35 Arabic letters', 'ع'.repeat(35)],
     ['Russian', 'Иван Петров'],
     ['35 emoji, each one character', '🐱'.repeat(35)],
+    ['an emoji family joined by invisible joiners', '\u{1F468}‍\u{1F469}‍\u{1F467}'],
+    ['a Persian name with a half-space', 'می‌خواهم'],
+    ['Hebrew with a right-to-left mark', 'דנה‏ לוי'],
   ])('takes %s, counted in characters not bytes', async (_name, display_name) => {
     fakeUsers(row({ display_name: 'Old Name' }));
 
@@ -436,6 +444,7 @@ describe('PATCH /api/profile and the per-member limits (PROF-08, COST-06, LIM-01
     expect(sixth.headers['retry-after']).toBe('43200');
     expect(userWrites()).toHaveLength(0);
     expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(PROFILE_SAVES_PER_DAY);
+    expect(countOf('write_budget#user-1')).toBe(PROFILE_SAVES_PER_DAY);
   });
 
   it('allows a save again at 00:00:00 UTC', async () => {
