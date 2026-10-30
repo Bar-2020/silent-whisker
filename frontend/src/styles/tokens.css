@@ -1,0 +1,68 @@
+/* Design tokens. The only place a colour, size or timing is chosen.
+   Breakpoints are 768px (tablet) and 1024px (desktop); they are written once, in breakpoints.css. */
+:root {
+  /* The wall: where content lives. */
+  --wall: #ffffff;
+  --surface: #ffffff;
+  --line: #d3d9e2;
+  --line-strong: #8793a3;
+
+  --ink: #1b2430;
+  --ink-2: #4a5563;
+
+  /* The dado: the painted band. Every tappable thing is this colour. */
+  --dado: #2d4467;
+  --dado-tint: #e3e9f3;
+  --dado-ink: #ffffff;
+
+  --focus: #0b57d0;
+
+  /* Type: the phone's own sans. A text takes one variant whole, `font: var(--type-body)`; no size,
+     weight or line height is written on its own (DESIGN.md, Typography). */
+  --font:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Hebrew', 'Arial Hebrew', Arial,
+    sans-serif;
+  --type-display: 700 clamp(1.875rem, 6.2vw, 2.875rem) / 1.15 var(--font);
+  --type-headline: 700 1.75rem / 1.25 var(--font);
+  --type-title: 700 1.375rem / 1.25 var(--font);
+  --type-heading: 700 1.125rem / 1.3 var(--font);
+  --type-body: 400 1rem / 1.5 var(--font);
+  --type-body-strong: 600 1rem / 1.5 var(--font);
+  --type-small: 400 0.875rem / 1.4 var(--font);
+  --type-label: 600 0.875rem / 1.2 var(--font);
+  --type-caption: 400 0.75rem / 1.3 var(--font);
+
+  /* Space: a 4px step. */
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-8: 72px;
+
+  --r-m: 12px;
+  --r-l: 20px;
+  --r-pill: 999px;
+  --tap: 48px;
+  --tap-l: 56px;
+  --column: 40rem;
+
+  --glass-light-edge: rgb(255 255 255 / 0.8);
+  /* Dialogs and search results: light glass, a little more white so dark ink stays legible over a busy map. */
+  --glass-panel: rgb(255 255 255 / 0.84);
+  --glass-panel-blur: blur(26px) saturate(1.6);
+
+  /* Depth: flat, with one lift for things that float over the map. */
+  --lift: 0 1px 2px rgb(20 32 52 / 0.14), 0 6px 18px rgb(20 32 52 / 0.18);
+
+  /* Layers, lowest to highest. A z-index is always one of these (DESIGN.md, Layers). */
+  --z-raised: 1;
+  --z-map-ui: 500;
+  --z-sheet: 600;
+  --z-bar: 700;
+  --z-nav: 800;
+  --z-scrim: 850;
+  --z-modal: 860;
+  --z-lightbox: 880;
+  --z-top: 900;
+}

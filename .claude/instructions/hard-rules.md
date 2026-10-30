@@ -2,8 +2,9 @@
 - **Server enforces every rule.** Auth, privacy, moderation, caps, bans: all in Lambda or IAM.
   Client checks are UX, never enforcement. A rule that only exists in the client is not implemented.
 - **Every user-facing string goes through `t('key')`.** No hardcoded strings, not even placeholders.
-  Strings live only in `he.json` and `en.json` (same keys in both), served from the CDN, never
-  bundled.
+  Strings live only in the locale files (same keys in all four languages), served from the CDN,
+  never bundled. The one exception: the retry word of the screen shown when a locale file cannot
+  load, kept in `shared/constants/languages.ts` (D-102).
 - **RTL-safe styles.** CSS logical properties (`margin-inline-start`, `inset-inline-end`,
   `text-align: start`), never `left`/`right`. Hebrew is the primary language.
 - **No inline styles.** No `style` attribute, no `element.style`. Styles live in a `.css` file beside

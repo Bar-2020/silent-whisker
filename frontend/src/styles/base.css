@@ -1,0 +1,91 @@
+/* Reset, type, focus and the parts the browser draws itself. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font: var(--type-body);
+  color: var(--ink);
+  background: var(--wall);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  accent-color: var(--dado);
+  caret-color: var(--dado);
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+body {
+  margin: 0;
+  min-block-size: 100dvh;
+  overflow-wrap: anywhere;
+}
+
+h1,
+h2,
+p,
+ul,
+ol,
+dl,
+dd,
+figure,
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+h1 {
+  font: var(--type-title);
+  text-wrap: balance;
+}
+
+h2 {
+  font: var(--type-heading);
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: var(--dado);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+img,
+svg {
+  display: block;
+  max-inline-size: 100%;
+}
+
+::selection {
+  background: var(--dado-tint);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Text typed by people can run the other way inside a line. */
+bdi,
+[dir='auto'] {
+  unicode-bidi: isolate;
+}

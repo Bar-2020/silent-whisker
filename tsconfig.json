@@ -8,7 +8,18 @@
     "noEmit": true,
     "isolatedModules": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "jsx": "react-jsx",
+    "paths": {
+      "@app/*": ["./frontend/src/app/*"],
+      "@features/*": ["./frontend/src/features/*"],
+      "@shared/*": ["./frontend/src/shared/*"],
+      "@styles/*": ["./frontend/src/styles/*"],
+      "@locales/*": ["./frontend/public/locales/*"],
+      "@constants/*": ["./shared/constants/*"],
+      "@schemas/*": ["./shared/schemas/*"]
+    },
+    "resolveJsonModule": true,
+    "types": ["node", "vite-plus/client"]
   },
   "include": ["frontend", "backend", "shared", "__tests__"]
 }

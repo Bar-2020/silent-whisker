@@ -1,0 +1,73 @@
+.button {
+  display: grid;
+  place-items: center;
+  inline-size: var(--tap);
+  block-size: var(--tap);
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--dado);
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--dado-tint);
+}
+
+.dialog {
+  inline-size: min(26rem, 100% - var(--s-5));
+  padding: 0;
+  border: 1px solid var(--glass-light-edge);
+  border-radius: var(--r-l);
+  background: var(--glass-panel);
+  -webkit-backdrop-filter: var(--glass-panel-blur);
+  backdrop-filter: var(--glass-panel-blur);
+  box-shadow: var(--lift);
+  color: var(--ink);
+}
+
+.content {
+  padding: var(--s-5);
+}
+
+.dialog::backdrop {
+  background: rgb(255 255 255 / 0.4);
+}
+
+.dialog ul {
+  display: flex;
+  flex-direction: column;
+  margin-block: var(--s-3);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  inline-size: 100%;
+  min-block-size: var(--tap);
+  padding-inline: var(--s-3);
+  border: 0;
+  border-radius: var(--r-m);
+  background: transparent;
+  font: var(--type-body);
+  text-align: start;
+  cursor: pointer;
+}
+
+.option:hover,
+.option[aria-current='true'] {
+  background: var(--dado-tint);
+}
+
+.close {
+  inline-size: 100%;
+  min-block-size: var(--tap);
+  border: 0;
+  border-radius: var(--r-m);
+  background: transparent;
+  color: var(--dado);
+  font: var(--type-body-strong);
+  cursor: pointer;
+}

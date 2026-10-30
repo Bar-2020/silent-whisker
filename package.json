@@ -15,8 +15,8 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit && tsc --noEmit -p backend",
-    "lint": "vp check",
-    "lint:fix": "vp check --fix",
+    "lint": "vp check && stylelint \"frontend/src/**/*.css\"",
+    "lint:fix": "vp check --fix && stylelint --fix \"frontend/src/**/*.css\"",
     "test": "vp test run",
     "fallow": "fallow dead-code --fail-on-issues --quiet && fallow dupes --fail-on-issues --quiet && fallow health --complexity --fail-on-issues --quiet && fallow audit --quiet",
     "verify": "npm run verify:code && npm run verify:iac",
@@ -32,6 +32,7 @@
     "@types/node": "^22.20.1",
     "eslint-plugin-sonarjs": "^4.2.1",
     "fallow": "^3.37.0",
+    "stylelint": "17.16.0",
     "typescript": "~6.0.3",
     "vite-plus": "1.2.0"
   }

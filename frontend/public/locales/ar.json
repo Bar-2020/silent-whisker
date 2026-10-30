@@ -1,0 +1,9 @@
+{
+  "app.name": "Silent Whisker",
+  "common.close": "إغلاق",
+  "lang.choose": "اختيار اللغة",
+  "nav.home": "الرئيسية",
+  "states.notFound.back": "العودة إلى الخريطة",
+  "states.notFound.text": "ربما الرابط خاطئ أو أُزيلت الصفحة.",
+  "states.notFound.title": "الصفحة غير موجودة"
+}

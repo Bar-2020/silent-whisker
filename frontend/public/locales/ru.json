@@ -1,0 +1,9 @@
+{
+  "app.name": "Silent Whisker",
+  "common.close": "Закрыть",
+  "lang.choose": "Выбор языка",
+  "nav.home": "Главная",
+  "states.notFound.back": "Назад к карте",
+  "states.notFound.text": "Возможно, ссылка неверна или страница удалена.",
+  "states.notFound.title": "Страница не найдена"
+}

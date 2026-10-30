@@ -1,1 +1,9 @@
-{}
+{
+  "app.name": "Silent Whisker",
+  "common.close": "סגירה",
+  "lang.choose": "בחירת שפה",
+  "nav.home": "לעמוד הראשי",
+  "states.notFound.back": "חזרה למפה",
+  "states.notFound.text": "ייתכן שהקישור שגוי או שהדף הוסר.",
+  "states.notFound.title": "הדף לא נמצא"
+}

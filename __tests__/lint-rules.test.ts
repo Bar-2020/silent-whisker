@@ -55,6 +55,34 @@ tester.run(
   }
 );
 
+// CLAUDE.md, Folder structure (a folder is imported through its alias; one `../` is the limit).
+tester.run('no-deep-relative-imports', plugin.rules['no-deep-relative-imports'], {
+  valid: [
+    "import { a } from '../a';",
+    "import { a } from './a';",
+    "import { a } from '@shared/a';",
+    "import { a } from 'react';",
+    "export { a } from '../a';",
+    "const a = import('../a');",
+  ],
+  invalid: [
+    { code: "import { a } from '../../a';", errors: [{ message: /climbs more than one folder/ }] },
+    {
+      code: "import type { A } from '../../../a';",
+      errors: [{ message: /climbs more than one folder/ }],
+    },
+    { code: "export * from '../../a';", errors: [{ message: /climbs more than one folder/ }] },
+    {
+      code: "export { a } from '../../a';",
+      errors: [{ message: /climbs more than one folder/ }],
+    },
+    {
+      code: "const a = import('../../a');",
+      errors: [{ message: /climbs more than one folder/ }],
+    },
+  ],
+});
+
 // R-05 (every metered AWS call goes through one function that checks the daily cap).
 tester.run(
   'paid-calls-go-through-metered-call',

@@ -162,6 +162,8 @@ const HANDLERS = readdirSync(BACKEND, { withFileTypes: true })
   .map((entry) => entry.name);
 
 export default defineConfig({
+  // Tests of frontend files import through the aliases of tsconfig.json.
+  resolve: { tsconfigPaths: true },
   // One entry and outDir per handler, so its zip never depends on a file another handler shares.
   pack: HANDLERS.map((name) => ({
     entry: { handler: `backend/${name}/handler.ts` },
@@ -187,6 +189,11 @@ export default defineConfig({
           'silent-whisker/rtl-logical-properties': 'error',
           'silent-whisker/no-inline-styles': 'error',
         },
+      },
+      {
+        // Folders are reached through their alias, never by climbing out of the frontend (CLAUDE.md).
+        files: ['frontend/src/**/*.{ts,tsx}'],
+        rules: { 'silent-whisker/no-deep-relative-imports': 'error' },
       },
       {
         // Limits, timeouts, sizes and counts are named in shared/constants/; tests use literals.

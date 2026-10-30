@@ -6,7 +6,8 @@ declare const plugin: {
     | 'rtl-logical-properties'
     | 'no-inline-styles'
     | 'numeric-constants-live-in-constants'
-    | 'paid-calls-go-through-metered-call',
+    | 'paid-calls-go-through-metered-call'
+    | 'no-deep-relative-imports',
     Rule
   >;
 };

@@ -1,0 +1,39 @@
+@import '../styles/breakpoints.css';
+
+.topbar {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--z-bar);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-block-size: 56px;
+  padding-inline: var(--s-2);
+  border-block-end: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.brand {
+  display: grid;
+  place-items: center;
+  inline-size: var(--tap);
+  block-size: var(--tap);
+  color: var(--dado);
+}
+
+.main {
+  inline-size: 100%;
+  max-inline-size: var(--column);
+  margin-inline: auto;
+  padding: var(--s-5) var(--s-4);
+}
+
+@media (--tablet) {
+  .topbar {
+    padding-inline: max(var(--s-2), calc((100% - 64rem) / 2));
+  }
+
+  .main {
+    padding: var(--s-6) var(--s-5) var(--s-8);
+  }
+}
