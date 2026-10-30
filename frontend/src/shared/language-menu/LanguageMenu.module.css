@@ -17,7 +17,7 @@
 
 .dialog {
   inline-size: min(26rem, 100% - var(--s-5));
-  padding: var(--s-5);
+  padding: 0;
   border: 1px solid var(--glass-light-edge);
   border-radius: var(--r-l);
   background: var(--glass-panel);
@@ -25,6 +25,10 @@
   backdrop-filter: var(--glass-panel-blur);
   box-shadow: var(--lift);
   color: var(--ink);
+}
+
+.content {
+  padding: var(--s-5);
 }
 
 .dialog::backdrop {

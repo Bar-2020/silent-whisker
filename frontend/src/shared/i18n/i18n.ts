@@ -7,11 +7,11 @@ import {
   LANGUAGE_STORAGE_KEY,
 } from '../../../../shared/constants/languages';
 import { localeSchema } from './locale.schema';
-import { languageSchema, storedLanguageSchema, type LanguageCode } from './language.schema';
+import { languageSchema } from './language.schema';
 
-function readStoredLanguage(): LanguageCode {
+export function readStoredLanguage() {
   try {
-    return storedLanguageSchema.parse(localStorage.getItem(LANGUAGE_STORAGE_KEY));
+    return languageSchema.catch(DEFAULT_LANGUAGE).parse(localStorage.getItem(LANGUAGE_STORAGE_KEY));
   } catch {
     return DEFAULT_LANGUAGE;
   }
@@ -22,7 +22,9 @@ i18n.on('languageChanged', (code) => {
   if (!language) return;
   document.documentElement.lang = language.code;
   document.documentElement.dir = language.dir;
-  if (i18n.hasResourceBundle(code, 'translation')) document.title = i18n.t('app.name');
+  // A language whose file failed to load is not remembered, or the next visit would start in it.
+  if (!i18n.hasResourceBundle(code, 'translation')) return;
+  document.title = i18n.t('app.name');
   try {
     localStorage.setItem(LANGUAGE_STORAGE_KEY, language.code);
   } catch {

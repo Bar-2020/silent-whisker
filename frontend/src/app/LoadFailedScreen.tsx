@@ -1,10 +1,15 @@
+import { LANGUAGES } from '../../../shared/constants/languages';
+import { readStoredLanguage } from '../shared/i18n/i18n';
 import { Icon } from '../shared/icons/Icon';
 import styles from './LoadFailedScreen.module.css';
 
-/** Icon only: the language files are what failed to load, so there is no text to show (D-32). */
+/** The word comes from the constants, in the language the member chose: the language file failed (D-102). */
 export function LoadFailedScreen() {
+  const stored = readStoredLanguage();
+  const language = LANGUAGES.find((entry) => entry.code === stored) ?? LANGUAGES[0];
+
   return (
-    <div className={styles.screen}>
+    <div className={styles.screen} lang={language.code} dir={language.dir}>
       <button
         type="button"
         className={styles.retry}
@@ -13,6 +18,7 @@ export function LoadFailedScreen() {
         }}
       >
         <Icon name="retry" />
+        {language.retry}
       </button>
     </div>
   );

@@ -53,7 +53,10 @@
       { "name": "backend", "patterns": ["backend/**"] },
       { "name": "shared", "patterns": ["shared/**"] },
       { "name": "infra", "patterns": ["infra/**"] },
-      { "name": "tooling", "patterns": ["lint/**", "scripts/**", "vite.config.ts"] },
+      {
+        "name": "tooling",
+        "patterns": ["lint/**", "scripts/**", "vite.config.ts", "stylelint.config.mjs"],
+      },
       { "name": "tests", "patterns": ["__tests__/**"] },
       { "name": "design", "patterns": ["design/**"] },
     ],

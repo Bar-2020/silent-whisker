@@ -15,7 +15,7 @@ unless a row says otherwise.
 | SHELL-06 | c | The API answers `401`, `FORBIDDEN`, `BANNED`, `TERMS_REQUIRED`, bare `429`, `RATE_LIMITED` with and without `Retry-After`, `5xx`, no connection | Session-expired state; admin controls hidden; plain notice; the accept-terms step; wait the default time; wait `Retry-After`; retry message; nothing queued | R-36, R-21, D-60, D-72 |
 | SHELL-07 | e | Four destinations, a spot page, a form; deep links to `/spots/{id}` and `/alerts/{id}` | Map, Cats, Alerts, Me; inner pages swap the tabs for a top bar; a link a member may not see shows the same not-found page as a missing one | D-83, R-03 |
 | SHELL-08 | e | The glass navigation with blur off, with reduced transparency, and in each engine | Solid fallback; labels readable over any map tile; our code writes no inline style | D-73 |
-| SHELL-09 | c | `/locales/he.json` fails (network, 404, bad JSON) with and without a cached copy | An icon-only retry screen; the cached copy used when there is one; no hardcoded text | D-32 |
+| SHELL-09 | c | `/locales/he.json` fails (network, 404, bad JSON) with and without a cached copy | A retry screen with the icon and the word "try again" in the stored language (from `shared/constants/`); the cached copy used when there is one; no other hardcoded text | D-32, D-102 |
 | SHELL-10 | d | An address with no file extension, one with an extension that is missing, `/api/nothing` | The app; a plain error; an API error, not the web page | D-63 |
 | SHELL-11 | e | Console and `securitypolicyviolation` events through every journey | None | D-59 |
 

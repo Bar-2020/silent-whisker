@@ -5,12 +5,14 @@
 }
 
 .retry {
-  display: grid;
-  place-items: center;
-  inline-size: var(--tap-l);
-  block-size: var(--tap-l);
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-block-size: var(--tap-l);
+  padding-inline: var(--s-5);
   border: 0;
   border-radius: var(--r-pill);
+  font-weight: 600;
   background: var(--dado);
   color: var(--dado-ink);
   cursor: pointer;

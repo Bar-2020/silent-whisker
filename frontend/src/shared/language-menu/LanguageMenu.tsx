@@ -20,31 +20,41 @@ export function LanguageMenu() {
       >
         <Icon name="globe" />
       </button>
-      <dialog ref={dialog} className={styles.dialog} aria-labelledby={titleId}>
-        <h2 id={titleId}>{t('lang.choose')}</h2>
-        <ul>
-          {LANGUAGES.map(({ code, dir, label }) => (
-            <li key={code}>
-              <button
-                type="button"
-                className={styles.option}
-                lang={code}
-                dir={dir}
-                aria-current={i18n.language === code}
-                onClick={() => {
-                  void i18n.changeLanguage(code);
-                  dialog.current?.close();
-                }}
-              >
-                {label}
-                {i18n.language === code && <Icon name="check" />}
-              </button>
-            </li>
-          ))}
-        </ul>
-        <button type="button" className={styles.close} onClick={() => dialog.current?.close()}>
-          {t('common.close')}
-        </button>
+      <dialog
+        ref={dialog}
+        className={styles.dialog}
+        aria-labelledby={titleId}
+        onClick={(event) => {
+          // Only the scrim is the dialog itself: its content sits in the inner div.
+          if (event.target === event.currentTarget) event.currentTarget.close();
+        }}
+      >
+        <div className={styles.content}>
+          <h2 id={titleId}>{t('lang.choose')}</h2>
+          <ul>
+            {LANGUAGES.map(({ code, dir, label }) => (
+              <li key={code}>
+                <button
+                  type="button"
+                  className={styles.option}
+                  lang={code}
+                  dir={dir}
+                  aria-current={i18n.language === code}
+                  onClick={() => {
+                    void i18n.changeLanguage(code);
+                    dialog.current?.close();
+                  }}
+                >
+                  {label}
+                  {i18n.language === code && <Icon name="check" />}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button type="button" className={styles.close} onClick={() => dialog.current?.close()}>
+            {t('common.close')}
+          </button>
+        </div>
       </dialog>
     </>
   );
