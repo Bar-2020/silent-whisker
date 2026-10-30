@@ -40,12 +40,11 @@ resource "aws_bedrock_guardrail" "profile_text" {
   }
 }
 
-# A numbered version, so editing the draft never changes what the app calls; a changed guardrail
-# gets a new version and the old ones stay.
+# A numbered version, so editing the draft never changes what the app calls. A changed guardrail
+# gets a new version and the old one is deleted, so only the current one exists.
 resource "aws_bedrock_guardrail_version" "profile_text" {
   guardrail_arn = aws_bedrock_guardrail.profile_text.guardrail_arn
   description   = "Used by PATCH /profile."
-  skip_destroy  = true
 
   lifecycle {
     replace_triggered_by = [aws_bedrock_guardrail.profile_text]

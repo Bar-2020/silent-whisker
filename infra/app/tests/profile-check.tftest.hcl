@@ -42,6 +42,15 @@ run "only_the_five_harm_filters_at_high_strength_and_no_personal_data_filter" {
   }
 }
 
+run "only_the_current_version_is_kept" {
+  command = apply
+
+  assert {
+    condition     = aws_bedrock_guardrail_version.profile_text.skip_destroy != true
+    error_message = "An old version is deleted when a new one replaces it: AWS limits how many a guardrail can have."
+  }
+}
+
 run "the_policy_allows_only_apply_guardrail_on_the_guardrail_and_its_profile" {
   command = apply
 
