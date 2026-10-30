@@ -9,6 +9,8 @@
 - **Tests start from the scenarios.** For a rule or route you touch, find its rows in
   `docs/TESTS-*.md` ([TESTING.md](../../docs/TESTING.md)) and cite the row id beside the `R-nn` in
   the test (`// LOG-07, R-10`). A case the catalogue lacks is added there first.
+  The session that wrote the code does not write its tests: the `test-writer` agent does, from the
+  docs only ([TESTING.md](../../docs/TESTING.md#agentic-workflow)).
 - **When the spec and the code disagree, the spec wins.** Fix the code or raise it.
 - **When the spec disagrees with itself, or a decision is missing, stop and ask.** Add it to
   DECISIONS.md with a recommendation.
