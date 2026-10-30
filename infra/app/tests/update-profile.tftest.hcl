@@ -28,7 +28,7 @@ run "the_profile_save_role_reaches_only_what_the_save_needs" {
 
   assert {
     condition = anytrue([
-      for s in jsondecode(aws_iam_role_policy.update_profile.policy).Statement :
+      for s in jsondecode(module.update_profile.role_policy.policy).Statement :
       flatten([s.Resource]) == [aws_dynamodb_table.users.arn] &&
       toset(flatten([s.Action])) == toset(["dynamodb:GetItem", "dynamodb:UpdateItem"])
     ])
@@ -37,7 +37,7 @@ run "the_profile_save_role_reaches_only_what_the_save_needs" {
 
   assert {
     condition = alltrue([
-      for s in jsondecode(aws_iam_role_policy.update_profile.policy).Statement :
+      for s in jsondecode(module.update_profile.role_policy.policy).Statement :
       !anytrue([for a in flatten([s.Action]) : startswith(a, "dynamodb:Delete")]) &&
       !contains(flatten([s.Resource]), "*")
     ])
@@ -46,14 +46,14 @@ run "the_profile_save_role_reaches_only_what_the_save_needs" {
 
   assert {
     condition = anytrue([
-      for s in jsondecode(aws_iam_role_policy.update_profile.policy).Statement :
+      for s in jsondecode(module.update_profile.role_policy.policy).Statement :
       flatten([s.Action]) == ["sns:Publish"] && flatten([s.Resource]) == [aws_sns_topic.cost_alerts.arn]
     ])
     error_message = "It may publish only to the cost alert topic (the breaker's email, D-52)."
   }
 
   assert {
-    condition     = aws_iam_role_policy_attachment.update_profile_text_moderation.policy_arn == aws_iam_policy.text_moderation.arn
+    condition     = contains([for a in module.update_profile.attachments : a.policy_arn], aws_iam_policy.text_moderation.arn)
     error_message = "The role gets the text moderation guardrail's policy, which allows only ApplyGuardrail."
   }
 }
@@ -63,18 +63,18 @@ run "the_profile_save_gets_its_tables_topic_and_guardrail_by_name" {
 
   assert {
     condition = (
-      aws_lambda_function.update_profile.environment[0].variables["USERS_TABLE"] == aws_dynamodb_table.users.name &&
-      aws_lambda_function.update_profile.environment[0].variables["GEOCODE_TABLE"] == aws_dynamodb_table.geocode_cache.name &&
-      aws_lambda_function.update_profile.environment[0].variables["COUNTERS_TABLE"] == aws_dynamodb_table.daily_usage_counters.name &&
-      aws_lambda_function.update_profile.environment[0].variables["ALERT_TOPIC_ARN"] == aws_sns_topic.cost_alerts.arn &&
-      aws_lambda_function.update_profile.environment[0].variables["GUARDRAIL_ID"] == aws_bedrock_guardrail.text_moderation.guardrail_id &&
-      aws_lambda_function.update_profile.environment[0].variables["GUARDRAIL_VERSION"] == aws_bedrock_guardrail_version.text_moderation.version
+      module.update_profile.function.environment[0].variables["USERS_TABLE"] == aws_dynamodb_table.users.name &&
+      module.update_profile.function.environment[0].variables["GEOCODE_TABLE"] == aws_dynamodb_table.geocode_cache.name &&
+      module.update_profile.function.environment[0].variables["COUNTERS_TABLE"] == aws_dynamodb_table.daily_usage_counters.name &&
+      module.update_profile.function.environment[0].variables["ALERT_TOPIC_ARN"] == aws_sns_topic.cost_alerts.arn &&
+      module.update_profile.function.environment[0].variables["GUARDRAIL_ID"] == aws_bedrock_guardrail.text_moderation.guardrail_id &&
+      module.update_profile.function.environment[0].variables["GUARDRAIL_VERSION"] == aws_bedrock_guardrail_version.text_moderation.version
     )
     error_message = "The handler reads these six settings (backend/update-profile/): a missing one fails every save."
   }
 
   assert {
-    condition     = aws_lambda_function.update_profile.timeout == local.api.update_profile.timeout_seconds
+    condition     = module.update_profile.function.timeout == local.api.update_profile.timeout_seconds
     error_message = "The save has its own timeout: a geocoder slot and two outside calls need more than the default."
   }
 }
