@@ -20,8 +20,8 @@ A phase's tests are written by the session that wrote the code, from the code it
 to agree with it, mistakes included. Phase 7 is the independent pass:
 
 1. The scenarios were written from the specs, before most of the code exists.
-2. A fresh session turns each row into a test from `RULES.md`, `API.md` and `DATA.md`, **without reading the
-   handler or the screen**. A red scenario is a bug in the code, a gap in the spec (a `D-nn`) or a wrong
+2. A fresh session turns each row into a test from the docs only (`RULES.md`, `API.md`, `DATA.md` and these
+   files), **without reading any code**: not the handler, not the screen, not the other tests. A red scenario is a bug in the code, a gap in the spec (a `D-nn`) or a wrong
    scenario. The owner decides which, not the test.
 3. Mutation testing (below) checks that the tests would notice a change.
 4. Browser journeys and a deployed smoke test cover what no handler test can: a real browser, the real
@@ -88,9 +88,14 @@ Four jobs, each its own session (a subagent or a fresh session), so nobody marks
 | Job | Reads | Writes | Never |
 |---|---|---|---|
 | Scenario author | specs, design briefs | rows here | code |
-| Test writer | these files, `RULES.md`, `API.md`, `DATA.md` | tests | the handler or screen code |
+| Test writer | the docs only: these files, `RULES.md`, `API.md`, `DATA.md` | tests | any code: handlers, screens, other tests |
 | Implementer | everything | code | tests (asks the owner to change a row) |
 | Reviewer | the diff, these files | findings | code |
+
+The test writer's session is started with that limit in its prompt, and it stops and reports instead of opening a
+source file. If a test needs something the docs do not say (a route, an event shape, a field, a constant's name),
+that is a gap in the docs: it is added to `API.md`, `DATA.md` or the row first, by the scenario author, never
+read out of the code. The test writer also never sees the implementer's reasoning or notes, only the docs.
 
 For the browser, the catalogue is the plan Playwright's planner would write, so only its generator and healer are used. The
 generator writes the `e` tests from rows. The healer may change a locator or a wait and **nothing else** (it may skip a test
