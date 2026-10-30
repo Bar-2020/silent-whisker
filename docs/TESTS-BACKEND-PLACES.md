@@ -52,6 +52,7 @@ Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether 
 | LOG-18 | i | Kittens from 51 m, and with accuracy 51; then read `GET /spots`, `GET /spots/{id}` and search at 14 d minus 1 s and at 14 d | `REFUSED`, identical to LOG-16; "kittens seen" is worked out when the server answers (no job) and such spots come first; R-03 and the pin colour are unchanged | R-35, D-67 |
 | LOG-19 | i | The 3 hour window across 00:00 UTC and across an Israeli daylight saving change | It is three real hours, not a calendar rule | R-06, R-10 |
 | LOG-20 | i | Make the database throttle in the middle of a log | Clean refusal; never a log without its timers | R-09 |
+| LOG-21 | i | `left_state` on a counted log, on an unverified one (far from the spot), as `bogus`, and on an empty report | Stored on the counted one; dropped on the unverified one with an answer identical to a log without it; `INVALID_INPUT` and nothing saved for `bogus`; not stored on an empty report | D-93 |
 
 ## Cat alerts (ALR)
 
