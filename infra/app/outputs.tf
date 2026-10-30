@@ -12,3 +12,12 @@ output "site_bucket" {
 output "distribution_id" {
   value = aws_cloudfront_distribution.site.id
 }
+
+output "design_url" {
+  description = "The design mocks' address (D-89)."
+  value       = "https://${aws_cloudfront_distribution.design.domain_name}"
+}
+
+output "design_bucket" {
+  value = aws_s3_bucket.design.bucket
+}
