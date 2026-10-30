@@ -17,7 +17,8 @@ a specific decision.
 
 Beyond those documents, review for correctness bugs, security (especially anything touching
 auth, IAM policies, uploads, moderation, or location privacy), cost (any metered AWS call that
-bypasses the daily cap), and performance.
+bypasses the daily cap), and performance. For a diff that adds or changes behavior, also run the
+test check from `.claude/instructions/pre-pr-review.md`.
 
 ## Writing findings
 
