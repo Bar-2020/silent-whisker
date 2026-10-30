@@ -13,11 +13,15 @@ const WRITING_FLAG = /--fix|--update|\s-u\b/;
 const GLOB_CHARS = /[*?[{]/;
 
 const root = process.env.CLAUDE_PROJECT_DIR ?? process.cwd();
+// A session in a worktree has its project dir at the main checkout, so a path into its own worktree
+// starts with this; it is cut off so the same rules apply there.
+const WORKTREE_PREFIX = /^\.claude\/worktrees\/[^/]+\//u;
 const text = (value) => String(value ?? '');
 const rel = (path) =>
   relative(root, resolve(root, text(path)))
     .split(sep)
-    .join('/');
+    .join('/')
+    .replace(WORKTREE_PREFIX, '');
 const isTest = (path) => TEST_SUFFIX.test(path) || TEST_DIR.test(`${path}/`);
 const readable = (path) => READABLE_DIRS.some((dir) => `${path}/`.startsWith(dir)) || isTest(path);
 const globPrefix = (pattern) => pattern.split(GLOB_CHARS)[0];
