@@ -1,7 +1,6 @@
 import type { ParseKeys } from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
 import { CONTACT_EMAIL } from '@constants/contact';
-import { InfoIcon } from '@shared/components/icon/InfoIcon';
 import type { LegalBlock, LegalSection } from './legal.types';
 import styles from './LegalDocument.module.css';
 
@@ -36,35 +35,34 @@ function Block({ block }: { block: LegalBlock }) {
 /** A long reading page: the contents list beside it on a desktop, hidden on a phone. */
 export function LegalDocument({
   titleKey,
+  idPrefix,
   sections,
 }: {
   titleKey: ParseKeys;
+  idPrefix: string;
   sections: LegalSection[];
 }) {
   const { t } = useTranslation();
   const title = t(titleKey);
+  const idOf = (index: number) => `${idPrefix}-${index + 1}`;
 
   return (
     <div className={styles.wrap}>
       <title>{`${title} | ${t('app.name')}`}</title>
       <nav className={styles.toc} aria-label={t('legal.toc')}>
         <ol>
-          {sections.map(({ heading }) => (
+          {sections.map(({ heading }, index) => (
             <li key={heading}>
-              <a href={`#${heading}`}>{t(heading)}</a>
+              <a href={`#${idOf(index)}`}>{t(heading)}</a>
             </li>
           ))}
         </ol>
       </nav>
       <article className={styles.read}>
         <h1 className={styles.title}>{title}</h1>
-        <div className={styles.notice}>
-          <InfoIcon />
-          <span>{t('legal.sample')}</span>
-        </div>
-        {sections.map(({ heading, blocks }) => (
-          <section key={heading} className={styles.section} aria-labelledby={heading}>
-            <h2 id={heading}>{t(heading)}</h2>
+        {sections.map(({ heading, blocks }, index) => (
+          <section key={heading} className={styles.section} aria-labelledby={idOf(index)}>
+            <h2 id={idOf(index)}>{t(heading)}</h2>
             {blocks.map((block) => (
               <Block key={'list' in block ? block.list[0] : block.paragraph} block={block} />
             ))}

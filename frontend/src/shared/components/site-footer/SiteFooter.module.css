@@ -1,4 +1,4 @@
-@import '../../styles/breakpoints.css';
+@import '../../../styles/breakpoints.css';
 
 /* The footer closes the page the way the hero opens it: the same slate, darker at the bottom. */
 .footer {

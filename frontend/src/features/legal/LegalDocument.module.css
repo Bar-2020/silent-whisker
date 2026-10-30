@@ -29,26 +29,6 @@
   padding-inline-start: var(--s-5);
 }
 
-/* The texts are drafts until the owner's final version replaces them (D-68). */
-.notice {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--s-3);
-  margin-block: var(--s-4) 0;
-  padding: var(--s-3) var(--s-4);
-  border-radius: var(--r-m);
-  background: var(--dado-tint);
-  color: var(--dado);
-}
-
-.notice svg {
-  margin-block-start: 1px;
-}
-
-.notice span {
-  color: var(--ink);
-}
-
 .toc {
   display: none;
 }

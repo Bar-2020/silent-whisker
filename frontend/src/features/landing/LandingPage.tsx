@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
+import { SiteFooter } from '@shared/components/site-footer/SiteFooter';
+import { SECTION_ID } from './sections';
 import { Hero } from './Hero';
-import { LandingFooter } from './LandingFooter';
 import { LandingNav } from './LandingNav';
 import { StepsSection } from './StepsSection';
 import { SupportSection } from './SupportSection';
@@ -21,7 +22,18 @@ export function LandingPage() {
         <TrustSection />
         <SupportSection />
       </main>
-      <LandingFooter />
+      <SiteFooter
+        anchors={
+          <>
+            <li>
+              <a href={`#${SECTION_ID.how}`}>{t('landing.nav.how')}</a>
+            </li>
+            <li>
+              <a href={`#${SECTION_ID.privacy}`}>{t('landing.nav.privacy')}</a>
+            </li>
+          </>
+        }
+      />
     </div>
   );
 }

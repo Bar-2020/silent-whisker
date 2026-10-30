@@ -4,11 +4,13 @@
   /* The wall: where content lives. */
   --wall: #ffffff;
   --surface: #ffffff;
+  --surface-sunk: #eef1f5;
   --line: #d3d9e2;
   --line-strong: #8793a3;
 
   --ink: #1b2430;
   --ink-2: #4a5563;
+  --ink-3: #5f6b79;
 
   /* The dado: the painted band. Every tappable thing is this colour. */
   --dado: #2d4467;

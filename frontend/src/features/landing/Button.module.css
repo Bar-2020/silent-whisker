@@ -51,3 +51,11 @@
 .button[data-quiet]:hover {
   background: var(--dado-tint);
 }
+
+/* Sign-in is not wired yet, so the button shows as unavailable. */
+.button:disabled,
+.button:disabled:hover {
+  background: var(--surface-sunk);
+  color: var(--ink-3);
+  cursor: not-allowed;
+}

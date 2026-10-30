@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
+import { Brandmark } from '@shared/components/brandmark/Brandmark';
 import { LanguageMenu } from '@shared/components/language-menu/LanguageMenu';
-import { Brandmark } from './Brandmark';
 import { SECTION_ID } from './sections';
 import { SignInButton } from './SignInButton';
 import styles from './LandingNav.module.css';
