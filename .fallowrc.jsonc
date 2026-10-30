@@ -15,7 +15,11 @@
     "design/mocks/styles/*.css",
   ],
   "ignorePatterns": ["design/**/*.js", "design/**/*.mjs"],
-  "dynamicallyLoaded": ["lint/silent-whisker-plugin.js", "infra/app/spa-fallback.js"],
+  "dynamicallyLoaded": [
+    "lint/silent-whisker-plugin.js",
+    "infra/app/spa-fallback.js",
+    "infra/app/design-index.js",
+  ],
   // Checker-backed proof of what uses an export; `tsc` stays the type check.
   "typeAware": { "enabled": true, "require": "best-effort" },
   "duplicates": {

@@ -211,9 +211,9 @@ export default defineConfig({
         rules: { 'sonarjs/no-clear-text-protocols': 'off' },
       },
       {
-        // The test runs infra/app/spa-fallback.js, the repo's own CloudFront Function; it never runs
-        // anything from outside the repo.
-        files: ['__tests__/spa-fallback.test.ts'],
+        // The tests run infra/app/spa-fallback.js and design-index.js, the repo's own CloudFront
+        // Functions; they never run anything from outside the repo.
+        files: ['__tests__/spa-fallback.test.ts', '__tests__/design-index.test.ts'],
         rules: { 'sonarjs/code-eval': 'off' },
       },
       {
