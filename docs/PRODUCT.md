@@ -36,7 +36,7 @@ D-73). AWS: S3 + CloudFront, Lambda, DynamoDB, Cognito. Terraform, deployed from
 4. **Cats and the feed**: photos of cats (each must contain one and has a required name of 1 to 40 characters, R-34), at a spot or random with a
    location tag, in an Instagram-style feed, never on the map. Others like and comment (D-44, D-45); an author can remove their own photo or comment (D-80).
 5. **Cat alerts**: a sick cat, a cat in danger or, not urgent, a cat that needs spaying or neutering (D-64), with a photo and a
-   note, tagged from where the member stands. On the map for 6 hours (7 days for spay or neuter), then in a past-alerts list every member sees for 7 days; the member who raised one, or an admin, resolves it; an admin extends it (D-41, D-42, D-84, R-24). An alert has its own page address too (D-83).
+   note, tagged from where the member stands. On the map for 6 hours (7 days for spay or neuter), then in a past-alerts list every member sees for 7 days; the member who raised one, or an admin, resolves it; an admin extends it (D-41, D-42, D-84, R-24). An alert has its own page address too (D-83). The alert page lists 24-hour emergency vets and hotlines (D-98), and the form says an alert may be shared with organisations that can help (D-99).
 6. **Chat**: small, per spot only; cat posts have comments instead (D-48). Automatic moderation. An admin can pause a spot's chat (R-33).
 7. **Profile**: at first sign-in the app asks for the full name (shown to every member, D-70), the city (the map opens there), whether to show the
    Google photo, otherwise initials, and to accept the terms and the privacy policy (D-21, D-27, D-69). Stats: cats helped, feedings, water given. Delete the account (D-71).

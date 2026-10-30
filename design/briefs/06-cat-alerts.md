@@ -37,7 +37,7 @@ Alerts tab with the new item shown to its creator as "in review".
 
 ## Boundaries
 No push (not in v1), so the screen never promises a notification. No link to a spot (spec). No
-vets map layer and no organisations receiving alerts (after v1). Pending design change (D-99, D-100): a list of 24-hour emergency vets and hotlines with tap-to-call on the alert page, and a line in the form saying the alert may be shared with rescue organisations and city vet services, never the member's name.
+vets map layer and no organisations receiving alerts (after v1). Pending design change (D-98, D-99): the emergency vets and hotlines list on the alert page (old entries hidden, no file shows nothing), and the line saying an alert may be shared.
 
 ## Open decisions
 Q5, Q21, Q22.
