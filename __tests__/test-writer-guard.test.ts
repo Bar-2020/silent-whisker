@@ -38,6 +38,7 @@ describe('test-writer guard', () => {
     ['Read', { file_path: WT('docs', 'API.md') }],
     ['Read', { file_path: WT('backend', 'shared', 'metered-call.test.ts') }],
     ['Glob', { pattern: 'docs/TESTS-*.md', path: WT() }],
+    ['Grep', { pattern: 'LOG-07', path: WT('docs') }],
     ['Write', { file_path: WT('backend', 'get-profile', 'handler.test.ts') }],
   ])('allows %s %j', (tool, input) => {
     expect(isDenied(tool, input)).toBe(false);
@@ -66,6 +67,9 @@ describe('test-writer guard', () => {
     ['Read', { file_path: WT('docs', '..', 'backend', 'get-profile', 'handler.ts') }],
     ['Read', { file_path: WT('..', 'other', 'backend', 'get-profile', 'handler.ts') }],
     ['Write', { file_path: WT('backend', 'get-profile', 'handler.ts') }],
+    ['Grep', { pattern: 'handler', path: WT('backend') }],
+    ['Glob', { pattern: '**/*.ts', path: WT('backend') }],
+    ['Glob', { pattern: 'backend/**/*.ts', path: WT() }],
   ])('refuses %s %j', (tool, input) => {
     expect(isDenied(tool, input)).toBe(true);
   });
