@@ -690,7 +690,31 @@
   }
 
   .viewer[data-collapsed='true'] .viewer__controls,
-  .viewer[data-collapsed='true'] .viewer__list {
+  .viewer[data-collapsed='true'] .viewer__list,
+  .viewer[data-collapsed='true'] .viewer__title,
+  .viewer[data-collapsed='true'] .viewer__caption {
     display: none;
+  }
+
+  /* Only the button is left of the bar; the mock takes the whole height below it. */
+  .viewer[data-collapsed='true'] .viewer__bar {
+    justify-content: flex-end;
+    padding-block: var(--s-1);
+  }
+
+  .viewer[data-collapsed='true'] .viewer__main {
+    padding: 0;
+  }
+
+  .viewer[data-collapsed='true'] .viewer__stage {
+    flex: 1;
+    min-block-size: 0;
+    align-items: stretch;
+  }
+
+  .viewer[data-collapsed='true'] .viewer__stage[data-device='phone'] .frame,
+  .viewer[data-collapsed='true'] .viewer__stage[data-device='phone-xs'] .frame {
+    block-size: auto;
+    border-radius: 0;
   }
 }
