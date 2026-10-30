@@ -8,7 +8,9 @@
     "noEmit": true,
     "isolatedModules": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "types": ["node", "vite-plus/client"]
   },
   "include": ["frontend", "backend", "shared", "__tests__"]
 }

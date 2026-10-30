@@ -1,0 +1,17 @@
+.screen {
+  display: grid;
+  place-items: center;
+  min-block-size: 100dvh;
+}
+
+.retry {
+  display: grid;
+  place-items: center;
+  inline-size: var(--tap-l);
+  block-size: var(--tap-l);
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--dado);
+  color: var(--dado-ink);
+  cursor: pointer;
+}

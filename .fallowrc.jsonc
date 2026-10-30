@@ -38,8 +38,9 @@
     "maxUnitSize": 40,
   },
   // The areas meet only in shared/, and features never import each other (CLAUDE.md, Folder
-  // structure). autoDiscover makes every folder in frontend/src/features its own zone. The two
-  // "matched 0 files" warnings stop with the first file in features/ and in frontend/src/shared/.
+  // structure). autoDiscover makes every folder in frontend/src/features its own zone, and those
+  // zones take all of its files. So the "features" zone itself always warns "matched 0 files":
+  // harmless, the rules below still apply to every feature folder.
   "boundaries": {
     "zones": [
       {

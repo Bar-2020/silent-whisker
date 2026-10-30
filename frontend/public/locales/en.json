@@ -1,1 +1,9 @@
-{}
+{
+  "app.name": "Silent Whisker",
+  "common.close": "Close",
+  "lang.choose": "Choose a language",
+  "nav.home": "Home",
+  "states.notFound.back": "Back to the map",
+  "states.notFound.text": "The link may be wrong or the page was removed.",
+  "states.notFound.title": "Page not found"
+}
