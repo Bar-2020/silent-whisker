@@ -668,6 +668,7 @@
     device: params.get('device') || 'phone',
     zoom: params.get('zoom') || '100',
     lang: params.get('lang') || 'he',
+    bar: params.get('bar') || 'open',
   };
 
   const flat = CATALOGUE.flatMap((group) => group.items);
@@ -764,10 +765,25 @@
     segment(el('seg-zoom'), ZOOMS, 'zoom');
     segment(el('seg-lang'), LANGS, 'lang');
     renderList();
+    renderBar();
+  }
+
+  /* Not part of render(): collapsing must not reload the screen in the frame. */
+  function renderBar() {
+    const closed = view.bar === 'closed';
+    document.body.dataset.collapsed = String(closed);
+    const toggle = el('toggle-bar');
+    toggle.textContent = closed ? 'Show menu' : 'Hide menu';
+    toggle.setAttribute('aria-expanded', String(!closed));
     window.location.hash = new URLSearchParams(
       Object.entries(view).map(([k, v]) => [k, String(v)])
     ).toString();
   }
+
+  el('toggle-bar').addEventListener('click', () => {
+    view.bar = view.bar === 'closed' ? 'open' : 'closed';
+    renderBar();
+  });
 
   render();
 })();

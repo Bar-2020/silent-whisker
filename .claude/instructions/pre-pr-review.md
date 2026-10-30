@@ -2,14 +2,17 @@
 Review the branch before opening a PR. Open it only after every finding is resolved.
 
 1. Run `/ponytail-review` (over-engineering) and `/code-review` (correctness) on the branch diff.
-2. Merge both outputs into one list. Their raw output is terse and full of tags (`yagni:`, `stdlib:`),
-   so it is input, not the list you show. Rewrite every point as described in
+2. Run the test check ([the test check](../../docs/TESTING.md#the-test-check)): for every rule,
+   endpoint or screen the diff touches, does a scenario in `docs/TESTS-*.md` exist, and would the
+   test that cites it fail if the rule broke? A missing or weak test is a finding like any other.
+3. Merge all the outputs into one list. The raw output of the two reviews is terse and full of tags
+   (`yagni:`, `stdlib:`), so it is input, not the list you show. Rewrite every point as described in
    [How to write a finding](#how-to-write-a-finding). List every point, nits included, and merge
    duplicates. Number every finding `[R1]`, `[R2]`, ... (finding IDs, not the `R-nn` rules) so the
    reply can be "fix R1 and R3, skip R2".
-3. Show the list and wait for the reply. If nobody is available to reply, say so and stop. Resolve
+4. Show the list and wait for the reply. If nobody is available to reply, say so and stop. Resolve
    each finding as the reply says (fix or skip), then run `npm run verify`.
-4. Open the PR once no finding is left open. If the reviews find nothing, say so in one line and
+5. Open the PR once no finding is left open. If the reviews find nothing, say so in one line and
    open it.
 
 #### How to write a finding
@@ -29,7 +32,7 @@ Every finding has four parts:
 - **Fix:** concrete enough to apply without guessing, and when there is a choice, say which one you
   would pick.
 
-Add which review raised it (`/ponytail-review` or `/code-review`).
+Add which review raised it (`/ponytail-review`, `/code-review` or the test check).
 
 **Never mention a reference on its own.** Wherever a finding points at something else, say in a
 few words what it is, in the same sentence. The reader should not need to open it. This covers:

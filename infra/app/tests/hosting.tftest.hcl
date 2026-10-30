@@ -81,7 +81,7 @@ run "pages_without_a_file_serve_the_app" {
 
   assert {
     condition = alltrue([
-      for b in aws_cloudfront_distribution.site.ordered_cache_behavior : length(b.function_association) == 0
+      for b in aws_cloudfront_distribution.site.ordered_cache_behavior : b.target_origin_id != "api" || length(b.function_association) == 0
     ])
     error_message = "Only the files' behavior may carry the page fallback (D-63): on /api it would answer every call with the web page."
   }

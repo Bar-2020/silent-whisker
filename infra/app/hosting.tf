@@ -69,6 +69,33 @@ resource "aws_cloudfront_distribution" "site" {
     }
   }
 
+  origin {
+    origin_id                = "design"
+    domain_name              = aws_s3_bucket.design.bucket_regional_domain_name
+    origin_access_control_id = aws_cloudfront_origin_access_control.site.id
+  }
+
+  # The design mocks (D-89). The bucket holds them under a `design/` prefix, because CloudFront
+  # passes the path on as it is. Not the page fallback: it would answer a missing mock with the app.
+  dynamic "ordered_cache_behavior" {
+    for_each = ["/design", "/design/*"]
+
+    content {
+      path_pattern           = ordered_cache_behavior.value
+      target_origin_id       = "design"
+      viewer_protocol_policy = "redirect-to-https"
+      allowed_methods        = ["GET", "HEAD"]
+      cached_methods         = ["GET", "HEAD"]
+      cache_policy_id        = aws_cloudfront_cache_policy.design.id
+      compress               = true
+
+      function_association {
+        event_type   = "viewer-request"
+        function_arn = aws_cloudfront_function.design_index.arn
+      }
+    }
+  }
+
   # No page fallback here (D-63). `/api/*` does not match a bare `/api`, which would get the web page.
   dynamic "ordered_cache_behavior" {
     for_each = ["/api", "/api/*"]

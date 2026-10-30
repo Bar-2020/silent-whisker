@@ -12,6 +12,7 @@
 | [docs/DECISIONS.md](../../docs/DECISIONS.md) | The `D-nn` log: accepted, proposed, open |
 | [docs/DESIGN.md](../../docs/DESIGN.md) | The look: colours, type, shapes, components. Exempt from the 150-line cap. Mocks in `design/` |
 | [docs/AWS.md](../../docs/AWS.md) | AWS regions, prices and free-tier facts, with sources and dates |
+| [docs/TESTING.md](../../docs/TESTING.md) | How the app is tested (Phase 7), the test check for reviews, and the list of `docs/TESTS-*.md` files: every scenario with an id, a layer and the rule it proves |
 
 Read PRODUCT and RULES first, then only the file your task touches. If you edit a spec, keep it
 short: cut before you add.
