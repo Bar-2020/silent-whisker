@@ -51,7 +51,7 @@ One column, sections separated by whitespace and a hairline, not cards in cards.
 are at least 56 px tall. State rows stay above the fold on a 360 x 640 phone.
 
 ## Boundaries
-No distance to the spot is shown (Q13). No photo on logs. Undo is only for the logger's own log, and only for 10 minutes. A "this spot was empty" report has no undo in this version.
+No distance to the spot is shown (Q13). No photo on logs. Undo is only for the logger's own log, and only for 10 minutes. A "this spot was empty" report has no undo in this version. Pending design change (D-93, the optional "what was left" tap): update the form, the spot mock and DESIGN.md before Phase 4 (D-55).
 
 ## Open decisions
 Q12 (names are shown in full, decided), Q13 (distance), Q14 (navigate link), Q15 (no reason on rejection), Q17
