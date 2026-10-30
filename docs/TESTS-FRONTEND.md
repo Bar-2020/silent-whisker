@@ -58,7 +58,7 @@ unless a row says otherwise.
 | FIRST-01 | e | First sign-in, then close the tab after each step and return | Order: sign-up form, install guide, location, map; each resumes at its step; the map is out of reach until terms are accepted | R-36, D-31 |
 | FIRST-02 | c | The sign-up form empty, filled, with only the box unticked, with name 1 and 36 characters | Errors in words under the field, the unticked box red; neither photo answer pre-selected; the photo question hidden with no Google photo | D-69, D-27, D-61 |
 | FIRST-03 | c | Double click the submit button; the answer takes 3 seconds | One request; the button shows a spinner while pending | D-57 |
-| FIRST-04 | e | The server answers `MODERATION_REJECTED`, `CITY_NOT_FOUND`, `CHECK_UNAVAILABLE`, `DAILY_LIMIT`, 429, offline | Each its own plain message; a refused name shows the contact address; the form keeps its values | D-62, D-74 |
+| FIRST-04 | e | The server answers `MODERATION_REJECTED`, `CITY_NOT_FOUND`, `CHECK_UNAVAILABLE`, `PROFILE_SAVE_DAILY_LIMIT`, 429, offline | Each its own plain message; a refused name shows the contact address; the form keeps its values | D-62, D-74 |
 | FIRST-05 | e | The location screen: granted, denied, ignored, already granted, no geolocation in the browser | Map at the phone; city map with a one-line notice; never blocks; screen skipped; still works. Shown once per device; "continue" disabled while the prompt is open | D-31 |
 | FIRST-06 | e | The install guide on iPhone, Android, Chrome or Edge, Safari on a Mac, and an unknown browser | The right guide, or the list; Continue works; "later from Profile" is true | D-01 |
 

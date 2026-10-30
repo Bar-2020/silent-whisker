@@ -74,6 +74,36 @@ export async function takeDailyAllowance(
   }
 }
 
+/** Gives back an allowance taken for an action that never ran (D-62); never below zero. */
+export async function giveBackDailyAllowance(
+  guard: CostGuard,
+  name: string,
+  amount: number,
+  now = new Date()
+): Promise<void> {
+  assertPositiveWhole(amount);
+  try {
+    await guard.db.send(
+      new UpdateCommand({
+        TableName: guard.tableName,
+        Key: { key: `${name}#${utcDay(now)}` },
+        UpdateExpression: 'ADD #count :back',
+        ConditionExpression: '#count >= :amount',
+        ExpressionAttributeNames: { '#count': 'count' },
+        ExpressionAttributeValues: { ':back': -amount, ':amount': amount },
+      })
+    );
+  } catch (error) {
+    if (!(error instanceof ConditionalCheckFailedException)) throw error;
+  }
+}
+
+/** How long a member at a daily limit waits: counters reset at midnight UTC (R-06). */
+export const secondsUntilNextUtcDay = (now = new Date()): number => {
+  const midnight = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1);
+  return Math.ceil((midnight - now.getTime()) / MS_PER_SECOND);
+};
+
 /**
  * A marker row makes the email once a UTC day across all Lambda instances. Failures are logged,
  * never thrown: the content still waits pending (never refused for cost), and the AWS Budget is the

@@ -154,13 +154,13 @@ const SONARJS_RULES = sonarjs.configs.recommended.rules as Record<string, 'error
 
 export default defineConfig({
   // One entry and outDir per handler, so its zip never depends on a file another handler shares.
-  pack: {
-    entry: { handler: 'backend/get-profile/handler.ts' },
-    outDir: 'backend/dist/get-profile',
-    target: 'node24',
+  pack: ['get-profile', 'update-profile'].map((name) => ({
+    entry: { handler: `backend/${name}/handler.ts` },
+    outDir: `backend/dist/${name}`,
+    target: 'node24' as const,
     clean: true,
     deps: { onlyBundle: false },
-  },
+  })),
   lint: {
     plugins: ['typescript'],
     jsPlugins: ['eslint-plugin-sonarjs', './lint/silent-whisker-plugin.js'],

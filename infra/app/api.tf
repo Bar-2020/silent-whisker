@@ -5,7 +5,8 @@ locals {
 
   # A new route goes here and in api.json; a test fails if it lacks the authorizer or a throttle.
   route_functions = {
-    "GET /api/profile" = aws_lambda_function.get_profile
+    "GET /api/profile"   = aws_lambda_function.get_profile
+    "PATCH /api/profile" = aws_lambda_function.update_profile
   }
 }
 

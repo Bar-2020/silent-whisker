@@ -9,7 +9,8 @@ import { mockClient } from 'aws-sdk-client-mock';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { TERMS_VERSION } from '../../shared/constants/profile';
 import { handler } from './handler';
-import type { ProfileEvent, UserRow } from './handler.types';
+import type { ApiEvent as ProfileEvent } from '../shared/api.types';
+import type { UserRow } from '../shared/users.types';
 
 const dbMock = mockClient(DynamoDBDocumentClient);
 
