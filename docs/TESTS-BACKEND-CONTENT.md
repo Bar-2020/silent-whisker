@@ -1,6 +1,6 @@
 # Test scenarios: photos, cats, chat, cost and privacy
 
-Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether a limit itself is inside is open (D-91).
+Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether a limit itself is inside is open (D-92).
 
 ## Photos and the photo check (UPL)
 
@@ -13,7 +13,7 @@ Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether 
 | UPL-05 | i | A spot photo the check answers NOT_CAT and UNSAFE | NOT_CAT passes (a spot photo needs no cat); UNSAFE is rejected | R-25, D-09 |
 | UPL-06 | i | A rejected, pending and approved photo: ask for their addresses | Only approved photos have a short-lived signed address; none is in the public prefix before approval | R-04, D-39 |
 | UPL-07 | i | Use one `photo_key` twice, a key never uploaded, a key of another member, a key after rejection | `INVALID_INPUT`; one upload backs one post | R-04 |
-| UPL-08 | i | The check throws while the breaker is not tripped | The photo stays hidden (D-91 asks whether it is retried) | R-04, D-91 |
+| UPL-08 | i | The check throws while the breaker is not tripped | The photo stays hidden (D-92 asks whether it is retried) | R-04, D-92 |
 
 ## Cat posts, feed, likes (CAT)
 
@@ -24,13 +24,13 @@ Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether 
 | CAT-03 | i | Post from two points 5 m apart; then scan the row and every response for `lat`, `lng`, `latitude`, `coords` | Same cell; no exact position stored or returned | R-28 |
 | CAT-04 | i | 11 cat photos in a UTC day; 11 at once | The 11th `DAILY_LIMIT`; exactly 10 at once | R-25 |
 | CAT-05 | i | Feed with a `seen` list: all unseen, some, all seen, empty area, 500 ids and more | Unseen first, most liked then newest, 20 a page; when none are left the seen ones again in the same order; never a `500` | R-29, D-45 |
-| CAT-06 | i | Feed window: a post at 6 d 23 h and 7 d; just inside and outside the 25 km ring; no location; removed, rejected, pending and self-reported posts | Only approved, recent, close posts; the city when there is no location; the author's own pending post is D-91 | D-45, R-04 |
+| CAT-06 | i | Feed window: a post at 6 d 23 h and 7 d; just inside and outside the 25 km ring; no location; removed, rejected, pending and self-reported posts | Only approved, recent, close posts; the city when there is no location; the author's own pending post is D-92 | D-45, R-04 |
 | CAT-07 | i | `POST /cats/feed` as a banned member; count database writes | Works; zero writes, no counter moved | R-08, D-72 |
 | CAT-08 | i | Call `GET /spots?bbox=`, `GET /cat-alerts` and search | No cat photo record in any of them | R-28 |
 | CAT-09 | i | Like, like again; 20 likes at once by one member; 50 members at once; like a removed or pending post; as banned | Count 1 then 0 with no row deleted; one consistent state; count 50; `NOT_FOUND`; `BANNED`; never negative | R-26 |
 | CAT-10 | i | An author removes their photo; someone else tries; the author removes it twice | `removed`, its likes and comments vanish from every list; `NOT_FOUND`; the second defined and harmless | R-38, R-07 |
 | CAT-11 | i | A member reported a photo; read the spot page, feed and cat page as them and as another | Hidden from the reporter only | D-81 |
-| CAT-12 | i | Read the feed card of a cat posted at a custom spot, at a city station, and a random cat | The custom spot's card has a coarse area and no spot name or link; the station's card may name the station; the random cat has a coarse area | R-03, R-28, D-91 |
+| CAT-12 | i | Read the feed card of a cat posted at a custom spot, at a city station, and a random cat | The custom spot's card has a coarse area and no spot name or link; the station's card may name the station; the random cat has a coarse area | R-03, R-28, D-92 |
 
 ## Comments and chat (COM)
 
@@ -38,7 +38,7 @@ Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether 
 |---|---|---|---|---|
 | COM-01 | i | A comment the check passes, rejects and cannot run on; read newest first | Visible after approval; `MODERATION_REJECTED`; hidden | R-04, R-25 |
 | COM-02 | i | 61 comments in a UTC day; 61 at once; chat messages and comments counted apart | The 61st `DAILY_LIMIT`; exactly 60; separate counters | R-25, R-31 |
-| COM-03 | i | 101 chat messages in a UTC day | The limit's answer, as D-91 settles; nothing saved over it | R-31, D-91 |
+| COM-03 | i | 101 chat messages in a UTC day | The limit's answer, as D-92 settles; nothing saved over it | R-31, D-92 |
 | COM-04 | i | A chat-restricted member posts a comment, a message; reads; removes their own | `CHAT_RESTRICTED` twice; reading and removing work | R-08, R-38, D-48 |
 | COM-05 | i | Chat paused: post as member and as admin; read; resume | `CHAT_PAUSED` for all; reads work | R-33 |
 | COM-06 | i | Read and post the chat of a hidden custom spot and of an id that never existed | `NOT_FOUND`, identical: chat must not reveal a hidden spot | R-03 |

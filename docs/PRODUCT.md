@@ -129,7 +129,7 @@ One phase, one PR or smaller. Finish a phase before the next. Inside a phase, bu
    member's logs, an admin gets a flag and that member's next logs need a photo.
 5. Cats, the feed, likes, comments, chat.
 6. Cat alerts, stats, landing-page ads, donation link, launch checklist (privacy policy, terms, Hebrew text moderation test).
-7. Automated testing of the whole app, frontend and backend (D-89): every scenario of [TESTING.md](TESTING.md) becomes a test, written from the specs, plus browser journeys, mutation checks and a deployed smoke test.
+7. Automated testing of the whole app, frontend and backend (D-90): every scenario of [TESTING.md](TESTING.md) becomes a test, written from the specs, plus browser journeys, mutation checks and a deployed smoke test.
 
 ## Evidence on Hand
 

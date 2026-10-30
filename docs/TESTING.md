@@ -1,6 +1,6 @@
 # Testing
 
-How the app is tested, from one function to a whole journey (D-89). The cases are in the
+How the app is tested, from one function to a whole journey (D-90). The cases are in the
 `TESTS-*.md` files below; this file is the method. Every phase ships the tests of its own rules
 ([working-style.md](../.claude/instructions/working-style.md)). Phase 7 runs the whole catalogue
 against the finished app, with a second pair of eyes.
@@ -39,8 +39,8 @@ The layer is in the second column of every row: the lowest one that can prove th
 | `u` | One function, no I/O: distance, need colours (D-14), expiry sums, validators | Vitest (`npm test`) | ms |
 | `i` | A handler called as a function with a real event and a real database; paid clients faked | Vitest and DynamoDB Local (proposed) | seconds |
 | `c` | A screen or hook in a test DOM, the API faked | Vitest and Testing Library (proposed) | seconds |
-| `e` | The built app in a real browser, against a local server running the real handlers (D-90) | Playwright (proposed) | minutes |
-| `d` | The deployed site and API, read-only, with the owner's test user (D-90) | A script after each deploy | minutes |
+| `e` | The built app in a real browser, against a local server running the real handlers (D-91) | Playwright (proposed) | minutes |
+| `d` | The deployed site and API, read-only, with the owner's test user (D-91) | A script after each deploy | minutes |
 | `m` | By hand: a native speaker's read, a real Google sign-in, a real phone | A checklist before launch | - |
 | `t` | Terraform: routes, roles, tables | `npm run test:iac` (exists) | seconds |
 
@@ -48,14 +48,14 @@ Most backend rows are `i`. The rules (R-10, R-12, R-13, R-17, D-52) rest on **co
 proves which call was made, not that the database refuses the second one. AWS's own serverless testing guide
 says the same: mocked services do not check IAM, quotas or real behaviour, integration tests carry the weight,
 and emulators are used sparingly. DynamoDB Local is the free-tier compromise; a first spike must show it refuses a
-conditional write like the real service. `d` covers the deployed site, read-only (D-90).
+conditional write like the real service. `d` covers the deployed site, read-only (D-91).
 
 ## How a test is written
 
 1. **Cite it.** The test names its scenario and rule: `// LOG-07, R-10`. A row with no test is a gap; a script
    lists the gaps at the end of Phase 7. A test with no row is allowed only for a pure `u` test. Ids are never renumbered or reused.
 2. **Boundaries come from the constants.** Try value minus one, the value and plus one, read from
-   `shared/constants/`, so a changed constant keeps the test true. Whether the limit itself is inside is D-91.
+   `shared/constants/`, so a changed constant keeps the test true. Whether the limit itself is inside is D-92.
 3. **Refuse as the person who should be refused** (working-style). Call the real handler as that member, then
    check the whole answer and **what was not saved** (no row, no counter moved, no object copied), not only the status.
 4. **Races are tests.** Send N identical requests at once (`Promise.all`) and expect exactly the allowed number to
@@ -100,7 +100,7 @@ it thinks is broken, and a skip fails the audit here), and a person reads every 
 
 Write to production: the deployed check only reads. Call a real paid model from CI (the one real-model run is
 `scripts/photo-check-test.mjs`, by hand, D-50). Use a real member's Google account (the deployed check uses the owner's test
-user, D-90). Send a real email (the breaker's mail is a fake). Load test the real stack: a flood can pause the project (D-38, D-22).
+user, D-91). Send a real email (the breaker's mail is a fake). Load test the real stack: a flood can pause the project (D-38, D-22).
 
 ## The test check
 
@@ -124,7 +124,7 @@ Run before every PR ([pre-pr-review.md](../.claude/instructions/pre-pr-review.md
 3. The mutation score is at the proposed 80% on rule code; each survivor is answered by a new row or a written reason.
 4. Every journey in `TESTS-JOURNEYS.md` is green on Chromium and WebKit, at phone and desktop sizes, in Hebrew and
    English; the shell and the log flow also in Arabic and Russian.
-5. The deployed smoke test is green after a real deploy, D-90 is answered and the gaps of D-91 are decided.
+5. The deployed smoke test is green after a real deploy, D-91 is answered and the gaps of D-92 are decided.
 6. `DECISIONS.md` says how many bugs and spec gaps the phase found.
 
 ## Sources

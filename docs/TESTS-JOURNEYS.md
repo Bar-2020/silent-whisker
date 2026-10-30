@@ -1,7 +1,7 @@
 # Test scenarios: whole journeys, the deployed site, infrastructure
 
 Layers and how to cite: [TESTING.md](TESTING.md). Journeys use several members at once, so they run in the browser
-against the local server of D-90 (`e`) or as handler calls (`i`). The paid checks are faked; nothing here writes to the real stack.
+against the local server of D-91 (`e`) or as handler calls (`i`). The paid checks are faked; nothing here writes to the real stack.
 
 ## Journeys (JRN)
 
@@ -31,7 +31,7 @@ against the local server of D-90 (`e`) or as handler calls (`i`). The paid check
 | DEP-02 | d | Without a token: the API, `/locales/he.json`, `/privacy`, `/terms`, `/` | The API a bare `401`; the other four `200` | R-22 |
 | DEP-03 | d | A photo's public address without a signature; an expired signed address; the quarantine prefix | Denied; `403`; unreadable by anyone | D-39, R-04 |
 | DEP-04 | d | After each deploy: fetch `index.html` and every file it names; the four locale files; `/api/profile` without a token | All `200`; valid JSON with equal keys; `401` | D-02, R-19 |
-| DEP-05 | d | A sign-in with the owner's test user (D-90), then `GET /profile`, the map and one spot page | `200` each; nothing is written except the profile row the first `GET` makes | D-90, D-59 |
+| DEP-05 | d | A sign-in with the owner's test user (D-91), then `GET /profile`, the map and one spot page | `200` each; nothing is written except the profile row the first `GET` makes | D-91, D-59 |
 | DEP-06 | m | Sign in by hand with a real Google account, once before launch, through Google's own consent screens | Works end to end; Google's screens cannot be scripted reliably | D-04 |
 
 ## Infrastructure (INFRA)

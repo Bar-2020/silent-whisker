@@ -3,7 +3,7 @@ import { readFileSync, readdirSync } from 'fs';
 import { join, resolve } from 'path';
 
 /**
- * docs/TESTS-*.md is the plan for the tests of Phase 7 (D-89). A rule with no scenario is a rule
+ * docs/TESTS-*.md is the plan for the tests of Phase 7 (D-90). A rule with no scenario is a rule
  * nobody planned to test, and a repeated id points a test at two cases, so both are checked
  * rather than trusted.
  */
