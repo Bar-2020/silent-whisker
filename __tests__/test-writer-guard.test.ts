@@ -10,6 +10,9 @@ import { resolve } from 'path';
 const ROOT = resolve(__dirname, '..');
 const GUARD = resolve(ROOT, 'scripts', 'test-writer-guard.mjs');
 
+// A worktree session: the project dir is the main checkout, tool paths point into its own worktree.
+const WT = (...parts: string[]) => resolve(ROOT, '.claude', 'worktrees', 'w1', ...parts);
+
 function isDenied(tool_name: string, tool_input: Record<string, unknown>): boolean {
   const out = execFileSync(process.execPath, [GUARD], {
     input: JSON.stringify({ tool_name, tool_input }),
@@ -32,6 +35,11 @@ describe('test-writer guard', () => {
     ['Write', { file_path: resolve(ROOT, 'backend', 'test-support', 'fake-clock.ts') }],
     ['Bash', { command: 'npm test -- backend/get-profile' }],
     ['Bash', { command: 'vp test run' }],
+    ['Read', { file_path: WT('docs', 'API.md') }],
+    ['Read', { file_path: WT('backend', 'shared', 'metered-call.test.ts') }],
+    ['Glob', { pattern: 'docs/TESTS-*.md', path: WT() }],
+    ['Grep', { pattern: 'LOG-07', path: WT('docs') }],
+    ['Write', { file_path: WT('backend', 'get-profile', 'handler.test.ts') }],
   ])('allows %s %j', (tool, input) => {
     expect(isDenied(tool, input)).toBe(false);
   });
@@ -55,6 +63,13 @@ describe('test-writer guard', () => {
     ['Grep', { pattern: 'handler', glob: '{*.test.ts,handler.ts}' }],
     ['Glob', { pattern: 'x/__tests__/../../backend/**/*.ts' }],
     ['Read', { file_path: resolve(ROOT, 'README.md') }],
+    ['Read', { file_path: WT('backend', 'get-profile', 'handler.ts') }],
+    ['Read', { file_path: WT('docs', '..', 'backend', 'get-profile', 'handler.ts') }],
+    ['Read', { file_path: WT('..', 'other', 'backend', 'get-profile', 'handler.ts') }],
+    ['Write', { file_path: WT('backend', 'get-profile', 'handler.ts') }],
+    ['Grep', { pattern: 'handler', path: WT('backend') }],
+    ['Glob', { pattern: '**/*.ts', path: WT('backend') }],
+    ['Glob', { pattern: 'backend/**/*.ts', path: WT() }],
   ])('refuses %s %j', (tool, input) => {
     expect(isDenied(tool, input)).toBe(true);
   });
