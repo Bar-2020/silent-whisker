@@ -24,7 +24,11 @@ function checkIfGooglePhoto(picture: string | undefined): boolean {
 }
 
 /** A conditional write, so two first calls at once make one row: the loser reads the winner's. */
-async function createUser(userId: string, photo: string | undefined): Promise<UserRow> {
+async function createUser(
+  table: string,
+  userId: string,
+  photo: string | undefined
+): Promise<UserRow> {
   const row: UserRow = {
     user_id: userId,
     status: 'active',
@@ -39,7 +43,7 @@ async function createUser(userId: string, photo: string | undefined): Promise<Us
   try {
     await db.send(
       new PutCommand({
-        TableName: requiredEnv('USERS_TABLE'),
+        TableName: table,
         Item: row,
         ConditionExpression: 'attribute_not_exists(user_id)',
       })
@@ -47,7 +51,7 @@ async function createUser(userId: string, photo: string | undefined): Promise<Us
     return row;
   } catch (error) {
     if (!(error instanceof ConditionalCheckFailedException)) throw error;
-    const winner = await readUser(db, requiredEnv('USERS_TABLE'), userId, true);
+    const winner = await readUser(db, table, userId, true);
     if (!winner) throw error;
     return winner;
   }
@@ -60,13 +64,13 @@ function memberFrom(event: ApiEvent): Member | undefined {
   return { userId: claims.sub, photo };
 }
 
-async function loadUser({ userId, photo }: Member): Promise<UserRow> {
-  const user = await readUser(db, requiredEnv('USERS_TABLE'), userId);
-  if (!user) return createUser(userId, photo);
+async function loadUser(table: string, { userId, photo }: Member): Promise<UserRow> {
+  const user = await readUser(db, table, userId);
+  if (!user) return createUser(table, userId, photo);
   if (!photo || photo === user.avatar_url) return user;
   await db.send(
     new UpdateCommand({
-      TableName: requiredEnv('USERS_TABLE'),
+      TableName: table,
       Key: { user_id: userId },
       UpdateExpression: 'SET avatar_url = :photo',
       ExpressionAttributeValues: { ':photo': photo },
@@ -79,5 +83,5 @@ export async function handler(event: ApiEvent): Promise<ApiResult> {
   const member = memberFrom(event);
   if (!member) return refuse(STATUS_UNAUTHORIZED, 'UNAUTHORIZED');
   // A banned member still gets the profile (API.md).
-  return reply(STATUS_OK, profileOf(await loadUser(member)));
+  return reply(STATUS_OK, profileOf(await loadUser(requiredEnv('USERS_TABLE'), member)));
 }
