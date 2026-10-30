@@ -115,6 +115,10 @@
     inset-block-end: var(--s-4);
   }
 
+  .results--list {
+    --results-clear: var(--s-4);
+  }
+
   /* The credit sits at the bottom, left of the action buttons, in both directions. */
   .stage .mapcredit,
   [dir='rtl'] .stage .mapcredit {

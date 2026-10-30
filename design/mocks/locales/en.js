@@ -709,10 +709,11 @@ window.MOCK_LOCALES.en = {
   'map.list': 'Spots to feed near me',
   'map.showMap': 'Show the map',
   'map.list.title': 'Spots to feed near you',
-  'map.list.sorted':
-    'By priority: red and kittens seen first, then the rest. Nearest first inside each group.',
+  'map.list.sorted': 'By priority: most urgent first, then nearest.',
   'map.list.empty': 'Nothing near you needs help right now.',
   'map.list.emptyHint': 'Check again later, or look around on the map.',
+  'map.list.distance.m': '{n} m',
+  'map.list.distance.km': '{n} km',
   'alerts.reporter.resolve': 'Mark as handled',
   'alerts.reporter.hint':
     'Use it when the cat was helped or is no longer there. The alert leaves the map for everyone.',

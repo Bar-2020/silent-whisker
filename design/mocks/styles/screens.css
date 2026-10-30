@@ -492,6 +492,20 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   padding: var(--s-2);
 }
 
+/* The list stays on screen beside the round map buttons, so it stops above them and none covers a
+   row. --results-clear is the gap the buttons keep below, which the wide layout shrinks. */
+.results--list {
+  --results-clear: calc(var(--nav-total) + var(--s-6));
+  max-block-size: min(
+    60dvh,
+    28rem,
+    calc(
+      100dvh - var(--s-4) - var(--round) - var(--s-2) - 3 * var(--round) - 2 * var(--s-3) -
+        var(--results-clear) - var(--s-3)
+    )
+  );
+}
+
 @supports not (backdrop-filter: blur(1px)) {
   .results {
     background: var(--surface);
@@ -535,6 +549,36 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   display: flex;
   flex-direction: column;
   min-inline-size: 0;
+}
+
+/* A spot's row in the list: the name and its distance on one line, the state chips under them. */
+.results--list .results__text {
+  flex: 1;
+}
+
+.results__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.results__distance {
+  flex: none;
+}
+
+.results__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1) var(--s-2);
+  margin-block-start: var(--s-1);
+}
+
+/* Lines up with the title and the rows' text. */
+.results__hint {
+  padding-inline: var(--s-3);
+  padding-block-end: var(--s-2);
 }
 
 .results--none {

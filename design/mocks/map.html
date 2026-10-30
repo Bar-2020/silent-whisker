@@ -119,15 +119,22 @@
             </div>
 
             <!-- List view: spots to feed near the phone; red with kittens, red, the rest (D-103). -->
-            <div class="results" id="spot-list" data-when="list">
+            <div class="results results--list" id="spot-list" data-when="list">
               <div class="results__group" role="group" aria-labelledby="list-h">
                 <h2 class="results__title" id="list-h" data-t="map.list.title"></h2>
-                <p class="small muted" data-t="map.list.sorted"></p>
+                <p class="results__hint small muted" data-t="map.list.sorted"></p>
                 <a class="results__item" href="spot.html?screen=detail&state=kittens">
                   <span class="results__icon"><i data-icon="pin"></i></span>
-                  <span class="results__text"
-                    ><strong data-t="demo.spot1.name"></strong
-                    ><span class="small muted"
+                  <span class="results__text">
+                    <span class="results__head"
+                      ><strong data-t="demo.spot1.name"></strong
+                      ><span
+                        class="results__distance num small muted"
+                        data-t="map.list.distance.m"
+                        data-v='{"n":80}'
+                      ></span
+                    ></span>
+                    <span class="results__meta"
                       ><span class="chip" data-level="red"
                         ><i data-icon="bowl-empty"></i><span data-t="map.legend.red"></span
                       ></span>
@@ -135,41 +142,62 @@
                         ><i data-icon="paw" data-class="icon--s"></i
                         ><span data-t="spot.tag.kittens"></span
                       ></span>
-                      <span class="num" data-t="alerts.distance.m" data-v='{"n":80}'></span></span
-                  ></span>
+                    </span>
+                  </span>
                 </a>
                 <a class="results__item" href="spot.html?screen=detail&state=red">
                   <span class="results__icon"><i data-icon="pin"></i></span>
-                  <span class="results__text"
-                    ><strong data-t="demo.spot2.name"></strong
-                    ><span class="small muted"
+                  <span class="results__text">
+                    <span class="results__head"
+                      ><strong data-t="demo.spot2.name"></strong
+                      ><span
+                        class="results__distance num small muted"
+                        data-t="map.list.distance.m"
+                        data-v='{"n":410}'
+                      ></span
+                    ></span>
+                    <span class="results__meta"
                       ><span class="chip" data-level="red"
                         ><i data-icon="bowl-empty"></i><span data-t="map.legend.red"></span
                       ></span>
-                      <span class="num" data-t="alerts.distance.m" data-v='{"n":410}'></span></span
-                  ></span>
+                    </span>
+                  </span>
                 </a>
                 <a class="results__item" href="spot.html?screen=detail&state=orange">
                   <span class="results__icon"><i data-icon="pin"></i></span>
-                  <span class="results__text"
-                    ><strong data-t="demo.spot3.name"></strong
-                    ><span class="small muted"
+                  <span class="results__text">
+                    <span class="results__head"
+                      ><strong data-t="demo.spot3.name"></strong
+                      ><span
+                        class="results__distance num small muted"
+                        data-t="map.list.distance.m"
+                        data-v='{"n":210}'
+                      ></span
+                    ></span>
+                    <span class="results__meta"
                       ><span class="chip" data-level="orange"
                         ><i data-icon="clock"></i><span data-t="map.legend.orange"></span
                       ></span>
-                      <span class="num" data-t="alerts.distance.m" data-v='{"n":210}'></span></span
-                  ></span>
+                    </span>
+                  </span>
                 </a>
                 <a class="results__item" href="spot.html?screen=detail&state=none">
                   <span class="results__icon"><i data-icon="pin"></i></span>
-                  <span class="results__text"
-                    ><strong data-t="demo.station.name"></strong
-                    ><span class="small muted"
+                  <span class="results__text">
+                    <span class="results__head"
+                      ><strong data-t="demo.station.name"></strong
+                      ><span
+                        class="results__distance num small muted"
+                        data-t="map.list.distance.m"
+                        data-v='{"n":300}'
+                      ></span
+                    ></span>
+                    <span class="results__meta"
                       ><span class="chip" data-level="none"
                         ><i data-icon="dash"></i><span data-t="map.legend.none"></span
                       ></span>
-                      <span class="num" data-t="alerts.distance.m" data-v='{"n":300}'></span></span
-                  ></span>
+                    </span>
+                  </span>
                 </a>
               </div>
             </div>
