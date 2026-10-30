@@ -5,7 +5,7 @@ import { GOOGLE_IMAGE_HOST_SUFFIX } from '../../shared/constants/profile';
 import { refuse, reply, verifiedClaims } from '../shared/api';
 import type { ApiEvent, ApiResult } from '../shared/api.types';
 import { requiredEnv } from '../shared/env';
-import { profileOf, readUser } from '../shared/users';
+import { buildProfileResponse, readUserRow } from '../shared/users';
 import type { UserRow } from '../shared/users.types';
 import type { Member } from './handler.types';
 
@@ -51,7 +51,7 @@ async function createUser(
     return row;
   } catch (error) {
     if (!(error instanceof ConditionalCheckFailedException)) throw error;
-    const winner = await readUser(db, table, userId, true);
+    const winner = await readUserRow(db, table, userId, true);
     if (!winner) throw error;
     return winner;
   }
@@ -65,7 +65,7 @@ function memberFrom(event: ApiEvent): Member | undefined {
 }
 
 async function loadUser(table: string, { userId, photo }: Member): Promise<UserRow> {
-  const user = await readUser(db, table, userId);
+  const user = await readUserRow(db, table, userId);
   if (!user) return createUser(table, userId, photo);
   if (!photo || photo === user.avatar_url) return user;
   await db.send(
@@ -83,5 +83,5 @@ export async function handler(event: ApiEvent): Promise<ApiResult> {
   const member = memberFrom(event);
   if (!member) return refuse(STATUS_UNAUTHORIZED, 'UNAUTHORIZED');
   // A banned member still gets the profile (API.md).
-  return reply(STATUS_OK, profileOf(await loadUser(requiredEnv('USERS_TABLE'), member)));
+  return reply(STATUS_OK, buildProfileResponse(await loadUser(requiredEnv('USERS_TABLE'), member)));
 }

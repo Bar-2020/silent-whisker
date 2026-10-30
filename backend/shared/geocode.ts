@@ -20,12 +20,19 @@ const normaliseQuery = (text: string): string =>
 
 const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
+/** A damaged row counts as a miss: the lookup asks again and writes the row over (D-87). */
+function placeOf(item: Record<string, unknown>): Place | undefined {
+  const { lat, lng, place } = item;
+  return typeof lat === 'number' && typeof lng === 'number' && typeof place === 'string'
+    ? { lat, lng, place }
+    : undefined;
+}
+
 async function readCache(deps: GeocodeDeps, query: string): Promise<Place | undefined> {
   const { Item } = await deps.db.send(
     new GetCommand({ TableName: deps.cacheTable, Key: { query } })
   );
-  const hit = Item as Place | undefined;
-  return hit && { lat: hit.lat, lng: hit.lng, place: hit.place };
+  return Item === undefined ? undefined : placeOf(Item);
 }
 
 /** One row per second, written only if absent, so every instance together sends one request a second (D-87). */
@@ -82,7 +89,9 @@ async function fetchHits(query: string): Promise<unknown> {
 /** A hit with a point and a name, else nothing: the answer comes from outside, so every field is checked. */
 function readHit(hit: unknown): Place | undefined {
   if (typeof hit !== 'object' || hit === null) return undefined;
-  const { lat, lon, display_name: name } = hit as Record<string, unknown>;
+  const lat: unknown = Reflect.get(hit, 'lat');
+  const lon: unknown = Reflect.get(hit, 'lon');
+  const name: unknown = Reflect.get(hit, 'display_name');
   if (typeof lat !== 'string' || typeof lon !== 'string' || typeof name !== 'string') {
     return undefined;
   }

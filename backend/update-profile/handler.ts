@@ -22,7 +22,7 @@ import {
   takeDailyAllowance,
 } from '../shared/metered-call';
 import type { CostGuard } from '../shared/metered-call.types';
-import { profileOf, readUser } from '../shared/users';
+import { buildProfileResponse, parseUserRow, readUserRow } from '../shared/users';
 import type { UserRow } from '../shared/users.types';
 import type { Changes, ProfileInput } from './handler.types';
 import { invalidInput, parseInput } from './input';
@@ -47,7 +47,7 @@ interface Save {
 }
 
 async function memberRow(userId: string): Promise<UserRow> {
-  const user = await readUser(db, requiredEnv('USERS_TABLE'), userId, true);
+  const user = await readUserRow(db, requiredEnv('USERS_TABLE'), userId, true);
   if (!user) throw new Refusal(refuse(STATUS_NOT_FOUND, 'NOT_FOUND'));
   if (user.status === 'banned') throw new Refusal(refuse(STATUS_FORBIDDEN, 'BANNED'));
   return user;
@@ -156,7 +156,8 @@ async function store(userId: string, user: UserRow, changes: Changes): Promise<U
         ReturnValues: 'ALL_NEW',
       })
     );
-    return Attributes as UserRow;
+    if (!Attributes) throw new Error('The members table gave no row back after the update');
+    return parseUserRow(Attributes);
   } catch (error) {
     if (!(error instanceof ConditionalCheckFailedException)) throw error;
     throw new Refusal(refuse(STATUS_FORBIDDEN, 'BANNED'));
@@ -184,7 +185,7 @@ export async function handler(event: ApiEvent): Promise<ApiResult> {
     requireInputs(save);
     await spend(save, WRITE_BUDGET, WRITES_PER_DAY, 'RATE_LIMITED');
     const changes = await changesFor(save);
-    return reply(STATUS_OK, profileOf(await store(claims.sub, user, changes)));
+    return reply(STATUS_OK, buildProfileResponse(await store(claims.sub, user, changes)));
   } catch (error) {
     if (error instanceof Refusal) return error.result;
     throw error;

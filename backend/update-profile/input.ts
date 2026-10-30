@@ -31,13 +31,13 @@ export function parseInput(body: string | undefined): ProfileInput {
     throw invalidInput();
   }
   if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) throw invalidInput();
-  const fields = parsed as Record<string, unknown>;
-  const show = fields.show_google_photo;
+  const field = (name: string): unknown => Reflect.get(parsed, name);
+  const show = field('show_google_photo');
   if (show !== undefined && typeof show !== 'boolean') throw invalidInput();
   return {
-    displayName: textField(fields.display_name),
-    city: textField(fields.city),
+    displayName: textField(field('display_name')),
+    city: textField(field('city')),
     showGooglePhoto: show,
-    acceptTerms: fields.accept_terms === true,
+    acceptTerms: field('accept_terms') === true,
   };
 }

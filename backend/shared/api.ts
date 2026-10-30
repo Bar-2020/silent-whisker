@@ -35,5 +35,5 @@ export class Refusal extends Error {
  */
 export function verifiedClaims(event: ApiEvent): Claims | undefined {
   const claims = event.requestContext.authorizer?.jwt?.claims;
-  return claims?.token_use === 'id' && claims.sub ? (claims as Claims) : undefined;
+  return claims?.token_use === 'id' && claims.sub ? { ...claims, sub: claims.sub } : undefined;
 }

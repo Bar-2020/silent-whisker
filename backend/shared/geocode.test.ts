@@ -69,6 +69,16 @@ describe('lookupPlace asks the cache first (D-29: no question is sent twice)', (
     expect(read.args[0].input).toMatchObject({ TableName: CACHE, Key: { query: key } });
   });
 
+  it('treats a damaged cache row as a miss and asks again', async () => {
+    dbMock.on(GetCommand).resolves({ Item: { query: 'haifa', lat: 'north', lng: 34.99 } });
+    fetchMock.mockResolvedValue(answer(hits));
+
+    const found = await lookupPlace(deps, 'Haifa');
+
+    expect(found).toEqual(HAIFA);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it('makes no second request for a city it has already found', async () => {
     const saved = new Map<string, Record<string, unknown>>();
     dbMock.on(GetCommand).callsFake((input: { Key: { query: string } }) => ({

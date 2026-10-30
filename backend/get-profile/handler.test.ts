@@ -231,6 +231,16 @@ describe('GET /api/profile and the terms (R-36)', () => {
   });
 });
 
+describe('GET /api/profile when the stored row is damaged', () => {
+  it('fails loudly and says which fields are wrong, instead of passing bad data on', async () => {
+    dbMock.on(GetCommand).resolves({ Item: { user_id: 'user-1', status: 'active' } });
+
+    await expect(handler(idToken())).rejects.toThrow(
+      'The users row of user-1 is broken: "show_google_photo" should be a boolean, not undefined'
+    );
+  });
+});
+
 describe('GET /api/profile for a banned member (API.md)', () => {
   it('still answers, with the status, so the app can say so', async () => {
     dbMock.on(GetCommand).resolves({ Item: row({ status: 'banned' }) });
