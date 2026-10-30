@@ -674,3 +674,23 @@
   justify-content: space-between;
   gap: var(--s-2) var(--s-3);
 }
+
+.viewer__toggle {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .viewer__toggle {
+    display: inline-flex;
+  }
+
+  /* The list is gone too, so the screen takes its row. */
+  .viewer[data-collapsed='true'] {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .viewer[data-collapsed='true'] .viewer__controls,
+  .viewer[data-collapsed='true'] .viewer__list {
+    display: none;
+  }
+}
