@@ -16,13 +16,13 @@ against the finished app, with a second pair of eyes.
 
 ## Why a Phase 7 when every phase ships tests
 
-A phase's tests are written by the session that wrote the code, from the code it just wrote, so they tend
-to agree with it, mistakes included. Phase 7 is the independent pass:
+Tests written by the session that wrote the code tend to agree with it, mistakes included. So in every
+phase the tests are written by a test writer that never reads the handlers or screens (see Agentic
+workflow). Phase 7 is the independent pass over all of them:
 
 1. The scenarios were written from the specs, before most of the code exists.
-2. A fresh session turns each row into a test from `RULES.md`, `API.md` and `DATA.md`, **without reading the
-   handler or the screen**. A red scenario is a bug in the code, a gap in the spec (a `D-nn`) or a wrong
-   scenario. The owner decides which, not the test.
+2. Each row became a test from the docs alone, **without reading the code under test**. A red scenario is a
+   bug in the code, a gap in the spec (a `D-nn`) or a wrong scenario. The owner decides which, not the test.
 3. Mutation testing (below) checks that the tests would notice a change.
 4. Browser journeys and a deployed smoke test cover what no handler test can: a real browser, the real
    CloudFront and API Gateway.
@@ -88,9 +88,20 @@ Four jobs, each its own session (a subagent or a fresh session), so nobody marks
 | Job | Reads | Writes | Never |
 |---|---|---|---|
 | Scenario author | specs, design briefs | rows here | code |
-| Test writer | these files, `RULES.md`, `API.md`, `DATA.md` | tests | the handler or screen code |
+| Test writer | all of `docs/`, `shared/constants/`, the tests and their helpers (fakes, fixtures, seed test) | tests and helpers | handlers, screens, any other code |
 | Implementer | everything | code | tests (asks the owner to change a row) |
 | Reviewer | the diff, these files | findings | code |
+
+The test writer is the same job in every phase. Tests and helpers live in `*.test.ts(x)` files or in
+`__tests__/` and `test-support/` folders; those are the only files it may write. The `test-writer` agent
+(`.claude/agents/test-writer.md`) is held to this by a hook, `scripts/test-writer-guard.mjs`, which refuses any
+other read or write and any shell command except an `npm` script or a `vp test run`. A session started by hand has
+no hook, so its prompt must state the limit and it stops and reports instead of opening a source file. The hook
+cannot hide what a failing run prints: a red test may show lines of the handler. The test writer ignores them and
+reports the failure; it does not change the test to fit what it saw.
+
+If a test needs something the docs do not say (a route, an event shape, a field), that is a gap in the docs: the
+scenario author adds it to `API.md`, `DATA.md` or the row first. The test writer never reads it out of the code.
 
 For the browser, the catalogue is the plan Playwright's planner would write, so only its generator and healer are used. The
 generator writes the `e` tests from rows. The healer may change a locator or a wait and **nothing else** (it may skip a test
