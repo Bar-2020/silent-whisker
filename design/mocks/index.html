@@ -24,9 +24,6 @@
           rel="noopener"
           >Design system</a
         >
-        <a class="btn btn--small btn--on-dado" id="open-tab" target="_blank" rel="noopener"
-          >Open in a tab</a
-        >
       </div>
     </header>
 
@@ -34,7 +31,11 @@
 
     <main class="viewer__main">
       <div class="viewer__caption">
-        <h1 id="caption-title"></h1>
+        <div class="viewer__headline">
+          <h1 id="caption-title"></h1>
+          <!-- Same tab, so the phone's back gesture returns here. -->
+          <a class="btn btn--small btn--secondary" id="open-tab">Screen only</a>
+        </div>
         <p class="muted" id="caption-detail"></p>
         <div class="cluster" id="caption-questions"></div>
       </div>

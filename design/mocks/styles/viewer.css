@@ -666,3 +666,11 @@
 .ds__grid-photos {
   max-inline-size: 22rem;
 }
+
+.viewer__headline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2) var(--s-3);
+}
