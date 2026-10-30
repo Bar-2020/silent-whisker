@@ -1,0 +1,4 @@
+/* How far the hero band runs up under the navigation pill. */
+.page {
+  --nav-offset: 84px;
+}

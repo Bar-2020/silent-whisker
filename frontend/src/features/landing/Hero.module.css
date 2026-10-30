@@ -1,0 +1,51 @@
+@import '../../styles/breakpoints.css';
+
+.band {
+  margin-block-start: calc(var(--nav-offset) * -1);
+  padding-block-start: var(--nav-offset);
+  background:
+    radial-gradient(70% 40% at 88% 6%, rgb(143 165 200 / 0.38), transparent 72%),
+    radial-gradient(60% 36% at 4% 62%, rgb(58 90 145 / 0.55), transparent 72%),
+    linear-gradient(168deg, var(--band-deep) 0%, var(--dado) 46%, var(--band-lift) 100%);
+}
+
+/* On a phone the first screen is the pitch alone. */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: var(--s-5);
+  max-inline-size: 64rem;
+  min-block-size: calc(100svh - var(--nav-offset) - 4rem);
+  margin-inline: auto;
+  padding: var(--s-6) var(--s-5) var(--s-8);
+}
+
+.hero h1 {
+  font: var(--type-display);
+  color: var(--dado-ink);
+}
+
+.lead {
+  font: var(--type-body);
+  color: var(--dado-quiet);
+  text-wrap: balance;
+}
+
+@media (--tablet) {
+  .hero {
+    align-items: flex-start;
+  }
+}
+
+@media (--desktop) {
+  .hero {
+    min-block-size: 0;
+    padding-block: var(--s-7) var(--s-8);
+  }
+
+  .hero h1 {
+    max-inline-size: 16ch;
+  }
+}

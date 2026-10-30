@@ -1,0 +1,81 @@
+@import '../../styles/breakpoints.css';
+
+/* The footer closes the page the way the hero opens it: the same slate, darker at the bottom. */
+.footer {
+  padding: var(--s-8) var(--s-5) var(--s-6);
+  background: linear-gradient(180deg, var(--dado-deep), var(--band-deep));
+  color: var(--dado-quiet);
+}
+
+.footer a {
+  color: var(--dado-ink);
+}
+
+.inner {
+  display: grid;
+  gap: var(--s-6);
+  inline-size: min(100%, 64rem);
+  margin-inline: auto;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--s-5);
+}
+
+.links a {
+  display: flex;
+  align-items: center;
+  min-block-size: 44px;
+  text-decoration: none;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
+
+.base {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding-block-start: var(--s-5);
+  border-block-start: 1px solid rgb(255 255 255 / 0.16);
+  font: var(--type-small);
+}
+
+.made {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+
+.made svg {
+  inline-size: 1rem;
+  block-size: 1rem;
+  fill: currentColor;
+  color: var(--heart);
+}
+
+@media (--tablet) {
+  .inner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    column-gap: var(--s-8);
+  }
+
+  .links {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .base {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}

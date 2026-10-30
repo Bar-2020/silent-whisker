@@ -7,12 +7,12 @@
   border: 0;
   border-radius: var(--r-pill);
   background: transparent;
-  color: var(--dado);
+  color: var(--language-menu-ink, var(--dado));
   cursor: pointer;
 }
 
 .button:hover {
-  background: var(--dado-tint);
+  background: var(--language-menu-hover, var(--dado-tint));
 }
 
 .dialog {

@@ -1,0 +1,53 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  min-block-size: var(--tap);
+  padding-inline: var(--s-5);
+  border: 1.5px solid transparent;
+  border-radius: var(--r-m);
+  background: var(--dado);
+  color: var(--dado-ink);
+  font: var(--type-body-strong);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-1) var(--ease),
+    border-color var(--dur-1) var(--ease);
+}
+
+.button:hover {
+  background: var(--dado-deep);
+}
+
+.button[data-size='small'] {
+  min-block-size: 44px;
+  padding-inline: var(--s-4);
+  border-radius: var(--r-pill);
+  font: var(--type-label);
+}
+
+.button[data-size='large'] {
+  min-block-size: var(--tap-l);
+}
+
+/* Slate buttons would vanish on the band, so there they turn white. */
+.button[data-on='band'] {
+  background: var(--surface);
+  color: var(--dado);
+}
+
+.button[data-on='band']:hover {
+  background: var(--dado-tint);
+}
+
+.button[data-quiet] {
+  background: transparent;
+  color: var(--dado);
+}
+
+.button[data-quiet]:hover {
+  background: var(--dado-tint);
+}

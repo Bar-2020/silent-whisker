@@ -1,5 +1,7 @@
+import { CONTACT_EMAIL } from './contact';
+
 /** Nominatim's usage policy asks for an identifying User-Agent with a contact address (D-29). */
-export const GEOCODER_USER_AGENT = 'SilentWhisker/1.0 (silentwhisker.ai@gmail.com)';
+export const GEOCODER_USER_AGENT = `SilentWhisker/1.0 (${CONTACT_EMAIL})`;
 
 export const GEOCODER_URL = 'https://nominatim.openstreetmap.org/search';
 

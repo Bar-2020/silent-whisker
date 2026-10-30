@@ -14,6 +14,18 @@
   --dado: #2d4467;
   --dado-tint: #e3e9f3;
   --dado-ink: #ffffff;
+  --dado-deep: #213553;
+  --dado-quiet: #c6d2e6;
+  /* The landing band and the footer: the slate, deeper at one end and lifted at the other. */
+  --band-deep: #172740;
+  --band-lift: #3a5a91;
+  --heart: #ff7a85;
+
+  /* State colours: the landing steps show a red and a green spot. */
+  --ok: #2a8f4f;
+  --ok-tint: #e0f0e5;
+  --bad: #d32f2f;
+  --bad-tint: #fbe0e0;
 
   --focus: #0b57d0;
 
@@ -33,20 +45,36 @@
   --type-caption: 400 0.75rem / 1.3 var(--font);
 
   /* Space: a 4px step. */
+  --s-1: 4px;
   --s-2: 8px;
   --s-3: 12px;
   --s-4: 16px;
   --s-5: 24px;
   --s-6: 32px;
+  --s-7: 48px;
   --s-8: 72px;
+  --nav-gap: 12px;
 
   --r-m: 12px;
   --r-l: 20px;
   --r-pill: 999px;
+  --r-glass: 28px;
   --tap: 48px;
   --tap-l: 56px;
   --column: 40rem;
+  --measure: 65ch;
 
+  /* The tinted glass pane of the landing bar. It is solid where blur is unavailable. */
+  --glass: rgb(36 60 103 / 0.58);
+  --glass-solid: #2d4467;
+  --glass-edge: rgb(255 255 255 / 0.42);
+  --glass-shine:
+    inset 0 1.5px 0 rgb(255 255 255 / 0.55), inset 0 -1px 0 rgb(255 255 255 / 0.14),
+    inset 0 0 14px rgb(255 255 255 / 0.07);
+  /* The backdrop is dimmed first so white labels keep 4.5:1 over a white page. */
+  --glass-blur: blur(8px) saturate(1.7) brightness(0.56);
+  --glass-ink: #eef3fa;
+  --glass-hover: rgb(255 255 255 / 0.08);
   --glass-light-edge: rgb(255 255 255 / 0.8);
   /* Dialogs and search results: light glass, a little more white so dark ink stays legible over a busy map. */
   --glass-panel: rgb(255 255 255 / 0.84);
@@ -54,6 +82,10 @@
 
   /* Depth: flat, with one lift for things that float over the map. */
   --lift: 0 1px 2px rgb(20 32 52 / 0.14), 0 6px 18px rgb(20 32 52 / 0.18);
+
+  /* Motion: one ease, one duration. */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-1: 120ms;
 
   /* Layers, lowest to highest. A z-index is always one of these (DESIGN.md, Layers). */
   --z-raised: 1;

@@ -1,20 +1,11 @@
-import { useTranslation } from 'react-i18next';
-import { Link, Outlet } from 'react-router';
-import { CatIcon } from '@shared/components/icon/CatIcon';
-import { LanguageMenu } from '@shared/components/language-menu/LanguageMenu';
+import { Outlet } from 'react-router';
+import { TopBar } from '@shared/components/top-bar/TopBar';
 import styles from './Shell.module.css';
 
 export function Shell() {
-  const { t } = useTranslation();
-
   return (
     <>
-      <header className={styles.topbar}>
-        <Link to="/" className={styles.brand} aria-label={t('nav.home')}>
-          <CatIcon />
-        </Link>
-        <LanguageMenu />
-      </header>
+      <TopBar />
       <main className={styles.main}>
         <Outlet />
       </main>
