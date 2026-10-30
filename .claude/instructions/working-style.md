@@ -6,6 +6,9 @@
   turn while it is red.
 - **A rule is done when the server refuses to break it**, not when the button is disabled. Test it
   by calling the endpoint as a user who should be refused.
+- **Tests start from the scenarios.** For a rule or route you touch, find its rows in
+  `docs/TESTS-*.md` ([TESTING.md](../../docs/TESTING.md)) and cite the row id beside the `R-nn` in
+  the test (`// LOG-07, R-10`). A case the catalogue lacks is added there first.
 - **When the spec and the code disagree, the spec wins.** Fix the code or raise it.
 - **When the spec disagrees with itself, or a decision is missing, stop and ask.** Add it to
   DECISIONS.md with a recommendation.
