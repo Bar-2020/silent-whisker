@@ -690,8 +690,11 @@
     display: none;
   }
 
-  .viewer__stage[data-device][data-zoom] .frame {
+  .viewer__stage[data-device] .frame {
     inline-size: 100%;
+  }
+
+  .viewer__stage[data-zoom] .frame {
     zoom: 1;
   }
 
