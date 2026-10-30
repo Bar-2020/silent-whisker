@@ -457,6 +457,12 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   outline: none;
 }
 
+/* The field has its own clear button; hide the browser's native one. */
+.mapsearch__input::-webkit-search-cancel-button {
+  display: none;
+  appearance: none;
+}
+
 .mapsearch__input::placeholder {
   color: var(--ink-3);
   opacity: 1;
