@@ -5,7 +5,7 @@ import { TEXT_CHECK_TIMEOUT_MS } from '../../shared/constants/profile';
 import { Refusal, refuse } from '../shared/api';
 import { meteredCall } from '../shared/metered-call';
 import type { CostGuard } from '../shared/metered-call.types';
-import type { GuardrailSettings } from '../shared/schemas/settings';
+import type { GuardrailSettings } from '../shared/schemas/settings.schema';
 
 /** The check could not run: the breaker has tripped (R-05) or the call failed (R-04). */
 export class CheckUnavailable extends Error {}

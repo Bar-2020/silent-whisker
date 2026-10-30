@@ -10,8 +10,8 @@ import {
   STATUS_UNPROCESSABLE,
 } from '../../shared/constants/http';
 import { TERMS_VERSION } from '../../shared/constants/profile';
-import { profileUpdateSchema } from '../../shared/schemas/profile';
-import type { ProfileUpdate } from '../../shared/schemas/profile';
+import { profileUpdateSchema } from '../../shared/schemas/profile.schema';
+import type { ProfileUpdate } from '../../shared/schemas/profile.schema';
 import { invalidInput, parseBody, Refusal, refuse, reply, verifiedClaims } from '../shared/api';
 import type { ApiEvent, ApiResult } from '../shared/api.types';
 import { readSettings } from '../shared/env';
@@ -23,9 +23,9 @@ import {
   withMemberLimit,
 } from '../shared/member-limits';
 import type { MemberDay } from '../shared/member-limits';
-import { updateProfileSettings } from '../shared/schemas/settings';
-import type { UpdateProfileSettings } from '../shared/schemas/settings';
-import type { UserRow, UserRowUpdate } from '../shared/schemas/user-row';
+import { updateProfileSettings } from '../shared/schemas/settings.schema';
+import type { UpdateProfileSettings } from '../shared/schemas/settings.schema';
+import type { UserRow, UserRowUpdate } from '../shared/schemas/user-row.schema';
 import { buildProfileResponse, parseUserRow, readUserRow } from '../shared/users';
 import { CheckUnavailable, moderateText } from './moderate';
 

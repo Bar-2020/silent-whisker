@@ -1,8 +1,8 @@
 import type { z } from 'zod';
 import { STATUS_BAD_REQUEST, STATUS_TOO_MANY_REQUESTS } from '../../shared/constants/http';
 import type { ApiEvent, ApiResult } from './api.types';
-import { idTokenClaimsSchema } from './schemas/claims';
-import type { IdTokenClaims } from './schemas/claims';
+import { idTokenClaimsSchema } from './schemas/claims.schema';
+import type { IdTokenClaims } from './schemas/claims.schema';
 
 export const reply = (
   statusCode: number,

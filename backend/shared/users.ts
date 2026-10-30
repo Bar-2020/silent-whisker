@@ -2,9 +2,9 @@ import { GetCommand } from '@aws-sdk/lib-dynamodb';
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { z } from 'zod';
 import { TERMS_VERSION } from '../../shared/constants/profile';
-import type { ProfileResponse } from '../../shared/schemas/profile';
-import { userRowSchema } from './schemas/user-row';
-import type { UserRow } from './schemas/user-row';
+import type { ProfileResponse } from '../../shared/schemas/profile.schema';
+import { userRowSchema } from './schemas/user-row.schema';
+import type { UserRow } from './schemas/user-row.schema';
 
 /** A row read from the table, checked by its schema; a broken one names every wrong field. */
 export function parseUserRow(item: unknown): UserRow {

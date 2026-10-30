@@ -5,8 +5,8 @@ import { GOOGLE_IMAGE_HOST_SUFFIX } from '../../shared/constants/profile';
 import { refuse, reply, verifiedClaims } from '../shared/api';
 import type { ApiEvent, ApiResult } from '../shared/api.types';
 import { readSettings } from '../shared/env';
-import { getProfileSettings } from '../shared/schemas/settings';
-import type { UserRow } from '../shared/schemas/user-row';
+import { getProfileSettings } from '../shared/schemas/settings.schema';
+import type { UserRow } from '../shared/schemas/user-row.schema';
 import { buildProfileResponse, readUserRow } from '../shared/users';
 import type { Member } from './handler.types';
 

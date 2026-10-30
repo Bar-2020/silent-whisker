@@ -11,8 +11,8 @@ import {
   GEOCODER_USER_AGENT,
 } from '../../shared/constants/geocode';
 import type { GeocodeDeps } from './geocode.types';
-import { nominatimAnswerSchema, nominatimHitSchema, placeSchema } from './schemas/geocode';
-import type { Place } from './schemas/geocode';
+import { nominatimAnswerSchema, nominatimHitSchema, placeSchema } from './schemas/geocode.schema';
+import type { Place } from './schemas/geocode.schema';
 import { sleep } from './sleep';
 
 /** The geocoder cannot be reached, is too busy, or gave an answer this app does not understand. */

@@ -20,8 +20,8 @@
   from another service, a Lambda's settings. No type assertion (`as`) and no hand-written checks. The
   schema is the one definition of the shape and its TypeScript type is `z.infer` of it. Schemas live in
   `shared/schemas/` when the frontend reads the shape too, otherwise in `backend/shared/schemas/`, which only
-  the backend imports (the boundary check in `.fallowrc.jsonc` fails anything else). A
-  built entity has no field list in `docs/DATA.md` (it links the schema); one not built yet has no schema.
+  the backend imports (the boundary check in `.fallowrc.jsonc` fails anything else). Schema
+  files are named `<name>.schema.ts`. A built entity has no field list in `docs/DATA.md` (it links the schema); one not built yet has no schema.
 - **Constants live in `shared/constants/`** (limits, thresholds, caps, timeouts, sizes, counts,
   radii). No magic numbers in logic: a numeric literal other than 0, 1 or -1 is a lint error. Visual
   values (spacing, colours) live in `frontend/src/styles/`. A value Terraform also needs lives in a

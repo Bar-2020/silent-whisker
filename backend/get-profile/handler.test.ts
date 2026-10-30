@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { TERMS_VERSION } from '../../shared/constants/profile';
 import { handler } from './handler';
 import type { ApiEvent as ProfileEvent } from '../shared/api.types';
-import type { UserRow } from '../shared/schemas/user-row';
+import type { UserRow } from '../shared/schemas/user-row.schema';
 
 const dbMock = mockClient(DynamoDBDocumentClient);
 

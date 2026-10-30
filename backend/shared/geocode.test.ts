@@ -10,7 +10,7 @@ import {
 } from '../../shared/constants/geocode';
 import { GeocoderUnavailable, lookupPlace } from './geocode';
 import type { GeocodeDeps } from './geocode.types';
-import type { Place } from './schemas/geocode';
+import type { Place } from './schemas/geocode.schema';
 
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({ region: 'eu-north-1' }));
 const dbMock = mockClient(db);
