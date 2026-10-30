@@ -35,7 +35,7 @@ run "design_bucket_is_private_and_only_the_design_cloudfront_reads_it" {
   }
 }
 
-run "design_is_its_own_address_over_https_and_never_cached" {
+run "design_is_its_own_address_over_https_compressed_and_barely_cached" {
   command = apply
 
   assert {
@@ -49,8 +49,22 @@ run "design_is_its_own_address_over_https_and_never_cached" {
   }
 
   assert {
-    condition     = one(aws_cloudfront_distribution.design.default_cache_behavior).cache_policy_id == data.aws_cloudfront_cache_policy.disabled.id
-    error_message = "A deployed mock must show on the phone at once, so it is not cached."
+    condition     = aws_cloudfront_distribution.design.default_root_object == "index.html"
+    error_message = "The root must serve index.html, or the phone link shows an S3 error."
+  }
+
+  assert {
+    condition     = one(aws_cloudfront_distribution.design.default_cache_behavior).cache_policy_id == aws_cloudfront_cache_policy.design.id && aws_cloudfront_cache_policy.design.max_ttl <= 1
+    error_message = "A deployed mock must show on the phone at once, so it is cached for a second at most."
+  }
+
+  assert {
+    condition = alltrue([
+      one(aws_cloudfront_distribution.design.default_cache_behavior).compress,
+      one(aws_cloudfront_cache_policy.design.parameters_in_cache_key_and_forwarded_to_origin).enable_accept_encoding_gzip,
+      one(aws_cloudfront_cache_policy.design.parameters_in_cache_key_and_forwarded_to_origin).enable_accept_encoding_brotli,
+    ])
+    error_message = "The mocks must be compressed: the locale files are about 210 KB."
   }
 
   assert {

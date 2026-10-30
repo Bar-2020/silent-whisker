@@ -14,6 +14,30 @@ resource "aws_s3_bucket_public_access_block" "design" {
   restrict_public_buckets = true
 }
 
+# Kept one second, so a deployed change shows on the phone at once. Not the managed
+# Managed-CachingDisabled: it cannot compress, and the four locale files are about 210 KB.
+resource "aws_cloudfront_cache_policy" "design" {
+  name        = "silent-whisker-design"
+  min_ttl     = 0
+  default_ttl = 1
+  max_ttl     = 1
+
+  parameters_in_cache_key_and_forwarded_to_origin {
+    enable_accept_encoding_gzip   = true
+    enable_accept_encoding_brotli = true
+
+    cookies_config {
+      cookie_behavior = "none"
+    }
+    headers_config {
+      header_behavior = "none"
+    }
+    query_strings_config {
+      query_string_behavior = "none"
+    }
+  }
+}
+
 resource "aws_cloudfront_distribution" "design" {
   enabled             = true
   default_root_object = "index.html"
@@ -25,14 +49,13 @@ resource "aws_cloudfront_distribution" "design" {
     origin_access_control_id = aws_cloudfront_origin_access_control.site.id
   }
 
-  # Not cached: a change to a mock shows on the phone as soon as it is deployed, and the files are
-  # few and small.
   default_cache_behavior {
     target_origin_id       = "design"
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
-    cache_policy_id        = data.aws_cloudfront_cache_policy.disabled.id
+    cache_policy_id        = aws_cloudfront_cache_policy.design.id
+    compress               = true
   }
 
   restrictions {
