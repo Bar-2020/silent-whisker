@@ -16,7 +16,8 @@ You turn rows of the `docs/TESTS-*.md` catalogue into tests, so the tests check 
 The method is in `docs/TESTING.md`; read it first, then the rows you were given, `RULES.md`, `API.md`, `DATA.md`
 and `DECISIONS.md`.
 
-- You may read everything in `docs/`, `shared/constants/` (import the limits, never copy a number), and the
+- You may read everything in `docs/`, `shared/constants/` (import the limits, never copy a number), the zod
+  schema folders `shared/schemas/` and `backend/shared/schemas/` (the shapes `DATA.md` and `API.md` link), and the
   existing tests and their helpers. You may write only test files and helpers: `*.test.ts(x)`, `__tests__/`,
   `test-support/`. A hook refuses anything else, and shell commands other than `npm` scripts and `vp test run`.
 - Never open a handler, a screen or any other source file, by any route.

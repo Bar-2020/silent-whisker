@@ -9,7 +9,8 @@ import {
   GEOCODER_USER_AGENT,
 } from '../../shared/constants/geocode';
 import { GeocoderUnavailable, lookupPlace } from './geocode';
-import type { GeocodeDeps, Place } from './geocode.types';
+import type { GeocodeDeps } from './geocode.types';
+import type { Place } from './schemas/geocode.schema';
 
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({ region: 'eu-north-1' }));
 const dbMock = mockClient(db);
@@ -67,6 +68,16 @@ describe('lookupPlace asks the cache first (D-29: no question is sent twice)', (
 
     const [read] = dbMock.commandCalls(GetCommand);
     expect(read.args[0].input).toMatchObject({ TableName: CACHE, Key: { query: key } });
+  });
+
+  it('treats a damaged cache row as a miss and asks again', async () => {
+    dbMock.on(GetCommand).resolves({ Item: { query: 'haifa', lat: 'north', lng: 34.99 } });
+    fetchMock.mockResolvedValue(answer(hits));
+
+    const found = await lookupPlace(deps, 'Haifa');
+
+    expect(found).toEqual(HAIFA);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it('makes no second request for a city it has already found', async () => {

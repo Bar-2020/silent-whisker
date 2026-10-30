@@ -36,7 +36,8 @@ and one counted water log per spot per member per 3 hours)". A human does not re
 Three areas, one folder each: `frontend/` the web app, `backend/` the Lambda handlers, `infra/`
 Terraform (`bootstrap/` by hand, `app/` by CI). **The areas never import from each other.** They
 meet only in `shared/`, which holds what more than one of them reads: `shared/constants/` (limits,
-caps, intervals; a `.json` file when Terraform reads it too). `frontend/` and `backend/` each have
+caps, intervals; a `.json` file when Terraform reads it too) and `shared/schemas/` (the zod
+schemas of the API's shapes, D-101). `frontend/` and `backend/` each have
 their own `package.json` for their dependencies; the root one holds tooling only.
 
 The frontend is feature-based. `frontend/src/features/<feature>/` owns its screens, components,

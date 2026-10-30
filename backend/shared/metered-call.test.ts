@@ -4,7 +4,12 @@ import { DynamoDBDocumentClient, PutCommand, UpdateCommand } from '@aws-sdk/lib-
 import { mockClient } from 'aws-sdk-client-mock';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { BREAKER_DAILY_MICRO_USD, COUNTER_TTL_SECONDS } from '../../shared/constants/cost';
-import { meteredCall, takeDailyAllowance } from './metered-call';
+import {
+  giveBackDailyAllowance,
+  meteredCall,
+  secondsUntilNextUtcDay,
+  takeDailyAllowance,
+} from './metered-call';
 import type { CostGuard } from './metered-call.types';
 
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({ region: 'eu-north-1' }));
@@ -255,5 +260,46 @@ describe('takeDailyAllowance (R-05: per-member limits and the breaker share one 
     expect(update.args[0].input.ExpressionAttributeValues?.[':expires']).toBe(
       NOW.getTime() / 1000 + COUNTER_TTL_SECONDS
     );
+  });
+});
+
+describe('giveBackDailyAllowance (D-62: an action that never ran gives its unit back)', () => {
+  it("takes the unit off today's counter, but only if the counter holds it", async () => {
+    dbMock.on(UpdateCommand).resolves({});
+
+    await giveBackDailyAllowance(guard, 'profile_save#user-1', 1);
+
+    const [update] = dbMock.commandCalls(UpdateCommand);
+    expect(update.args[0].input).toMatchObject({
+      Key: { key: 'profile_save#user-1#2026-10-21' },
+      UpdateExpression: 'ADD #count :back',
+      ConditionExpression: '#count >= :amount',
+      ExpressionAttributeValues: { ':back': -1, ':amount': 1 },
+    });
+  });
+
+  it('does nothing when there is no unit to give back (never below zero)', async () => {
+    dbMock.on(UpdateCommand).rejects(conditionFailed());
+
+    await expect(giveBackDailyAllowance(guard, 'profile_save#user-1', 1)).resolves.toBeUndefined();
+  });
+
+  it('does not hide a database failure', async () => {
+    dbMock.on(UpdateCommand).rejects(new Error('table gone'));
+
+    await expect(giveBackDailyAllowance(guard, 'profile_save#user-1', 1)).rejects.toThrow(
+      'table gone'
+    );
+  });
+});
+
+describe('secondsUntilNextUtcDay (R-06: counters reset at midnight UTC)', () => {
+  it.each([
+    ['2026-10-21T12:00:00Z', 43200],
+    ['2026-10-21T23:59:59Z', 1],
+    ['2026-10-21T00:00:00Z', 86400],
+    ['2026-12-31T18:00:00Z', 21600],
+  ])('from %s it is %i seconds', (now, seconds) => {
+    expect(secondsUntilNextUtcDay(new Date(now))).toBe(seconds);
   });
 });

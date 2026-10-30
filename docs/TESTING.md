@@ -88,7 +88,7 @@ Four jobs, each its own session (a subagent or a fresh session), so nobody marks
 | Job | Reads | Writes | Never |
 |---|---|---|---|
 | Scenario author | specs, design briefs | rows here | code |
-| Test writer | all of `docs/`, `shared/constants/`, the tests and their helpers (fakes, fixtures, seed test) | tests and helpers | handlers, screens, any other code |
+| Test writer | all of `docs/`, `shared/constants/`, the zod schemas (`shared/schemas/`, `backend/shared/schemas/`: the shapes `DATA.md` and `API.md` link), the tests and their helpers (fakes, fixtures, seed test) | tests and helpers | handlers, screens, any other code |
 | Implementer | everything | code | tests (asks the owner to change a row) |
 | Reviewer | the diff, these files | findings | code |
 

@@ -10,7 +10,8 @@
   },
   "workspaces": [
     "frontend",
-    "backend"
+    "backend",
+    "shared"
   ],
   "scripts": {
     "typecheck": "tsc --noEmit && tsc --noEmit -p backend",

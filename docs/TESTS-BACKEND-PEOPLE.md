@@ -31,7 +31,7 @@ Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether 
 | PROF-05 | i | Name and city of 1, 2, 35 and 36 characters; in Hebrew, Arabic, Russian; with emoji; only spaces | Counted in characters, not bytes; out of range `INVALID_INPUT`; spaces and emoji per D-92 | D-61 |
 | PROF-06 | i | `PATCH /profile` where the text check says rejected | `MODERATION_REJECTED`, nothing saved, the day's allowance stays spent | D-62 |
 | PROF-07 | i | The check cannot run: breaker tripped, the call throws, times out or answers nonsense | `503 CHECK_UNAVAILABLE`, nothing saved, allowance given back | D-62, R-05 |
-| PROF-08 | i | Six saves in one UTC day, then one at 00:00:00 UTC; six at once | Sixth `DAILY_LIMIT`; reset at midnight; exactly five of the six at once pass | D-61 |
+| PROF-08 | i | Six saves in one UTC day, then one at 00:00:00 UTC; six at once | Sixth `PROFILE_SAVE_DAILY_LIMIT` with `Retry-After`; reset at midnight; exactly five of the six at once pass | D-61 |
 | PROF-09 | i | A city the geocoder does not know, twice; a known city twice; the geocoder down | `CITY_NOT_FOUND`, the check does not run, no spend; the unknown city is not saved, so typos never fill `geocode_cache`, and each try uses the member's allowance; the known city's second call comes from the cache; never a made-up centre | D-29, D-62, D-87 |
 | PROF-10 | i | Count the paid calls of one successful `PATCH` | One check for name and city together, through `meteredCall`, after the allowance and the city lookup | D-62, R-05 |
 | PROF-11 | i | First save without `accept_terms`, with `false`, with `true` | `INVALID_INPUT`, `INVALID_INPUT`, then UTC `terms_accepted_at` and `terms_version` stored | D-69, R-36 |
@@ -40,6 +40,7 @@ Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether 
 | PROF-14 | i | After `DELETE`, call `GET /profile` with the old, still valid ID token | A fresh empty row is made and the member must accept the terms again (accepted: D-92) | D-59, D-71, D-92 |
 | PROF-15 | i | Look at the headers of `GET /profile` | Never cached (`Cache-Control: no-store`) | D-59 |
 | PROF-16 | i | Ten lookups of different cities in the same second, from several handler instances | One request a second reaches the geocoder (one `geocoder#<second>` row each); the losers wait for the next second, up to 3 tries, then fail; the route decides what the member sees | D-87 |
+| PROF-17 | t | The profile save Lambda in Terraform | It is the route `PATCH /api/profile` with the authorizer and its throttle (1 a second, burst 2); its role reads and updates `users` only (no delete, no wildcard), reaches the geocode cache, the counters, the cost alert topic and the text moderation guardrail; its six settings are wired | D-62, D-61, R-22 |
 
 ## Admin and reports (ADM)
 

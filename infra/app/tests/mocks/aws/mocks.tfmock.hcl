@@ -16,6 +16,10 @@ mock_resource "aws_cloudfront_function" {
   defaults = { arn = "arn:aws:cloudfront::123456789012:function/silent-whisker-spa-fallback" }
 }
 
+mock_resource "aws_iam_policy" {
+  defaults = { arn = "arn:aws:iam::123456789012:policy/silent-whisker-use-text-moderation" }
+}
+
 mock_resource "aws_iam_role" {
   defaults = { arn = "arn:aws:iam::123456789012:role/silent-whisker-get-profile" }
 }

@@ -10,3 +10,6 @@ export const BREAKER_DAILY_MICRO_USD = 2 * MICRO_USD_PER_USD;
 export const COUNTER_TTL_SECONDS = 2 * 24 * 60 * 60;
 
 export const MS_PER_SECOND = 1000;
+
+/** One text unit of the guardrail: $0.15 per 1,000 units (D-61, docs/AWS.md). */
+export const TEXT_CHECK_COST_MICRO_USD = 150;

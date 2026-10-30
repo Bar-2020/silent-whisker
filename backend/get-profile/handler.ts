@@ -1,29 +1,18 @@
 import { ConditionalCheckFailedException, DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import {
-  DynamoDBDocumentClient,
-  GetCommand,
-  PutCommand,
-  UpdateCommand,
-} from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { STATUS_OK, STATUS_UNAUTHORIZED } from '../../shared/constants/http';
-import { GOOGLE_IMAGE_HOST_SUFFIX, TERMS_VERSION } from '../../shared/constants/profile';
-import type { ApiResult, Member, Profile, ProfileEvent, UserRow } from './handler.types';
+import { GOOGLE_IMAGE_HOST_SUFFIX } from '../../shared/constants/profile';
+import { refuse, reply, verifiedClaims } from '../shared/api';
+import type { ApiEvent, ApiResult } from '../shared/api.types';
+import { readSettings } from '../shared/env';
+import { getProfileSettings } from '../shared/schemas/settings.schema';
+import type { UserRow } from '../shared/schemas/user-row.schema';
+import { buildProfileResponse, readUserRow } from '../shared/users';
+import type { Member } from './handler.types';
 
 // GET /api/profile (D-59): `user_id` is always the token's `sub`, never anything in the request.
 
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({}));
-
-const reply = (statusCode: number, body: unknown): ApiResult => ({
-  statusCode,
-  headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
-  body: JSON.stringify(body),
-});
-
-function usersTable(): string {
-  const name = process.env.USERS_TABLE;
-  if (!name) throw new Error('USERS_TABLE is not set');
-  return name;
-}
 
 /** Only an https address on Google's image host is kept (D-21). */
 function checkIfGooglePhoto(picture: string | undefined): boolean {
@@ -35,19 +24,12 @@ function checkIfGooglePhoto(picture: string | undefined): boolean {
   }
 }
 
-async function readUser(userId: string, consistent = false): Promise<UserRow | undefined> {
-  const { Item } = await db.send(
-    new GetCommand({
-      TableName: usersTable(),
-      Key: { user_id: userId },
-      ConsistentRead: consistent,
-    })
-  );
-  return Item as UserRow | undefined;
-}
-
 /** A conditional write, so two first calls at once make one row: the loser reads the winner's. */
-async function createUser(userId: string, photo: string | undefined): Promise<UserRow> {
+async function createUser(
+  table: string,
+  userId: string,
+  photo: string | undefined
+): Promise<UserRow> {
   const row: UserRow = {
     user_id: userId,
     status: 'active',
@@ -62,7 +44,7 @@ async function createUser(userId: string, photo: string | undefined): Promise<Us
   try {
     await db.send(
       new PutCommand({
-        TableName: usersTable(),
+        TableName: table,
         Item: row,
         ConditionExpression: 'attribute_not_exists(user_id)',
       })
@@ -70,27 +52,26 @@ async function createUser(userId: string, photo: string | undefined): Promise<Us
     return row;
   } catch (error) {
     if (!(error instanceof ConditionalCheckFailedException)) throw error;
-    const winner = await readUser(userId, true);
+    const winner = await readUserRow(db, table, userId, true);
     if (!winner) throw error;
     return winner;
   }
 }
 
-function memberFrom(event: ProfileEvent): Member | undefined {
-  const claims = event.requestContext.authorizer?.jwt?.claims;
-  // The authorizer also accepts access tokens, but only the ID token carries the Google photo.
-  if (claims?.token_use !== 'id' || !claims.sub) return undefined;
+function memberFrom(event: ApiEvent): Member | undefined {
+  const claims = verifiedClaims(event);
+  if (!claims) return undefined;
   const photo = checkIfGooglePhoto(claims.picture) ? claims.picture : undefined;
   return { userId: claims.sub, photo };
 }
 
-async function loadUser({ userId, photo }: Member): Promise<UserRow> {
-  const user = await readUser(userId);
-  if (!user) return createUser(userId, photo);
+async function loadUser(table: string, { userId, photo }: Member): Promise<UserRow> {
+  const user = await readUserRow(db, table, userId);
+  if (!user) return createUser(table, userId, photo);
   if (!photo || photo === user.avatar_url) return user;
   await db.send(
     new UpdateCommand({
-      TableName: usersTable(),
+      TableName: table,
       Key: { user_id: userId },
       UpdateExpression: 'SET avatar_url = :photo',
       ExpressionAttributeValues: { ':photo': photo },
@@ -99,19 +80,10 @@ async function loadUser({ userId, photo }: Member): Promise<UserRow> {
   return { ...user, avatar_url: photo };
 }
 
-/** The photo goes out only if the member chose to show it (D-21). */
-const profileOf = (user: UserRow): Profile => ({
-  display_name: user.display_name ?? null,
-  city: user.city ?? null,
-  avatar_url: user.show_google_photo ? (user.avatar_url ?? null) : null,
-  show_google_photo: user.show_google_photo,
-  status: user.status,
-  terms_accepted: user.terms_version === TERMS_VERSION,
-});
-
-export async function handler(event: ProfileEvent): Promise<ApiResult> {
+export async function handler(event: ApiEvent): Promise<ApiResult> {
   const member = memberFrom(event);
-  if (!member) return reply(STATUS_UNAUTHORIZED, { code: 'UNAUTHORIZED' });
+  if (!member) return refuse(STATUS_UNAUTHORIZED, 'UNAUTHORIZED');
+  const { USERS_TABLE } = readSettings(getProfileSettings);
   // A banned member still gets the profile (API.md).
-  return reply(STATUS_OK, profileOf(await loadUser(member)));
+  return reply(STATUS_OK, buildProfileResponse(await loadUser(USERS_TABLE, member)));
 }

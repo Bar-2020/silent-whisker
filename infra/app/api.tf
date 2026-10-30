@@ -5,7 +5,8 @@ locals {
 
   # A new route goes here and in api.json; a test fails if it lacks the authorizer or a throttle.
   route_functions = {
-    "GET /api/profile" = aws_lambda_function.get_profile
+    "GET /api/profile"   = module.get_profile.function
+    "PATCH /api/profile" = module.update_profile.function
   }
 }
 
@@ -24,69 +25,41 @@ resource "aws_dynamodb_table" "users" {
   }
 }
 
-# A handler that has not been built fails the plan, so every deploy builds first.
-data "archive_file" "get_profile" {
-  type        = "zip"
-  source_dir  = "${path.module}/../../backend/dist/get-profile"
-  output_path = "${path.module}/../../backend/dist/get-profile.zip"
+module "get_profile" {
+  source             = "./modules/lambda"
+  name               = "get-profile"
+  built_dir          = "${path.module}/../../backend/dist/get-profile"
+  memory_mb          = local.api.lambda.memory_mb
+  timeout_seconds    = local.api.lambda.timeout_seconds
+  log_retention_days = local.api.lambda.log_retention_days
+  environment        = { USERS_TABLE = aws_dynamodb_table.users.name }
+  policy_name        = "users-and-logs"
+  policy_statements = [{
+    Effect   = "Allow"
+    Action   = ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:UpdateItem"]
+    Resource = aws_dynamodb_table.users.arn
+  }]
 }
 
-resource "aws_cloudwatch_log_group" "get_profile" {
-  name              = "/aws/lambda/get-profile"
-  retention_in_days = local.api.lambda.log_retention_days
+# The Lambda was first written out here; these keep its live resources instead of recreating them.
+moved {
+  from = aws_cloudwatch_log_group.get_profile
+  to   = module.get_profile.aws_cloudwatch_log_group.this
 }
 
-resource "aws_iam_role" "get_profile" {
-  name = "silent-whisker-get-profile"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect    = "Allow"
-      Action    = "sts:AssumeRole"
-      Principal = { Service = "lambda.amazonaws.com" }
-    }]
-  })
+moved {
+  from = aws_iam_role.get_profile
+  to   = module.get_profile.aws_iam_role.this
 }
 
-resource "aws_iam_role_policy" "get_profile" {
-  name = "users-and-logs"
-  role = aws_iam_role.get_profile.id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect   = "Allow"
-        Action   = ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:UpdateItem"]
-        Resource = aws_dynamodb_table.users.arn
-      },
-      {
-        Effect   = "Allow"
-        Action   = ["logs:CreateLogStream", "logs:PutLogEvents"]
-        Resource = "${aws_cloudwatch_log_group.get_profile.arn}:*"
-      },
-    ]
-  })
+moved {
+  from = aws_iam_role_policy.get_profile
+  to   = module.get_profile.aws_iam_role_policy.this
 }
 
-resource "aws_lambda_function" "get_profile" {
-  function_name    = "get-profile"
-  role             = aws_iam_role.get_profile.arn
-  runtime          = "nodejs24.x"
-  architectures    = ["arm64"]
-  handler          = "handler.handler"
-  filename         = data.archive_file.get_profile.output_path
-  source_code_hash = data.archive_file.get_profile.output_base64sha256
-  memory_size      = local.api.lambda.memory_mb
-  timeout          = local.api.lambda.timeout_seconds
-
-  environment {
-    variables = {
-      USERS_TABLE = aws_dynamodb_table.users.name
-    }
-  }
-
-  # Lambda would otherwise make the log group itself, with no expiry.
-  depends_on = [aws_cloudwatch_log_group.get_profile]
+moved {
+  from = aws_lambda_function.get_profile
+  to   = module.get_profile.aws_lambda_function.this
 }
 
 resource "aws_apigatewayv2_api" "api" {

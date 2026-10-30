@@ -1,4 +1,7 @@
 import sonarjs from 'eslint-plugin-sonarjs';
+import { existsSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite-plus';
 
 // ESLint's recommended set.
@@ -152,15 +155,21 @@ const asErrors = (names: string[]) =>
 // type information.
 const SONARJS_RULES = sonarjs.configs.recommended.rules as Record<string, 'error' | 'off'>;
 
+// A folder of backend/ with a handler.ts is a Lambda; shared/ and dist/ have none.
+const BACKEND = fileURLToPath(new URL('backend', import.meta.url));
+const HANDLERS = readdirSync(BACKEND, { withFileTypes: true })
+  .filter((entry) => entry.isDirectory() && existsSync(join(BACKEND, entry.name, 'handler.ts')))
+  .map((entry) => entry.name);
+
 export default defineConfig({
   // One entry and outDir per handler, so its zip never depends on a file another handler shares.
-  pack: {
-    entry: { handler: 'backend/get-profile/handler.ts' },
-    outDir: 'backend/dist/get-profile',
-    target: 'node24',
+  pack: HANDLERS.map((name) => ({
+    entry: { handler: `backend/${name}/handler.ts` },
+    outDir: `backend/dist/${name}`,
+    target: 'node24' as const,
     clean: true,
     deps: { onlyBundle: false },
-  },
+  })),
   lint: {
     plugins: ['typescript'],
     jsPlugins: ['eslint-plugin-sonarjs', './lint/silent-whisker-plugin.js'],

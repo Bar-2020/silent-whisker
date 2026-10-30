@@ -131,7 +131,7 @@ run "the_profile_handler_touches_only_the_users_table_and_cannot_delete" {
 
   assert {
     condition = anytrue([
-      for s in jsondecode(aws_iam_role_policy.get_profile.policy).Statement :
+      for s in jsondecode(module.get_profile.role_policy.policy).Statement :
       contains(flatten([s.Action]), "dynamodb:GetItem") &&
       flatten([s.Resource]) == [aws_dynamodb_table.users.arn] &&
       !anytrue([for a in flatten([s.Action]) : startswith(a, "dynamodb:Delete")])
@@ -141,7 +141,7 @@ run "the_profile_handler_touches_only_the_users_table_and_cannot_delete" {
 
   assert {
     condition = alltrue([
-      for s in jsondecode(aws_iam_role_policy.get_profile.policy).Statement :
+      for s in jsondecode(module.get_profile.role_policy.policy).Statement :
       !contains(flatten([s.Resource]), "*")
     ])
     error_message = "No statement of the handler's role may name every resource."

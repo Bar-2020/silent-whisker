@@ -3,7 +3,7 @@ import { join, relative, resolve, sep } from 'node:path';
 
 // PreToolUse hook of the test-writer agent: it reads the docs, never the code under test
 // (docs/TESTING.md, Agentic workflow).
-const READABLE_DIRS = ['docs/', 'shared/constants/'];
+const READABLE_DIRS = ['docs/', 'shared/constants/', 'shared/schemas/', 'backend/shared/schemas/'];
 const TEST_SUFFIX = /\.test\.[cm]?[jt]sx?$/;
 const TEST_DIR = /(^|\/)(__tests__|test-support)\//;
 const RUN_COMMAND =
@@ -50,7 +50,7 @@ try {
   const { tool_name: tool, tool_input: input } = JSON.parse(readFileSync(0, 'utf8'));
   if (!(allowed[tool]?.(input ?? {}) ?? true)) {
     deny(
-      'The test writer reads docs/, shared/constants/ and test files, and writes only test files. ' +
+      'The test writer reads docs/, shared/constants/, the schema folders and test files, and writes only test files. ' +
         'Something missing from the docs is a doc gap: report it (docs/TESTING.md, Agentic workflow).'
     );
   }

@@ -1,6 +1,8 @@
 {
   "routes": {
-    "GET /api/profile": { "rate_per_second": 2, "burst": 10 }
+    "GET /api/profile": { "rate_per_second": 2, "burst": 10 },
+    "PATCH /api/profile": { "rate_per_second": 1, "burst": 2 }
   },
-  "lambda": { "memory_mb": 256, "timeout_seconds": 10, "log_retention_days": 30 }
+  "lambda": { "memory_mb": 256, "timeout_seconds": 10, "log_retention_days": 30 },
+  "update_profile": { "timeout_seconds": 20 }
 }
