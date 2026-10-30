@@ -1,6 +1,6 @@
 import { LANGUAGES } from '../../../shared/constants/languages';
 import { readStoredLanguage } from '../shared/i18n/i18n';
-import { Icon } from '../shared/icons/Icon';
+import { Icon } from '../shared/components/icon/Icon';
 import styles from './LoadFailedScreen.module.css';
 
 /** The word comes from the constants, in the language the member chose: the language file failed (D-102). */

@@ -41,8 +41,10 @@ schemas of the API's shapes, D-101). `frontend/` and `backend/` each have
 their own `package.json` for their dependencies; the root one holds tooling only.
 
 The frontend is feature-based. `frontend/src/features/<feature>/` owns its screens, components,
-hooks and data access. `frontend/src/shared/` only when a second feature needs it. **Features never
-import from each other.**
+hooks and data access. `frontend/src/shared/` only when a second feature needs it, split by kind
+(`components/`, `api/`, `utils/`) when a kind gets its first file. Types sit beside the file that owns them
+(`<name>.types.ts`); constants stay in the repo's `shared/constants/`. **Features never import from
+each other.**
 
 @.claude/instructions/working-style.md
 

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link, Outlet } from 'react-router';
-import { Icon } from '../shared/icons/Icon';
-import { LanguageMenu } from '../shared/language-menu/LanguageMenu';
+import { Icon } from '../shared/components/icon/Icon';
+import { LanguageMenu } from '../shared/components/language-menu/LanguageMenu';
 import styles from './Shell.module.css';
 
 export function Shell() {

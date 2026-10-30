@@ -1,7 +1,7 @@
 import { useId, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LANGUAGES } from '../../../../shared/constants/languages';
-import { Icon } from '../icons/Icon';
+import { LANGUAGES } from '../../../../../shared/constants/languages';
+import { Icon } from '../icon/Icon';
 import styles from './LanguageMenu.module.css';
 
 /** A globe button that opens the four languages, each in its own script (DESIGN.md, Language menu). */
