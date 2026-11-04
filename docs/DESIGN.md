@@ -511,14 +511,14 @@ heart is an icon, not an emoji).
 ### Map search, alerts, profile
 - **Map search:** a pill field at the top of the map (the legend "?" beside it); typing lists feeding
   spots by name, then places (cities, streets, house addresses), one row each with its kind; no results
-  says so and what to try. The two action buttons sit at the right in both languages on a phone, and
+  says so and what to try. The results stop above the round buttons and scroll. The two action buttons sit at the right in both languages on a phone, and
   disappear while a spot or an alert is selected. Banners (zoom in, location off) sit under the top
   row, and "location off" is one row: a crossed-out target, the words and the "Turn on" button at the end.
   **The map credit** ("© OpenStreetMap", linked to their copyright page) shows in the bottom corner away
   from the action buttons when a map opens, folds into a small (i) button after five seconds, and the (i)
   shows it again (OpenStreetMap's attribution guidelines allow this; their tile policy forbids hiding it
   behind a toggle from the start, so it never starts hidden). The legend repeats it.
-- **Spots list:** a round list button at the head of the map controls swaps the map for the list of the same spots (kittens seen first, then needing help, then nearest), each row a real link with its state chip (icon and word) and its distance; the same button, now a map icon, goes back (D-82).
+- **Spots list:** the round list button at the head of the map controls always opens it and never changes its icon or job. The spots and their order are set by D-103. The list opens over the map like a spot card, with a close X: on a phone a sheet from the top of the screen to the bottom bar that covers the search box, the legend button and the map (the OpenStreetMap credit is hidden until it closes), on a wide screen a full-height 400 px panel with the credit in its corner. Each row is a real link: the name with its distance at the inline end of the same line, then the state chip (icon and word) and the kittens tag, wrapping together; the rows scroll under a fixed head. With none, it says nothing near needs help right now. The round buttons give way as to a card (on a wide screen only the list button), the map and, on a phone, the top bar are inert while it is open, and focus moves to the title and back to the button (D-103).
 - **Alert row:** photo and words on top (kind chip, "reported N hours ago", the note cut at two lines,
   distance and area), then **Details** and **Show on map** side by side, full width. A countdown is
   never shown for helping a cat; only a gentle "leaves the map in N minutes" when it is about to go.
