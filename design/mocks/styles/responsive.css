@@ -115,7 +115,7 @@
     inset-block-end: var(--s-4);
   }
 
-  .results--list {
+  .results {
     --results-clear: var(--s-4);
   }
 

@@ -511,7 +511,7 @@ heart is an icon, not an emoji).
 ### Map search, alerts, profile
 - **Map search:** a pill field at the top of the map (the legend "?" beside it); typing lists feeding
   spots by name, then places (cities, streets, house addresses), one row each with its kind; no results
-  says so and what to try. The two action buttons sit at the right in both languages on a phone, and
+  says so and what to try. The results stop above the round buttons and scroll, like the spots list. The two action buttons sit at the right in both languages on a phone, and
   disappear while a spot or an alert is selected. Banners (zoom in, location off) sit under the top
   row, and "location off" is one row: a crossed-out target, the words and the "Turn on" button at the end.
   **The map credit** ("© OpenStreetMap", linked to their copyright page) shows in the bottom corner away
