@@ -119,6 +119,10 @@
     --results-clear: var(--s-4);
   }
 
+  .stage[data-sheet='list'] .maptop {
+    visibility: visible;
+  }
+
   /* The credit sits at the bottom, left of the action buttons, in both directions. */
   .stage .mapcredit,
   [dir='rtl'] .stage .mapcredit {

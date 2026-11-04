@@ -595,18 +595,6 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   overflow-y: auto;
 }
 
-.sheet__empty {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--s-2);
-  padding: var(--s-6) var(--s-4);
-  color: var(--ink-3);
-  text-align: center;
-}
-
 /* While the list is open the map behind it is inert; a tap on it closes the list. It sits above the
    map's panes (400) and just below the search box, the credit and the sheet. */
 .mapdismiss {
@@ -615,12 +603,25 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   z-index: calc(var(--z-map-ui) - 1);
 }
 
-.results--none {
+/* On a phone the list covers the top bar, so keyboard focus must not reach it either. */
+.stage[data-sheet='list'] .maptop {
+  visibility: hidden;
+}
+
+.results--none,
+.sheet__empty {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   gap: var(--s-2);
   padding: var(--s-6) var(--s-4);
   color: var(--ink-3);
   text-align: center;
+}
+
+.sheet__empty {
+  flex: 1;
+  justify-content: center;
 }
 
 .dialog__option {

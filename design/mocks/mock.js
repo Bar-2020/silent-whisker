@@ -394,6 +394,8 @@
     addCredit,
     pinHtml,
     signHtml,
+    drawIcons,
+    translate,
     onState: null,
   };
 

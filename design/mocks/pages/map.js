@@ -89,8 +89,8 @@
   function syncList(state) {
     const open = LIST_STATES.includes(state);
     host.inert = open;
-    if (open && !listWasOpen && listTitle) listTitle.focus();
-    if (!open && listWasOpen && state === 'default' && listButton) listButton.focus();
+    if (open && !listWasOpen) listTitle.focus();
+    if (!open && listWasOpen && state === 'default') listButton.focus();
     listWasOpen = open;
   }
 
@@ -116,6 +116,37 @@
     draw(state);
   };
   Mock.onState(Mock.getState());
+
+  /* The spots to feed near the phone, in the order D-103 sets: red with kittens, red, then the rest
+     (kittens seen, orange, no data), nearest first inside each group. */
+  const LEVEL_ICON = { red: 'bowl-empty', orange: 'clock', none: 'dash' };
+  const FEED_ROWS = [
+    { name: 'demo.spot1.name', level: 'red', state: 'kittens', m: 80, kittens: true },
+    { name: 'demo.spot2.name', level: 'red', m: 410 },
+    { name: 'demo.spot5.name', level: 'red', m: 650 },
+    { name: 'demo.spot6.name', level: 'orange', m: 520, kittens: true },
+    { name: 'demo.spot3.name', level: 'orange', m: 210 },
+    { name: 'demo.spot7.name', level: 'orange', m: 940 },
+    { name: 'demo.station.name', level: 'none', m: 300 },
+    { name: 'demo.spot8.name', level: 'none', m: 1400 },
+  ];
+  const KITTENS_TAG =
+    '<span class="tag"><i data-icon="paw" data-class="icon--s"></i><span data-t="spot.tag.kittens"></span></span>';
+  const feedRow = ({ name, level, state, m, kittens }) => {
+    const [unit, n] = m < 1000 ? ['m', m] : ['km', m / 1000];
+    return (
+      `<a class="results__item" href="spot.html?screen=detail&state=${state || level}">` +
+      '<span class="results__icon"><i data-icon="pin"></i></span><span class="results__text">' +
+      `<span class="results__head"><strong data-t="${name}"></strong>` +
+      `<span class="results__distance num small muted" data-t="map.list.distance.${unit}" data-v='{"n":${n}}'></span></span>` +
+      `<span class="results__meta"><span class="chip" data-level="${level}"><i data-icon="${LEVEL_ICON[level]}"></i>` +
+      `<span data-t="map.legend.${level}"></span></span>${kittens ? KITTENS_TAG : ''}</span></span></a>`
+    );
+  };
+  const feedList = document.querySelector('.sheet__list');
+  feedList.innerHTML = FEED_ROWS.map(feedRow).join('');
+  Mock.drawIcons(feedList);
+  Mock.translate(feedList);
 
   const legend = [
     { pin: { level: 'red', kind: 'food' }, key: 'map.legend.red' },
