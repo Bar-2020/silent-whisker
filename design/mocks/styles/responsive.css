@@ -133,10 +133,6 @@
     inset-block: auto var(--s-2);
   }
 
-  .sheet__credit {
-    display: none;
-  }
-
   /* Beside the side panel there is room, so the buttons stay, at the inline-end. */
   [dir='rtl'] .mapctl {
     inset-inline: auto var(--s-4);

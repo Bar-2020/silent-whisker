@@ -1860,20 +1860,9 @@ h2[id] {
   inset-block-end: calc(var(--nav-total) + 280px + var(--s-2));
 }
 
-/* On a phone the list covers the map, so its credit moves to the foot of the sheet. */
+/* On a phone the list covers the map, so the credit is hidden until the list closes. */
 .stage[data-sheet='list'] .mapcredit {
   display: none;
-}
-
-.sheet__credit {
-  flex: none;
-  text-align: center;
-}
-
-.sheet__credit a {
-  display: inline-block;
-  padding: var(--s-2) var(--s-3);
-  text-underline-offset: 2px;
 }
 
 .mapcredit__text {
