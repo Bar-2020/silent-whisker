@@ -20,6 +20,7 @@ unless a row says otherwise. The screens are in `design/briefs/`.
 | MAP-11 | e | The credit | Shown in a corner, folds into an (i) after 5 seconds, opens again, never removed | D-58 |
 | MAP-12 | e | The list with location on, then pan the map 5 km away; the same with location off or denied | With location on the list does not change; with it off, the box and the distances follow the map's centre | D-103, D-31 |
 | MAP-13 | e | The list when every spot inside 2 km is green with no kittens | The words that nothing near needs help right now, not an error or a blank screen | D-103 |
+| MAP-14 | e | Tap the list button; close it with the X, with Escape and with a tap on the map; open it with the keyboard; repeat at 1024 px | The button's icon and name never change; the list opens as a card and the round buttons give way (at 1024 px only the list button goes); focus moves to its title and returns to the button; the map behind ignores taps and Tab while it is open; the OpenStreetMap credit stays visible | D-103, D-58 |
 
 ## Spot page and logging (SPOTUI, LOGUI)
 

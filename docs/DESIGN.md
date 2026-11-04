@@ -511,14 +511,14 @@ heart is an icon, not an emoji).
 ### Map search, alerts, profile
 - **Map search:** a pill field at the top of the map (the legend "?" beside it); typing lists feeding
   spots by name, then places (cities, streets, house addresses), one row each with its kind; no results
-  says so and what to try. The results stop above the round buttons and scroll, like the spots list. The two action buttons sit at the right in both languages on a phone, and
+  says so and what to try. The results stop above the round buttons and scroll. The two action buttons sit at the right in both languages on a phone, and
   disappear while a spot or an alert is selected. Banners (zoom in, location off) sit under the top
   row, and "location off" is one row: a crossed-out target, the words and the "Turn on" button at the end.
   **The map credit** ("© OpenStreetMap", linked to their copyright page) shows in the bottom corner away
   from the action buttons when a map opens, folds into a small (i) button after five seconds, and the (i)
   shows it again (OpenStreetMap's attribution guidelines allow this; their tile policy forbids hiding it
   behind a toggle from the start, so it never starts hidden). The legend repeats it.
-- **Spots list:** a round list button at the head of the map controls swaps the map for the spots near the phone that need a feeding (within 2 km, or of the map's centre with location off): red with kittens seen first, then red, then the rest (kittens seen, then running low, then no data), nearest first inside each. Each row is a real link: the name with its distance at the inline end of the same line, and under them the state chip (icon and word) and the kittens tag, wrapping together. The panel stops above the round buttons and scrolls. With none, it says nothing near needs help right now. The same button, now a map icon, goes back (D-103).
+- **Spots list:** a round list button at the head of the map controls always opens it; the button never changes its icon or its job. The list opens over the map like a spot card (a sheet on a phone, the 400 px panel on a wide screen) with a close X, and holds the spots near the phone that need a feeding (within 2 km, or of the map's centre with location off): red with kittens seen first, then red, then the rest (kittens seen, then running low, then no data), nearest first inside each. Each row is a real link: the name with its distance at the inline end of the same line, and under them the state chip (icon and word) and the kittens tag, wrapping together. The rows scroll under a fixed head. With none, it says nothing near needs help right now. While it is open the round buttons give way, as to a card (on a wide screen only the list button, the other two stay), the map behind it is inert and a tap on it closes the list, as do the X and Escape. Focus moves to the title when it opens and back to the button when it closes (D-103).
 - **Alert row:** photo and words on top (kind chip, "reported N hours ago", the note cut at two lines,
   distance and area), then **Details** and **Show on map** side by side, full width. A countdown is
   never shown for helping a cat; only a gentle "leaves the map in N minutes" when it is about to go.

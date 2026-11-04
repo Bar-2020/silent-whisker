@@ -105,8 +105,13 @@
     overflow-y: auto;
   }
 
-  .stage .sheet--peek {
+  .stage .sheet--peek,
+  .stage .sheet--list {
     inset-block-end: auto;
+  }
+
+  .stage .sheet--list {
+    max-block-size: calc(100dvh - 2 * var(--s-4));
   }
 
   .mapctl,
@@ -127,8 +132,9 @@
   }
 
   .stage[data-sheet='spot'] .mapcredit,
-  .stage[data-sheet='alert'] .mapcredit {
-    inset-block-end: var(--s-2);
+  .stage[data-sheet='alert'] .mapcredit,
+  .stage[data-sheet='list'] .mapcredit {
+    inset-block: auto var(--s-2);
   }
 
   /* Beside the side panel there is room, so the buttons stay, at the inline-end. */
@@ -136,7 +142,7 @@
     inset-inline: auto var(--s-4);
   }
 
-  .stage:is([data-sheet='spot'], [data-sheet='alert']) .mapctl {
+  .stage:is([data-sheet='spot'], [data-sheet='alert'], [data-sheet='list']) .mapctl {
     display: flex;
   }
 

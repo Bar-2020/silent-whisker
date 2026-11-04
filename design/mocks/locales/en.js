@@ -707,7 +707,6 @@ window.MOCK_LOCALES.en = {
   'spot.log.cancelled.text': 'The spot is back to how it was. You can log again.',
   'spot.history.cancel': 'Cancel',
   'map.list': 'Spots to feed near me',
-  'map.showMap': 'Show the map',
   'map.list.title': 'Spots to feed near you',
   'map.list.sorted': 'By priority: most urgent first, then nearest.',
   'map.list.empty': 'Nothing near you needs help right now.',

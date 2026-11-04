@@ -117,95 +117,6 @@
               <strong data-t="map.search.none"></strong>
               <span class="small muted" data-t="map.search.noneHint"></span>
             </div>
-
-            <!-- List view: spots to feed near the phone; red with kittens, red, the rest (D-103). -->
-            <div class="results results--list" id="spot-list" data-when="list">
-              <div class="results__group" role="group" aria-labelledby="list-h">
-                <h2 class="results__title" id="list-h" data-t="map.list.title"></h2>
-                <p class="results__hint small muted" data-t="map.list.sorted"></p>
-                <a class="results__item" href="spot.html?screen=detail&state=kittens">
-                  <span class="results__icon"><i data-icon="pin"></i></span>
-                  <span class="results__text">
-                    <span class="results__head"
-                      ><strong data-t="demo.spot1.name"></strong
-                      ><span
-                        class="results__distance num small muted"
-                        data-t="map.list.distance.m"
-                        data-v='{"n":80}'
-                      ></span
-                    ></span>
-                    <span class="results__meta"
-                      ><span class="chip" data-level="red"
-                        ><i data-icon="bowl-empty"></i><span data-t="map.legend.red"></span
-                      ></span>
-                      <span class="tag"
-                        ><i data-icon="paw" data-class="icon--s"></i
-                        ><span data-t="spot.tag.kittens"></span
-                      ></span>
-                    </span>
-                  </span>
-                </a>
-                <a class="results__item" href="spot.html?screen=detail&state=red">
-                  <span class="results__icon"><i data-icon="pin"></i></span>
-                  <span class="results__text">
-                    <span class="results__head"
-                      ><strong data-t="demo.spot2.name"></strong
-                      ><span
-                        class="results__distance num small muted"
-                        data-t="map.list.distance.m"
-                        data-v='{"n":410}'
-                      ></span
-                    ></span>
-                    <span class="results__meta"
-                      ><span class="chip" data-level="red"
-                        ><i data-icon="bowl-empty"></i><span data-t="map.legend.red"></span
-                      ></span>
-                    </span>
-                  </span>
-                </a>
-                <a class="results__item" href="spot.html?screen=detail&state=orange">
-                  <span class="results__icon"><i data-icon="pin"></i></span>
-                  <span class="results__text">
-                    <span class="results__head"
-                      ><strong data-t="demo.spot3.name"></strong
-                      ><span
-                        class="results__distance num small muted"
-                        data-t="map.list.distance.m"
-                        data-v='{"n":210}'
-                      ></span
-                    ></span>
-                    <span class="results__meta"
-                      ><span class="chip" data-level="orange"
-                        ><i data-icon="clock"></i><span data-t="map.legend.orange"></span
-                      ></span>
-                    </span>
-                  </span>
-                </a>
-                <a class="results__item" href="spot.html?screen=detail&state=none">
-                  <span class="results__icon"><i data-icon="pin"></i></span>
-                  <span class="results__text">
-                    <span class="results__head"
-                      ><strong data-t="demo.station.name"></strong
-                      ><span
-                        class="results__distance num small muted"
-                        data-t="map.list.distance.m"
-                        data-v='{"n":300}'
-                      ></span
-                    ></span>
-                    <span class="results__meta"
-                      ><span class="chip" data-level="none"
-                        ><i data-icon="dash"></i><span data-t="map.legend.none"></span
-                      ></span>
-                    </span>
-                  </span>
-                </a>
-              </div>
-            </div>
-            <div class="results results--none" role="status" data-when="list-empty">
-              <i data-icon="check" data-class="icon--l"></i>
-              <strong data-t="map.list.empty"></strong>
-              <span class="small muted" data-t="map.list.emptyHint"></span>
-            </div>
           </div>
 
           <div class="mapbanner" data-when="zoom">
@@ -229,21 +140,13 @@
           <div class="mapctl">
             <button
               class="round"
+              id="list-open"
               type="button"
               data-go="list"
               data-unless="list list-empty"
               data-t-attr="aria-label:map.list"
             >
               <i data-icon="list"></i>
-            </button>
-            <button
-              class="round"
-              type="button"
-              data-go="default"
-              data-when="list list-empty"
-              data-t-attr="aria-label:map.showMap"
-            >
-              <i data-icon="map"></i>
             </button>
             <button class="round" type="button" data-t-attr="aria-label:map.locate">
               <i data-icon="locate"></i>
@@ -258,6 +161,113 @@
               <i data-icon="plus"></i>
             </button>
           </div>
+
+          <!-- List of spots to feed (D-103): opens like a card; the X, Escape or a tap on the map closes it. -->
+          <div
+            class="mapdismiss"
+            data-when="list list-empty"
+            data-go="default"
+            aria-hidden="true"
+          ></div>
+          <aside class="sheet sheet--list" data-when="list list-empty" aria-labelledby="list-h">
+            <div class="sheet__head">
+              <div class="stack stack--2">
+                <h2 class="sheet__title" id="list-h" tabindex="-1" data-t="map.list.title"></h2>
+                <p class="small muted" data-t="map.list.sorted"></p>
+              </div>
+              <button
+                class="iconbtn"
+                type="button"
+                data-go="default"
+                data-t-attr="aria-label:common.close"
+              >
+                <i data-icon="x"></i>
+              </button>
+            </div>
+            <div class="sheet__list" data-when="list">
+              <a class="results__item" href="spot.html?screen=detail&state=kittens">
+                <span class="results__icon"><i data-icon="pin"></i></span>
+                <span class="results__text">
+                  <span class="results__head"
+                    ><strong data-t="demo.spot1.name"></strong
+                    ><span
+                      class="results__distance num small muted"
+                      data-t="map.list.distance.m"
+                      data-v='{"n":80}'
+                    ></span
+                  ></span>
+                  <span class="results__meta"
+                    ><span class="chip" data-level="red"
+                      ><i data-icon="bowl-empty"></i><span data-t="map.legend.red"></span
+                    ></span>
+                    <span class="tag"
+                      ><i data-icon="paw" data-class="icon--s"></i
+                      ><span data-t="spot.tag.kittens"></span
+                    ></span>
+                  </span>
+                </span>
+              </a>
+              <a class="results__item" href="spot.html?screen=detail&state=red">
+                <span class="results__icon"><i data-icon="pin"></i></span>
+                <span class="results__text">
+                  <span class="results__head"
+                    ><strong data-t="demo.spot2.name"></strong
+                    ><span
+                      class="results__distance num small muted"
+                      data-t="map.list.distance.m"
+                      data-v='{"n":410}'
+                    ></span
+                  ></span>
+                  <span class="results__meta"
+                    ><span class="chip" data-level="red"
+                      ><i data-icon="bowl-empty"></i><span data-t="map.legend.red"></span
+                    ></span>
+                  </span>
+                </span>
+              </a>
+              <a class="results__item" href="spot.html?screen=detail&state=orange">
+                <span class="results__icon"><i data-icon="pin"></i></span>
+                <span class="results__text">
+                  <span class="results__head"
+                    ><strong data-t="demo.spot3.name"></strong
+                    ><span
+                      class="results__distance num small muted"
+                      data-t="map.list.distance.m"
+                      data-v='{"n":210}'
+                    ></span
+                  ></span>
+                  <span class="results__meta"
+                    ><span class="chip" data-level="orange"
+                      ><i data-icon="clock"></i><span data-t="map.legend.orange"></span
+                    ></span>
+                  </span>
+                </span>
+              </a>
+              <a class="results__item" href="spot.html?screen=detail&state=none">
+                <span class="results__icon"><i data-icon="pin"></i></span>
+                <span class="results__text">
+                  <span class="results__head"
+                    ><strong data-t="demo.station.name"></strong
+                    ><span
+                      class="results__distance num small muted"
+                      data-t="map.list.distance.m"
+                      data-v='{"n":300}'
+                    ></span
+                  ></span>
+                  <span class="results__meta"
+                    ><span class="chip" data-level="none"
+                      ><i data-icon="dash"></i><span data-t="map.legend.none"></span
+                    ></span>
+                  </span>
+                </span>
+              </a>
+            </div>
+            <div class="sheet__empty" role="status" data-when="list-empty">
+              <i data-icon="check" data-class="icon--l"></i>
+              <strong data-t="map.list.empty"></strong>
+              <span class="small muted" data-t="map.list.emptyHint"></span>
+            </div>
+          </aside>
 
           <div class="scrim" data-when="plus" data-go="default"></div>
           <aside class="sheet sheet--modal" role="dialog" aria-modal="true" data-when="plus">

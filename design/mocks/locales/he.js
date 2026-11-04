@@ -689,7 +689,6 @@ window.MOCK_LOCALES.he = {
   'spot.log.cancelled.text': 'הנקודה חזרה למצב שהיה. אפשר לרשום שוב.',
   'spot.history.cancel': 'ביטול',
   'map.list': 'נקודות להאכלה לידי',
-  'map.showMap': 'חזרה למפה',
   'map.list.title': 'נקודות להאכלה לידך',
   'map.list.sorted': 'לפי עדיפות: הדחופות קודם, ואז הקרובות.',
   'map.list.empty': 'אין כרגע נקודות קרובות שצריכות עזרה.',

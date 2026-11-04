@@ -79,7 +79,27 @@
 
   const search = document.getElementById('map-search');
 
+  /* The list of spots to feed opens like a card (D-103): the map behind it is inert, focus moves into
+     it, and Escape or the X closes it and gives focus back to its button. */
+  const LIST_STATES = ['list', 'list-empty'];
+  const listButton = document.getElementById('list-open');
+  const listTitle = document.getElementById('list-h');
+  let listWasOpen = false;
+
+  function syncList(state) {
+    const open = LIST_STATES.includes(state);
+    host.inert = open;
+    if (open && !listWasOpen && listTitle) listTitle.focus();
+    if (!open && listWasOpen && state === 'default' && listButton) listButton.focus();
+    listWasOpen = open;
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && LIST_STATES.includes(Mock.getState())) Mock.setState('default');
+  });
+
   Mock.onState = (state) => {
+    syncList(state);
     if (search) {
       search.setAttribute('aria-expanded', String(state === 'search' || state === 'search-none'));
       search.value =

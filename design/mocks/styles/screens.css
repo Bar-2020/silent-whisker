@@ -405,7 +405,8 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   inset-inline-start: var(--s-4);
 }
 
-.stage:is([data-sheet='spot'], [data-sheet='alert'], [data-sheet='legend']) .mapctl {
+.stage:is([data-sheet='spot'], [data-sheet='alert'], [data-sheet='legend'], [data-sheet='list'])
+  .mapctl {
   display: none;
 }
 
@@ -549,7 +550,7 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
 }
 
 /* A spot's row in the list: the name and its distance on one line, the state chips under them. */
-.results--list .results__text {
+.sheet--list .results__text {
   flex: 1;
 }
 
@@ -572,10 +573,36 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   margin-block-start: var(--s-1);
 }
 
-/* Lines up with the title and the rows' text. */
-.results__hint {
-  padding-inline: var(--s-3);
-  padding-block-end: var(--s-2);
+/* The list of spots to feed opens like a card: the head and its close X stay, the rows scroll. It
+   stops short of the top so the search box and some map stay in view. */
+.stage .sheet--list {
+  overflow: hidden;
+  max-block-size: min(66dvh, 36rem);
+}
+
+/* The rows reach into the sheet's padding, so their icons line up with the title. */
+.sheet__list {
+  min-block-size: 0;
+  margin-inline: calc(var(--s-3) * -1);
+  overflow-y: auto;
+}
+
+.sheet__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-6) var(--s-4);
+  color: var(--ink-3);
+  text-align: center;
+}
+
+/* While the list is open the map behind it is inert; a tap on it closes the list. It sits above the
+   map's panes (400) and just below the search box, the credit and the sheet. */
+.mapdismiss {
+  position: absolute;
+  inset: 0;
+  z-index: calc(var(--z-map-ui) - 1);
 }
 
 .results--none {
@@ -1821,6 +1848,10 @@ h2[id] {
 
 .stage[data-sheet='alert'] .mapcredit {
   inset-block-end: calc(var(--nav-total) + 280px + var(--s-2));
+}
+
+.stage[data-sheet='list'] .mapcredit {
+  inset-block: calc(var(--s-4) + var(--round) + var(--s-2)) auto;
 }
 
 .mapcredit__text {
