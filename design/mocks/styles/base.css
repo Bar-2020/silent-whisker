@@ -19,8 +19,8 @@ html {
   scrollbar-width: none;
 }
 
-/* A focused control is never hidden behind the consent bar. */
-html:has(.consent:not([hidden])) {
+/* A focused control is never hidden behind the consent bar (landing.js sets the attribute while the bar shows). */
+html[data-consent] {
   scroll-padding-block-end: 12rem;
 }
 
@@ -168,7 +168,7 @@ svg {
   block-size: 2rem;
 }
 
-.icon--fill {
+[data-ui~='icon--fill'] {
   fill: currentColor;
 }
 
@@ -177,7 +177,7 @@ svg {
   transform: scaleX(-1);
 }
 
-.sprite {
+[data-ui~='sprite'] {
   position: absolute;
   inline-size: 0;
   block-size: 0;
@@ -190,13 +190,16 @@ bdi,
   unicode-bidi: isolate;
 }
 
+/* Reduced motion. Every transition takes its length from a --dur token and the two animations from
+   their own properties, so shortening them here needs no !important. A spinner still has to turn, only
+   slower: it is the only sign that something is loading. */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  :root {
+    --dur-1: 0.01ms;
+    --dur-2: 0.01ms;
+    --shimmer-dur: 0.01ms;
+    --shimmer-count: 1;
+    --spin-dur: 1.6s;
   }
 }
 
@@ -205,20 +208,12 @@ bdi,
   fill: var(--cut, var(--alert));
 }
 
-/* A spinner still has to turn when motion is reduced; it is the only sign that something is loading. */
-@media (prefers-reduced-motion: reduce) {
-  .spinner {
-    animation-duration: 1.6s !important;
-    animation-iteration-count: infinite !important;
-  }
-}
-
 /* High-contrast (forced colours) mode: a selected or pressed state cannot rely on a fill or a shadow. */
 @media (forced-colors: active) {
   .tabs button[aria-selected='true'],
-  .nav__item[aria-current='page'],
+  [data-ui~='nav__item'][aria-current='page'],
   .react[aria-pressed='true'],
-  .choice input:checked + .choice__tile {
+  input:checked + .choice__tile {
     outline: 2px solid Highlight;
     outline-offset: -2px;
   }

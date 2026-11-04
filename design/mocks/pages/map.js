@@ -137,9 +137,9 @@
     return (
       `<a class="results__item" href="spot.html?screen=detail&state=${state || level}">` +
       '<span class="results__icon"><i data-icon="pin"></i></span><span class="results__text">' +
-      `<span class="results__head"><strong data-t="${name}"></strong>` +
-      `<span class="results__distance num small muted" data-t="map.list.distance.${unit}" data-v='{"n":${n}}'></span></span>` +
-      `<span class="results__meta"><span class="chip" data-level="${level}"><i data-icon="${LEVEL_ICON[level]}"></i>` +
+      `<span data-ui="results__head"><strong data-t="${name}"></strong>` +
+      `<span class="num small muted" data-ui="results__distance" data-t="map.list.distance.${unit}" data-v='{"n":${n}}'></span></span>` +
+      `<span data-ui="results__meta"><span class="chip" data-level="${level}"><i data-icon="${LEVEL_ICON[level]}"></i>` +
       `<span data-t="map.legend.${level}"></span></span>${kittens ? KITTENS_TAG : ''}</span></span></a>`
     );
   };
@@ -158,11 +158,11 @@
   ];
   const rows = legend.map(
     (item) =>
-      `<div class="legend__item"><span class="legend__swatch">${Mock.pinHtml(item.pin)}</span><span>${Mock.t(item.key)}</span></div>`
+      `<div data-ui="legend__item"><span data-ui="legend__swatch">${Mock.pinHtml(item.pin)}</span><span>${Mock.t(item.key)}</span></div>`
   );
   rows.push(
-    `<div class="legend__item"><span class="legend__swatch">${Mock.signHtml({ kind: 'danger' })}</span><span>${Mock.t('map.legend.alert')}</span></div>`,
-    `<div class="legend__item"><span class="legend__swatch">${Mock.signHtml({ kind: 'neuter' })}</span><span>${Mock.t('map.legend.neuter')}</span></div>`
+    `<div data-ui="legend__item"><span data-ui="legend__swatch">${Mock.signHtml({ kind: 'danger' })}</span><span>${Mock.t('map.legend.alert')}</span></div>`,
+    `<div data-ui="legend__item"><span data-ui="legend__swatch">${Mock.signHtml({ kind: 'neuter' })}</span><span>${Mock.t('map.legend.neuter')}</span></div>`
   );
   document.getElementById('legend').innerHTML = rows.join('');
 })();

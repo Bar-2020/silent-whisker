@@ -83,22 +83,22 @@
     const current = host.dataset.nav;
     const items = NAV.map(
       (item) =>
-        `<a class="nav__item" href="${withLang(item.href)}"${item.id === current ? ' aria-current="page"' : ''}>` +
+        `<a data-ui="nav__item" href="${withLang(item.href)}"${item.id === current ? ' aria-current="page"' : ''}>` +
         `<i data-icon="${item.icon}"></i><span data-t="nav.${item.id}"></span></a>`
     ).join('');
     host.className = 'nav on-dado';
     host.setAttribute('aria-label', t('nav.label'));
     host.innerHTML =
-      `<a class="nav__brand" href="${withLang('landing.html')}" aria-label="${t('nav.home')}"><svg class="brand-glyph" aria-hidden="true"><use href="#i-cat"></use></svg></a>` +
+      `<a data-ui="nav__brand" href="${withLang('landing.html')}" aria-label="${t('nav.home')}"><svg data-ui="brand-glyph" aria-hidden="true"><use href="#i-cat"></use></svg></a>` +
       items +
-      '<div class="nav__lang" data-langmenu></div>';
+      '<div data-ui="nav__lang" data-langmenu></div>';
   }
 
   /* Every top bar carries the mark: first when the bar has no back button, right after it otherwise. */
   function drawTopbarBrand() {
     document.querySelectorAll('.topbar:not([data-nobrand])').forEach((bar) => {
       const brand = document.createElement('a');
-      brand.className = 'topbar__brand';
+      brand.dataset.ui = 'topbar__brand';
       brand.href = withLang('map.html');
       brand.setAttribute('aria-label', t('nav.home'));
       brand.innerHTML =
@@ -125,18 +125,17 @@
         .map(
           (code) =>
             `<a class="menu__item" href="?${otherQuery(code)}" lang="${code}"${code === lang ? ' aria-current="true"' : ''}>` +
-            `${t(`lang.${code}`)}${code === lang ? '<i class="check-end" data-icon="check"></i>' : ''}</a>`
+            `${t(`lang.${code}`)}${code === lang ? '<i data-icon="check"></i>' : ''}</a>`
         )
         .join('');
-      host.classList.add('langmenu');
       host.innerHTML =
-        `<button class="iconbtn langmenu__btn" type="button" aria-expanded="false" aria-controls="${id}" aria-label="${t('lang.label')}" data-toggle="${id}"><i data-icon="globe"></i></button>` +
-        `<div class="menu langmenu__menu" id="${id}" hidden>${items}</div>`;
+        `<button class="iconbtn" data-ui="langmenu__btn" type="button" aria-expanded="false" aria-controls="${id}" aria-label="${t('lang.label')}" data-toggle="${id}"><i data-icon="globe"></i></button>` +
+        `<div class="menu" data-ui="langmenu__menu" id="${id}" hidden>${items}</div>`;
     });
   }
 
   function closeLangMenus(except) {
-    document.querySelectorAll('.langmenu__menu:not([hidden])').forEach((menu) => {
+    document.querySelectorAll('[data-ui="langmenu__menu"]:not([hidden])').forEach((menu) => {
       if (except && menu.parentElement.contains(except)) return;
       menu.hidden = true;
       menu.previousElementSibling.setAttribute('aria-expanded', 'false');
@@ -299,7 +298,7 @@
       if (menu && toggle.hasAttribute('data-disclosure')) {
         toggle.setAttribute('aria-expanded', String(!menu.hidden));
       }
-      if (menu && menu.classList.contains('langmenu__menu')) {
+      if (menu && menu.dataset.ui === 'langmenu__menu') {
         toggle.setAttribute('aria-expanded', String(!menu.hidden));
         closeLangMenus(toggle.parentElement);
       }
@@ -323,18 +322,18 @@
   /* One pin everywhere: a teardrop in the state colour and nothing else. The card, the legend and the
      name of the marker carry the words. */
   function pinHtml(spot) {
-    const selected = spot.selected ? ' is-selected' : '';
+    const selected = spot.selected ? ' data-selected' : '';
     return (
-      `<div class="pin${selected}" data-level="${spot.level}" data-kind="${spot.kind}" data-status="${spot.status || 'active'}">` +
-      '<svg class="pin__body" viewBox="0 0 46 56" aria-hidden="true"><path d="M23 54S5 37 5 22a18 18 0 1 1 36 0c0 15-18 32-18 32z"/></svg></div>'
+      `<div class="pin"${selected} data-level="${spot.level}" data-kind="${spot.kind}" data-status="${spot.status || 'active'}">` +
+      '<svg data-ui="pin__body" viewBox="0 0 46 56" aria-hidden="true"><path d="M23 54S5 37 5 22a18 18 0 1 1 36 0c0 15-18 32-18 32z"/></svg></div>'
     );
   }
 
   function signHtml(alertItem) {
-    const selected = alertItem.selected ? ' is-selected' : '';
+    const selected = alertItem.selected ? ' data-selected' : '';
     return (
-      `<div class="sign${selected}" data-level="alert" data-kind="${alertItem.kind}"><span class="sign__box"><svg class="sign__glyph" aria-hidden="true"><use href="#i-cat-fill"></use></svg></span>` +
-      `<span class="sign__stem"></span><span class="sign__label">${t(`alerts.kind.${alertItem.kind}`)}</span></div>`
+      `<div class="sign"${selected} data-level="alert" data-kind="${alertItem.kind}"><span data-ui="sign__box"><svg data-ui="sign__glyph" aria-hidden="true"><use href="#i-cat-fill"></use></svg></span>` +
+      `<span data-ui="sign__stem"></span><span data-ui="sign__label">${t(`alerts.kind.${alertItem.kind}`)}</span></div>`
     );
   }
 
@@ -356,24 +355,24 @@
      (i) button after five seconds (allowed by their attribution guidelines), and shown again by a tap. */
   const CREDIT_SECONDS = 5;
   function addCredit(container) {
-    if (!container || container.querySelector('.mapcredit')) return;
+    if (!container || container.querySelector('[data-ui="mapcredit"]')) return;
     const credit = document.createElement('div');
-    credit.className = 'mapcredit';
+    credit.dataset.ui = 'mapcredit';
     credit.innerHTML =
-      `<a class="mapcredit__text" dir="ltr" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">${t('map.credit.short')}</a>` +
-      `<button class="mapcredit__info" type="button" aria-label="${t('map.credit.show')}"><i data-icon="info"></i></button>`;
+      `<a data-ui="mapcredit__text" dir="ltr" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">${t('map.credit.short')}</a>` +
+      `<button data-ui="mapcredit__info" type="button" aria-label="${t('map.credit.show')}"><i data-icon="info"></i></button>`;
     container.append(credit);
     drawIcons(credit);
     let timer = 0;
     const fold = () => {
-      credit.classList.add('is-collapsed');
+      credit.dataset.collapsed = '';
     };
     const open = () => {
-      credit.classList.remove('is-collapsed');
+      delete credit.dataset.collapsed;
       window.clearTimeout(timer);
       timer = window.setTimeout(fold, CREDIT_SECONDS * 1000);
     };
-    credit.querySelector('.mapcredit__info').addEventListener('click', open);
+    credit.querySelector('[data-ui="mapcredit__info"]').addEventListener('click', open);
     open();
   }
 

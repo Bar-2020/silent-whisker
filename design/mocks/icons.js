@@ -82,7 +82,7 @@
 
   document.body.insertAdjacentHTML(
     'afterbegin',
-    `<svg class="sprite" aria-hidden="true" focusable="false">${symbols}</svg>`
+    `<svg data-ui="sprite" aria-hidden="true" focusable="false">${symbols}</svg>`
   );
 
   window.MOCK_ICON_IDS = Object.keys(ICONS);

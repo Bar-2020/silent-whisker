@@ -15,7 +15,7 @@
   }
 
   .shell .main {
-    padding-inline-start: var(--rail-offset);
+    padding-inline-start: var(--main-pad-start, var(--rail-offset));
   }
 
   .nav {
@@ -28,30 +28,30 @@
     border-radius: var(--r-rail);
   }
 
-  .nav__item {
+  [data-ui~='nav__item'] {
     flex: none;
     min-block-size: 68px;
   }
 
   /* The rail carries the mark, so the top bar does not repeat it. */
-  .topbar__brand {
+  [data-ui~='topbar__brand'] {
     display: none;
   }
 
-  .nav__brand {
+  [data-ui~='nav__brand'] {
     display: grid;
     place-items: center;
     min-block-size: var(--tap);
     margin-block-end: var(--s-3);
   }
 
-  .nav__brand img {
+  [data-ui~='nav__brand'] img {
     inline-size: 40px;
     block-size: 40px;
     border-radius: var(--r-s);
   }
 
-  .nav__lang {
+  [data-ui~='nav__lang'] {
     display: grid;
     place-items: center;
     margin-block-start: auto;
@@ -62,7 +62,7 @@
     text-decoration: none;
   }
 
-  .nav__lang:hover {
+  [data-ui~='nav__lang']:hover {
     color: var(--dado-ink);
   }
 
@@ -80,7 +80,7 @@
     padding-inline: max(var(--s-2), calc((100% - 64rem) / 2));
   }
 
-  .feed .post .photo {
+  .post .photo {
     --ratio: 4 / 3;
   }
 
@@ -124,15 +124,14 @@
   }
 
   /* The credit sits at the bottom, left of the action buttons, in both directions. */
-  .stage .mapcredit,
-  [dir='rtl'] .stage .mapcredit {
+  .stage [data-ui~='mapcredit'] {
     inset-block-end: var(--s-2);
     inset-inline: auto calc(var(--s-4) + var(--round) + var(--s-3));
   }
 
-  .stage[data-sheet='spot'] .mapcredit,
-  .stage[data-sheet='alert'] .mapcredit,
-  .stage[data-sheet='list'] .mapcredit {
+  .stage[data-sheet='spot'] [data-ui~='mapcredit'],
+  .stage[data-sheet='alert'] [data-ui~='mapcredit'],
+  .stage[data-sheet='list'] [data-ui~='mapcredit'] {
     display: flex;
     inset-block: auto var(--s-2);
   }
@@ -142,17 +141,15 @@
     inset-inline: auto var(--s-4);
   }
 
-  .stage:is([data-sheet='spot'], [data-sheet='alert'], [data-sheet='list']) .mapctl {
+  [data-sheet='spot'] .mapctl,
+  [data-sheet='alert'] .mapctl,
+  [data-sheet='list'] .mapctl {
     display: flex;
   }
 
   .maptop {
     inset-inline: auto var(--s-4);
     inline-size: 26rem;
-  }
-
-  .map .leaflet-bottom {
-    inset-block-end: 0;
   }
 
   .mapbanner {
@@ -201,16 +198,19 @@
     grid-column: auto;
   }
 
-  .step:not(:last-child)::before {
+  .step {
+    --dash: to right;
+  }
+
+  [dir='rtl'] .step {
+    --dash: to left;
+  }
+
+  .step::before {
     inset-block: 21px auto;
     inset-inline: 60px calc(var(--s-7) * -1 + 16px);
     inline-size: auto;
     block-size: 2px;
-    background: repeating-linear-gradient(to right, var(--line-strong) 0 6px, transparent 6px 12px);
-  }
-
-  [dir='rtl'] .step:not(:last-child)::before {
-    background: repeating-linear-gradient(to left, var(--line-strong) 0 6px, transparent 6px 12px);
   }
 
   .sitefoot__inner {
@@ -243,8 +243,7 @@
     gap: var(--s-5);
   }
 
-  .feed .post .photo,
-  .post--solo .photo {
+  .post .photo {
     border-radius: var(--r-m);
   }
 

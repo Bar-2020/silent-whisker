@@ -13,7 +13,7 @@
   document.querySelectorAll('[data-lang-option]').forEach((option) => {
     if (option.dataset.langOption === Mock.lang) {
       option.setAttribute('aria-current', 'true');
-      option.insertAdjacentHTML('beforeend', '<i class="check-end" data-icon="check"></i>');
+      option.insertAdjacentHTML('beforeend', '<i data-icon="check"></i>');
     }
   });
   Mock.refresh(document.body);

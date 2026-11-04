@@ -90,13 +90,13 @@
     const action =
       level === 'none'
         ? ''
-        : `<div class="state__actions"><button class="btn btn--secondary btn--small" type="button"${needed ? ' disabled' : ''} data-go="/empty-${kind}" data-t="${needed ? 'spot.empty.already' : `spot.empty.${kind}`}"></button></div>`;
+        : `<div data-ui="state__actions"><button class="btn btn--secondary btn--small" type="button"${needed ? ' disabled' : ''} data-go="/empty-${kind}" data-t="${needed ? 'spot.empty.already' : `spot.empty.${kind}`}"></button></div>`;
     return (
       `<div class="state" data-level="${level}">` +
-      `<span class="state__icon"><i data-icon="${icon}"></i></span>` +
-      `<div class="cluster"><h3 class="state__label" data-t="spot.state.${kind}"></h3>` +
+      `<span data-ui="state__icon"><i data-icon="${icon}"></i></span>` +
+      `<div class="cluster"><h3 data-ui="state__label" data-t="spot.state.${kind}"></h3>` +
       `<span class="chip"><i data-icon="${levelMark(kind, level)}"></i><span data-t="level.${kind}.${level}"></span></span></div>` +
-      `<p class="state__when num" data-t="${when}" data-v='{"n":${hours || 0}}'></p>${action}</div>`
+      `<p class="num" data-ui="state__when" data-t="${when}" data-v='{"n":${hours || 0}}'></p>${action}</div>`
     );
   }
 

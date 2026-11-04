@@ -11,10 +11,14 @@
   const madeBy = document.getElementById('made-by');
   const [before, after] = Mock.t('landing.madeBy', { heart: '\u0000' }).split('\u0000');
   const heart = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  heart.setAttribute('class', 'icon icon--s icon--fill sitefoot__heart');
+  heart.setAttribute('class', 'icon icon--s');
+  heart.dataset.ui = 'sitefoot__heart icon--fill';
   heart.setAttribute('aria-hidden', 'true');
   heart.innerHTML = '<use href="#i-heart"></use>';
   madeBy.replaceChildren(before, heart, after);
+  Mock.onState = (state) =>
+    document.documentElement.toggleAttribute('data-consent', state === 'eu');
+  Mock.onState(Mock.getState());
 
   /* The frame shows the map as it looks inside a phone, below the camera island. */
   const frame = document.getElementById('hero-map');
