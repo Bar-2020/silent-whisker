@@ -105,13 +105,8 @@
     overflow-y: auto;
   }
 
-  .stage .sheet--peek,
-  .stage .sheet--list {
+  .stage .sheet--peek {
     inset-block-end: auto;
-  }
-
-  .stage .sheet--list {
-    max-block-size: calc(100dvh - 2 * var(--s-4));
   }
 
   .mapctl,
@@ -134,7 +129,12 @@
   .stage[data-sheet='spot'] .mapcredit,
   .stage[data-sheet='alert'] .mapcredit,
   .stage[data-sheet='list'] .mapcredit {
+    display: flex;
     inset-block: auto var(--s-2);
+  }
+
+  .sheet__credit {
+    display: none;
   }
 
   /* Beside the side panel there is room, so the buttons stay, at the inline-end. */

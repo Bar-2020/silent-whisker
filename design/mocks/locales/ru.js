@@ -718,6 +718,10 @@ window.MOCK_LOCALES.ru = {
   'map.list.emptyHint': 'Проверьте позже или посмотрите на карте.',
   'map.list.distance.m': '{n} м',
   'map.list.distance.km': '{n} км',
+  'demo.spot5.name': 'Киоск на бульваре Ротшильда',
+  'demo.spot6.name': 'Задний двор на улице Бен-Йехуда',
+  'demo.spot7.name': 'Угол площади Дизенгоф',
+  'demo.spot8.name': 'Ворота рынка Кармель',
   'alerts.reporter.resolve': 'Отметить как решённое',
   'alerts.reporter.hint':
     'Нажимают, когда кошке помогли или её там уже нет. Оповещение исчезнет с карты у всех.',

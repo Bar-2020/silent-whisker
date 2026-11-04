@@ -19,7 +19,7 @@ alert is, then pick one and go. Used in glare, one-handed, often while moving.
   spot's most liked approved one, Q37; two state chips; the last log) and one button to the full
   page. The close X sits at the inline-end corner of the title row.
 - The "+" button opens a dialog: "New feeding spot" (the new spot form) and "Report a cat"
-  (the cat alert form: in danger, sick, or spay or neuter); both screens are in the mocks. A search box sits at the top (Q38), and a round button always opens a card with the spots to feed near the phone, which closes with its X, Escape or a tap on the map (D-103). The two
+  (the cat alert form: in danger, sick, or spay or neuter); both screens are in the mocks. A search box sits at the top (Q38), and a round button always opens a card with the spots to feed near the phone, which closes with its X, Escape or a tap on the map; on a phone it covers the whole screen above the bottom bar, search box and legend button included (D-103). The two
   action buttons sit at the right on a phone and hide while a card is open. The map credit shows in a
   corner and folds into an (i) after five seconds (Q43).
 

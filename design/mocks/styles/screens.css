@@ -573,11 +573,19 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   margin-block-start: var(--s-1);
 }
 
-/* The list of spots to feed opens like a card: the head and its close X stay, the rows scroll. It
-   stops short of the top so the search box and some map stay in view. */
+/* The list of spots to feed opens like a card: the head and its close X stay, the rows scroll. On a
+   phone it spans from the top edge to the bottom bar and covers the search box and the legend button;
+   the wide layout makes it a full-height panel. */
 .stage .sheet--list {
+  inset-block-start: var(--nav-gap);
+  max-block-size: none;
   overflow: hidden;
-  max-block-size: min(66dvh, 36rem);
+}
+
+/* Focus lands on the title when the list opens: the ring hugs the words, not the whole row. */
+.sheet--list .sheet__title {
+  inline-size: fit-content;
+  border-radius: var(--r-s);
 }
 
 /* The rows reach into the sheet's padding, so their icons line up with the title. */
@@ -589,8 +597,10 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
 
 .sheet__empty {
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: var(--s-2);
   padding: var(--s-6) var(--s-4);
   color: var(--ink-3);
@@ -1850,8 +1860,20 @@ h2[id] {
   inset-block-end: calc(var(--nav-total) + 280px + var(--s-2));
 }
 
+/* On a phone the list covers the map, so its credit moves to the foot of the sheet. */
 .stage[data-sheet='list'] .mapcredit {
-  inset-block: calc(var(--s-4) + var(--round) + var(--s-2)) auto;
+  display: none;
+}
+
+.sheet__credit {
+  flex: none;
+  text-align: center;
+}
+
+.sheet__credit a {
+  display: inline-block;
+  padding: var(--s-2) var(--s-3);
+  text-underline-offset: 2px;
 }
 
 .mapcredit__text {

@@ -713,6 +713,10 @@ window.MOCK_LOCALES.en = {
   'map.list.emptyHint': 'Check again later, or look around on the map.',
   'map.list.distance.m': '{n} m',
   'map.list.distance.km': '{n} km',
+  'demo.spot5.name': 'Rothschild Boulevard kiosk',
+  'demo.spot6.name': 'Ben Yehuda Street back yard',
+  'demo.spot7.name': 'Dizengoff Square corner',
+  'demo.spot8.name': 'Carmel Market gate',
   'alerts.reporter.resolve': 'Mark as handled',
   'alerts.reporter.hint':
     'Use it when the cat was helped or is no longer there. The alert leaves the map for everyone.',

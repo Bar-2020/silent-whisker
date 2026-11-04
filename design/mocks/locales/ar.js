@@ -698,6 +698,10 @@ window.MOCK_LOCALES.ar = {
   'map.list.emptyHint': 'تحقق مرة أخرى لاحقًا أو تصفح الخريطة.',
   'map.list.distance.m': '{n} م',
   'map.list.distance.km': '{n} كم',
+  'demo.spot5.name': 'كشك شارع روتشيلد',
+  'demo.spot6.name': 'الفناء الخلفي في شارع بن يهودا',
+  'demo.spot7.name': 'زاوية ميدان ديزنغوف',
+  'demo.spot8.name': 'بوابة سوق الكرمل',
   'alerts.reporter.resolve': 'تعليم كمعالَج',
   'alerts.reporter.hint':
     'يُستخدم عندما تلقّت القطة المساعدة أو لم تعد هناك. يختفي التنبيه من الخريطة لدى الجميع.',
