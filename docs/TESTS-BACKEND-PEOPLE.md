@@ -41,6 +41,7 @@ Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether 
 | PROF-15 | i | Look at the headers of `GET /profile` | Never cached (`Cache-Control: no-store`) | D-59 |
 | PROF-16 | i | Ten lookups of different cities in the same second, from several handler instances | One request a second reaches the geocoder (one `geocoder#<second>` row each); the losers wait for the next second, up to 3 tries, then fail; the route decides what the member sees | D-87 |
 | PROF-17 | t | The profile save Lambda in Terraform | It is the route `PATCH /api/profile` with the authorizer and its throttle (1 a second, burst 2); its role reads and updates `users` only (no delete, no wildcard), reaches the geocode cache, the counters, the cost alert topic and the text moderation guardrail; its six settings are wired | D-62, D-61, R-22 |
+| PROF-18 | i | `GET /profile` with a changed Google picture, while the member's row is deleted after the handler read it | The photo update is conditional on the row still existing, so it can never make a row holding only `user_id` and `avatar_url`; when it finds the row gone, a fresh empty row is made as in PROF-14, with the new photo, and the answer is `200` | D-59, D-92 |
 
 ## Admin and reports (ADM)
 

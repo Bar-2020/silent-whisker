@@ -69,14 +69,21 @@ async function loadUser(table: string, { userId, photo }: Member): Promise<UserR
   const user = await readUserRow(db, table, userId);
   if (!user) return createUser(table, userId, photo);
   if (!photo || photo === user.avatar_url) return user;
-  await db.send(
-    new UpdateCommand({
-      TableName: table,
-      Key: { user_id: userId },
-      UpdateExpression: 'SET avatar_url = :photo',
-      ExpressionAttributeValues: { ':photo': photo },
-    })
-  );
+  try {
+    await db.send(
+      new UpdateCommand({
+        TableName: table,
+        Key: { user_id: userId },
+        UpdateExpression: 'SET avatar_url = :photo',
+        ConditionExpression: 'attribute_exists(user_id)',
+        ExpressionAttributeValues: { ':photo': photo },
+      })
+    );
+  } catch (error) {
+    // The row was deleted since the read (DELETE /profile): a fresh one, as after a delete (D-92).
+    if (!(error instanceof ConditionalCheckFailedException)) throw error;
+    return createUser(table, userId, photo);
+  }
   return { ...user, avatar_url: photo };
 }
 

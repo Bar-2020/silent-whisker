@@ -217,6 +217,157 @@ describe('GET /api/profile and the Google photo (D-21)', () => {
   });
 });
 
+const NEWER_PHOTO = 'https://lh3.googleusercontent.com/a/newer=s96-c';
+
+interface UpdateInput {
+  Key: { user_id: string };
+  ConditionExpression?: string;
+  ExpressionAttributeValues?: Record<string, unknown>;
+}
+interface PutInput {
+  Item: { user_id: string } & Record<string, unknown>;
+  ConditionExpression?: string;
+}
+interface FakeTable {
+  table: Map<string, Record<string, unknown>>;
+  written: Record<string, unknown>[];
+}
+
+/**
+ * The members table as the real one acts: the first read finds the row and then the row is deleted; a condition
+ * that fails changes nothing; an update with no row condition on a missing row makes a row holding only what it sets.
+ */
+function fakeRowDeletedAfterRead(stored: UserRow): FakeTable {
+  const table = new Map<string, Record<string, unknown>>([[stored.user_id, stored]]);
+  const written: Record<string, unknown>[] = [];
+  let read = false;
+
+  dbMock.on(GetCommand).callsFake((input: { Key: { user_id: string } }) => {
+    const Item = table.get(input.Key.user_id);
+    if (!read) {
+      read = true;
+      table.delete(input.Key.user_id);
+    }
+    return { Item };
+  });
+  dbMock.on(UpdateCommand).callsFake((input: UpdateInput) => {
+    const id = input.Key.user_id;
+    const existing = table.get(id);
+    if (!existing && input.ConditionExpression?.includes('attribute_exists(user_id)')) {
+      throw conditionFailed();
+    }
+    const photo = Object.values(input.ExpressionAttributeValues ?? {}).find(
+      (value) => value === NEWER_PHOTO
+    );
+    if (photo === undefined) throw new Error('this fake only knows the photo update');
+    const item = { ...(existing ?? { user_id: id }), avatar_url: photo };
+    table.set(id, item);
+    written.push(item);
+    return {};
+  });
+  dbMock.on(PutCommand).callsFake((input: PutInput) => {
+    const id = input.Item.user_id;
+    if (table.has(id) && input.ConditionExpression?.includes('attribute_not_exists(user_id)')) {
+      throw conditionFailed();
+    }
+    table.set(id, input.Item);
+    written.push(input.Item);
+    return {};
+  });
+  return { table, written };
+}
+
+const DELETED_MEMBER = row({
+  show_google_photo: true,
+  display_name: 'Dana',
+  city: 'Haifa',
+  terms_version: TERMS_VERSION,
+  terms_accepted_at: '2026-10-01T08:00:00.000Z',
+});
+
+describe('GET /api/profile when the row is deleted while the photo is updated (PROF-18, D-59, D-92)', () => {
+  it('makes the photo update conditional on the row still existing, and still copies the photo', async () => {
+    // PROF-18, D-59, D-92
+    dbMock.on(GetCommand).resolves({ Item: row({ show_google_photo: true }) });
+    dbMock.on(UpdateCommand).resolves({});
+
+    const result = await handler(idToken({ picture: NEWER_PHOTO }));
+
+    const updates = dbMock.commandCalls(UpdateCommand);
+    expect(updates).toHaveLength(1);
+    expect(updates[0].args[0].input.Key).toEqual({ user_id: 'user-1' });
+    expect(Object.values(updates[0].args[0].input.ExpressionAttributeValues ?? {})).toContain(
+      NEWER_PHOTO
+    );
+    expect(updates[0].args[0].input.ConditionExpression).toContain('attribute_exists(user_id)');
+    expect(dbMock.commandCalls(PutCommand)).toHaveLength(0);
+    expect(result.statusCode).toBe(200);
+    expect(body(result)).toMatchObject({ avatar_url: NEWER_PHOTO });
+  });
+
+  it('makes a fresh empty row with the new photo, and answers 200, when the update finds the row gone', async () => {
+    // PROF-18, D-59, D-92
+    const { table } = fakeRowDeletedAfterRead(DELETED_MEMBER);
+
+    const result = await handler(idToken({ picture: NEWER_PHOTO }));
+
+    expect(result.statusCode).toBe(200);
+    const puts = dbMock.commandCalls(PutCommand);
+    expect(puts).toHaveLength(1);
+    const fresh = {
+      user_id: 'user-1',
+      status: 'active',
+      show_google_photo: false,
+      is_admin: false,
+      cats_helped: 0,
+      feedings: 0,
+      waters: 0,
+      created_at: '2026-10-28T12:00:00.000Z',
+      avatar_url: NEWER_PHOTO,
+    };
+    expect(puts[0].args[0].input.Item).toEqual(fresh);
+    expect(table.get('user-1')).toEqual(fresh);
+    expect(body(result)).toEqual({
+      display_name: null,
+      city: null,
+      avatar_url: null,
+      show_google_photo: false,
+      status: 'active',
+      terms_accepted: false,
+    });
+  });
+
+  it('makes the fresh row with a conditional put, as the first call does', async () => {
+    // PROF-18, D-59, D-92
+    fakeRowDeletedAfterRead(DELETED_MEMBER);
+
+    await handler(idToken({ picture: NEWER_PHOTO }));
+
+    const [put] = dbMock.commandCalls(PutCommand);
+    expect(put.args[0].input).toMatchObject({
+      TableName: 'users',
+      ConditionExpression: 'attribute_not_exists(user_id)',
+    });
+  });
+
+  it('never writes a row that holds only user_id and avatar_url', async () => {
+    // PROF-18, D-59, D-92
+    const { table, written } = fakeRowDeletedAfterRead(DELETED_MEMBER);
+    const onlyIdAndPhoto = (item: Record<string, unknown>) =>
+      Object.keys(item).every((key) => key === 'user_id' || key === 'avatar_url');
+
+    await handler(idToken({ picture: NEWER_PHOTO }));
+
+    expect(written.filter(onlyIdAndPhoto)).toEqual([]);
+    const stored = table.get('user-1');
+    expect(stored).toBeDefined();
+    expect(onlyIdAndPhoto(stored ?? {})).toBe(false);
+    for (const put of dbMock.commandCalls(PutCommand)) {
+      expect(onlyIdAndPhoto(put.args[0].input.Item ?? {})).toBe(false);
+    }
+  });
+});
+
 describe('GET /api/profile and the terms (R-36)', () => {
   it.each([
     ['never accepted', {}, false],
