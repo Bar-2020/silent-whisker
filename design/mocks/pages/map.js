@@ -65,10 +65,7 @@
   }
 
   if (window.L) {
-    map = window.L.map(host, { zoomControl: false, attributionControl: false }).setView(
-      MockDemo.center,
-      DEFAULT_ZOOM
-    );
+    map = window.L.map(host, Mock.mapOptions).setView(MockDemo.center, DEFAULT_ZOOM);
     window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(
       map
     );
@@ -98,7 +95,7 @@
     if (event.key === 'Escape' && LIST_STATES.includes(Mock.getState())) Mock.setState('default');
   });
 
-  Mock.onState = (state) => {
+  Mock.subscribe((state) => {
     syncList(state);
     if (search) {
       search.setAttribute('aria-expanded', String(state === 'search' || state === 'search-none'));
@@ -114,8 +111,7 @@
       map.setView(state === 'empty' ? EMPTY_CENTER : MockDemo.center, zoom, { animate: false });
     }
     draw(state);
-  };
-  Mock.onState(Mock.getState());
+  });
 
   /* The spots to feed near the phone, in the order D-103 sets: red with kittens, red, then the rest
      (kittens seen, orange, no data), nearest first inside each group. */

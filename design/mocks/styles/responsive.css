@@ -96,8 +96,9 @@
     block-size: 100dvh;
   }
 
+  /* Under 1024 px a 400 px card and the 416 px search box would overlap, so cards start below the search row. */
   .stage .sheet {
-    inset-block: var(--s-4);
+    inset-block: calc(var(--s-4) + var(--round) + var(--s-2)) var(--s-4);
     inset-inline: calc(var(--rail-offset) + var(--s-2)) auto;
     inline-size: var(--panel-size);
     border-radius: var(--r-l);
@@ -107,11 +108,6 @@
 
   .stage .sheet--peek {
     inset-block-end: auto;
-  }
-
-  /* Under 1024 px the panel and the search box would overlap, so the list starts below the search row. */
-  .stage .sheet--list {
-    inset-block-start: calc(var(--s-4) + var(--round) + var(--s-2));
   }
 
   .mapctl,
@@ -287,7 +283,7 @@
 }
 
 @media (min-width: 1024px) {
-  .stage .sheet--list {
+  .stage .sheet {
     inset-block-start: var(--s-4);
   }
 

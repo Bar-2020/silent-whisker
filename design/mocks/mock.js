@@ -135,7 +135,7 @@
   }
 
   function closeLangMenus(except) {
-    document.querySelectorAll('[data-ui="langmenu__menu"]:not([hidden])').forEach((menu) => {
+    document.querySelectorAll('[data-ui~="langmenu__menu"]:not([hidden])').forEach((menu) => {
       if (except && menu.parentElement.contains(except)) return;
       menu.hidden = true;
       menu.previousElementSibling.setAttribute('aria-expanded', 'false');
@@ -165,6 +165,24 @@
       else delete el.dataset.pinned;
     });
   }
+
+  /* Page scripts register here: the listener runs once now and after every state change, and
+     several can share a page. */
+  const stateListeners = [];
+  function subscribe(listener) {
+    stateListeners.push(listener);
+    listener(state);
+  }
+
+  /* Leaflet fades and zooms with CSS transitions of its own, so reduced motion is asked of it here. */
+  const calm = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const mapOptions = {
+    zoomControl: false,
+    attributionControl: false,
+    fadeAnimation: calm,
+    zoomAnimation: calm,
+    markerZoomAnimation: calm,
+  };
 
   function applyState() {
     screens.forEach((el) => {
@@ -196,7 +214,7 @@
       el.setAttribute('aria-pressed', String(el.dataset.pressed.split(' ').includes(state)));
     });
     markPinned();
-    if (window.Mock.onState) window.Mock.onState(state);
+    stateListeners.forEach((listener) => listener(state));
     syncTitle();
     improveAccessibility();
     showFirstProblem();
@@ -298,7 +316,7 @@
       if (menu && toggle.hasAttribute('data-disclosure')) {
         toggle.setAttribute('aria-expanded', String(!menu.hidden));
       }
-      if (menu && menu.dataset.ui === 'langmenu__menu') {
+      if (menu && menu.matches('[data-ui~="langmenu__menu"]')) {
         toggle.setAttribute('aria-expanded', String(!menu.hidden));
         closeLangMenus(toggle.parentElement);
       }
@@ -355,7 +373,7 @@
      (i) button after five seconds (allowed by their attribution guidelines), and shown again by a tap. */
   const CREDIT_SECONDS = 5;
   function addCredit(container) {
-    if (!container || container.querySelector('[data-ui="mapcredit"]')) return;
+    if (!container || container.querySelector('[data-ui~="mapcredit"]')) return;
     const credit = document.createElement('div');
     credit.dataset.ui = 'mapcredit';
     credit.innerHTML =
@@ -372,7 +390,7 @@
       window.clearTimeout(timer);
       timer = window.setTimeout(fold, CREDIT_SECONDS * 1000);
     };
-    credit.querySelector('[data-ui="mapcredit__info"]').addEventListener('click', open);
+    credit.querySelector('[data-ui~="mapcredit__info"]').addEventListener('click', open);
     open();
   }
 
@@ -395,7 +413,8 @@
     signHtml,
     drawIcons,
     translate,
-    onState: null,
+    subscribe,
+    mapOptions,
   };
 
   drawNav();

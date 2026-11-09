@@ -38,7 +38,7 @@ yet"); admin view (pending spots dashed, with approve and reject in the sheet). 
 Phone: a card that floats above the glass bar, drag up for details is replaced by one explicit
 "details" button (drag gestures fight map panning). Controls: locate (round, white), "+" (round,
 slate blue, opens a two-item menu: new spot, cat alert), legend "?" (small, top). Tablet and
-desktop: a side rail replaces the bottom bar; the sheet becomes a 400 px panel at the inline-start
+desktop: a side rail replaces the bottom bar; the sheet becomes a 400 px panel at the inline-start (below the search box under 1024 px)
 of the map area.
 
 ## Boundaries

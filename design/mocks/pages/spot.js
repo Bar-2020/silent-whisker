@@ -177,10 +177,7 @@
       return;
     }
     const focus = MockDemo.spots[0];
-    map = window.L.map(host, { zoomControl: false, attributionControl: false }).setView(
-      [focus.lat, focus.lng],
-      17
-    );
+    map = window.L.map(host, Mock.mapOptions).setView([focus.lat, focus.lng], 17);
     window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(
       map
     );
@@ -237,12 +234,11 @@
     });
   }
 
-  Mock.onState = (state) => {
+  Mock.subscribe((state) => {
     if (DETAIL_STATES.includes(state)) renderDetail(state);
     applyTabs();
     applyForms(state);
     applySub();
     mountSideMap();
-  };
-  Mock.onState(Mock.getState());
+  });
 })();

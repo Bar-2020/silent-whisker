@@ -306,8 +306,6 @@ body[data-chrome='page'] [data-pinned] {
 }
 
 .read {
-  --flow-gap: var(--s-3);
-  --flow-item-gap: var(--s-2);
   max-inline-size: var(--measure);
   margin-inline: auto;
   padding: var(--s-5) var(--s-4) var(--s-8);
@@ -322,10 +320,8 @@ body[data-chrome='page'] [data-pinned] {
   margin-block: var(--s-6) var(--s-2);
 }
 
-p + p,
-ul + p,
-p + ul {
-  margin-block-start: var(--flow-gap);
+.read__block + .read__block {
+  margin-block-start: var(--s-3);
 }
 
 .read ul {
@@ -333,8 +329,12 @@ p + ul {
   padding-inline-start: var(--s-5);
 }
 
-li + li {
-  margin-block-start: var(--flow-item-gap);
+.read li {
+  margin-block-start: var(--s-2);
+}
+
+.read li:first-child {
+  margin-block-start: 0;
 }
 
 .sample-note {
@@ -1070,7 +1070,7 @@ fieldset.field > legend {
 }
 
 /* The open or closed mark is a drawn chevron, like the others, not a text glyph. */
-summary::after {
+.howto__toggle::after {
   content: '';
   inline-size: 9px;
   block-size: 9px;
@@ -1255,6 +1255,13 @@ summary::after {
 [data-ui~='nav__lang'] [data-ui~='langmenu__menu'] {
   inset-block: auto 0;
   inset-inline: calc(100% + var(--s-3)) auto;
+}
+
+/* The check beside the chosen language sits at the end of its row. */
+[data-ui~='langmenu__menu'] .icon,
+[data-lang-option] .icon {
+  margin-inline-start: auto;
+  color: var(--dado);
 }
 
 [data-ui~='langmenu__btn'] {

@@ -16,9 +16,9 @@
   heart.setAttribute('aria-hidden', 'true');
   heart.innerHTML = '<use href="#i-heart"></use>';
   madeBy.replaceChildren(before, heart, after);
-  Mock.onState = (state) =>
-    document.documentElement.toggleAttribute('data-consent', state === 'eu');
-  Mock.onState(Mock.getState());
+  Mock.subscribe((state) =>
+    document.documentElement.toggleAttribute('data-consent', state === 'eu')
+  );
 
   /* The frame shows the map as it looks inside a phone, below the camera island. */
   const frame = document.getElementById('hero-map');

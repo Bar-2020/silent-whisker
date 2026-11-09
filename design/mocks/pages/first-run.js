@@ -8,7 +8,7 @@
     citynotfound: ['city'],
   };
 
-  Mock.onState = (state) => {
+  Mock.subscribe((state) => {
     const name = document.getElementById('fullname');
     const city = document.getElementById('city');
     const terms = document.getElementById('terms');
@@ -21,6 +21,5 @@
     [name, city, terms].forEach((input) => {
       input.setAttribute('aria-invalid', String((INVALID[state] || []).includes(input.id)));
     });
-  };
-  Mock.onState(Mock.getState());
+  });
 })();
