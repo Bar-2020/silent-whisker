@@ -109,6 +109,11 @@
     inset-block-end: auto;
   }
 
+  /* Under 1024 px the panel and the search box would overlap, so the list starts below the search row. */
+  .stage .sheet--list {
+    inset-block-start: calc(var(--s-4) + var(--round) + var(--s-2));
+  }
+
   .mapctl,
   .stage[data-sheet='spot'] .mapctl,
   .stage[data-sheet='alert'] .mapctl {
@@ -282,6 +287,10 @@
 }
 
 @media (min-width: 1024px) {
+  .stage .sheet--list {
+    inset-block-start: var(--s-4);
+  }
+
   .split-view {
     display: grid;
     grid-template-columns: minmax(24rem, 30rem) minmax(0, 1fr);
