@@ -38,7 +38,7 @@
 }
 
 body[data-chrome='tabs'] .main {
-  padding-block-end: var(--nav-total);
+  padding-block-end: var(--main-pad-end, var(--nav-total));
 }
 
 .main {
@@ -82,12 +82,12 @@ body[data-chrome='tabs'] .main {
   }
 }
 
-.nav__brand,
-.nav__lang {
+[data-ui~='nav__brand'],
+[data-ui~='nav__lang'] {
   display: none;
 }
 
-.nav__item {
+[data-ui~='nav__item'] {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -105,11 +105,11 @@ body[data-chrome='tabs'] .main {
   transition: background-color var(--dur-1) var(--ease);
 }
 
-.nav__item:hover {
+[data-ui~='nav__item']:hover {
   background: var(--glass-hover);
 }
 
-.nav__item[aria-current='page'] {
+[data-ui~='nav__item'][aria-current='page'] {
   background: var(--glass-active);
   color: var(--glass-active-ink);
   box-shadow:
@@ -418,8 +418,8 @@ body[data-chrome='tabs'] .main {
   outline-offset: 0;
 }
 
-.input.is-focus,
-.textarea.is-focus {
+.input[data-state='focus'],
+.textarea[data-state='focus'] {
   border-color: var(--dado);
   outline: 3px solid var(--focus);
   outline-offset: 0;
@@ -496,20 +496,20 @@ body[data-chrome='tabs'] .main {
 }
 
 .choice__tile .icon {
-  color: var(--dado);
+  color: var(--tile-icon-ink, var(--dado));
 }
 
 .choice__tile small {
   font-size: var(--fs-s);
   font-weight: 400;
-  color: var(--ink-2);
+  color: var(--tile-small-ink, var(--ink-2));
 }
 
 .choice__mark {
   position: absolute;
   inset-block-start: var(--s-2);
   inset-inline-end: var(--s-2);
-  display: none;
+  display: var(--mark-display, none);
   place-items: center;
   inline-size: 20px;
   block-size: 20px;
@@ -522,35 +522,34 @@ body[data-chrome='tabs'] .main {
   inline-size: 14px;
   block-size: 14px;
   stroke-width: 3;
+  color: var(--mark-ink, var(--dado-ink));
 }
 
-.choice input:checked + .choice__tile {
+input:checked + .choice__tile {
+  --mark-display: grid;
   background: var(--dado-tint);
   border-color: var(--dado);
   box-shadow: inset 0 0 0 1px var(--dado);
 }
 
-.choice input:checked + .choice__tile .choice__mark {
-  display: grid;
-}
-
-.choice input:focus-visible + .choice__tile {
+input:focus-visible + .choice__tile {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
 
 .input:disabled,
 .textarea:disabled,
-.choice input:disabled + .choice__tile {
+input:disabled + .choice__tile {
   border-color: var(--line);
   background: var(--surface-sunk);
   color: var(--ink-3);
   cursor: not-allowed;
 }
 
-.choice input:disabled + .choice__tile .icon,
-.choice input:disabled + .choice__tile small {
-  color: var(--ink-3);
+input:disabled + .choice__tile {
+  --tile-icon-ink: var(--ink-3);
+  --tile-small-ink: var(--ink-3);
+  --mark-ink: var(--ink-3);
 }
 
 .choice--row .choice__tile {
@@ -596,7 +595,7 @@ body[data-chrome='tabs'] .main {
   place-items: center;
   inline-size: var(--check);
   block-size: var(--check);
-  border: 2px solid var(--line-strong);
+  border: 2px solid var(--check-border, var(--line-strong));
   border-radius: 6px;
   background: var(--surface);
   color: var(--dado-ink);
@@ -609,7 +608,7 @@ body[data-chrome='tabs'] .main {
   inline-size: 14px;
   block-size: 14px;
   stroke-width: 3;
-  opacity: 0;
+  opacity: var(--check-tick, 0);
 }
 
 /* A line as tall as the box keeps the box centred on the first line. */
@@ -621,30 +620,27 @@ body[data-chrome='tabs'] .main {
   font-weight: 600;
 }
 
-.check:hover .check__box,
-.check input:checked + .check__box {
-  border-color: var(--dado);
+.check:hover {
+  --check-border: var(--dado);
 }
 
-.check input:checked + .check__box {
+input:checked + .check__box {
+  --check-tick: 1;
+  border-color: var(--dado);
   background: var(--dado);
 }
 
-.check input:checked + .check__box .icon {
-  opacity: 1;
-}
-
-.check input:focus-visible + .check__box {
+input:focus-visible + .check__box {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
 
-.check input[aria-invalid='true'] + .check__box {
+input[aria-invalid='true'] + .check__box {
   border-color: var(--bad);
   background: var(--bad-tint);
 }
 
-.check input:disabled + .check__box {
+input:disabled + .check__box {
   border-color: var(--line);
   background: var(--surface-sunk);
   color: var(--ink-3);
@@ -761,9 +757,14 @@ button.row {
 }
 
 .photo .icon {
-  inline-size: 28%;
-  block-size: 28%;
-  stroke-width: 1.25;
+  inline-size: var(--photo-icon, 28%);
+  block-size: var(--photo-icon, 28%);
+  stroke-width: var(--photo-stroke, 1.25);
+}
+
+.photo .chip {
+  --photo-icon: 1.125rem;
+  --photo-stroke: 2;
 }
 
 .photo--wide {
@@ -827,18 +828,8 @@ button.row {
   font: inherit;
 }
 
-.map .leaflet-tile-pane {
+.map [class~='leaflet-tile-pane'] {
   filter: saturate(0.5) brightness(1.05) contrast(0.92);
-}
-
-.map .leaflet-bottom {
-  inset-block-end: var(--nav-total);
-}
-
-.map .leaflet-control-attribution {
-  font-size: var(--fs-xs);
-  background: rgb(255 255 255 / 0.8);
-  color: var(--ink-2);
 }
 
 /* One footprint for every marker (46 x 56): a pin for a spot, a sign for a cat alert. */
@@ -852,7 +843,7 @@ button.row {
   cursor: pointer;
 }
 
-.pin__body {
+[data-ui~='pin__body'] {
   position: absolute;
   inset: 0;
   inline-size: 100%;
@@ -870,18 +861,18 @@ button.row {
   color: var(--dado);
 }
 
-.pin[data-status='pending'] .pin__body {
+.pin[data-status='pending'] [data-ui~='pin__body'] {
   fill: #fff;
   stroke: var(--dado);
   stroke-dasharray: 4 3;
 }
 
-.pin.is-selected {
+.pin[data-selected] {
   scale: 1.15;
   transform-origin: 50% 100%;
 }
 
-.pin.is-selected .pin__body {
+.pin[data-selected] [data-ui~='pin__body'] {
   stroke: var(--dado);
   stroke-width: 5;
   paint-order: stroke;
@@ -897,7 +888,7 @@ button.row {
   filter: drop-shadow(0 2px 3px rgb(20 32 52 / 0.4));
 }
 
-.sign__box {
+[data-ui~='sign__box'] {
   position: absolute;
   inset-block-start: 0;
   inset-inline: 0;
@@ -909,14 +900,14 @@ button.row {
   background: var(--alert);
 }
 
-.sign__glyph {
+[data-ui~='sign__glyph'] {
   inline-size: 28px;
   block-size: 28px;
   fill: currentColor;
   stroke: none;
 }
 
-.sign__stem {
+[data-ui~='sign__stem'] {
   position: absolute;
   inset-block-end: 0;
   inset-inline-start: calc(50% - 8px);
@@ -925,7 +916,7 @@ button.row {
   border-block-start-color: var(--alert);
 }
 
-.sign__label {
+[data-ui~='sign__label'] {
   position: absolute;
   inset-block-start: 10px;
   inset-inline-start: calc(100% + 6px);
@@ -938,12 +929,12 @@ button.row {
   white-space: nowrap;
 }
 
-.sign.is-selected .sign__box {
+.sign[data-selected] [data-ui~='sign__box'] {
   border-color: var(--dado);
   box-shadow: 0 0 0 3px var(--dado);
 }
 
-.sign.is-selected {
+.sign[data-selected] {
   scale: 1.12;
   transform-origin: 50% 100%;
 }
@@ -1235,7 +1226,7 @@ button.row {
   padding-block-start: 0;
 }
 
-.state__icon {
+[data-ui~='state__icon'] {
   display: grid;
   place-items: center;
   inline-size: 44px;
@@ -1246,16 +1237,16 @@ button.row {
   grid-row: span 3;
 }
 
-.state__label {
+[data-ui~='state__label'] {
   font-weight: 600;
 }
 
-.state__when {
+[data-ui~='state__when'] {
   color: var(--ink-2);
   font-size: var(--fs-s);
 }
 
-.state__actions {
+[data-ui~='state__actions'] {
   margin-block-start: var(--s-2);
 }
 
@@ -1312,13 +1303,13 @@ button.row {
 }
 
 /* The three dots sit in the title row, at the end, never on the photo. */
-.post__more {
+[data-ui~='post__more'] {
   margin-block: calc(var(--s-2) * -1);
   margin-inline-end: calc(var(--s-2) * -1);
   color: var(--ink-2);
 }
 
-.post__menu {
+[data-ui~='post__menu'] {
   position: absolute;
   inset-block-start: calc(var(--s-4) + var(--tap));
   inset-inline-end: var(--s-3);
@@ -1450,7 +1441,7 @@ button.row {
 .skeleton {
   background: linear-gradient(90deg, var(--skeleton), var(--skeleton-shine), var(--skeleton));
   background-size: 200% 100%;
-  animation: shimmer 1.6s linear infinite;
+  animation: shimmer var(--shimmer-dur, 1.6s) linear var(--shimmer-count, infinite);
   border-radius: var(--r-s);
 }
 
@@ -1606,13 +1597,13 @@ button.msg__bubble:hover {
   gap: var(--s-2);
 }
 
-.legend__item {
+[data-ui~='legend__item'] {
   display: flex;
   align-items: center;
   gap: var(--s-3);
 }
 
-.legend__swatch {
+[data-ui~='legend__swatch'] {
   inline-size: var(--pin-w);
   display: grid;
   place-items: center;
@@ -1624,7 +1615,7 @@ button.msg__bubble:hover {
   border: 3px solid var(--line);
   border-block-start-color: var(--dado);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin var(--spin-dur, 0.8s) linear infinite;
 }
 
 @keyframes spin {
@@ -1634,13 +1625,13 @@ button.msg__bubble:hover {
 }
 
 /* Legend rows draw the real markers, laid flat. */
-.legend__swatch .pin,
-.legend__swatch .sign {
+[data-ui~='legend__swatch'] .pin,
+[data-ui~='legend__swatch'] .sign {
   translate: none;
   filter: none;
 }
 
-.legend .sign__label {
+.legend [data-ui~='sign__label'] {
   display: none;
 }
 
@@ -1650,6 +1641,8 @@ button.msg__bubble:hover {
 }
 
 .shell--map .main {
+  --main-pad-end: 0px;
+  --main-pad-start: 0px;
   overflow: hidden;
 }
 
@@ -1669,10 +1662,6 @@ body[data-chrome='page'] .nav {
   inset-block-end: calc(var(--nav-total) - var(--s-1));
   border: 1px solid var(--glass-light-edge);
   border-radius: var(--r-l);
-}
-
-body[data-chrome='tabs'] .shell--map .main {
-  padding: 0;
 }
 
 .menu--float {
@@ -1700,23 +1689,13 @@ body[data-chrome='tabs'] .shell--map .main {
   background: var(--dado-deep);
 }
 
-.choice__tile .choice__mark .icon {
-  color: var(--dado-ink);
-}
-
 .alertrow .photo {
   align-self: flex-start;
 }
 
 .toast .notice__body,
-.toast .notice__body strong {
+.toast strong {
   color: #fff;
-}
-
-.photo .chip .icon {
-  inline-size: 1.125rem;
-  block-size: 1.125rem;
-  stroke-width: 2;
 }
 
 .chip--count {
@@ -1724,30 +1703,30 @@ body[data-chrome='tabs'] .shell--map .main {
   --lvl-ink: var(--dado);
 }
 
-.btn.is-hover,
-.btn.is-pressed {
+.btn[data-state='hover'],
+.btn[data-state='pressed'] {
   background: var(--dado-deep);
 }
 
-.btn--secondary.is-hover,
-.btn--secondary.is-pressed,
-.btn--quiet.is-hover,
-.btn--quiet.is-pressed,
-.btn--on-dado.is-hover,
-.btn--on-dado.is-pressed {
+.btn--secondary[data-state='hover'],
+.btn--secondary[data-state='pressed'],
+.btn--quiet[data-state='hover'],
+.btn--quiet[data-state='pressed'],
+.btn--on-dado[data-state='hover'],
+.btn--on-dado[data-state='pressed'] {
   background: var(--dado-tint);
 }
 
-.btn--danger.is-hover,
-.btn--danger.is-pressed {
+.btn--danger[data-state='hover'],
+.btn--danger[data-state='pressed'] {
   background: var(--bad-ink);
 }
 
-.btn.is-pressed {
+.btn[data-state='pressed'] {
   transform: translateY(1px);
 }
 
-.btn.is-focus {
+.btn[data-state='focus'] {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
@@ -1766,11 +1745,12 @@ body[data-chrome='tabs'] .shell--map .main {
 }
 
 /* Only the spinner shows. The label stays in the page (invisible, still read aloud), so the button keeps its width. */
-.btn[aria-busy='true'] > :not(.spinner) {
+.btn[aria-busy='true'] > * {
   opacity: 0;
 }
 
 .btn[aria-busy='true'] > .spinner {
+  opacity: 1;
   position: absolute;
   inset: 0;
   margin: auto;
@@ -1791,7 +1771,7 @@ body[data-chrome='tabs'] .shell--map .main {
   padding-block: calc(var(--s-1) * 1.5);
 }
 
-.state__icon {
+[data-ui~='state__icon'] {
   grid-row: 1 / span 2;
 }
 
@@ -1799,11 +1779,11 @@ body[data-chrome='tabs'] .shell--map .main {
   grid-column: 2;
 }
 
-.state__when {
+[data-ui~='state__when'] {
   grid-column: 2;
 }
 
-.state__actions {
+[data-ui~='state__actions'] {
   grid-column: 3;
   grid-row: 1 / span 2;
   align-self: center;

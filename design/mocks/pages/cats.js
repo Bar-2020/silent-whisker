@@ -41,7 +41,7 @@
 
   /* The context menu of a photo: report for everyone, hide and restrict for admins, remove for its author. */
   const MENU =
-    '<div class="menu post__menu" id="post-menu" data-when="menu menu-admin menu-own">' +
+    '<div class="menu" data-ui="post__menu" id="post-menu" data-when="menu menu-admin menu-own">' +
     `<button class="menu__item" type="button" data-when="menu menu-admin"><i data-icon="flag"></i><span data-t="cats.menu.report"></span></button>` +
     `<button class="menu__item menu__item--bad" type="button" data-when="menu-own" data-go="remove-photo"><i data-icon="trash"></i><span data-t="cats.menu.remove"></span></button>` +
     `<button class="menu__item menu__item--bad" type="button" data-when="menu-admin"><i data-icon="restrict"></i><span data-t="cats.menu.hide"></span></button>` +
@@ -58,7 +58,7 @@
       '</div>' +
       '<div class="post__body">' +
       `<div class="post__title"><h2 data-t="${item.cat}"></h2>` +
-      `<button class="iconbtn iconbtn--small post__more" type="button" data-disclosure aria-controls="post-menu" data-go="menu" data-t-attr="aria-label:common.more"><i data-icon="more"></i></button></div>` +
+      `<button class="iconbtn" data-ui="iconbtn--small post__more" type="button" data-disclosure aria-controls="post-menu" data-go="menu" data-t-attr="aria-label:common.more"><i data-icon="more"></i></button></div>` +
       (index === 0 ? MENU : '') +
       `<div class="post__who"><span class="avatar avatar--s" data-t="${item.initials}"></span><bdi data-t="${item.user}"></bdi></div>` +
       '<div class="post__actions">' +
@@ -111,7 +111,7 @@
   const confirmButton = document.getElementById('picker-confirm');
 
   function smallPin(spot) {
-    return `<span class="pickpin">${Mock.pinHtml(spot)}</span>`;
+    return `<span data-ui="pickpin">${Mock.pinHtml(spot)}</span>`;
   }
 
   if (picker) {
@@ -168,10 +168,7 @@
     const host = document.getElementById('picker-map');
     if (!host || !window.L || host.offsetParent === null) return;
     if (!pickerMap) {
-      pickerMap = window.L.map(host, { zoomControl: false, attributionControl: false }).setView(
-        MockDemo.center,
-        16
-      );
+      pickerMap = window.L.map(host, Mock.mapOptions).setView(MockDemo.center, 16);
       window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(
         pickerMap
       );
@@ -183,7 +180,7 @@
 
   const NAMED = ['ready-spot', 'ready-random', 'ready-fixed', 'uploading', 'nocat'];
 
-  Mock.onState = (state) => {
+  Mock.subscribe((state) => {
     if (state === 'picker' || state === 'picker-general') {
       choose(state === 'picker' ? 'red' : 'random');
       mountPickerMap();
@@ -197,6 +194,5 @@
     /* Started from a spot, the place is fixed: the button cannot change it. */
     const where = document.getElementById('where-pick');
     if (where) where.disabled = state === 'ready-fixed';
-  };
-  Mock.onState(Mock.getState());
+  });
 })();

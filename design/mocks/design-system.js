@@ -57,10 +57,12 @@
   const states = ['Default', 'Hover', 'Pressed', 'Focus', 'Disabled', 'Pending'];
   function button(cls, state, label) {
     const spin = '<span class="spinner spinner--btn"></span>';
-    if (state === 'Hover') return `<button class="${cls} is-hover" type="button">${label}</button>`;
+    if (state === 'Hover')
+      return `<button class="${cls}" data-state="hover" type="button">${label}</button>`;
     if (state === 'Pressed')
-      return `<button class="${cls} is-pressed" type="button">${label}</button>`;
-    if (state === 'Focus') return `<button class="${cls} is-focus" type="button">${label}</button>`;
+      return `<button class="${cls}" data-state="pressed" type="button">${label}</button>`;
+    if (state === 'Focus')
+      return `<button class="${cls}" data-state="focus" type="button">${label}</button>`;
     if (state === 'Disabled')
       return `<button class="${cls}" type="button" disabled>${label}</button>`;
     if (state === 'Pending')
@@ -102,7 +104,7 @@
     'One text field style. The error is a sentence below it, in red ink, with the field tinted and no icon; focus is a 3 px ring. A placeholder follows the page direction, typed words choose their own.',
     `${grid(
       cell('Default', field('Name', '<input class="input" placeholder="For example: Mitzi" />')) +
-        cell('Focus', field('Name', '<input class="input is-focus" value="Mitzi" />')) +
+        cell('Focus', field('Name', '<input class="input" data-state="focus" value="Mitzi" />')) +
         cell(
           'Error',
           field(
@@ -197,7 +199,7 @@
     'icons',
     'Brand mark and icons',
     'The mark is an outline cat head, 2 px strokes with round ends, two dot eyes and a small nose. It sits at the start of every top bar and in the navigation rail, in the colour of the bar. Every icon is drawn on a 24 px grid with the same 2 px stroke.',
-    `<div class="ds__sample ds__sample--pad"><svg class="brandmark__glyph ds__brand ds__brand--l" aria-hidden="true"><use href="#i-cat"></use></svg><svg class="brandmark__glyph ds__brand" aria-hidden="true"><use href="#i-cat"></use></svg><span class="topbar__brand"><svg class="brandmark__glyph" aria-hidden="true"><use href="#i-cat"></use></svg></span></div>` +
+    `<div class="ds__sample ds__sample--pad"><svg class="brandmark__glyph ds__brand ds__brand--l" aria-hidden="true"><use href="#i-cat"></use></svg><svg class="brandmark__glyph ds__brand" aria-hidden="true"><use href="#i-cat"></use></svg><span data-ui="topbar__brand"><svg class="brandmark__glyph" aria-hidden="true"><use href="#i-cat"></use></svg></span></div>` +
       `<h3>All icons</h3><div class="ds__icons">${window.MOCK_ICON_IDS.map(
         (id) =>
           `<figure class="ds__icon">${icon(id, 'icon--l')}<figcaption>${id}</figcaption></figure>`
