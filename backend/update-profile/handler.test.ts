@@ -6,7 +6,12 @@ import { mockClient } from 'aws-sdk-client-mock';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { BREAKER_DAILY_MICRO_USD, TEXT_CHECK_COST_MICRO_USD } from '../../shared/constants/cost';
 import { WRITES_PER_DAY } from '../../shared/constants/limits';
-import { PROFILE_SAVES_PER_DAY, TERMS_VERSION } from '../../shared/constants/profile';
+import {
+  PROFILE_SAVES_PER_DAY,
+  PROFILE_TEXT_MAX_LENGTH,
+  PROFILE_TEXT_MIN_LENGTH,
+  TERMS_VERSION,
+} from '../../shared/constants/profile';
 import type { ApiEvent } from '../shared/api.types';
 import { GeocoderUnavailable, lookupPlace } from '../shared/geocode';
 import type { UserRow } from '../shared/schemas/user-row.schema';
@@ -252,6 +257,109 @@ describe('PATCH /api/profile reads its input strictly (PROF-05, D-61, D-92)', ()
     expect(written).not.toContain('user_id');
   });
 });
+
+// Characters that draw nothing, built from code points so the source shows what they are (PROF-19, D-92).
+const HANGUL_FILLER = 'ㅤ';
+const HALFWIDTH_HANGUL_FILLER = 'ﾠ';
+const BRAILLE_BLANK = '⠀';
+const VARIATION_SELECTOR = '️';
+const ZERO_WIDTH_SPACE = '​';
+const ZERO_WIDTH_NON_JOINER = '‌';
+
+const INVISIBLE = [
+  ['a Hangul filler', HANGUL_FILLER],
+  ['a halfwidth Hangul filler', HALFWIDTH_HANGUL_FILLER],
+  ['a braille blank', BRAILLE_BLANK],
+  ['a variation selector', VARIATION_SELECTOR],
+  ['a zero-width space', ZERO_WIDTH_SPACE],
+] as const;
+
+const MIXED_INVISIBLE =
+  HANGUL_FILLER + HALFWIDTH_HANGUL_FILLER + BRAILLE_BLANK + VARIATION_SELECTOR + ZERO_WIDTH_SPACE;
+
+describe.each(['display_name', 'city'])(
+  'PATCH /api/profile and a %s that draws nothing (PROF-19, D-61, D-92)',
+  (field) => {
+    it.each([
+      ...INVISIBLE.map(([name, character]) => [
+        `${PROFILE_TEXT_MIN_LENGTH} times ${name}`,
+        character.repeat(PROFILE_TEXT_MIN_LENGTH),
+      ]),
+      ...INVISIBLE.map(([name, character]) => [
+        `${PROFILE_TEXT_MAX_LENGTH} times ${name}`,
+        character.repeat(PROFILE_TEXT_MAX_LENGTH),
+      ]),
+      ['all of them together', MIXED_INVISIBLE],
+      ['all of them together, between spaces', `  ${MIXED_INVISIBLE}  `],
+    ])('refuses %s: INVALID_INPUT, nothing saved or spent, no paid check', async (_name, value) => {
+      // PROF-19, D-61, D-92
+      const result = await handler(patch({ ...FIRST_SAVE, [field]: value }));
+
+      expect(result.statusCode).toBe(400);
+      expect(bodyOf(result)).toEqual({ code: 'INVALID_INPUT' });
+      expect(counters.size).toBe(0);
+      expect(dbMock.commandCalls(UpdateCommand)).toHaveLength(0);
+      expect(userWrites()).toHaveLength(0);
+      expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
+      expect(lookup).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ['a letter, then a Hangul filler', `Dana${HANGUL_FILLER}`],
+      ['a Hangul filler, then a letter', `${HANGUL_FILLER}Dana`],
+      ['a letter, a Hangul filler, a letter', `Da${HANGUL_FILLER}na`],
+      ['a letter, then a halfwidth Hangul filler', `Dana${HALFWIDTH_HANGUL_FILLER}`],
+      ['a letter, then a braille blank', `Dana${BRAILLE_BLANK}`],
+      ['a letter, then a variation selector', `Dana${VARIATION_SELECTOR}`],
+      ['a letter, then a zero-width space', `D${ZERO_WIDTH_SPACE}`],
+      ['a letter between zero-width spaces', `${ZERO_WIDTH_SPACE}D${ZERO_WIDTH_SPACE}`],
+      ['a letter with all of them after it', `D${MIXED_INVISIBLE}`],
+      [
+        'the longest text, a letter and a filler',
+        `${'x'.repeat(PROFILE_TEXT_MAX_LENGTH - 1)}${HANGUL_FILLER}`,
+      ],
+    ])('saves %s as typed, with the paid check run', async (_name, value) => {
+      // PROF-19, D-61, D-92
+      const result = await handler(patch({ [field]: value }));
+
+      expect(result.statusCode).toBe(200);
+      expect(userWrites()[0].args[0].input.ExpressionAttributeValues).toMatchObject({
+        [`:${field}`]: value,
+      });
+      expect(bodyOf(result)).toMatchObject({ [field]: value });
+      expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(1);
+    });
+
+    it('counts a filler as a character: a longest text plus a filler is too long', async () => {
+      // PROF-19, D-61, D-92
+      const value = `${'x'.repeat(PROFILE_TEXT_MAX_LENGTH)}${HANGUL_FILLER}`;
+
+      const result = await handler(patch({ [field]: value }));
+
+      expect(result.statusCode).toBe(400);
+      expect(bodyOf(result)).toEqual({ code: 'INVALID_INPUT' });
+      expect(userWrites()).toHaveLength(0);
+    });
+
+    it.each([
+      ['Hebrew with points (niqqud)', 'שָׁלוֹם'],
+      ['Arabic with a zero-width non-joiner', `عبد${ZERO_WIDTH_NON_JOINER}الله`],
+      ['Russian', 'Анна Иванова'],
+      ['an emoji with a variation selector', `❤${VARIATION_SELECTOR}`],
+      ['two braille letters', '⠁⠃'],
+    ])('saves a real name: %s', async (_name, value) => {
+      // PROF-19, D-61, D-92
+      const result = await handler(patch({ [field]: value }));
+
+      expect(result.statusCode).toBe(200);
+      expect(userWrites()[0].args[0].input.ExpressionAttributeValues).toMatchObject({
+        [`:${field}`]: value,
+      });
+      expect(bodyOf(result)).toMatchObject({ [field]: value });
+      expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(1);
+    });
+  }
+);
 
 describe('PATCH /api/profile and the terms (PROF-11, D-69, R-36)', () => {
   const NEW_MEMBER = row({
