@@ -81,13 +81,14 @@ resource "aws_cloudfront_distribution" "site" {
     for_each = ["/design", "/design/*"]
 
     content {
-      path_pattern           = ordered_cache_behavior.value
-      target_origin_id       = "design"
-      viewer_protocol_policy = "redirect-to-https"
-      allowed_methods        = ["GET", "HEAD"]
-      cached_methods         = ["GET", "HEAD"]
-      cache_policy_id        = aws_cloudfront_cache_policy.design.id
-      compress               = true
+      path_pattern               = ordered_cache_behavior.value
+      target_origin_id           = "design"
+      viewer_protocol_policy     = "redirect-to-https"
+      allowed_methods            = ["GET", "HEAD"]
+      cached_methods             = ["GET", "HEAD"]
+      cache_policy_id            = aws_cloudfront_cache_policy.design.id
+      response_headers_policy_id = aws_cloudfront_response_headers_policy.security["design"].id
+      compress                   = true
 
       function_association {
         event_type   = "viewer-request"
@@ -101,23 +102,25 @@ resource "aws_cloudfront_distribution" "site" {
     for_each = ["/api", "/api/*"]
 
     content {
-      path_pattern             = ordered_cache_behavior.value
-      target_origin_id         = "api"
-      viewer_protocol_policy   = "redirect-to-https"
-      allowed_methods          = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
-      cached_methods           = ["GET", "HEAD"]
-      cache_policy_id          = data.aws_cloudfront_cache_policy.disabled.id
-      origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host.id
+      path_pattern               = ordered_cache_behavior.value
+      target_origin_id           = "api"
+      viewer_protocol_policy     = "redirect-to-https"
+      allowed_methods            = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+      cached_methods             = ["GET", "HEAD"]
+      cache_policy_id            = data.aws_cloudfront_cache_policy.disabled.id
+      origin_request_policy_id   = data.aws_cloudfront_origin_request_policy.all_viewer_except_host.id
+      response_headers_policy_id = aws_cloudfront_response_headers_policy.security["api"].id
     }
   }
 
   default_cache_behavior {
-    target_origin_id       = "site"
-    viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "HEAD"]
-    cached_methods         = ["GET", "HEAD"]
-    cache_policy_id        = data.aws_cloudfront_cache_policy.optimized.id
-    compress               = true
+    target_origin_id           = "site"
+    viewer_protocol_policy     = "redirect-to-https"
+    allowed_methods            = ["GET", "HEAD"]
+    cached_methods             = ["GET", "HEAD"]
+    cache_policy_id            = data.aws_cloudfront_cache_policy.optimized.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.security["app"].id
+    compress                   = true
 
     function_association {
       event_type   = "viewer-request"
