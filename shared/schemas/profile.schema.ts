@@ -29,7 +29,7 @@ export const profileUpdateSchema = z.object({
 });
 export type ProfileUpdate = z.infer<typeof profileUpdateSchema>;
 
-const profileResponseSchema = z.object({
+export const profileResponseSchema = z.object({
   display_name: z.string().nullable(),
   city: z.string().nullable(),
   avatar_url: z.string().nullable(),

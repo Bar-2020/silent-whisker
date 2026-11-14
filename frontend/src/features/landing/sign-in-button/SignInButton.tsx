@@ -1,7 +1,9 @@
 import { useTranslation } from 'react-i18next';
+import { AFTER_SIGN_IN_PATH } from '@constants/sign-in';
+import { signIn } from '@shared/auth/session';
 import styles from './SignInButton.module.css';
 
-/** Disabled until the next PR wires Google sign-in (D-59). */
+/** Sends the visitor straight to Google; they come back to the first page of the app (D-59). */
 export function SignInButton({
   size,
   onBand = false,
@@ -14,7 +16,7 @@ export function SignInButton({
   return (
     <button
       type="button"
-      disabled
+      onClick={() => void signIn(AFTER_SIGN_IN_PATH)}
       className={styles.button}
       data-size={size}
       data-on={onBand ? 'band' : undefined}

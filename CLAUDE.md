@@ -57,5 +57,5 @@ Phase 1 is done: AWS infra and deploy pipeline (Terraform in `infra/`, one-time 
 [infra/README.md](infra/README.md)), cost limits, and the text and photo checks. Phase 2 is under way:
 the design of every screen (`design/`, [DESIGN.md](docs/DESIGN.md)), Google sign-in on the AWS
 side (`infra/app/auth.tf`), the front-end foundation and the public landing, privacy and terms pages
-(the legal texts are drafts that still need a lawyer's read). The sign-in buttons are disabled until sign-in
-is built in the app; the sign-up form and the profile page come after it.
+(the legal texts are drafts that still need a lawyer's read). Google sign-in works in the app
+(the route guard, the callback page, the API client); the sign-up form and the profile page come after it.

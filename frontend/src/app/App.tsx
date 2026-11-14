@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router';
-import { AuthCallbackPage } from '@features/auth';
+import { AuthCallbackPage, RequireSignIn } from '@features/auth';
 import { LandingPage } from '@features/landing';
 import { LegalLayout, PrivacyPage, TermsPage } from '@features/legal';
 import { ProfilePage } from '@features/profile';
@@ -16,8 +16,10 @@ export function App() {
       </Route>
       <Route element={<AppShell />}>
         <Route path="auth/callback" element={<AuthCallbackPage />} />
-        <Route path="profile" element={<ProfilePage />} />
-        <Route path="*" element={<NotFoundPage />} />
+        <Route element={<RequireSignIn />}>
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
       </Route>
     </Routes>
   );

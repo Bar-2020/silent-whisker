@@ -2,6 +2,7 @@
   "app.name": "Silent Whisker",
   "common.close": "סגירה",
   "common.contact": "יצירת קשר",
+  "common.retry": "ניסיון חוזר",
   "landing.footer": "Silent Whisker. קוד פתוח ברישיון MIT.",
   "landing.footer.label": "קישורים בתחתית העמוד",
   "landing.footer.tagline": "מפה חופשית לאנשים שמאכילים חתולי רחוב.",
@@ -74,7 +75,12 @@
   "legal.terms.title": "תנאי שימוש",
   "legal.toc": "תוכן העניינים",
   "nav.home": "לעמוד הראשי",
+  "profile.signOut": "יציאה",
+  "states.error.title": "משהו השתבש",
+  "states.loadFailed.text": "לא הצלחנו לטעון את החשבון שלך. כדאי לבדוק את החיבור ולנסות שוב.",
   "states.notFound.back": "חזרה למפה",
   "states.notFound.text": "ייתכן שהקישור שגוי או שהדף הוסר.",
-  "states.notFound.title": "הדף לא נמצא"
+  "states.notFound.title": "הדף לא נמצא",
+  "states.signIn.text": "גוגל לא סיימה להתחבר איתך. אפשר לנסות שוב.",
+  "states.signIn.title": "ההתחברות לא הושלמה"
 }

@@ -2,6 +2,7 @@
   "app.name": "Silent Whisker",
   "common.close": "Закрыть",
   "common.contact": "Связаться с нами",
+  "common.retry": "Повторить",
   "landing.footer": "Silent Whisker. Открытый код под лицензией MIT.",
   "landing.footer.label": "Ссылки внизу страницы",
   "landing.footer.tagline": "Бесплатная карта для тех, кто кормит бездомных кошек.",
@@ -74,7 +75,12 @@
   "legal.terms.title": "Условия использования",
   "legal.toc": "Содержание",
   "nav.home": "Главная",
+  "profile.signOut": "Выйти",
+  "states.error.title": "Что-то пошло не так",
+  "states.loadFailed.text": "Не удалось загрузить ваш аккаунт. Проверьте соединение и повторите.",
   "states.notFound.back": "Назад к карте",
   "states.notFound.text": "Возможно, ссылка неверна или страница удалена.",
-  "states.notFound.title": "Страница не найдена"
+  "states.notFound.title": "Страница не найдена",
+  "states.signIn.text": "Google не завершил вход. Повторите.",
+  "states.signIn.title": "Вход не завершён"
 }

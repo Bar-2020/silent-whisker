@@ -1,0 +1,26 @@
+.screen {
+  display: grid;
+  justify-items: start;
+  gap: var(--s-3);
+}
+
+.text {
+  max-inline-size: var(--measure);
+  color: var(--ink-2);
+}
+
+.retry {
+  min-block-size: var(--tap);
+  margin-block-start: var(--s-2);
+  padding-inline: var(--s-5);
+  border: 0;
+  border-radius: var(--r-m);
+  font: var(--type-body-strong);
+  background: var(--dado);
+  color: var(--dado-ink);
+  cursor: pointer;
+}
+
+.retry:hover {
+  background: var(--dado-deep);
+}

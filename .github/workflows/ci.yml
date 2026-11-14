@@ -113,6 +113,11 @@ jobs:
       - name: Upload the site
         working-directory: infra/app
         run: |
+          # The app is built with this client id (shared/constants/auth.json, D-104): a new client makes it stale.
+          if [ "$(terraform output -raw app_client_id)" != "$(jq -r .client_id ../../shared/constants/auth.json)" ]; then
+            echo "client_id in shared/constants/auth.json is not the app client id (terraform output app_client_id)"
+            exit 1
+          fi
           SITE="s3://$(terraform output -raw site_bucket)"
           DIST="$(terraform output -raw distribution_id)"
           aws s3 sync ../../frontend/dist "$SITE"

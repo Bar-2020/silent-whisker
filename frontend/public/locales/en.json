@@ -2,6 +2,7 @@
   "app.name": "Silent Whisker",
   "common.close": "Close",
   "common.contact": "Contact",
+  "common.retry": "Try again",
   "landing.footer": "Silent Whisker. Open source under the MIT licence.",
   "landing.footer.label": "Footer links",
   "landing.footer.tagline": "A free map for the people who feed stray cats.",
@@ -74,7 +75,12 @@
   "legal.terms.title": "Terms of use",
   "legal.toc": "Contents",
   "nav.home": "Home",
+  "profile.signOut": "Sign out",
+  "states.error.title": "Something went wrong",
+  "states.loadFailed.text": "We could not load your account. Check the connection and try again.",
   "states.notFound.back": "Back to the map",
   "states.notFound.text": "The link may be wrong or the page was removed.",
-  "states.notFound.title": "Page not found"
+  "states.notFound.title": "Page not found",
+  "states.signIn.text": "Google did not finish signing you in. Try again.",
+  "states.signIn.title": "Sign-in did not finish"
 }
