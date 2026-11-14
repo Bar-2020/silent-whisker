@@ -7,7 +7,7 @@ import { PROFILE_TEXT_MAX_LENGTH, PROFILE_TEXT_MIN_LENGTH } from '../constants/p
 const FORBIDDEN = /[\p{Cc}‪-‮⁦-⁩]/u;
 
 /** At least one character a reader can see: not a space, a control or an invisible format character, and not a filler that draws nothing (a Hangul filler, a variation selector, a braille blank). */
-const VISIBLE = /[^\s\p{C}\p{Default_Ignorable_Code_Point}⠀]/u;
+const VISIBLE = /[^\s\p{C}\p{Default_Ignorable_Code_Point}\u2800]/u;
 
 /** Counted in characters, not bytes (D-61, D-92). */
 const characters = (text: string): number => Array.from(text).length;

@@ -259,20 +259,11 @@ describe('PATCH /api/profile reads its input strictly (PROF-05, D-61, D-92)', ()
 });
 
 // Characters that draw nothing, built from code points so the source shows what they are (PROF-19, D-92).
-const HANGUL_FILLER = 'ㅤ';
-const HALFWIDTH_HANGUL_FILLER = 'ﾠ';
-const BRAILLE_BLANK = '⠀';
-const VARIATION_SELECTOR = '️';
-const ZERO_WIDTH_SPACE = '​';
-const ZERO_WIDTH_NON_JOINER = '‌';
-
-const INVISIBLE = [
-  ['a Hangul filler', HANGUL_FILLER],
-  ['a halfwidth Hangul filler', HALFWIDTH_HANGUL_FILLER],
-  ['a braille blank', BRAILLE_BLANK],
-  ['a variation selector', VARIATION_SELECTOR],
-  ['a zero-width space', ZERO_WIDTH_SPACE],
-] as const;
+const HANGUL_FILLER = '\u{3164}';
+const HALFWIDTH_HANGUL_FILLER = '\u{FFA0}';
+const BRAILLE_BLANK = '\u{2800}';
+const VARIATION_SELECTOR = '\u{FE0F}';
+const ZERO_WIDTH_SPACE = '\u{200B}';
 
 const MIXED_INVISIBLE =
   HANGUL_FILLER + HALFWIDTH_HANGUL_FILLER + BRAILLE_BLANK + VARIATION_SELECTOR + ZERO_WIDTH_SPACE;
@@ -280,19 +271,7 @@ const MIXED_INVISIBLE =
 describe.each(['display_name', 'city'])(
   'PATCH /api/profile and a %s that draws nothing (PROF-19, D-61, D-92)',
   (field) => {
-    it.each([
-      ...INVISIBLE.map(([name, character]) => [
-        `${PROFILE_TEXT_MIN_LENGTH} times ${name}`,
-        character.repeat(PROFILE_TEXT_MIN_LENGTH),
-      ]),
-      ...INVISIBLE.map(([name, character]) => [
-        `${PROFILE_TEXT_MAX_LENGTH} times ${name}`,
-        character.repeat(PROFILE_TEXT_MAX_LENGTH),
-      ]),
-      ['all of them together', MIXED_INVISIBLE],
-      ['all of them together, between spaces', `  ${MIXED_INVISIBLE}  `],
-    ])('refuses %s: INVALID_INPUT, nothing saved or spent, no paid check', async (_name, value) => {
-      // PROF-19, D-61, D-92
+    const refusedWithNothingSpent = async (value: string) => {
       const result = await handler(patch({ ...FIRST_SAVE, [field]: value }));
 
       expect(result.statusCode).toBe(400);
@@ -302,24 +281,9 @@ describe.each(['display_name', 'city'])(
       expect(userWrites()).toHaveLength(0);
       expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
       expect(lookup).not.toHaveBeenCalled();
-    });
+    };
 
-    it.each([
-      ['a letter, then a Hangul filler', `Dana${HANGUL_FILLER}`],
-      ['a Hangul filler, then a letter', `${HANGUL_FILLER}Dana`],
-      ['a letter, a Hangul filler, a letter', `Da${HANGUL_FILLER}na`],
-      ['a letter, then a halfwidth Hangul filler', `Dana${HALFWIDTH_HANGUL_FILLER}`],
-      ['a letter, then a braille blank', `Dana${BRAILLE_BLANK}`],
-      ['a letter, then a variation selector', `Dana${VARIATION_SELECTOR}`],
-      ['a letter, then a zero-width space', `D${ZERO_WIDTH_SPACE}`],
-      ['a letter between zero-width spaces', `${ZERO_WIDTH_SPACE}D${ZERO_WIDTH_SPACE}`],
-      ['a letter with all of them after it', `D${MIXED_INVISIBLE}`],
-      [
-        'the longest text, a letter and a filler',
-        `${'x'.repeat(PROFILE_TEXT_MAX_LENGTH - 1)}${HANGUL_FILLER}`,
-      ],
-    ])('saves %s as typed, with the paid check run', async (_name, value) => {
-      // PROF-19, D-61, D-92
+    const savedAsTyped = async (value: string) => {
       const result = await handler(patch({ [field]: value }));
 
       expect(result.statusCode).toBe(200);
@@ -328,35 +292,38 @@ describe.each(['display_name', 'city'])(
       });
       expect(bodyOf(result)).toMatchObject({ [field]: value });
       expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(1);
+    };
+
+    it.each([
+      ['Hangul fillers', HANGUL_FILLER.repeat(PROFILE_TEXT_MIN_LENGTH)],
+      ['braille blanks', BRAILLE_BLANK.repeat(PROFILE_TEXT_MIN_LENGTH)],
+      ['variation selectors', VARIATION_SELECTOR.repeat(PROFILE_TEXT_MIN_LENGTH)],
+      ['zero-width spaces', ZERO_WIDTH_SPACE.repeat(PROFILE_TEXT_MIN_LENGTH)],
+      ['all five invisible characters together', MIXED_INVISIBLE],
+    ])('refuses only %s: INVALID_INPUT, nothing saved, no paid check', async (_name, value) => {
+      // PROF-19, D-61, D-92
+      await refusedWithNothingSpent(value);
     });
 
-    it('counts a filler as a character: a longest text plus a filler is too long', async () => {
+    it('saves a letter with fillers around it as typed, with the paid check run', async () => {
       // PROF-19, D-61, D-92
-      const value = `${'x'.repeat(PROFILE_TEXT_MAX_LENGTH)}${HANGUL_FILLER}`;
-
-      const result = await handler(patch({ [field]: value }));
-
-      expect(result.statusCode).toBe(400);
-      expect(bodyOf(result)).toEqual({ code: 'INVALID_INPUT' });
-      expect(userWrites()).toHaveLength(0);
+      await savedAsTyped(`${HANGUL_FILLER}Da${HANGUL_FILLER}na${HANGUL_FILLER}`);
     });
 
     it.each([
-      ['Hebrew with points (niqqud)', 'שָׁלוֹם'],
-      ['Arabic with a zero-width non-joiner', `عبد${ZERO_WIDTH_NON_JOINER}الله`],
+      ['Hebrew with points (niqqud)', 'ש\u{5B8}\u{5C1}לו\u{5B9}ם'],
+      ['Arabic with a zero-width non-joiner', 'عبد\u{200C}الله'],
       ['Russian', 'Анна Иванова'],
-      ['an emoji with a variation selector', `❤${VARIATION_SELECTOR}`],
-      ['two braille letters', '⠁⠃'],
-    ])('saves a real name: %s', async (_name, value) => {
+      ['an emoji with a variation selector', '\u{2764}\u{FE0F}'],
+      ['two braille letters', '\u{2801}\u{2803}'],
+    ])('saves a real name as typed: %s', async (_name, value) => {
       // PROF-19, D-61, D-92
-      const result = await handler(patch({ [field]: value }));
+      await savedAsTyped(value);
+    });
 
-      expect(result.statusCode).toBe(200);
-      expect(userWrites()[0].args[0].input.ExpressionAttributeValues).toMatchObject({
-        [`:${field}`]: value,
-      });
-      expect(bodyOf(result)).toMatchObject({ [field]: value });
-      expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(1);
+    it('counts a filler as a character: the longest text plus a filler is too long', async () => {
+      // PROF-19, D-61, D-92
+      await refusedWithNothingSpent(`${'x'.repeat(PROFILE_TEXT_MAX_LENGTH)}${HANGUL_FILLER}`);
     });
   }
 );

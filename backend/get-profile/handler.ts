@@ -68,19 +68,21 @@ function memberFrom(event: ApiEvent): Member | undefined {
 async function loadUser(table: string, { userId, photo }: Member): Promise<UserRow> {
   const user = await readUserRow(db, table, userId);
   if (!user) return createUser(table, userId, photo);
-  if (!photo || photo === user.avatar_url) return user;
+  // A banned member's row keeps no photo: after a delete it holds only `user_id` and `status` (D-71).
+  if (!photo || photo === user.avatar_url || user.status !== 'active') return user;
   try {
     await db.send(
       new UpdateCommand({
         TableName: table,
         Key: { user_id: userId },
         UpdateExpression: 'SET avatar_url = :photo',
-        ConditionExpression: 'attribute_exists(user_id)',
-        ExpressionAttributeValues: { ':photo': photo },
+        ConditionExpression: 'attribute_exists(user_id) AND #status = :active',
+        ExpressionAttributeNames: { '#status': 'status' },
+        ExpressionAttributeValues: { ':photo': photo, ':active': 'active' },
       })
     );
   } catch (error) {
-    // The row was deleted since the read (DELETE /profile): a fresh one, as after a delete (D-92).
+    // Deleted or banned since the read: a fresh row, or (the put refuses) the banned one as it is.
     if (!(error instanceof ConditionalCheckFailedException)) throw error;
     return createUser(table, userId, photo);
   }
