@@ -49,6 +49,8 @@
         "autoDiscover": ["frontend/src/features"],
       },
       { "name": "frontend-shared", "patterns": ["frontend/src/shared/**"] },
+      // The design tokens and the breakpoints: a stylesheet imports them from any folder.
+      { "name": "frontend-styles", "patterns": ["frontend/src/styles/**"] },
       { "name": "frontend", "patterns": ["frontend/**"] },
       { "name": "backend", "patterns": ["backend/**"] },
       { "name": "shared", "patterns": ["shared/**"] },
@@ -61,9 +63,9 @@
       { "name": "design", "patterns": ["design/**"] },
     ],
     "rules": [
-      { "from": "features", "allow": ["frontend-shared", "shared"] },
-      { "from": "frontend-shared", "allow": ["shared"] },
-      { "from": "frontend", "allow": ["features", "frontend-shared", "shared"] },
+      { "from": "features", "allow": ["frontend-shared", "frontend-styles", "shared"] },
+      { "from": "frontend-shared", "allow": ["frontend-styles", "shared"] },
+      { "from": "frontend", "allow": ["features", "frontend-shared", "frontend-styles", "shared"] },
       { "from": "backend", "allow": ["shared"] },
       { "from": "shared", "allow": [] },
       { "from": "infra", "allow": [] },

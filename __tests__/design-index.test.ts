@@ -43,7 +43,7 @@ describe('the function that serves the design mocks', () => {
     expect(answerTo('/design/')).toEqual({ uri: '/design/index.html' });
   });
 
-  it.each(['/design/map.html', '/design/styles/tokens.css', '/design/locales/he.js'])(
+  it.each(['/design/map.html', '/design/styles/global.css', '/design/locales/he.js'])(
     'leaves the file %s alone',
     (uri) => {
       expect(answerTo(uri)).toEqual({ uri });

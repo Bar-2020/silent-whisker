@@ -1,0 +1,16 @@
+.promise {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.promise li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+}
+
+.promise svg {
+  margin-block-start: 2px;
+  color: var(--dado-ink);
+}

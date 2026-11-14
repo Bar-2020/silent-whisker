@@ -1,0 +1,15 @@
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-block-size: var(--tap);
+  padding-inline: var(--s-5);
+  border-radius: var(--r-m);
+  color: var(--dado);
+  font: var(--type-body-strong);
+  text-decoration: none;
+}
+
+.link:hover {
+  background: var(--dado-tint);
+}

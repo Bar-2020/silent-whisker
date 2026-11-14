@@ -41,13 +41,14 @@ schemas of the API's shapes, D-101). `frontend/` and `backend/` each have
 their own `package.json` for their dependencies; the root one holds tooling only.
 
 The frontend is feature-based. `frontend/src/features/<feature>/` owns its screens, components,
-hooks and data access. `frontend/src/shared/` only when a second feature needs it, split by kind
+hooks and data access. **Every component has its own folder** (kebab-case, `landing-hero/`) holding the component
+(`LandingHero.tsx`), its stylesheet (`LandingHero.module.css`) and anything else only it uses; a component never shares a stylesheet with another. A component's name says what it is on its own (`LandingHero`, not `Hero`; `BrandLink`, not `Brandmark`). A feature's non-component files (`index.ts`, constants, schemas) stay at its root. Two exceptions: the icons share `shared/components/icon/`, one file each and no stylesheet of their own, and a small helper used by one component stays in that component's file. `frontend/src/shared/` only when a second feature needs it, split by kind
 (`components/`, `api/`, `utils/`) when a kind gets its first file. Types sit beside the file that owns them
 (`<name>.types.ts`); constants stay in the repo's `shared/constants/`. **Features never import from
 each other.** In the frontend a folder is imported through its alias (`@app`, `@features`, `@shared`,
 `@styles`, `@locales`, `@constants`, `@schemas`; the `paths` of `tsconfig.json`); one `../` is fine,
 two or more is a lint error. Text takes a `--type-*` variant whole and a `z-index` is a `--z-*` layer
-(`frontend/src/styles/tokens.css`); Stylelint refuses anything else.
+(`frontend/src/styles/global.css`); Stylelint refuses anything else.
 
 @.claude/instructions/working-style.md
 

@@ -1,0 +1,39 @@
+.section {
+  padding: var(--s-8) var(--s-5);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+  inline-size: min(100%, 64rem);
+  margin-inline: auto;
+}
+
+.section[data-tone='trust'] {
+  background: var(--dado);
+  color: var(--dado-quiet);
+}
+
+.section[data-tone='trust'] h2 {
+  color: var(--dado-ink);
+}
+
+/* The closing pitch stands apart from the slate footer: a tinted band, centred. */
+.section[data-tone='support'] {
+  background: var(--dado-tint);
+  text-align: center;
+}
+
+.section[data-tone='support'] .inner {
+  align-items: center;
+  max-inline-size: var(--column);
+}
+
+.section h2 {
+  scroll-margin-block-start: 96px;
+}
+
+.section[data-tone='support'] h2 {
+  font: var(--type-headline);
+}
