@@ -6,7 +6,8 @@ locals {
   security_headers = jsondecode(file("${path.module}/../../shared/constants/security-headers.json"))
 
   # Everything loads from the answer's own address. A third party is added here by name, in the
-  # change that first needs it (the sign-in host of D-59, the geocoder of D-88).
+  # change that first needs it: the sign-in host (D-59), the geocoder (D-88), Google's photo host
+  # for `avatar_url` (D-21) and the map tiles of the real app.
   content_security_policy = {
     app = "default-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
     # The mocks load Leaflet from cdnjs and map tiles from OpenStreetMap, and the viewer frames its own pages (D-89).
