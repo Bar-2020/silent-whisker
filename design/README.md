@@ -28,7 +28,7 @@ back gesture returns to the viewer.
 |---|---|
 | `briefs/` | The `shape` brief for each area, the direction record (`00-direction.md`) and the open questions with a recommendation each (`10-open-questions.md`) |
 | `mocks/*.html` | One page per area: landing, legal, first run, map, spot and logging, cats, alerts, chat, profile, global states |
-| `mocks/styles/` | `tokens.css` (the only place a colour, size or timing is chosen), `base.css`, `components.css`, `screens.css`, `responsive.css` (every width rule, breakpoints 768 and 1024 px) |
+| `mocks/styles/` | `global.css` (the only place a colour, size or timing is chosen), `base.css`, `components.css`, `screens.css`, `responsive.css` (every width rule, breakpoints 768 and 1024 px) |
 | `mocks/locales/` | Every string of the mocks, keyed, Hebrew and English with the same keys. `demo.*` keys are sample data that the API will supply |
 | `mocks/icons.js` | The icon set: one 24 px grid, 2 px stroke |
 | `mocks/design-system.html` | The design system on one page: every token and every component with its states (buttons: default, hover, pressed, focus, disabled, pending). English by default; `?lang=he` for right to left |
@@ -60,6 +60,6 @@ read, and CSS-only checked tiles need a long selector. The mock scripts themselv
 
 ## Using it in Phase 2
 
-Read `docs/DESIGN.md` first, then the page you are building and its brief. Move `tokens.css` into
+Read `docs/DESIGN.md` first, then the page you are building and its brief. Move `global.css` into
 `frontend/src/styles/`, keep one stylesheet beside each component (CSS Modules), and keep the
 breakpoints in one file. If a screen must change, change the mock and `DESIGN.md` first.

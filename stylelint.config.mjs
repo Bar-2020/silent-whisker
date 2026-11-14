@@ -1,7 +1,7 @@
 const RTL_FIX =
   'Use the logical property (inline-start/inline-end, block-start/block-end): Hebrew and Arabic flip. hard-rules.md, RTL-safe styles.';
 const TYPE_FIX =
-  'Take a whole variant: font: var(--type-body) (the variants are in frontend/src/styles/tokens.css and DESIGN.md, Typography). A look that no variant has is added to the design first.';
+  'Take a whole variant: font: var(--type-body) (the variants are in frontend/src/styles/global.css and DESIGN.md, Typography). A look that no variant has is added to the design first.';
 
 export default {
   rules: {
@@ -35,7 +35,7 @@ export default {
       {
         message: (property, value) =>
           property === 'z-index'
-            ? `"z-index: ${value}" is a number. Use a layer: z-index: var(--z-bar) (the scale is in frontend/src/styles/tokens.css, DESIGN.md, Layers).`
+            ? `"z-index: ${value}" is a number. Use a layer: z-index: var(--z-bar) (the scale is in frontend/src/styles/global.css, DESIGN.md, Layers).`
             : `"font: ${value}" is not a variant. ${TYPE_FIX}`,
       },
     ],

@@ -3,8 +3,8 @@ import { AuthCallbackPage } from '@features/auth';
 import { LandingPage } from '@features/landing';
 import { LegalLayout, PrivacyPage, TermsPage } from '@features/legal';
 import { ProfilePage } from '@features/profile';
-import { NotFoundPage } from './NotFoundPage';
-import { Shell } from './Shell';
+import { NotFoundPage } from './not-found-page/NotFoundPage';
+import { AppShell } from './app-shell/AppShell';
 
 export function App() {
   return (
@@ -14,7 +14,7 @@ export function App() {
         <Route path="privacy" element={<PrivacyPage />} />
         <Route path="terms" element={<TermsPage />} />
       </Route>
-      <Route element={<Shell />}>
+      <Route element={<AppShell />}>
         <Route path="auth/callback" element={<AuthCallbackPage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="*" element={<NotFoundPage />} />

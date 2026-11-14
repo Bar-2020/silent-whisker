@@ -1,1 +1,1 @@
-export { AuthCallbackPage } from './AuthCallbackPage';
+export { AuthCallbackPage } from './auth-callback-page/AuthCallbackPage';

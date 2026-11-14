@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { CONTACT_EMAIL, SOURCE_CODE_URL } from '@constants/contact';
-import { Brandmark } from '@shared/components/brandmark/Brandmark';
+import { BrandLink } from '@shared/components/brand-link/BrandLink';
 import { HeartIcon } from '@shared/components/icon/HeartIcon';
 import styles from './SiteFooter.module.css';
 
@@ -14,7 +14,7 @@ export function SiteFooter({ anchors }: { anchors?: ReactNode }) {
     <footer className={styles.footer}>
       <div className={styles.inner}>
         <div className={styles.brand}>
-          <Brandmark />
+          <BrandLink />
           <p>{t('landing.footer.tagline')}</p>
         </div>
         <nav aria-label={t('landing.footer.label')}>

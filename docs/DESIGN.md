@@ -215,7 +215,7 @@ only; letter-spacing is never set (it breaks Hebrew letterforms).
 
 ### Hierarchy
 Nine variants, each a token that holds the whole `font` (weight, size, line height, family), in
-`frontend/src/styles/tokens.css` and `design/mocks/styles/tokens.css`. A text takes one whole
+`frontend/src/styles/global.css` and `design/mocks/styles/global.css`. A text takes one whole
 (`font: var(--type-body)`); no size, weight or line height is written on its own. Stylelint refuses
 `font-size`, `font-weight`, `line-height`, `font-family` and `letter-spacing`, and any `font` that is
 not a `--type-*` variant. A look that none has is added here first.
