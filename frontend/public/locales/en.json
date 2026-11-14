@@ -2,6 +2,8 @@
   "app.name": "Silent Whisker",
   "common.close": "Close",
   "common.contact": "Contact",
+  "common.rateLimit.text": "Try again in {{n}} seconds.",
+  "common.rateLimit.title": "Too many requests",
   "common.retry": "Try again",
   "landing.footer": "Silent Whisker. Open source under the MIT licence.",
   "landing.footer.label": "Footer links",

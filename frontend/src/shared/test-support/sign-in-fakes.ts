@@ -2,6 +2,7 @@ import { User } from 'oidc-client-ts';
 import { vi } from 'vite-plus/test';
 
 import { COUNTER_TTL_SECONDS, MS_PER_SECOND } from '@constants/cost';
+import { OIDC_STORAGE_PREFIX, SIGN_IN_STARTED_STORAGE_KEY } from '@constants/sign-in';
 import type { ProfileResponse } from '@schemas/profile.schema';
 import type { Listener, LockRequest, UserOptions } from './sign-in-fakes.types';
 
@@ -107,6 +108,20 @@ export function stubNavigatorLocks(): ReturnType<typeof vi.fn<LockRequest>> {
 
 export function unstubNavigatorLocks(): void {
   Reflect.deleteProperty(navigator, 'locks');
+}
+
+export const OIDC_STORAGE_KEYS = [
+  `${OIDC_STORAGE_PREFIX}user:x`,
+  `${OIDC_STORAGE_PREFIX}somestate`,
+];
+export const UNRELATED_STORAGE_KEY = 'language';
+export const UNRELATED_STORAGE_VALUE = 'he';
+
+/** What a signed-in browser holds: the library's keys, the loop marker and a key that is not the sign-in's. */
+export function seedSignInStorage(): void {
+  for (const key of OIDC_STORAGE_KEYS) localStorage.setItem(key, 'x');
+  localStorage.setItem(UNRELATED_STORAGE_KEY, UNRELATED_STORAGE_VALUE);
+  sessionStorage.setItem(SIGN_IN_STARTED_STORAGE_KEY, String(Date.now()));
 }
 
 export function jsonResponse(

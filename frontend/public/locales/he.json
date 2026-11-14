@@ -2,6 +2,8 @@
   "app.name": "Silent Whisker",
   "common.close": "סגירה",
   "common.contact": "יצירת קשר",
+  "common.rateLimit.text": "אפשר לנסות שוב בעוד {{n}} שניות.",
+  "common.rateLimit.title": "יותר מדי בקשות",
   "common.retry": "ניסיון חוזר",
   "landing.footer": "Silent Whisker. קוד פתוח ברישיון MIT.",
   "landing.footer.label": "קישורים בתחתית העמוד",

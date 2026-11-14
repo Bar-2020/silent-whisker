@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AFTER_SIGN_IN_PATH } from '@constants/sign-in';
 import { signIn } from '@shared/auth/session';
@@ -12,16 +13,22 @@ export function SignInButton({
   onBand?: boolean;
 }) {
   const { t } = useTranslation();
+  const [failed, setFailed] = useState(false);
 
   return (
     <button
       type="button"
-      onClick={() => void signIn(AFTER_SIGN_IN_PATH)}
+      onClick={() => {
+        signIn(AFTER_SIGN_IN_PATH).catch(() => {
+          setFailed(true);
+        });
+      }}
       className={styles.button}
       data-size={size}
       data-on={onBand ? 'band' : undefined}
     >
-      {size === 'small' ? t('landing.signInShort') : t('landing.signIn')}
+      {failed && t('common.retry')}
+      {!failed && (size === 'small' ? t('landing.signInShort') : t('landing.signIn'))}
     </button>
   );
 }

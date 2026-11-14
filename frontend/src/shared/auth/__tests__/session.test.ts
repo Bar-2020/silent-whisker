@@ -9,14 +9,20 @@ import {
   fakeUserManager,
   ID_TOKEN,
   makeUser,
+  OIDC_STORAGE_KEYS,
   REFRESHED_ACCESS_TOKEN,
   REFRESHED_ID_TOKEN,
+  seedSignInStorage,
   stubNavigatorLocks,
+  UNRELATED_STORAGE_KEY,
+  UNRELATED_STORAGE_VALUE,
   unstubNavigatorLocks,
 } from '@shared/test-support/sign-in-fakes';
 import auth from '@constants/auth.json';
 import {
+  OIDC_STORAGE_PREFIX,
   SIGN_IN_IDENTITY_PROVIDER,
+  SIGN_IN_STARTED_STORAGE_KEY,
   TOKEN_REFRESH_LOCK_NAME,
   TOKEN_REFRESH_MARGIN_SECONDS,
 } from '@constants/sign-in';
@@ -38,6 +44,8 @@ beforeEach(() => {
   vi.setSystemTime(NOW);
   fakeUserManager.reset();
   replace.mockReset();
+  localStorage.clear();
+  sessionStorage.clear();
   lockRequest = stubNavigatorLocks();
   vi.stubGlobal('location', { origin: ORIGIN, href: `${ORIGIN}/profile`, replace });
 });
@@ -85,9 +93,27 @@ describe('getIdToken', () => {
     expect(fakeUserManager.signinSilent).not.toHaveBeenCalled();
   });
 
+  // SHELL-16, D-59: a call whose token is still good takes no lock and no refresh
+  it('takes no lock for a token that has at least the margin left', async () => {
+    fakeUserManager.setUser(makeUser({ secondsLeft: TOKEN_REFRESH_MARGIN_SECONDS }));
+    await expect(getIdToken()).resolves.toBe(ID_TOKEN);
+    expect(lockRequest).not.toHaveBeenCalled();
+    expect(fakeUserManager.signinSilent).not.toHaveBeenCalled();
+  });
+
   // SHELL-13, D-59
-  it('returns null when nobody is signed in', async () => {
+  it('returns null, with no lock, when nobody is signed in', async () => {
     await expect(getIdToken()).resolves.toBeNull();
+    expect(fakeUserManager.signinSilent).not.toHaveBeenCalled();
+    expect(lockRequest).not.toHaveBeenCalled();
+  });
+
+  // SHELL-16, D-59: another tab refreshed while this call waited for the lock: the lock re-reads first
+  it('does not refresh when the user it re-reads inside the lock is no longer expiring', async () => {
+    const other = refreshed();
+    fakeUserManager.getUser.mockResolvedValueOnce(expiring()).mockResolvedValue(other);
+    await expect(getIdToken()).resolves.toBe(REFRESHED_ID_TOKEN);
+    expect(lockRequest).toHaveBeenCalledTimes(1);
     expect(fakeUserManager.signinSilent).not.toHaveBeenCalled();
   });
 
@@ -172,19 +198,28 @@ describe('getIdToken', () => {
 });
 
 describe('signOut', () => {
-  // SHELL-14, D-59, R-22: the tokens and the sign-in records go first, then Cognito's own session ends
-  it('removes the tokens, clears the stale state, then goes to Cognito /logout', async () => {
+  // SHELL-14, D-59, R-22: every oidc.* key and the sign-in marker go, nothing else does
+  it('empties the sign-in records from both storages and keeps unrelated keys', async () => {
+    fakeUserManager.setUser(makeUser());
+    seedSignInStorage();
+    await signOut();
+    const left = Object.keys(localStorage).filter((key) => key.startsWith(OIDC_STORAGE_PREFIX));
+    expect(left).toEqual([]);
+    expect(OIDC_STORAGE_KEYS.filter((key) => localStorage.getItem(key) !== null)).toEqual([]);
+    expect(sessionStorage.getItem(SIGN_IN_STARTED_STORAGE_KEY)).toBeNull();
+    expect(localStorage.getItem(UNRELATED_STORAGE_KEY)).toBe(UNRELATED_STORAGE_VALUE);
+  });
+
+  // SHELL-14, D-59, R-22: the tokens go first, then Cognito's own session ends
+  it('removes the tokens, then goes to Cognito /logout', async () => {
     fakeUserManager.setUser(makeUser());
     await signOut();
     expect(fakeUserManager.removeUser).toHaveBeenCalledTimes(1);
-    expect(fakeUserManager.clearStaleState).toHaveBeenCalledTimes(1);
     expect(replace).toHaveBeenCalledTimes(1);
 
     const removedAt = fakeUserManager.removeUser.mock.invocationCallOrder[0];
-    const clearedAt = fakeUserManager.clearStaleState.mock.invocationCallOrder[0];
     const leftAt = replace.mock.invocationCallOrder[0];
     expect(removedAt).toBeLessThan(leftAt);
-    expect(clearedAt).toBeLessThan(leftAt);
 
     const url = new URL(replace.mock.calls[0][0]);
     expect(`${url.origin}${url.pathname}`).toBe(`${FAKE_COGNITO_DOMAIN}/logout`);

@@ -237,4 +237,33 @@ describe.each(CODES)('landing page signed out, language %s', (code) => {
     }
     expect(apiCalls()).toEqual([]);
   });
+
+  // SHELL-19, D-59: the redirect cannot start: the button shows the retry word, and a second press tries again
+  it('shows the retry word on a sign-in button whose redirect fails, and tries again', async () => {
+    fakeUserManager.signinRedirect.mockRejectedValue(new Error('cannot reach Google'));
+    await openRoute('/', code);
+    const label = text(code, 'landing.signInShort');
+    const retryWord = text(code, 'common.retry');
+    const first = Array.from(document.querySelectorAll('button')).find(
+      (b) => b.textContent.trim() === label || b.textContent.trim() === text(code, 'landing.signIn')
+    );
+    expect(first).toBeDefined();
+    if (first === undefined) return;
+
+    fireEvent.click(first);
+    await waitFor(() => {
+      expect(first.textContent.trim()).toBe(retryWord);
+    });
+    expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(1);
+    expect(first.disabled).toBe(false);
+
+    fireEvent.click(first);
+    await waitFor(() => {
+      expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(2);
+    });
+    expect(fakeUserManager.signinRedirect).toHaveBeenLastCalledWith({
+      state: AFTER_SIGN_IN_PATH,
+      extraQueryParams: { identity_provider: SIGN_IN_IDENTITY_PROVIDER },
+    });
+  });
 });

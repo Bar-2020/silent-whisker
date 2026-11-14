@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router';
-import type { ProfileResponse } from '@schemas/profile.schema';
 import { ApiError } from '@shared/api/api-error';
-import { getProfile } from '@shared/api/profile-api';
 import { signIn } from '@shared/auth/session';
 import { AuthFailedScreen } from '../auth-failed-screen/AuthFailedScreen';
-import { signInUnlessLooping } from '../sign-in-loop';
+import { useMemberProfile } from '../use-member-profile';
+import { useSignInRedirect } from '../use-sign-in-redirect';
 import { useSignInStatus } from '../use-sign-in-status';
 
 /**
@@ -17,34 +15,19 @@ export function RequireSignIn() {
   const { pathname, search, hash } = useLocation();
   const returnTo = `${pathname}${search}${hash}`;
   const status = useSignInStatus();
-  const [looping, setLooping] = useState(false);
-  const [profile, setProfile] = useState<ProfileResponse>();
-  const [attempt, setAttempt] = useState(0);
-  const [loadFailed, setLoadFailed] = useState(false);
+  const redirectStopped = useSignInRedirect(status, returnTo);
+  const { profile, failure, retry } = useMemberProfile(status);
 
-  useEffect(() => {
-    if (status === 'signedOut') setLooping(!signInUnlessLooping(returnTo));
-  }, [status, returnTo]);
-
-  useEffect(() => {
-    if (status !== 'signedIn') return;
-    getProfile()
-      .then(setProfile)
-      .catch((error: unknown) => {
-        // A session that ended signs the member out and the effect above sends them to Google.
-        if (!(error instanceof ApiError && error.kind === 'sessionExpired')) setLoadFailed(true);
-      });
-  }, [status, attempt]);
-
-  if (looping) return <AuthFailedScreen kind="signIn" onRetry={() => void signIn(returnTo)} />;
-  if (loadFailed) {
+  if (redirectStopped) {
+    return <AuthFailedScreen kind="signIn" onRetry={() => void signIn(returnTo)} />;
+  }
+  if (failure) {
+    const waitSeconds = failure instanceof ApiError ? failure.retryAfterSeconds : undefined;
     return (
       <AuthFailedScreen
-        kind="connection"
-        onRetry={() => {
-          setLoadFailed(false);
-          setAttempt((count) => count + 1);
-        }}
+        kind={waitSeconds === undefined ? 'connection' : 'rateLimited'}
+        waitSeconds={waitSeconds}
+        onRetry={retry}
       />
     );
   }

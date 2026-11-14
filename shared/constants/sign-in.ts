@@ -14,3 +14,6 @@ export const SIGN_IN_STARTED_STORAGE_KEY = 'sign-in-started-at';
 
 /** One token refresh at a time across tabs, so a rotated refresh token is never used twice (D-59). */
 export const TOKEN_REFRESH_LOCK_NAME = 'silent-whisker-token-refresh';
+
+/** The library keeps the tokens and the pending sign-in requests in `localStorage` under this prefix. */
+export const OIDC_STORAGE_PREFIX = 'oidc.';

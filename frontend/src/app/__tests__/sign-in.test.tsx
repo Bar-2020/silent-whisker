@@ -20,20 +20,26 @@ import {
   ID_TOKEN,
   jsonResponse,
   makeUser,
+  OIDC_STORAGE_KEYS,
   PROFILE,
-  stubNavigatorLocks,
-  unstubNavigatorLocks,
+  seedSignInStorage,
+  UNRELATED_STORAGE_KEY,
+  UNRELATED_STORAGE_VALUE,
 } from '@shared/test-support/sign-in-fakes';
 import auth from '@constants/auth.json';
+import { MS_PER_SECOND } from '@constants/cost';
 import {
   API_PATH_PREFIX,
+  DEFAULT_RETRY_AFTER_SECONDS,
   STATUS_OK,
+  STATUS_TOO_MANY_REQUESTS,
   STATUS_UNAUTHORIZED,
   STATUS_UNAVAILABLE,
 } from '@constants/http';
 import { LANGUAGES } from '@constants/languages';
 import {
   AFTER_SIGN_IN_PATH,
+  OIDC_STORAGE_PREFIX,
   SIGN_IN_IDENTITY_PROVIDER,
   SIGN_IN_LOOP_SECONDS,
   SIGN_IN_STARTED_STORAGE_KEY,
@@ -70,7 +76,6 @@ const text = (code: string, key: string): string => {
 
 const CODES = LANGUAGES.map(({ code }) => code);
 const EN = 'en';
-const MS_PER_SECOND = 1000;
 const NOW = new Date('2026-11-14T10:00:00Z');
 const ORIGIN = 'https://app.example.test';
 const CALLBACK_PATH = auth.callback_path;
@@ -118,12 +123,11 @@ beforeEach(async () => {
   vi.stubGlobal('fetch', fetchMock);
   replace.mockReset();
   vi.stubGlobal('location', { origin: ORIGIN, href: `${ORIGIN}/`, replace });
-  stubNavigatorLocks();
+  allTimersFaked = false;
 });
 
 afterEach(() => {
   cleanup();
-  unstubNavigatorLocks();
   vi.useRealTimers();
   vi.unstubAllGlobals();
 });
@@ -136,11 +140,30 @@ function Probe(): ReactElement {
   return <output data-testid="probe">{label}</output>;
 }
 
+/** A countdown needs the timers themselves faked; other tests fake the clock only. */
+let allTimersFaked = false;
+
+function fakeAllTimers(): void {
+  vi.useRealTimers();
+  vi.useFakeTimers({ now: NOW });
+  allTimersFaked = true;
+}
+
 async function flush(): Promise<void> {
   await act(async () => {
+    if (allTimersFaked) {
+      await vi.advanceTimersByTimeAsync(0);
+      return;
+    }
     await new Promise((done) => {
       setTimeout(done, 0);
     });
+  });
+}
+
+async function waitSeconds(seconds: number): Promise<void> {
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(seconds * MS_PER_SECOND);
   });
 }
 
@@ -300,11 +323,30 @@ describe('the guard, signed in', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fakeUserManager.signinRedirect).not.toHaveBeenCalled();
     expect(fakeUserManager.removeUser).not.toHaveBeenCalled();
+    // SHELL-18: only a 429 holds the button back
+    expect(button(text(EN, 'common.retry'))?.disabled).toBe(false);
 
     await pressRetry();
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(signOutButton()).toBeDefined();
     expect(h1()).not.toBe(text(EN, 'states.error.title'));
+  });
+
+  // SHELL-17, D-59: tab A signed out; tab B's next call sends nothing, and its guard goes to Google
+  it('sends nothing and goes to Google when another tab signed out', async () => {
+    fetchMock.mockImplementationOnce(() => Promise.resolve(jsonResponse(STATUS_UNAVAILABLE)));
+    await open('/profile?tab=2');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fakeUserManager.signinRedirect).not.toHaveBeenCalled();
+
+    // tab A's sign-out emptied the shared storage; this tab's library was not told
+    fakeUserManager.setUser(null);
+    await pressRetry();
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fakeUserManager.removeUser).toHaveBeenCalledTimes(1);
+    expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(1);
+    expect(fakeUserManager.signinRedirect.mock.calls[0]).toEqual(googleAt('/profile?tab=2'));
   });
 
   // SHELL-13, D-59: while the answer is still a failure the page stays shut
@@ -329,6 +371,79 @@ describe('the guard, signed in', () => {
   });
 });
 
+describe('the guard, signed in, too many requests', () => {
+  const RETRY_AFTER = DEFAULT_RETRY_AFTER_SECONDS + 5;
+  const rateLimitText = (code: string, seconds: number): string =>
+    text(code, 'common.rateLimit.text').replace('{{n}}', String(seconds));
+
+  const tooMany = (headers: Record<string, string> = {}): Promise<Response> =>
+    Promise.resolve(jsonResponse(STATUS_TOO_MANY_REQUESTS, undefined, headers));
+
+  beforeEach(() => {
+    fakeUserManager.setUser(makeUser());
+    fakeAllTimers();
+  });
+
+  // SHELL-18, D-60, R-21: the wait is Retry-After, else the default; the button is off until it has passed
+  it.each([
+    ['a bare 429', undefined, DEFAULT_RETRY_AFTER_SECONDS],
+    ['a 429 with Retry-After', String(RETRY_AFTER), RETRY_AFTER],
+  ])('shows the wait after %s, and its button waits', async (_name, header, seconds) => {
+    const headers: Record<string, string> = header === undefined ? {} : { 'retry-after': header };
+    fetchMock.mockImplementationOnce(() => tooMany(headers));
+    await open('/profile');
+    expect(h1()).toBe(text(EN, 'common.rateLimit.title'));
+    expect(document.body.textContent).toContain(rateLimitText(EN, seconds));
+    expect(signOutButton()).toBeUndefined();
+    expect(button(text(EN, 'common.retry'))?.disabled).toBe(true);
+
+    await waitSeconds(seconds - 1);
+    expect(button(text(EN, 'common.retry'))?.disabled).toBe(true);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    await waitSeconds(1);
+    expect(button(text(EN, 'common.retry'))?.disabled).toBe(false);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    await pressRetry();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock.mock.calls[1][0]).toBe(`${API_PATH_PREFIX}/profile`);
+    expect(signOutButton()).toBeDefined();
+  });
+
+  // SHELL-18, D-60: no sign-in is started and no token is removed for a 429
+  it('keeps the member signed in', async () => {
+    fetchMock.mockImplementationOnce(() => tooMany());
+    await open('/profile');
+    expect(fakeUserManager.removeUser).not.toHaveBeenCalled();
+    expect(fakeUserManager.signinRedirect).not.toHaveBeenCalled();
+  });
+
+  // SHELL-18: the screen is in the member's language and the text carries the number
+  it.each(CODES)('has its words in %s', async (code) => {
+    expect(text(code, 'common.rateLimit.text')).toContain('{{n}}');
+    fetchMock.mockImplementationOnce(() => tooMany());
+    await open('/profile', code);
+    expect(h1()).toBe(text(code, 'common.rateLimit.title'));
+    expect(document.body.textContent).toContain(rateLimitText(code, DEFAULT_RETRY_AFTER_SECONDS));
+  });
+});
+
+describe('a sign-in redirect that cannot start', () => {
+  // SHELL-19, D-59: the guard shows the sign-in-failed screen, and its button tries again
+  it('shows the sign-in-failed screen on a guarded page, and its button tries again', async () => {
+    fakeUserManager.signinRedirect.mockRejectedValue(new Error('cannot reach Google'));
+    await open('/profile?tab=2');
+    expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(1);
+    expectSignInFailedScreen();
+
+    await pressRetry();
+    expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(2);
+    expect(fakeUserManager.signinRedirect.mock.calls[1]).toEqual(googleAt('/profile?tab=2'));
+    expectSignInFailedScreen();
+  });
+});
+
 describe('sign-out', () => {
   async function pressSignOut(): Promise<void> {
     fakeUserManager.setUser(makeUser());
@@ -336,15 +451,25 @@ describe('sign-out', () => {
     const out = signOutButton();
     expect(out).toBeDefined();
     if (out === undefined) return;
+    seedSignInStorage();
     fireEvent.click(out);
     await flush();
   }
+
+  // SHELL-14, D-59, R-22: every oidc.* key and the sign-in marker are gone, nothing else is touched
+  it('empties the sign-in records from both storages and keeps unrelated keys', async () => {
+    await pressSignOut();
+    const left = Object.keys(localStorage).filter((key) => key.startsWith(OIDC_STORAGE_PREFIX));
+    expect(left).toEqual([]);
+    expect(OIDC_STORAGE_KEYS.filter((key) => localStorage.getItem(key) !== null)).toEqual([]);
+    expect(sessionStorage.getItem(SIGN_IN_STARTED_STORAGE_KEY)).toBeNull();
+    expect(localStorage.getItem(UNRELATED_STORAGE_KEY)).toBe(UNRELATED_STORAGE_VALUE);
+  });
 
   // SHELL-14, D-59, R-22: tokens gone, then the visit goes to Cognito's /logout with the app's own address
   it('removes the tokens and goes to Cognito /logout', async () => {
     await pressSignOut();
     expect(fakeUserManager.removeUser).toHaveBeenCalledTimes(1);
-    expect(fakeUserManager.clearStaleState).toHaveBeenCalledTimes(1);
     expect(replace).toHaveBeenCalledTimes(1);
     const url = new URL(replace.mock.calls[0][0]);
     expect(`${url.origin}${url.pathname}`).toBe(`${FAKE_COGNITO_DOMAIN}/logout`);

@@ -24,3 +24,10 @@
 .retry:hover {
   background: var(--dado-deep);
 }
+
+.retry:disabled,
+.retry:disabled:hover {
+  background: var(--surface-sunk);
+  color: var(--ink-3);
+  cursor: not-allowed;
+}

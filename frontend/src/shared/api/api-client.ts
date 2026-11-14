@@ -55,7 +55,11 @@ export async function apiRequest<Schema extends z.ZodType>(
   const token = await getIdToken().catch(() => {
     throw new ApiError('unavailable');
   });
-  if (token === null) throw new ApiError('sessionExpired');
+  if (token === null) {
+    // Signed out in another tab: this tab learns it from the tokens going away.
+    await forgetSession();
+    throw new ApiError('sessionExpired');
+  }
   const response = await send(path, token);
   if (!response.ok) throw await refusal(response);
   return schema.parse(await response.json());

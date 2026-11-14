@@ -49,7 +49,6 @@ const fetchMock = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>(
 beforeEach(() => {
   fakeUserManager.reset();
   fakeUserManager.setUser(makeUser());
-  stubNavigatorLocks();
   fetchMock.mockReset();
   fetchMock.mockResolvedValue(jsonResponse(STATUS_OK, { value: 'ok' }));
   vi.stubGlobal('fetch', fetchMock);
@@ -314,12 +313,16 @@ describe('apiRequest and 429', () => {
 });
 
 describe('apiRequest without a usable sign-in', () => {
-  // SHELL-06, SHELL-13, D-59: no signed-in user: no call leaves the browser
+  // SHELL-06, SHELL-13, SHELL-17, D-59: no signed-in user: no call leaves the browser, and the guard hears it
   it('is a session that ended, with no fetch at all, when nobody is signed in', async () => {
     fakeUserManager.setUser(null);
+    const heard = vi.fn();
+    fakeUserManager.events.addUserUnloaded(heard);
     const error = await apiError();
     expect(error.kind).toBe('sessionExpired');
     expect(fetchMock).not.toHaveBeenCalled();
+    expect(fakeUserManager.removeUser).toHaveBeenCalledTimes(1);
+    expect(heard).toHaveBeenCalledTimes(1);
   });
 
   // SHELL-06, SHELL-16, D-59: a refused refresh ends the session before any call is made

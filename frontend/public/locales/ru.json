@@ -2,6 +2,8 @@
   "app.name": "Silent Whisker",
   "common.close": "Закрыть",
   "common.contact": "Связаться с нами",
+  "common.rateLimit.text": "Повторите через {{n}} с.",
+  "common.rateLimit.title": "Слишком много запросов",
   "common.retry": "Повторить",
   "landing.footer": "Silent Whisker. Открытый код под лицензией MIT.",
   "landing.footer.label": "Ссылки внизу страницы",

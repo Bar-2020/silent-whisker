@@ -5,9 +5,10 @@ import { isSigningOut, signIn } from '@shared/auth/session';
 /**
  * Sends the visitor to Google unless that was already done a moment ago: a sign-in that returns
  * and is refused again would otherwise bounce between the app and Google for ever. False means
- * it did not go, and the caller shows a screen with a retry button.
+ * it did not go (a loop, or the redirect could not start), and the caller shows a screen with a
+ * retry button.
  */
-export function signInUnlessLooping(returnTo: string): boolean {
+export async function signInUnlessLooping(returnTo: string): Promise<boolean> {
   if (isSigningOut()) return true;
   try {
     const last = Number(sessionStorage.getItem(SIGN_IN_STARTED_STORAGE_KEY));
@@ -16,6 +17,10 @@ export function signInUnlessLooping(returnTo: string): boolean {
   } catch {
     // Storage is blocked: the loop cannot be seen here, and the callback checks the tokens were kept.
   }
-  void signIn(returnTo);
-  return true;
+  try {
+    await signIn(returnTo);
+    return true;
+  } catch {
+    return false;
+  }
 }

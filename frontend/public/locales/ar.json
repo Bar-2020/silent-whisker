@@ -2,6 +2,8 @@
   "app.name": "Silent Whisker",
   "common.close": "إغلاق",
   "common.contact": "التواصل",
+  "common.rateLimit.text": "يمكن المحاولة بعد {{n}} ثانية.",
+  "common.rateLimit.title": "طلبات كثيرة",
   "common.retry": "إعادة المحاولة",
   "landing.footer": "Silent Whisker. مفتوح المصدر بترخيص MIT.",
   "landing.footer.label": "روابط التذييل",
