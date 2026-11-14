@@ -1,4 +1,4 @@
-# The security headers CloudFront adds to every answer (D-59, D-103). The ordered behaviors in
+# The security headers CloudFront adds to every answer (D-59, D-104). The ordered behaviors in
 # hosting.tf do not inherit from the default one, so each behavior sets one of these policies. They
 # differ only in the Content-Security-Policy; `override` makes CloudFront's value win over the origin's.
 

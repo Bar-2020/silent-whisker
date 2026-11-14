@@ -12,12 +12,14 @@ body[data-chrome='page'] [data-pinned] {
   min-block-size: 100dvh;
 }
 
-body[data-chrome='page'] [data-pinned] > .page {
+[data-pinned] > .page {
   flex: 1;
   inline-size: 100%;
 }
 
-body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-footer]) {
+[data-pinned] > .footbar,
+[data-pinned] > .composer,
+[data-pinned] > [data-panel-footer] {
   margin-block-start: auto;
 }
 
@@ -124,6 +126,7 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   grid-template-columns: auto minmax(0, 1fr) auto;
   gap: var(--s-4);
   align-items: start;
+  --dash: to bottom;
 }
 
 .step__num {
@@ -142,13 +145,21 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   content: counter(step);
 }
 
-.step:not(:last-child)::before {
+.step::before {
   content: '';
   position: absolute;
   inset-inline-start: 21px;
   inset-block: 52px calc(var(--s-6) * -1 + 8px);
   inline-size: 2px;
-  background: repeating-linear-gradient(to bottom, var(--line-strong) 0 6px, transparent 6px 12px);
+  background: repeating-linear-gradient(
+    var(--dash),
+    var(--line-strong) 0 6px,
+    transparent 6px 12px
+  );
+}
+
+.step:last-child::before {
+  content: none;
 }
 
 .step__text {
@@ -195,7 +206,7 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
 }
 
 .promise .icon {
-  color: var(--dado);
+  color: var(--promise-icon, var(--dado));
   margin-block-start: 2px;
 }
 
@@ -290,7 +301,7 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   gap: var(--s-1);
 }
 
-.sitefoot__heart {
+[data-ui~='sitefoot__heart'] {
   color: var(--heart);
 }
 
@@ -309,9 +320,7 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   margin-block: var(--s-6) var(--s-2);
 }
 
-.read p + p,
-.read ul + p,
-.read p + ul {
+.read__block + .read__block {
   margin-block-start: var(--s-3);
 }
 
@@ -320,8 +329,12 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   padding-inline-start: var(--s-5);
 }
 
-.read li + li {
+.read li {
   margin-block-start: var(--s-2);
+}
+
+.read li:first-child {
+  margin-block-start: 0;
 }
 
 .sample-note {
@@ -360,9 +373,13 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   color: var(--dado);
 }
 
-.firstrun__body .illus .icon {
-  inline-size: 1.75rem;
-  block-size: 1.75rem;
+.firstrun__body .illus {
+  --illus-icon: 1.75rem;
+}
+
+.illus .icon {
+  inline-size: var(--illus-icon, 1.5rem);
+  block-size: var(--illus-icon, 1.5rem);
 }
 
 .why {
@@ -377,7 +394,7 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   align-items: center;
 }
 
-.why li > .icon {
+.why .icon {
   inline-size: 40px;
   block-size: 40px;
   padding: 8px;
@@ -405,7 +422,10 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   inset-inline-start: var(--s-4);
 }
 
-.stage:is([data-sheet='spot'], [data-sheet='alert'], [data-sheet='legend']) .mapctl {
+[data-sheet='spot'] .mapctl,
+[data-sheet='alert'] .mapctl,
+[data-sheet='legend'] .mapctl,
+[data-sheet='list'] .mapctl {
   display: none;
 }
 
@@ -480,14 +500,25 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   block-size: 1.125rem;
 }
 
+/* The panel (search results, the spots list) stays on screen beside the round map buttons, so it
+   stops above them and none covers a row. --results-clear is the gap the buttons keep below, which
+   the wide layout shrinks. */
 .results {
+  --results-clear: calc(var(--nav-total) + var(--s-6));
   position: absolute;
   inset-block-start: calc(100% + var(--s-2));
   inset-inline: 0;
   display: flex;
   flex-direction: column;
   gap: var(--s-1);
-  max-block-size: min(60dvh, 28rem);
+  max-block-size: min(
+    60dvh,
+    28rem,
+    calc(
+      100dvh - var(--s-4) - var(--round) - var(--s-2) - 3 * var(--round) - 2 * var(--s-3) -
+        var(--results-clear) - var(--s-3)
+    )
+  );
   overflow-y: auto;
   padding: var(--s-2);
 }
@@ -537,12 +568,79 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   min-inline-size: 0;
 }
 
-.results--none {
+/* A spot's row in the list: the name and its distance on one line, the state chips under them. */
+.sheet--list .results__text {
+  flex: 1;
+}
+
+[data-ui~='results__head'] {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+[data-ui~='results__distance'] {
+  flex: none;
+}
+
+[data-ui~='results__meta'] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1) var(--s-2);
+  margin-block-start: var(--s-1);
+}
+
+/* The list of spots to feed opens like a card: the head and its close X stay, the rows scroll. On a
+   phone it spans from the top edge to the bottom bar and covers the search box and the legend button;
+   the wide layout makes it a full-height panel. */
+.stage .sheet--list {
+  inset-block-start: var(--nav-gap);
+  max-block-size: none;
+  overflow: hidden;
+}
+
+/* Focus lands on the title when the list opens: the ring hugs the words, not the whole row. */
+.sheet--list .sheet__title {
+  inline-size: fit-content;
+  border-radius: var(--r-s);
+}
+
+/* The rows reach into the sheet's padding, so their icons line up with the title. */
+.sheet__list {
+  min-block-size: 0;
+  margin-inline: calc(var(--s-3) * -1);
+  overflow-y: auto;
+}
+
+/* While the list is open the map behind it is inert; a tap on it closes the list. It sits above the
+   map's panes (400) and just below the search box, the credit and the sheet. */
+.mapdismiss {
+  position: absolute;
+  inset: 0;
+  z-index: calc(var(--z-map-ui) - 1);
+}
+
+/* On a phone the list covers the top bar, so keyboard focus must not reach it either. */
+.stage[data-sheet='list'] .maptop {
+  visibility: hidden;
+}
+
+.results--none,
+.sheet__empty {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   gap: var(--s-2);
   padding: var(--s-6) var(--s-4);
   color: var(--ink-3);
   text-align: center;
+}
+
+.sheet__empty {
+  flex: 1;
+  justify-content: center;
 }
 
 .dialog__option {
@@ -681,7 +779,7 @@ body[data-chrome='page'] [data-pinned] > :is(.footbar, .composer, [data-panel-fo
   gap: var(--s-2);
 }
 
-.alertrow__actions:has(> :only-child) {
+.alertrow__actions.alertrow__actions--single {
   grid-template-columns: 1fr;
 }
 
@@ -734,6 +832,7 @@ fieldset.field > legend {
 }
 
 .centered .illus {
+  --illus-icon: 2.5rem;
   display: grid;
   place-items: center;
   inline-size: 88px;
@@ -741,11 +840,6 @@ fieldset.field > legend {
   border-radius: 50%;
   background: var(--surface-sunk);
   color: var(--ink-2);
-}
-
-.centered .illus .icon {
-  inline-size: 2.5rem;
-  block-size: 2.5rem;
 }
 
 .page--feed {
@@ -875,7 +969,7 @@ fieldset.field > legend {
 }
 
 /* A small pin for a list row: the same drawing as the map, at half the size. */
-.pickpin {
+[data-ui~='pickpin'] {
   --pin-w: 24px;
   --pin-h: 29px;
   display: grid;
@@ -884,13 +978,13 @@ fieldset.field > legend {
   flex: none;
 }
 
-.pickpin .pin {
+[data-ui~='pickpin'] .pin {
   translate: none;
   filter: none;
   cursor: inherit;
 }
 
-.pickpin .pin__body {
+[data-ui~='pickpin'] [data-ui~='pin__body'] {
   stroke-width: 2;
 }
 
@@ -947,7 +1041,7 @@ fieldset.field > legend {
   line-height: 1.3;
 }
 
-.iconbtn--small {
+[data-ui~='iconbtn--small'] {
   inline-size: 44px;
   block-size: 44px;
   color: var(--ink-3);
@@ -976,19 +1070,19 @@ fieldset.field > legend {
 }
 
 /* The open or closed mark is a drawn chevron, like the others, not a text glyph. */
-.howto summary::after {
+.howto__toggle::after {
   content: '';
   inline-size: 9px;
   block-size: 9px;
   flex: none;
   border-block-end: 2px solid var(--dado);
   border-inline-end: 2px solid var(--dado);
-  rotate: 45deg;
+  rotate: var(--chevron, 45deg);
   transition: rotate var(--dur-1) var(--ease);
 }
 
-.howto[open] summary::after {
-  rotate: -135deg;
+.howto[open] {
+  --chevron: -135deg;
 }
 
 .steps-list {
@@ -1007,7 +1101,7 @@ fieldset.field > legend {
   counter-increment: step;
 }
 
-.steps-list li::before {
+.steps-list__item::before {
   content: counter(step);
   display: grid;
   place-items: center;
@@ -1036,7 +1130,7 @@ fieldset.field > legend {
   flex-direction: column;
 }
 
-.profile-grid .page + .page {
+.profile-grid .page:nth-child(n + 2) {
   padding-block-start: 0;
 }
 
@@ -1076,10 +1170,6 @@ fieldset.field > legend {
 .hero__copy .lead,
 .hero__copy .small {
   color: var(--dado-quiet);
-}
-
-.hero__cta a:not(.btn) {
-  color: var(--dado-ink);
 }
 
 /* The first screen is the pitch alone: the phone starts below the fold, one scroll away. */
@@ -1146,15 +1236,15 @@ fieldset.field > legend {
   gap: var(--s-4);
 }
 
-.trust .promise .icon {
-  color: var(--dado-ink);
+.trust .promise {
+  --promise-icon: var(--dado-ink);
 }
 
-.langmenu {
+[data-langmenu] {
   position: relative;
 }
 
-.langmenu__menu {
+[data-ui~='langmenu__menu'] {
   position: absolute;
   inset-block-start: calc(100% + var(--s-1));
   inset-inline-end: 0;
@@ -1162,41 +1252,32 @@ fieldset.field > legend {
   min-inline-size: 12rem;
 }
 
-.nav__lang .langmenu__menu {
+[data-ui~='nav__lang'] [data-ui~='langmenu__menu'] {
   inset-block: auto 0;
   inset-inline: calc(100% + var(--s-3)) auto;
 }
 
-.langmenu__btn {
-  color: var(--dado);
-}
-
-.nav .langmenu__btn {
-  color: var(--glass-ink);
-}
-
-.nav .langmenu__btn:hover {
-  background: var(--glass-hover);
-}
-
-.check-end {
+/* The check beside the chosen language sits at the end of its row. */
+[data-ui~='langmenu__menu'] .icon,
+[data-lang-option] .icon {
   margin-inline-start: auto;
   color: var(--dado);
 }
 
-.hero__cta .btn {
-  align-self: stretch;
+[data-ui~='langmenu__btn'] {
+  color: var(--dado);
 }
 
-/* Share a photo: two real buttons, never a line of text. */
-.share {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-3);
-  padding: var(--s-4);
-  border: 1px solid var(--line);
-  border-radius: var(--r-l);
-  background: var(--surface);
+.nav [data-ui~='langmenu__btn'] {
+  color: var(--glass-ink);
+}
+
+.nav [data-ui~='langmenu__btn']:hover {
+  background: var(--glass-hover);
+}
+
+.hero__cta .btn {
+  align-self: stretch;
 }
 
 .dropzone {
@@ -1234,8 +1315,8 @@ fieldset.field > legend {
 }
 
 .dropzone__camera .icon {
-  inline-size: 2rem;
-  block-size: 2rem;
+  inline-size: var(--camera-icon, 2rem);
+  block-size: var(--camera-icon, 2rem);
 }
 
 /* A photo that is only one part of a long form: a row, not a poster. */
@@ -1250,13 +1331,9 @@ fieldset.field > legend {
 }
 
 .dropzone--compact .dropzone__camera {
+  --camera-icon: 1.5rem;
   inline-size: 48px;
   block-size: 48px;
-}
-
-.dropzone--compact .dropzone__camera .icon {
-  inline-size: 1.5rem;
-  block-size: 1.5rem;
 }
 
 .dropzone--compact.dropzone--filled {
@@ -1317,7 +1394,7 @@ fieldset.field > legend {
   cursor: not-allowed;
 }
 
-.where-pick:disabled > .icon:last-child {
+.where-pick:disabled .where-pick__go {
   display: none;
 }
 
@@ -1342,7 +1419,7 @@ fieldset.field > legend {
   color: var(--ink-2);
 }
 
-.brand-glyph {
+[data-ui~='brand-glyph'] {
   inline-size: 32px;
   block-size: 32px;
   fill: none;
@@ -1393,7 +1470,7 @@ fieldset.field > legend {
   gap: var(--s-1);
 }
 
-.sitenav .langmenu__btn {
+.sitenav [data-ui~='langmenu__btn'] {
   color: var(--glass-ink);
 }
 
@@ -1503,7 +1580,7 @@ h2[id] {
   stroke-linejoin: round;
 }
 
-.topbar__brand {
+[data-ui~='topbar__brand'] {
   display: grid;
   place-items: center;
   inline-size: var(--tap);
@@ -1512,7 +1589,7 @@ h2[id] {
   color: var(--dado);
 }
 
-.topbar__brand .brandmark__glyph {
+[data-ui~='topbar__brand'] .brandmark__glyph {
   inline-size: 28px;
   block-size: 28px;
 }
@@ -1754,7 +1831,7 @@ h2[id] {
 }
 
 /* At the bottom corner away from the action buttons, level with them; it folds into a small (i) after a few seconds. */
-.mapcredit {
+[data-ui~='mapcredit'] {
   position: absolute;
   inset-block-end: var(--s-2);
   inset-inline-start: var(--s-2);
@@ -1766,23 +1843,28 @@ h2[id] {
   font-size: var(--fs-xs);
 }
 
-[dir='rtl'] .mapcredit {
+[dir='rtl'] [data-ui~='mapcredit'] {
   inset-inline: auto var(--s-2);
 }
 
-.stage .mapcredit {
+.stage [data-ui~='mapcredit'] {
   inset-block-end: calc(var(--nav-total) + var(--s-6) + var(--s-1));
 }
 
-.stage[data-sheet='spot'] .mapcredit {
+.stage[data-sheet='spot'] [data-ui~='mapcredit'] {
   inset-block-end: calc(var(--nav-total) + var(--sheet-h) + var(--s-2));
 }
 
-.stage[data-sheet='alert'] .mapcredit {
+.stage[data-sheet='alert'] [data-ui~='mapcredit'] {
   inset-block-end: calc(var(--nav-total) + 280px + var(--s-2));
 }
 
-.mapcredit__text {
+/* On a phone the list covers the map, so the credit is hidden until the list closes. */
+.stage[data-sheet='list'] [data-ui~='mapcredit'] {
+  display: none;
+}
+
+[data-ui~='mapcredit__text'] {
   position: relative;
   padding: var(--s-1) var(--s-3);
   color: var(--ink-2);
@@ -1790,14 +1872,14 @@ h2[id] {
 }
 
 /* The link is small to look at and 44 px to hit. */
-.mapcredit__text::after {
+[data-ui~='mapcredit__text']::after {
   content: '';
   position: absolute;
   inset-block: -9px;
   inset-inline: 0;
 }
 
-.mapcredit__info {
+[data-ui~='mapcredit__info'] {
   display: none;
   place-items: center;
   inline-size: 44px;
@@ -1809,7 +1891,7 @@ h2[id] {
   cursor: pointer;
 }
 
-.mapcredit__info .icon {
+[data-ui~='mapcredit__info'] .icon {
   inline-size: 28px;
   block-size: 28px;
   padding: 5px;
@@ -1817,17 +1899,17 @@ h2[id] {
   background: rgb(255 255 255 / 0.9);
 }
 
-.mapcredit.is-collapsed {
+[data-ui~='mapcredit'][data-collapsed] {
   background: transparent;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
 
-.mapcredit.is-collapsed .mapcredit__text {
+[data-ui~='mapcredit'][data-collapsed] [data-ui~='mapcredit__text'] {
   display: none;
 }
 
-.mapcredit.is-collapsed .mapcredit__info {
+[data-ui~='mapcredit'][data-collapsed] [data-ui~='mapcredit__info'] {
   display: grid;
 }
 
@@ -1841,7 +1923,7 @@ h2[id] {
   color: var(--alert);
 }
 
-.sign[data-kind='neuter'] .sign__box {
+.sign[data-kind='neuter'] [data-ui~='sign__box'] {
   border-color: var(--alert);
   background: var(--alert-tint);
 }
@@ -1864,7 +1946,7 @@ h2[id] {
 }
 
 /* Place names and areas are typed words: they do not flip the sentence around them. */
-.post__place > span:not(.icon),
+.post__place > span,
 .meta-line > span {
   unicode-bidi: isolate;
 }

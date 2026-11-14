@@ -54,9 +54,17 @@ labelled placeholders. The app builds these properly in React, with the real API
 ## Checks
 
 `npm run verify` runs fallow on the mocks' stylesheets: a repeated block of declarations, a broken
-reference or a hard-coded value that has a token fails it. Unused classes and over-complex selectors
-(5 or more parts) show as warnings only: many classes are written by `mock.js`, which fallow cannot
-read, and CSS-only checked tiles need a long selector. The mock scripts themselves are not checked.
+reference, a hard-coded value that has a token, an unused class or a selector of 5 or more parts fails
+it. Fallow scores a type, class, attribute or pseudo-class as 1, a pseudo-element as 2 and each
+combinator as 1. The mock scripts themselves are not checked, so:
+
+- A part a script draws (the nav, the language menu, the map credit, pins, the spots list rows) is
+  hooked with a `data-ui` attribute, not a class, and the stylesheet selects it with
+  `[data-ui~='name']`. State a script sets is an attribute too (`data-selected`, `data-collapsed`).
+- A state that would need a long chain of selectors (a checked tile and its mark) travels as a custom
+  property that the parts read (`--mark-display`, `--check-tick`), so no selector names the chain.
+- `[hidden]` keeps its `!important`, which fallow lists as an old, ungated finding: it has to win
+  over every `display` in the sheets.
 
 ## Using it in Phase 2
 

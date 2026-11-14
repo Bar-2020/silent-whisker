@@ -5,7 +5,7 @@ import securityHeaders from '../shared/constants/security-headers.json';
 
 /**
  * Every CloudFront behavior must point to a response headers policy, and every such policy must send
- * the four security headers (INFRA-07, D-59, D-103). A Terraform test sees only today's resources and
+ * the four security headers (INFRA-07, D-59, D-104). A Terraform test sees only today's resources and
  * cannot tell a behavior added later from a bare one, so this reads the text of every `.tf` file in
  * `infra/app`, the same way table-protection.test.ts does. It reads the structure (blocks and
  * attributes), never an exact policy string, so a sign-in host or the geocoder added to the app's
@@ -343,33 +343,33 @@ describe('the reader of Terraform text', () => {
 
 // --- The checks ---------------------------------------------------------------------------------
 
-describe('CloudFront response headers (INFRA-07, D-59, D-103)', () => {
-  // INFRA-07, D-59, D-103
+describe('CloudFront response headers (INFRA-07, D-59, D-104)', () => {
+  // INFRA-07, D-59, D-104
   it('finds a distribution, so the scan cannot pass by finding nothing', () => {
     expect(distributions.length).toBeGreaterThan(0);
   });
 
-  // INFRA-07, D-59, D-103
+  // INFRA-07, D-59, D-104
   it('finds a default behavior', () => {
     expect(behaviors.filter(({ kind }) => kind === DEFAULT_BEHAVIOR).length).toBeGreaterThan(0);
   });
 
-  // INFRA-07, D-59, D-103
+  // INFRA-07, D-59, D-104
   it('finds an ordered behavior', () => {
     expect(behaviors.filter(({ kind }) => kind === ORDERED_BEHAVIOR).length).toBeGreaterThan(0);
   });
 
-  // INFRA-07, D-59, D-103
+  // INFRA-07, D-59, D-104
   it('finds a response headers policy', () => {
     expect(policies.length).toBeGreaterThan(0);
   });
 
-  // INFRA-07, D-59, D-103
+  // INFRA-07, D-59, D-104
   it.each(behaviors)('$name sets a response headers policy', ({ block }) => {
     expect(isBlank(attributeOf(block, 'response_headers_policy_id'))).toBe(false);
   });
 
-  // INFRA-07, D-59, D-103
+  // INFRA-07, D-59, D-104
   it.each(behaviors)(
     '$name uses a policy of this repository, not a literal or managed id',
     ({ block }) => {
@@ -380,26 +380,26 @@ describe('CloudFront response headers (INFRA-07, D-59, D-103)', () => {
   );
 
   describe.each(policies)('policy $id', ({ block }) => {
-    // INFRA-07, D-59, D-103
+    // INFRA-07, D-59, D-104
     it.each(SECURITY_HEADERS)('sends %s and overrides the origin', (header) => {
       const found = headerBlock(block, header);
       expect(found).toBeDefined();
       expect(attributeOf(found, 'override')).toBe('true');
     });
 
-    // INFRA-07, D-59, D-103
+    // INFRA-07, D-59, D-104
     it('does not leave the Content-Security-Policy empty', () => {
       const csp = headerBlock(block, 'content_security_policy');
       expect(isBlank(attributeOf(csp, 'content_security_policy'))).toBe(false);
     });
 
-    // INFRA-07, D-59, D-103
+    // INFRA-07, D-59, D-104
     it('does not leave the referrer policy empty', () => {
       const referrer = headerBlock(block, 'referrer_policy');
       expect(isBlank(attributeOf(referrer, 'referrer_policy'))).toBe(false);
     });
 
-    // INFRA-07, D-59, D-103
+    // INFRA-07, D-59, D-104
     it('sets an HSTS max age that is not a number written in the file', () => {
       const hsts = headerBlock(block, 'strict_transport_security');
       const maxAge = attributeOf(hsts, 'access_control_max_age_sec');
@@ -408,7 +408,7 @@ describe('CloudFront response headers (INFRA-07, D-59, D-103)', () => {
     });
   });
 
-  // INFRA-07, D-103
+  // INFRA-07, D-104
   it('reads the HSTS max age from shared/constants/security-headers.json', () => {
     expect(securityHeaders[HSTS_KEY]).toBeGreaterThan(0);
     expect(
@@ -417,17 +417,17 @@ describe('CloudFront response headers (INFRA-07, D-59, D-103)', () => {
     expect(files.some(({ src }) => src.code.includes(HSTS_KEY))).toBe(true);
   });
 
-  // INFRA-07, D-59, D-103
+  // INFRA-07, D-59, D-104
   it('finds at least one Content-Security-Policy string', () => {
     expect(csps.length).toBeGreaterThan(0);
   });
 
-  // INFRA-07, D-59, D-103
+  // INFRA-07, D-59, D-104
   it.each(csps)('$name allows no unsafe-eval', ({ text }) => {
     expect(sourcesOf(text).includes('unsafe-eval')).toBe(false);
   });
 
-  // INFRA-07, D-59, D-103
+  // INFRA-07, D-59, D-104
   it("has the app's strict policy: it allows content, cannot be framed and allows no unsafe-inline", () => {
     const strictApp = csps.filter(
       ({ text }) => !deniesEverything(text) && cannotBeFramed(text) && !allowsInline(text)
@@ -435,12 +435,12 @@ describe('CloudFront response headers (INFRA-07, D-59, D-103)', () => {
     expect(strictApp.length).toBeGreaterThan(0);
   });
 
-  // INFRA-07, D-59, D-103
+  // INFRA-07, D-59, D-104
   it("has the API's policy: default-src 'none'", () => {
     expect(csps.filter(({ text }) => deniesEverything(text)).length).toBeGreaterThan(0);
   });
 
-  // INFRA-07, D-59, D-103
+  // INFRA-07, D-59, D-104
   it("cannot frame an API: every policy with default-src 'none' also has frame-ancestors 'none'", () => {
     const api = csps.filter(({ text }) => deniesEverything(text));
     expect(api.length).toBeGreaterThan(0);
