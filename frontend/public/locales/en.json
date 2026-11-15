@@ -20,7 +20,7 @@
   "firstrun.name.invalid": "Use {{min}} to {{max}} characters.",
   "firstrun.name.label": "Full name",
   "firstrun.name.placeholder": "First and last name",
-  "firstrun.name.refused": "The name or city did not pass the check. Try again, or write to <mail>{{email}}</mail>.",
+  "firstrun.name.refused": "The name or city did not pass the check. Try again, or write to {{email}}.",
   "firstrun.name.required": "Please enter your full name.",
   "firstrun.photo.hint": "The photo comes from your Google account and is shown only if you choose.",
   "firstrun.photo.label": "Show your Google photo?",

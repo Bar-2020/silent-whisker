@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { secondsInHour } from 'date-fns/constants';
 import { z, ZodError } from 'zod';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
@@ -22,7 +23,6 @@ import {
 } from '@constants/http';
 import type { ProfileResponse, ProfileUpdate } from '@schemas/profile.schema';
 import { PROFILE_TEXT_MAX_LENGTH, PROFILE_TEXT_MIN_LENGTH } from '@constants/profile';
-import { SECONDS_PER_HOUR } from '@constants/time';
 
 vi.mock('@shared/auth/user-manager', async () => {
   const { fakeUserManager: fake, FAKE_COGNITO_DOMAIN } =
@@ -80,7 +80,7 @@ const REFUSALS: Refusal[] = [
     status: STATUS_TOO_MANY_REQUESTS,
     code: 'PROFILE_SAVE_DAILY_LIMIT',
     kind: 'rateLimited',
-    retryAfter: SECONDS_PER_HOUR * 2,
+    retryAfter: secondsInHour * 2,
   },
   { status: STATUS_UNPROCESSABLE, code: 'MODERATION_REJECTED', kind: 'rejected' },
   { status: STATUS_UNPROCESSABLE, code: 'CITY_NOT_FOUND', kind: 'rejected' },

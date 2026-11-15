@@ -93,7 +93,7 @@ function isGoogleImage(address: string): boolean {
  * Whether Google sent a photo the server would keep (an https address on Google's image host, D-21).
  * `GET /profile` hides the address until the member says yes, so the sign-up form asks the token (D-108).
  */
-export async function hasGooglePhoto(): Promise<boolean> {
+export async function checkGooglePhoto(): Promise<boolean> {
   const user = await userManager.getUser();
   return isGoogleImage(user?.profile.picture ?? '');
 }

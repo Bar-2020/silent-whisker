@@ -20,7 +20,7 @@
   "firstrun.name.invalid": "יש להזין {{min}} עד {{max}} תווים.",
   "firstrun.name.label": "שם מלא",
   "firstrun.name.placeholder": "שם פרטי ושם משפחה",
-  "firstrun.name.refused": "השם או העיר לא עברו בדיקה. אפשר לנסות שוב או לכתוב אל <mail>{{email}}</mail>.",
+  "firstrun.name.refused": "השם או העיר לא עברו בדיקה. אפשר לנסות שוב או לכתוב אל {{email}}.",
   "firstrun.name.required": "יש למלא שם מלא.",
   "firstrun.photo.hint": "התמונה מגיעה מחשבון ה-Google ומוצגת רק אם בוחרים בכך.",
   "firstrun.photo.label": "להציג את תמונת ה-Google?",

@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, screen } from '@testing-library/react';
+import { secondsInHour, secondsInMinute } from 'date-fns/constants';
 import { z } from 'zod';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
@@ -40,7 +41,6 @@ import {
   PROFILE_TEXT_MAX_LENGTH,
   PROFILE_TEXT_MIN_LENGTH,
 } from '@constants/profile';
-import { SECONDS_PER_HOUR, SECONDS_PER_MINUTE } from '@constants/time';
 
 vi.mock('@shared/auth/user-manager', async () => {
   const { fakeUserManager: fake, FAKE_COGNITO_DOMAIN: domain } =
@@ -239,8 +239,8 @@ const withValue = (key: string, value: string): string =>
   text(EN, key).replace(/\{\{\w+\}\}/g, value);
 
 const WAIT_UNITS: [string, number][] = [
-  ['hour', SECONDS_PER_HOUR],
-  ['minute', SECONDS_PER_MINUTE],
+  ['hour', secondsInHour],
+  ['minute', secondsInMinute],
   ['second', 1],
 ];
 
@@ -669,10 +669,10 @@ const REFUSALS: Refusal[] = [
   {
     name: 'PROFILE_SAVE_DAILY_LIMIT with Retry-After',
     answer: refuse(STATUS_TOO_MANY_REQUESTS, 'PROFILE_SAVE_DAILY_LIMIT', {
-      'retry-after': String(SECONDS_PER_HOUR * 2),
+      'retry-after': String(secondsInHour * 2),
     }),
     where: 'form',
-    message: withValue('profile.error.dailyLimit', waitText(SECONDS_PER_HOUR * 2)),
+    message: withValue('profile.error.dailyLimit', waitText(secondsInHour * 2)),
   },
   {
     name: 'a bare 429',
@@ -889,12 +889,12 @@ describe('the profile page behind the edit form, when the member is banned durin
 describe('the daily save limit says its wait in the largest unit', () => {
   // FIRST-09, D-108: hours from an hour, minutes from a minute, else seconds
   it.each([
-    SECONDS_PER_HOUR * 2,
-    SECONDS_PER_HOUR,
-    SECONDS_PER_HOUR - SECONDS_PER_MINUTE,
-    SECONDS_PER_MINUTE * 5,
-    SECONDS_PER_MINUTE,
-    SECONDS_PER_MINUTE - 1,
+    secondsInHour * 2,
+    secondsInHour,
+    secondsInHour - secondsInMinute,
+    secondsInMinute * 5,
+    secondsInMinute,
+    secondsInMinute - 1,
     1,
   ])('for Retry-After of %s seconds', async (seconds) => {
     const limit = refuse(STATUS_TOO_MANY_REQUESTS, 'PROFILE_SAVE_DAILY_LIMIT', {
@@ -1012,33 +1012,47 @@ describe('the forms wait for the ID token read', () => {
     expect(radios()).toHaveLength(0);
   });
 
-  // FIRST-10, D-108: nothing of the edit form is drawn until the read is done; the photo note comes with the rest
-  it('draws no part of the edit form while the token read is slow', async () => {
+  // FIRST-10, D-108: the claim is read once, above every page: until it is done nothing of the Profile page is
+  // drawn (so no part of the edit form); then the page is whole and the pencil opens the form at once, note included
+  it('draws nothing of the Profile page while the token read is slow, then the edit form whole', async () => {
     const user = makeUser({ picture: GOOGLE_PHOTO });
     const slow = slowTokenRead(user);
+    onProfileRequest = slow.engage;
     fakeUserManager.setUser(user);
     profile = MEMBER;
     await renderApp(<App />, '/profile');
     await flush();
-    slow.engage();
 
-    await press('profile.edit.title');
+    expect(callsOf('GET')).toHaveLength(1);
+    expect(heading1()).not.toBe(text(EN, 'profile.heading'));
+    expect(maybeButton('profile.edit.title')).toBeNull();
+    expect(maybeButton('profile.signOut')).toBeNull();
+    expect(document.querySelector('h2 bdi')).toBeNull();
     expect(textFields()).toHaveLength(0);
     expect(radios()).toHaveLength(0);
     expect(maybeButton('common.save')).toBeNull();
     expect(hintShown()).toBe(false);
 
-    const watch = watchPage(
-      () => textFields().length > 0 && (radios().length === 0 || !hintShown())
-    );
+    const pageHalfDrawn = (): boolean =>
+      heading1() === text(EN, 'profile.heading') &&
+      (maybeButton('profile.edit.title') === null ||
+        maybeButton('profile.signOut') === null ||
+        document.querySelector('h2 bdi') === null);
+    const watch = watchPage(pageHalfDrawn);
     slow.release();
     await flush();
     expect(watch.stop()).toBe(false);
 
+    expect(heading1()).toBe(text(EN, 'profile.heading'));
+    expect(maybeButton('profile.edit.title')).not.toBeNull();
+
+    // no press-and-wait: the form is whole the moment the pencil is pressed
+    fireEvent.click(buttonNamed('profile.edit.title'));
     expect(textFields().length).toBeGreaterThan(0);
     expect(radios()).toHaveLength(2);
     expect(hintShown()).toBe(true);
     expect(maybeButton('common.save')).not.toBeNull();
+    expect(callsOf('GET')).toHaveLength(1);
   });
 
   // FIRST-10, D-27, D-108: with a Google photo the edit form has the note; with none it has no note and no question

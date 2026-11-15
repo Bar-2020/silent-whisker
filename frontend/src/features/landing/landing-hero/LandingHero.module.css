@@ -1,7 +1,6 @@
 @import '../../../styles/breakpoints.css';
 
 .band {
-  margin-block-start: calc(var(--nav-offset) * -1);
   padding-block-start: var(--nav-offset);
   background:
     radial-gradient(70% 40% at 88% 6%, rgb(143 165 200 / 0.38), transparent 72%),

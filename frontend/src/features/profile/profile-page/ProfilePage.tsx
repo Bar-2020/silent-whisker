@@ -1,21 +1,23 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useOutletContext } from 'react-router';
 import { signOut } from '@shared/auth/session';
 import { EditIcon } from '@shared/components/icon/EditIcon';
-import { Avatar } from '../avatar/Avatar';
-import { BannedNotice } from '../banned-notice/BannedNotice';
+import { BannedAccountNotice } from '../banned-account-notice/BannedAccountNotice';
 import { EditProfileForm } from '../edit-profile-form/EditProfileForm';
 import { FormButton } from '../form-button/FormButton';
-import { useProfile } from '../use-profile';
+import { MemberAvatar } from '../member-avatar/MemberAvatar';
+import { AvatarSize } from '../member-avatar/MemberAvatar.types';
+import { profileContextSchema } from '../profile-context.schema';
 import styles from './ProfilePage.module.css';
 
 /** Who the member is to everyone else, a way to change it, and sign out. Stats and settings come with their own backend. */
 export function ProfilePage() {
   const { t } = useTranslation();
-  const profile = useProfile();
+  const { profile, hasGooglePhoto } = profileContextSchema.parse(useOutletContext());
   const [editing, setEditing] = useState(false);
   const banned = profile.status === 'banned';
-  const name = profile.display_name ?? '';
+  const fullName = profile.display_name ?? '';
 
   return (
     <div className={styles.page}>
@@ -35,20 +37,21 @@ export function ProfilePage() {
           </button>
         )}
       </header>
-      {banned && <BannedNotice />}
+      {banned && <BannedAccountNotice />}
       {editing ? (
         <EditProfileForm
           profile={profile}
+          hasGooglePhoto={hasGooglePhoto}
           onClose={() => {
             setEditing(false);
           }}
         />
       ) : (
         <div className={styles.identity}>
-          <Avatar name={name} photoUrl={profile.avatar_url} size="large" />
+          <MemberAvatar fullName={fullName} photoUrl={profile.avatar_url} size={AvatarSize.Large} />
           <div className={styles.text}>
             <h2>
-              <bdi>{name}</bdi>
+              <bdi>{fullName}</bdi>
             </h2>
             <p className={styles.city}>
               <bdi>{profile.city}</bdi>

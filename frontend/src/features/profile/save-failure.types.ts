@@ -1,5 +1,3 @@
-import type { Field, Issue } from './profile-form.types';
-
 /** The server's own words for why a save was refused (docs/API.md). */
 export enum ProfileErrorCode {
   InvalidInput = 'INVALID_INPUT',
@@ -9,8 +7,8 @@ export enum ProfileErrorCode {
   CheckUnavailable = 'CHECK_UNAVAILABLE',
 }
 
-/** What to tell the member, and under which field (none: above the button). */
+/** Where react-hook-form shows it: under a field, or above the buttons (`root.server`). */
 export interface SaveFailure {
-  readonly field: Field | null;
-  readonly issue: Issue;
+  readonly field: 'name' | 'city' | 'root.server';
+  readonly message: string;
 }

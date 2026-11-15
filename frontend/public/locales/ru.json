@@ -20,7 +20,7 @@
   "firstrun.name.invalid": "Введите от {{min}} до {{max}} символов.",
   "firstrun.name.label": "Полное имя",
   "firstrun.name.placeholder": "Имя и фамилия",
-  "firstrun.name.refused": "Имя или город не прошли проверку. Попробуйте ещё раз или напишите на <mail>{{email}}</mail>.",
+  "firstrun.name.refused": "Имя или город не прошли проверку. Попробуйте ещё раз или напишите на {{email}}.",
   "firstrun.name.required": "Введите полное имя.",
   "firstrun.photo.hint": "Фото берётся из аккаунта Google и показывается только по вашему выбору.",
   "firstrun.photo.label": "Показывать фото из Google?",

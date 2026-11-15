@@ -20,7 +20,7 @@
   "firstrun.name.invalid": "يلزم إدخال من {{min}} إلى {{max}} حرفًا.",
   "firstrun.name.label": "الاسم الكامل",
   "firstrun.name.placeholder": "الاسم الأول واسم العائلة",
-  "firstrun.name.refused": "لم ينجح الاسم أو المدينة في الفحص. يمكن المحاولة مجددًا أو الكتابة إلى <mail>{{email}}</mail>.",
+  "firstrun.name.refused": "لم ينجح الاسم أو المدينة في الفحص. يمكن المحاولة مجددًا أو الكتابة إلى {{email}}.",
   "firstrun.name.required": "يلزم إدخال الاسم الكامل.",
   "firstrun.photo.hint": "الصورة تأتي من حساب Google وتظهر فقط عند الاختيار.",
   "firstrun.photo.label": "عرض صورة Google؟",

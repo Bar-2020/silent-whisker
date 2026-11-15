@@ -1,32 +1,34 @@
 import type { ParseKeys } from 'i18next';
+import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { FormMessage } from '../form-message/FormMessage';
-import type { Issue } from '../profile-form.types';
+import type { ProfileFormValues } from '../profile-form.types';
 import styles from './ProfileTextField.module.css';
 
 /** A labelled text box with its hint and, once there is one, its error in words (DESIGN.md, Inputs). */
 export function ProfileTextField({
-  id,
+  name,
   labelKey,
   placeholderKey,
   hintKey,
   autoComplete,
-  value,
-  onChange,
-  issue,
 }: {
-  id: string;
+  name: 'name' | 'city';
   labelKey: ParseKeys;
   placeholderKey: ParseKeys;
   hintKey: ParseKeys;
   autoComplete: string;
-  value: string;
-  onChange: (value: string) => void;
-  issue: Issue | undefined;
 }) {
   const { t } = useTranslation();
+  const {
+    register,
+    clearErrors,
+    formState: { errors },
+  } = useFormContext<ProfileFormValues>();
+  const id = `profile-${name}`;
   const hintId = `${id}-hint`;
   const errorId = `${id}-error`;
+  const message = errors[name]?.message;
 
   return (
     <div className={styles.field}>
@@ -39,18 +41,20 @@ export function ProfileTextField({
         type="text"
         autoComplete={autoComplete}
         placeholder={t(placeholderKey)}
-        value={value}
         aria-required="true"
-        aria-invalid={issue !== undefined}
-        aria-describedby={issue ? `${hintId} ${errorId}` : hintId}
-        onChange={(event) => {
-          onChange(event.target.value);
-        }}
+        aria-invalid={message !== undefined}
+        aria-describedby={message ? `${hintId} ${errorId}` : hintId}
+        // Typing on takes the server's refusal away, so the member can try again (FIRST-09).
+        {...register(name, {
+          onChange: () => {
+            clearErrors('root.server');
+          },
+        })}
       />
       <p id={hintId} className={styles.hint}>
         {t(hintKey)}
       </p>
-      {issue && <FormMessage id={errorId} issue={issue} />}
+      {message && <FormMessage id={errorId} message={message} />}
     </div>
   );
 }

@@ -505,6 +505,9 @@ describe('the guard, signed in, too many requests', () => {
     await pressRetry();
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(fetchMock.mock.calls[1][0]).toBe(`${API_PATH_PREFIX}/profile`);
+    // the Profile page appears one async step after the answer (the token read above every page); the
+    // step needs the faked clock to move, a plain flush is not enough
+    await waitSeconds(1);
     expect(signOutButton()).toBeDefined();
   });
 
