@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { AVATAR_INITIALS_COUNT } from '@constants/profile';
 import styles from './Avatar.module.css';
 
-/** The first letter of each of the first words, taken as characters so an emoji is never cut in half (ME-05). */
+const SEGMENTER = new Intl.Segmenter();
+
+/** The first letter of each of the first words, whole: an emoji or a letter with its marks is never cut apart (ME-05). */
 function initialsOf(name: string): string {
   return name
     .trim()
     .split(/\s+/u)
     .slice(0, AVATAR_INITIALS_COUNT)
-    .map((word) => Array.from(word)[0] ?? '')
+    .map((word) => SEGMENTER.segment(word)[Symbol.iterator]().next().value?.segment ?? '')
     .join('')
     .toLocaleUpperCase();
 }

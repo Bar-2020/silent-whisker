@@ -8,6 +8,7 @@ import { FormMessage } from '../form-message/FormMessage';
 import { ProfileFields } from '../profile-fields/ProfileFields';
 import { Field, FormMode } from '../profile-form.types';
 import { TermsCheckbox } from '../terms-checkbox/TermsCheckbox';
+import { useHasGooglePhoto } from '../use-has-google-photo';
 import { useProfileForm } from '../use-profile-form';
 import styles from './SignUpForm.module.css';
 
@@ -16,8 +17,13 @@ import styles from './SignUpForm.module.css';
  * city, the photo choice and the required terms box. It takes the place of every page until it is saved.
  */
 export function SignUpForm({ profile }: { profile: ProfileResponse }) {
+  const askPhoto = useHasGooglePhoto();
+  return askPhoto === undefined ? null : <SignUpFormBody profile={profile} askPhoto={askPhoto} />;
+}
+
+function SignUpFormBody({ profile, askPhoto }: { profile: ProfileResponse; askPhoto: boolean }) {
   const { t } = useTranslation();
-  const form = useProfileForm({ profile, mode: FormMode.SignUp });
+  const form = useProfileForm({ profile, mode: FormMode.SignUp, askPhoto });
 
   return (
     <form

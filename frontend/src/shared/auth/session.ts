@@ -80,10 +80,14 @@ export async function getIdToken(): Promise<string | null> {
   });
 }
 
-const isGoogleImage = (address: string): boolean =>
-  URL.canParse(address) &&
-  new URL(address).protocol === 'https:' &&
-  new URL(address).hostname.endsWith(GOOGLE_IMAGE_HOST_SUFFIX);
+function isGoogleImage(address: string): boolean {
+  try {
+    const { protocol, hostname } = new URL(address);
+    return protocol === 'https:' && hostname.endsWith(GOOGLE_IMAGE_HOST_SUFFIX);
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Whether Google sent a photo the server would keep (an https address on Google's image host, D-21).

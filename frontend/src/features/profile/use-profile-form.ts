@@ -5,7 +5,6 @@ import { buildUpdate, changesNothing, initialValues, validateProfileForm } from 
 import { FormMode } from './profile-form.types';
 import type { FieldIssues, ProfileFormValues } from './profile-form.types';
 import { describeFailure, isBannedFailure } from './save-failure';
-import { useHasGooglePhoto } from './use-has-google-photo';
 import { useSaveProfile } from './use-save-profile';
 
 /**
@@ -15,14 +14,16 @@ import { useSaveProfile } from './use-save-profile';
 export function useProfileForm({
   profile,
   mode,
+  askPhoto,
   onSaved,
 }: {
   profile: ProfileResponse;
   mode: FormMode;
+  /** Whether Google sent a photo, so the photo question is asked (D-105). */
+  askPhoto: boolean;
   onSaved?: () => void;
 }) {
   const { i18n } = useTranslation();
-  const askPhoto = useHasGooglePhoto();
   const save = useSaveProfile();
   const [values, setValues] = useState(() => initialValues(profile, mode));
   const [pressed, setPressed] = useState(false);

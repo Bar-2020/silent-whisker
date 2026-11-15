@@ -88,6 +88,8 @@ let App: typeof AppComponent;
 /** What `GET /profile` answers now, and the answers `PATCH /profile` gives in turn. */
 let profile: ProfileResponse;
 let patchQueue: Answer[] = [];
+/** Called when `GET /profile` is asked, before it is answered (FIRST-10). */
+let onProfileRequest: (() => void) | undefined;
 
 const fetchMock = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>();
 const replace = vi.fn<(url: string) => void>();
@@ -109,9 +111,13 @@ beforeEach(async () => {
   localStorage.clear();
   profile = MEMBER;
   patchQueue = [];
+  onProfileRequest = undefined;
   fetchMock.mockReset();
   fetchMock.mockImplementation((_url, init) => {
-    if (methodOf(init) !== 'PATCH') return Promise.resolve(jsonResponse(STATUS_OK, profile));
+    if (methodOf(init) !== 'PATCH') {
+      onProfileRequest?.();
+      return Promise.resolve(jsonResponse(STATUS_OK, profile));
+    }
     const next = patchQueue.shift();
     return next === undefined ? Promise.reject(new Error('unexpected PATCH')) : next();
   });
@@ -833,6 +839,53 @@ describe.each(DRIVERS)('$title, when the server refuses', (driver) => {
   });
 });
 
+describe.each(DRIVERS)('$title, when an active member is banned during a save', (driver) => {
+  // ME-10, R-08, D-72: the notice shows, and typing in a field does not take it away
+  it('shows the permanent notice and keeps it while the member types', async () => {
+    patchQueue.push(refuse(STATUS_FORBIDDEN, 'BANNED'));
+    await driver.prepare();
+    expect(noticeShown()).toBe(false);
+
+    await press(driver.submit);
+    expect(noticeShown()).toBe(true);
+
+    type(input(NAME), `${input(NAME).value}x`);
+    await flush();
+    expect(noticeShown()).toBe(true);
+    type(input(CITY), 'Akko');
+    await flush();
+    expect(noticeShown()).toBe(true);
+
+    // the answer itself says the member is banned: no second GET to learn it
+    expect(callsOf('GET')).toHaveLength(1);
+    expect(callsOf('PATCH')).toHaveLength(1);
+  });
+});
+
+describe('the profile page behind the edit form, when the member is banned during a save', () => {
+  // ME-10, R-08, D-72: Cancel closes the form; the page still has the notice and no pencil
+  it('keeps the notice and has no pencil once the form is cancelled', async () => {
+    patchQueue.push(refuse(STATUS_FORBIDDEN, 'BANNED'));
+    await open(MEMBER);
+    await press('profile.edit.title');
+    type(input(NAME), EDITED_NAME);
+    await press('common.save');
+    type(input(NAME), `${EDITED_NAME}x`);
+    await flush();
+    expect(noticeShown()).toBe(true);
+
+    await press('common.cancel');
+    expect(maybeButton('common.save')).toBeNull();
+    expect(heading1()).toBe(text(EN, 'profile.heading'));
+    expect(noticeShown()).toBe(true);
+    expect(maybeButton('profile.edit.title')).toBeNull();
+    expect(maybeButton('profile.signOut')).not.toBeNull();
+    expect(document.querySelector('h2 bdi')?.textContent).toBe('Dana Levi');
+    expect(callsOf('GET')).toHaveLength(1);
+    expect(callsOf('PATCH')).toHaveLength(1);
+  });
+});
+
 describe('the daily save limit says its wait in the largest unit', () => {
   // FIRST-09, D-105: hours from an hour, minutes from a minute, else seconds
   it.each([
@@ -866,6 +919,139 @@ describe('a refusal with a Google photo asked', () => {
     await press('common.continue');
     expect(radio('firstrun.photo.yes').checked).toBe(true);
     expect(box().checked).toBe(true);
+  });
+});
+
+// ---- FIRST-10
+
+/** The fake ID token read answers only after `release`, and only once `engage` has been called. */
+function slowTokenRead(user: ReturnType<typeof makeUser>): {
+  engage: () => void;
+  release: () => void;
+} {
+  let engaged = false;
+  let release = (): void => undefined;
+  const gate = new Promise<void>((done) => {
+    release = done;
+  });
+  fakeUserManager.getUser.mockImplementation(() =>
+    engaged ? gate.then(() => user) : Promise.resolve(user)
+  );
+  return {
+    engage: () => {
+      engaged = true;
+    },
+    release,
+  };
+}
+
+/** Watches every change of the page and remembers whether `halfDrawn` was ever true. */
+function watchPage(halfDrawn: () => boolean): { stop: () => boolean } {
+  let seen = false;
+  const observer = new MutationObserver(() => {
+    if (halfDrawn()) seen = true;
+  });
+  observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+  return {
+    stop: () => {
+      observer.disconnect();
+      return seen;
+    },
+  };
+}
+
+const textFields = (): Element[] =>
+  Array.from(document.querySelectorAll('input:not([type="radio"]):not([type="checkbox"])'));
+
+const PHOTO_HINT = 'profile.edit.photoHint';
+const hintShown = (): boolean => document.body.textContent.includes(text(EN, PHOTO_HINT));
+
+describe('the forms wait for the ID token read', () => {
+  // FIRST-10, D-105: nothing of the sign-up form is drawn until the read is done, then all of it at once
+  it('draws no part of the sign-up form while the token read is slow, and the photo question with the rest', async () => {
+    const user = makeUser({ picture: GOOGLE_PHOTO });
+    const slow = slowTokenRead(user);
+    onProfileRequest = slow.engage;
+    fakeUserManager.setUser(user);
+    profile = NEW_MEMBER;
+    await renderApp(<App />, '/profile');
+    await flush();
+
+    expect(callsOf('GET')).toHaveLength(1);
+    expect(textFields()).toHaveLength(0);
+    expect(radios()).toHaveLength(0);
+    expect(screen.queryByRole('checkbox')).toBeNull();
+    expect(maybeButton('common.continue')).toBeNull();
+
+    const watch = watchPage(() => textFields().length > 0 && radios().length === 0);
+    slow.release();
+    await flush();
+    expect(watch.stop()).toBe(false);
+
+    expect(textFields().length).toBeGreaterThan(0);
+    expect(radios()).toHaveLength(2);
+    expect(maybeButton('common.continue')).not.toBeNull();
+  });
+
+  // FIRST-10, D-27, D-105: a slow read for a token with no photo: no question, ever
+  it('never asks a photo question after a slow read for a token with no photo', async () => {
+    const user = makeUser();
+    const slow = slowTokenRead(user);
+    onProfileRequest = slow.engage;
+    fakeUserManager.setUser(user);
+    profile = NEW_MEMBER;
+    await renderApp(<App />, '/profile');
+    await flush();
+    expect(textFields()).toHaveLength(0);
+
+    const watch = watchPage(() => radios().length > 0);
+    slow.release();
+    await flush();
+    expect(watch.stop()).toBe(false);
+    expect(textFields().length).toBeGreaterThan(0);
+    expect(radios()).toHaveLength(0);
+  });
+
+  // FIRST-10, D-105: nothing of the edit form is drawn until the read is done; the photo note comes with the rest
+  it('draws no part of the edit form while the token read is slow', async () => {
+    const user = makeUser({ picture: GOOGLE_PHOTO });
+    const slow = slowTokenRead(user);
+    fakeUserManager.setUser(user);
+    profile = MEMBER;
+    await renderApp(<App />, '/profile');
+    await flush();
+    slow.engage();
+
+    await press('profile.edit.title');
+    expect(textFields()).toHaveLength(0);
+    expect(radios()).toHaveLength(0);
+    expect(maybeButton('common.save')).toBeNull();
+    expect(hintShown()).toBe(false);
+
+    const watch = watchPage(
+      () => textFields().length > 0 && (radios().length === 0 || !hintShown())
+    );
+    slow.release();
+    await flush();
+    expect(watch.stop()).toBe(false);
+
+    expect(textFields().length).toBeGreaterThan(0);
+    expect(radios()).toHaveLength(2);
+    expect(hintShown()).toBe(true);
+    expect(maybeButton('common.save')).not.toBeNull();
+  });
+
+  // FIRST-10, D-27, D-105: with a Google photo the edit form has the note; with none it has no note and no question
+  it.each([
+    ['a Google photo', GOOGLE_PHOTO, true],
+    ['no photo', undefined, false],
+  ])('shows the photo note in the edit form for a token with %s', async (_name, picture, shown) => {
+    expect(text(EN, PHOTO_HINT)).not.toContain('{{');
+    await open(MEMBER, '/profile', picture);
+    await press('profile.edit.title');
+    expect(input(NAME).value).toBe('Dana Levi');
+    expect(hintShown()).toBe(shown);
+    expect(radios()).toHaveLength(shown ? 2 : 0);
   });
 });
 
@@ -940,6 +1126,31 @@ describe('the profile page', () => {
     await open({ ...MEMBER, display_name: name, avatar_url: null, show_google_photo: false });
     expect(document.querySelector('h2 bdi')?.textContent).toBe(name);
     expect(hiddenTextShown(initials)).toBe(true);
+  });
+
+  // ME-05, D-21: initials are whole visible characters: a family emoji, a letter with its marks
+  const FAMILY = '\u{1F468}‍\u{1F469}‍\u{1F467}';
+  const BET_WITH_MARKS = 'בְּ';
+  const E_ACCENT = 'é';
+  const WHOLE_CHARACTERS: [string, string, string][] = [
+    ['a family emoji first', `${FAMILY} Dana`, `${FAMILY}D`],
+    ['a family emoji alone', FAMILY, FAMILY],
+    ['a family emoji second', `Dana ${FAMILY}`, `D${FAMILY}`],
+    ['a Hebrew letter with vowel marks', `${BET_WITH_MARKS}רוך לוי`, `${BET_WITH_MARKS}ל`],
+    ['a Latin letter and a combining accent', `${E_ACCENT}lan vital`, 'ÉV'],
+    ['a combining accent in the second word', `dana ${E_ACCENT}li`, 'DÉ'],
+  ];
+
+  const hiddenTexts = (): string[] =>
+    Array.from(document.querySelectorAll('[aria-hidden="true"]')).map((node) =>
+      node.textContent.trim().normalize('NFC')
+    );
+
+  it.each(WHOLE_CHARACTERS)('cuts %s whole', async (_what, name, initials) => {
+    await open({ ...MEMBER, display_name: name, avatar_url: null, show_google_photo: false });
+    expect(hiddenTexts()).toContain(initials.normalize('NFC'));
+    // never half an emoji joined to nothing, never a bare mark
+    for (const shown of hiddenTexts()) expect(shown).not.toMatch(/^[\p{M}‍]|‍$/u);
   });
 
   // ME-05, D-21: the initials come from the first words only

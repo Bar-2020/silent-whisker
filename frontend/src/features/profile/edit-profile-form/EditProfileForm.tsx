@@ -5,6 +5,7 @@ import { FormButton } from '../form-button/FormButton';
 import { FormMessage } from '../form-message/FormMessage';
 import { ProfileFields } from '../profile-fields/ProfileFields';
 import { FormMode } from '../profile-form.types';
+import { useHasGooglePhoto } from '../use-has-google-photo';
 import { useProfileForm } from '../use-profile-form';
 import styles from './EditProfileForm.module.css';
 
@@ -16,8 +17,23 @@ export function EditProfileForm({
   profile: ProfileResponse;
   onClose: () => void;
 }) {
+  const askPhoto = useHasGooglePhoto();
+  return askPhoto === undefined ? null : (
+    <EditProfileFormBody profile={profile} askPhoto={askPhoto} onClose={onClose} />
+  );
+}
+
+function EditProfileFormBody({
+  profile,
+  askPhoto,
+  onClose,
+}: {
+  profile: ProfileResponse;
+  askPhoto: boolean;
+  onClose: () => void;
+}) {
   const { t } = useTranslation();
-  const form = useProfileForm({ profile, mode: FormMode.Edit, onSaved: onClose });
+  const form = useProfileForm({ profile, mode: FormMode.Edit, askPhoto, onSaved: onClose });
 
   return (
     <form
@@ -32,7 +48,7 @@ export function EditProfileForm({
       <h2 id="edit-profile-title">{t('profile.edit.title')}</h2>
       {form.banned && <BannedNotice />}
       <ProfileFields form={form} />
-      <p className={styles.note}>{t('profile.edit.photoHint')}</p>
+      {askPhoto && <p className={styles.note}>{t('profile.edit.photoHint')}</p>}
       {form.generalIssue && <FormMessage id="profile-form-message" issue={form.generalIssue} />}
       <div className={styles.buttons}>
         <FormButton type="submit" variant="primary" pending={form.pending}>
