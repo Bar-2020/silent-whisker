@@ -90,7 +90,7 @@ const REFUSALS: Refusal[] = [
 ];
 
 describe('updateProfile', () => {
-  // ME-08, FIRST-08, D-105, D-101: PATCH /api/profile with the ID token and a JSON body
+  // ME-08, FIRST-08, D-108, D-101: PATCH /api/profile with the ID token and a JSON body
   it('sends PATCH /api/profile with the ID token and the body as JSON', async () => {
     await updateProfile({ ...VALID, show_google_photo: true, accept_terms: true });
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -109,7 +109,7 @@ describe('updateProfile', () => {
     expect(sentBody()).toEqual({ display_name: 'Café', city: 'Haifa' });
   });
 
-  // ME-08, D-105: an edit never carries accept_terms unless the caller gave it
+  // ME-08, D-108: an edit never carries accept_terms unless the caller gave it
   it('sends no accept_terms when the caller gave none', async () => {
     await updateProfile({ ...VALID, show_google_photo: false });
     expect(sentBody()).toEqual({ ...VALID, show_google_photo: false });

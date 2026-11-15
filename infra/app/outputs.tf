@@ -23,6 +23,6 @@ output "design_bucket" {
 }
 
 output "app_client_id" {
-  description = "The app's Cognito client id; the deploy checks it against shared/constants/auth.json (D-104)."
+  description = "The app's Cognito client id; the deploy checks it against shared/constants/auth.json (D-107)."
   value       = aws_cognito_user_pool_client.web.id
 }

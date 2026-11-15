@@ -19,7 +19,7 @@ export function useProfileForm({
 }: {
   profile: ProfileResponse;
   mode: FormMode;
-  /** Whether Google sent a photo, so the photo question is asked (D-105). */
+  /** Whether Google sent a photo, so the photo question is asked (D-108). */
   askPhoto: boolean;
   onSaved?: () => void;
 }) {

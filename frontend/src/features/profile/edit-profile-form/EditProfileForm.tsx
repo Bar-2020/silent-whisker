@@ -9,7 +9,7 @@ import { useHasGooglePhoto } from '../use-has-google-photo';
 import { useProfileForm } from '../use-profile-form';
 import styles from './EditProfileForm.module.css';
 
-/** The same fields and errors as the sign-up form, to change the name, the city or the photo choice later (D-105). */
+/** The same fields and errors as the sign-up form, to change the name, the city or the photo choice later (D-108). */
 export function EditProfileForm({
   profile,
   onClose,

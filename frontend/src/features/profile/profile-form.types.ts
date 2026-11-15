@@ -28,7 +28,7 @@ export interface ProfileFormValues {
 
 export interface ProfileFormSetup {
   readonly mode: FormMode;
-  /** Whether Google sent a photo, so the question is worth asking (D-105). */
+  /** Whether Google sent a photo, so the question is worth asking (D-108). */
   readonly askPhoto: boolean;
 }
 

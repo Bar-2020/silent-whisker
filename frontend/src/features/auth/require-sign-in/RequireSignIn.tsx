@@ -10,7 +10,7 @@ import { SignInStatus } from '../use-sign-in-status.types';
  * Every route below it needs a sign-in (R-22): a signed-out visit goes to Google and comes back to
  * the same page (D-83). Once signed in it loads the profile, which tells whether the terms were
  * accepted, and hands it to the page through the outlet context. The profile feature's route
- * element below it shows the sign-up form while the terms are not accepted (D-105).
+ * element below it shows the sign-up form while the terms are not accepted (D-108).
  */
 export function RequireSignIn() {
   const { pathname, search, hash } = useLocation();

@@ -56,7 +56,7 @@ const SETTLE_ROUNDS = 6;
 
 const flush = (): Promise<void> => flushRounds(SETTLE_ROUNDS);
 
-/** A picture claim that does not count as a Google photo (D-105). */
+/** A picture claim that does not count as a Google photo (D-108). */
 const NOT_A_GOOGLE_PHOTO: [string, string][] = [
   ['another host', 'https://example.test/photo.jpg'],
   ['a host that only starts like Google', `https://lh3${GOOGLE_IMAGE_HOST_SUFFIX}.evil.example/a`],
@@ -244,7 +244,7 @@ const WAIT_UNITS: [string, number][] = [
   ['second', 1],
 ];
 
-/** The wait as the app writes it: hours from an hour, minutes from a minute, else seconds (D-105). */
+/** The wait as the app writes it: hours from an hour, minutes from a minute, else seconds (D-108). */
 function waitText(seconds: number): string {
   const [unit, size] = WAIT_UNITS.find(([, length]) => seconds >= length) ?? WAIT_UNITS[0];
   const format = new Intl.NumberFormat(EN, { style: 'unit', unit, unitDisplay: 'long' });
@@ -304,7 +304,7 @@ describe('the sign-up form, what it shows', () => {
     expect(screen.queryByRole('group', { name: text(EN, 'firstrun.photo.label') })).toBeNull();
   });
 
-  // FIRST-02, D-27, D-105: only a Google https picture counts
+  // FIRST-02, D-27, D-108: only a Google https picture counts
   it.each(NOT_A_GOOGLE_PHOTO)(
     'does not ask about a photo for a picture on %s',
     async (_name, picture) => {
@@ -494,7 +494,7 @@ describe('pressing Continue twice', () => {
 // ---- FIRST-07
 
 describe('the sign-up form takes the place of the page', () => {
-  // FIRST-07, R-36, D-69, D-105: terms not accepted: the form, whatever the address, and the address stays
+  // FIRST-07, R-36, D-69, D-108: terms not accepted: the form, whatever the address, and the address stays
   it.each(['/profile', '/nowhere/at/all', '/spots/x'])('shows the form at %s', async (path) => {
     await open(NEW_MEMBER, path);
     expect(heading1()).toBe(text(EN, 'firstrun.profile.h1'));
@@ -502,7 +502,7 @@ describe('the sign-up form takes the place of the page', () => {
     expect(screen.queryByRole('heading', { name: text(EN, 'profile.heading') })).toBeNull();
   });
 
-  // FIRST-07, R-36, D-69, D-105: terms accepted: the page
+  // FIRST-07, R-36, D-69, D-108: terms accepted: the page
   it('shows the profile page once the terms are accepted', async () => {
     await open(MEMBER);
     expect(heading1()).toBe(text(EN, 'profile.heading'));
@@ -510,7 +510,7 @@ describe('the sign-up form takes the place of the page', () => {
     expect(callsOf('GET')).toHaveLength(1);
   });
 
-  // FIRST-07, R-36, D-69, D-105: terms accepted, any other address: not the form
+  // FIRST-07, R-36, D-69, D-108: terms accepted, any other address: not the form
   it('shows no form at an unknown address once the terms are accepted', async () => {
     await open(MEMBER, '/nowhere/at/all');
     expect(heading1()).not.toBe(text(EN, 'firstrun.profile.h1'));
@@ -518,7 +518,7 @@ describe('the sign-up form takes the place of the page', () => {
     expect(currentPath()).toBe('/nowhere/at/all');
   });
 
-  // FIRST-07, R-36, R-08, D-69, D-72, D-105: banned and not accepted: the form, the permanent notice, Sign out
+  // FIRST-07, R-36, R-08, D-69, D-72, D-108: banned and not accepted: the form, the permanent notice, Sign out
   it('shows a banned member the form with the permanent notice and a Sign out button', async () => {
     await open(BANNED_NEW_MEMBER);
     expect(heading1()).toBe(text(EN, 'firstrun.profile.h1'));
@@ -538,7 +538,7 @@ describe('the sign-up form takes the place of the page', () => {
     expect(callsOf('PATCH')).toHaveLength(0);
   });
 
-  // FIRST-07, R-08, D-72, D-105: a banned member who presses Continue is refused, and the notice stays
+  // FIRST-07, R-08, D-72, D-108: a banned member who presses Continue is refused, and the notice stays
   it('keeps the notice when a banned member presses Continue', async () => {
     patchQueue.push(refuse(STATUS_FORBIDDEN, 'BANNED'));
     await open(BANNED_NEW_MEMBER);
@@ -553,7 +553,7 @@ describe('the sign-up form takes the place of the page', () => {
 // ---- FIRST-08
 
 describe('saving the sign-up form', () => {
-  // FIRST-08, D-27, D-69, D-101, D-105: with a Google photo, one PATCH with everything, then the page
+  // FIRST-08, D-27, D-69, D-101, D-108: with a Google photo, one PATCH with everything, then the page
   it('sends one PATCH with the token, the trimmed text and the photo answer, then the page', async () => {
     const saved = { ...MEMBER, display_name: 'Dana Cohen', city: 'Haifa' };
     patchQueue.push(accept(saved));
@@ -600,7 +600,7 @@ describe('saving the sign-up form', () => {
     });
   });
 
-  // FIRST-08, D-27, D-105: no photo in the token: no question and no show_google_photo
+  // FIRST-08, D-27, D-108: no photo in the token: no question and no show_google_photo
   it('sends no show_google_photo when the token has no photo', async () => {
     patchQueue.push(accept({ ...MEMBER, show_google_photo: false, avatar_url: null }));
     await open(NEW_MEMBER);
@@ -887,7 +887,7 @@ describe('the profile page behind the edit form, when the member is banned durin
 });
 
 describe('the daily save limit says its wait in the largest unit', () => {
-  // FIRST-09, D-105: hours from an hour, minutes from a minute, else seconds
+  // FIRST-09, D-108: hours from an hour, minutes from a minute, else seconds
   it.each([
     SECONDS_PER_HOUR * 2,
     SECONDS_PER_HOUR,
@@ -967,7 +967,7 @@ const PHOTO_HINT = 'profile.edit.photoHint';
 const hintShown = (): boolean => document.body.textContent.includes(text(EN, PHOTO_HINT));
 
 describe('the forms wait for the ID token read', () => {
-  // FIRST-10, D-105: nothing of the sign-up form is drawn until the read is done, then all of it at once
+  // FIRST-10, D-108: nothing of the sign-up form is drawn until the read is done, then all of it at once
   it('draws no part of the sign-up form while the token read is slow, and the photo question with the rest', async () => {
     const user = makeUser({ picture: GOOGLE_PHOTO });
     const slow = slowTokenRead(user);
@@ -993,7 +993,7 @@ describe('the forms wait for the ID token read', () => {
     expect(maybeButton('common.continue')).not.toBeNull();
   });
 
-  // FIRST-10, D-27, D-105: a slow read for a token with no photo: no question, ever
+  // FIRST-10, D-27, D-108: a slow read for a token with no photo: no question, ever
   it('never asks a photo question after a slow read for a token with no photo', async () => {
     const user = makeUser();
     const slow = slowTokenRead(user);
@@ -1012,7 +1012,7 @@ describe('the forms wait for the ID token read', () => {
     expect(radios()).toHaveLength(0);
   });
 
-  // FIRST-10, D-105: nothing of the edit form is drawn until the read is done; the photo note comes with the rest
+  // FIRST-10, D-108: nothing of the edit form is drawn until the read is done; the photo note comes with the rest
   it('draws no part of the edit form while the token read is slow', async () => {
     const user = makeUser({ picture: GOOGLE_PHOTO });
     const slow = slowTokenRead(user);
@@ -1041,7 +1041,7 @@ describe('the forms wait for the ID token read', () => {
     expect(maybeButton('common.save')).not.toBeNull();
   });
 
-  // FIRST-10, D-27, D-105: with a Google photo the edit form has the note; with none it has no note and no question
+  // FIRST-10, D-27, D-108: with a Google photo the edit form has the note; with none it has no note and no question
   it.each([
     ['a Google photo', GOOGLE_PHOTO, true],
     ['no photo', undefined, false],
@@ -1202,7 +1202,7 @@ describe('editing the profile', () => {
   const photoAnswer = (kind: 'yes' | 'no'): HTMLInputElement =>
     radio(kind === 'yes' ? 'firstrun.photo.yes' : 'firstrun.photo.no');
 
-  // ME-08, D-105, A11Y-05: the pencil opens a form with the values in it and no terms box
+  // ME-08, D-108, A11Y-05: the pencil opens a form with the values in it and no terms box
   it('opens the form with the current values, the photo answer and no terms box', async () => {
     await open(MEMBER, '/profile', GOOGLE_PHOTO);
     await press('profile.edit.title');
@@ -1227,14 +1227,14 @@ describe('editing the profile', () => {
     expect(photoAnswer('yes').checked).toBe(false);
   });
 
-  // ME-08, D-27, D-105: no Google photo in the token: no question in the edit form either
+  // ME-08, D-27, D-108: no Google photo in the token: no question in the edit form either
   it('asks no photo question when the token has no photo', async () => {
     await open(MEMBER);
     await press('profile.edit.title');
     expect(radios()).toHaveLength(0);
   });
 
-  // ME-08, D-27, D-62, D-105: a changed Save sends name, city and photo answer, never accept_terms, then shows the new name
+  // ME-08, D-27, D-62, D-108: a changed Save sends name, city and photo answer, never accept_terms, then shows the new name
   it('sends one PATCH without accept_terms and shows the new values', async () => {
     patchQueue.push(accept({ ...MEMBER, display_name: 'Dana Cohen' }));
     await open(MEMBER, '/profile', GOOGLE_PHOTO);
@@ -1276,7 +1276,7 @@ describe('editing the profile', () => {
     expect(avatarImage()).toBeNull();
   });
 
-  // ME-08, D-27, D-105: with no photo question, the PATCH has no show_google_photo
+  // ME-08, D-27, D-108: with no photo question, the PATCH has no show_google_photo
   it('sends no show_google_photo when the token has no photo', async () => {
     patchQueue.push(accept({ ...MEMBER, city: 'Akko' }));
     await open(MEMBER);
@@ -1286,7 +1286,7 @@ describe('editing the profile', () => {
     expect(bodyOf(callsOf('PATCH')[0])).toEqual({ display_name: 'Dana Levi', city: 'Akko' });
   });
 
-  // ME-08, D-105: Cancel sends nothing, closes the form and drops what was typed
+  // ME-08, D-108: Cancel sends nothing, closes the form and drops what was typed
   it('closes on Cancel with no request and forgets the change', async () => {
     await open(MEMBER, '/profile', GOOGLE_PHOTO);
     await press('profile.edit.title');
@@ -1300,7 +1300,7 @@ describe('editing the profile', () => {
     expect(input(NAME).value).toBe('Dana Levi');
   });
 
-  // ME-08, D-105: Save with nothing changed sends nothing and closes
+  // ME-08, D-108: Save with nothing changed sends nothing and closes
   it('closes on an unchanged Save with no request', async () => {
     await open(MEMBER, '/profile', GOOGLE_PHOTO);
     await press('profile.edit.title');
