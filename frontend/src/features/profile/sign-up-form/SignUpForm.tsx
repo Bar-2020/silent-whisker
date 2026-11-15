@@ -13,7 +13,7 @@ import { createProfileFormSchema } from '../profile-form.schema';
 import { PhotoChoice } from '../profile-form.types';
 import type { ProfileFormValues } from '../profile-form.types';
 import { TermsCheckbox } from '../terms-checkbox/TermsCheckbox';
-import { SaveFailureMessage } from '../save-failure-message/SaveFailureMessage';
+import { ProfileSaveErrorMessage } from '../profile-save-error-message/ProfileSaveErrorMessage';
 import { useSaveProfileMutation } from '../use-save-profile-mutation';
 import styles from './SignUpForm.module.css';
 
@@ -63,7 +63,7 @@ export function SignUpForm({
           {profile.status === 'banned' && <BannedAccountNotice />}
           <ProfileFields hasGooglePhoto={hasGooglePhoto} />
           <TermsCheckbox />
-          <SaveFailureMessage />
+          <ProfileSaveErrorMessage />
         </div>
         <div className={styles.footbar}>
           <FormButton type="submit" variant={FormButtonVariant.Primary} pending={isSubmitPending}>

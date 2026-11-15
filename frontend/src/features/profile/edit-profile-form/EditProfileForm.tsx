@@ -10,7 +10,7 @@ import { ProfileFields } from '../profile-fields/ProfileFields';
 import { createProfileFormSchema } from '../profile-form.schema';
 import { PhotoChoice } from '../profile-form.types';
 import type { ProfileFormValues } from '../profile-form.types';
-import { SaveFailureMessage } from '../save-failure-message/SaveFailureMessage';
+import { ProfileSaveErrorMessage } from '../profile-save-error-message/ProfileSaveErrorMessage';
 import { useSaveProfileMutation } from '../use-save-profile-mutation';
 import styles from './EditProfileForm.module.css';
 
@@ -61,7 +61,7 @@ export function EditProfileForm({
         {profile.status === 'banned' && <BannedAccountNotice />}
         <ProfileFields hasGooglePhoto={hasGooglePhoto} />
         {hasGooglePhoto && <p className={styles.note}>{t('profile.edit.photoHint')}</p>}
-        <SaveFailureMessage />
+        <ProfileSaveErrorMessage />
         <div className={styles.buttons}>
           <FormButton type="submit" variant={FormButtonVariant.Primary} pending={isSubmitPending}>
             {t('common.save')}

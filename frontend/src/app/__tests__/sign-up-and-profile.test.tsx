@@ -4,14 +4,10 @@ import { z } from 'zod';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
 import type { App as AppComponent } from '@app/App';
-import {
-  CODES,
-  currentPath,
-  EN,
-  flush as flushRounds,
-  renderApp,
-  text,
-} from '@shared/test-support/app-harness';
+import { ENGLISH_CODE, getLocaleText, LANGUAGE_CODES } from '@shared/test-support/locale-texts';
+import { renderAppAtPath } from '@shared/test-support/render-app-in-memory-router';
+import { readCurrentPath } from '@shared/test-support/router-location';
+import { settleAsyncUpdates } from '@shared/test-support/settle-async-updates';
 import type { fakeUserManager as FakeUserManager } from '@shared/test-support/sign-in-fakes';
 import {
   FAKE_COGNITO_DOMAIN,
@@ -55,7 +51,7 @@ const SETTLE_ROUNDS = 6;
 /** Two hours: a wait the daily save limit must not write out (FIRST-09, D-108). */
 const DAILY_LIMIT_RETRY_AFTER = 7200;
 
-const flush = (): Promise<void> => flushRounds(SETTLE_ROUNDS);
+const flush = (): Promise<void> => settleAsyncUpdates(SETTLE_ROUNDS);
 
 /** A picture claim that does not count as a Google photo (D-108). */
 const NOT_A_GOOGLE_PHOTO: [string, string][] = [
@@ -177,12 +173,12 @@ function bodyOf(call: Call): Record<string, unknown> {
 const heading1 = (): string | null => document.querySelector('h1')?.textContent ?? null;
 
 const buttonNamed = (key: string): HTMLElement =>
-  screen.getByRole('button', { name: text(EN, key) });
+  screen.getByRole('button', { name: getLocaleText(ENGLISH_CODE, key) });
 const maybeButton = (key: string): HTMLElement | null =>
-  screen.queryByRole('button', { name: text(EN, key) });
+  screen.queryByRole('button', { name: getLocaleText(ENGLISH_CODE, key) });
 
 function input(key: string): HTMLInputElement {
-  const found = screen.getByRole('textbox', { name: text(EN, key) });
+  const found = screen.getByRole('textbox', { name: getLocaleText(ENGLISH_CODE, key) });
   if (!(found instanceof HTMLInputElement)) throw new Error(`${key} is not an input`);
   return found;
 }
@@ -197,7 +193,7 @@ function box(): HTMLInputElement {
 }
 
 function radio(key: string): HTMLInputElement {
-  const found = screen.getByRole('radio', { name: text(EN, key) });
+  const found = screen.getByRole('radio', { name: getLocaleText(ENGLISH_CODE, key) });
   if (!(found instanceof HTMLInputElement)) throw new Error(`${key} is not an input`);
   return found;
 }
@@ -232,16 +228,19 @@ function words(key: string, values: Record<string, string> = {}): string {
     max: String(PROFILE_TEXT_MAX_LENGTH),
     ...values,
   };
-  return text(EN, key).replace(/\{\{(\w+)\}\}/g, (whole, name: string) => filled[name] ?? whole);
+  return getLocaleText(ENGLISH_CODE, key).replace(
+    /\{\{(\w+)\}\}/g,
+    (whole, name: string) => filled[name] ?? whole
+  );
 }
 
 /** The one placeholder of a text, whatever its name, filled with `value`. */
 const withValue = (key: string, value: string): string =>
-  text(EN, key).replace(/\{\{\w+\}\}/g, value);
+  getLocaleText(ENGLISH_CODE, key).replace(/\{\{\w+\}\}/g, value);
 
 const noticeShown = (): boolean =>
-  document.body.textContent.includes(text(EN, 'common.banned.title')) &&
-  document.body.textContent.includes(text(EN, 'common.banned.text'));
+  document.body.textContent.includes(getLocaleText(ENGLISH_CODE, 'common.banned.title')) &&
+  document.body.textContent.includes(getLocaleText(ENGLISH_CODE, 'common.banned.text'));
 
 function signIn(picture?: string): void {
   fakeUserManager.setUser(makeUser({ picture }));
@@ -254,7 +253,7 @@ async function open(
 ): Promise<void> {
   profile = answerWith;
   signIn(picture);
-  await renderApp(<App />, path);
+  await renderAppAtPath(<App />, path);
   await flush();
 }
 
@@ -271,10 +270,12 @@ describe('the sign-up form, what it shows', () => {
   // FIRST-02, D-69, D-27, D-61: the fields, no error before the first press, a photo question that waits for an answer
   it('shows the form with a photo question, no answer chosen and no error', async () => {
     await open(NEW_MEMBER, '/profile', GOOGLE_PHOTO);
-    expect(heading1()).toBe(text(EN, 'firstrun.profile.h1'));
+    expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'firstrun.profile.h1'));
     expect(input(NAME).value).toBe('');
     expect(input(CITY).value).toBe('');
-    expect(screen.getByRole('group', { name: text(EN, 'firstrun.photo.label') })).toBeDefined();
+    expect(
+      screen.getByRole('group', { name: getLocaleText(ENGLISH_CODE, 'firstrun.photo.label') })
+    ).toBeDefined();
     expect(radios()).toHaveLength(2);
     expect(radio('firstrun.photo.yes').checked).toBe(false);
     expect(radio('firstrun.photo.no').checked).toBe(false);
@@ -287,9 +288,11 @@ describe('the sign-up form, what it shows', () => {
   // FIRST-02, D-27: no Google photo in the token, no question
   it('does not ask about a photo when the token has none', async () => {
     await open(NEW_MEMBER);
-    expect(heading1()).toBe(text(EN, 'firstrun.profile.h1'));
+    expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'firstrun.profile.h1'));
     expect(radios()).toHaveLength(0);
-    expect(screen.queryByRole('group', { name: text(EN, 'firstrun.photo.label') })).toBeNull();
+    expect(
+      screen.queryByRole('group', { name: getLocaleText(ENGLISH_CODE, 'firstrun.photo.label') })
+    ).toBeNull();
   });
 
   // FIRST-02, D-27, D-108: only a Google https picture counts
@@ -297,7 +300,7 @@ describe('the sign-up form, what it shows', () => {
     'does not ask about a photo for a picture on %s',
     async (_name, picture) => {
       await open(NEW_MEMBER, '/profile', picture);
-      expect(heading1()).toBe(text(EN, 'firstrun.profile.h1'));
+      expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'firstrun.profile.h1'));
       expect(radios()).toHaveLength(0);
     }
   );
@@ -313,12 +316,12 @@ describe('the sign-up form, what it shows', () => {
   });
 
   // FIRST-02, D-69: the form is in the member's language
-  it.each(CODES)('has its heading in %s', async (code) => {
+  it.each(LANGUAGE_CODES)('has its heading in %s', async (code) => {
     profile = NEW_MEMBER;
     signIn();
-    await renderApp(<App />, '/profile', code);
+    await renderAppAtPath(<App />, '/profile', code);
     await flush();
-    expect(heading1()).toBe(text(code, 'firstrun.profile.h1'));
+    expect(heading1()).toBe(getLocaleText(code, 'firstrun.profile.h1'));
   });
 });
 
@@ -328,16 +331,22 @@ describe('the sign-up form, what it refuses', () => {
     await open(NEW_MEMBER, '/profile', GOOGLE_PHOTO);
     await press('common.continue');
 
-    expect(messagesOf(input(NAME))).toEqual([text(EN, 'firstrun.name.required')]);
-    expect(messagesOf(input(CITY))).toEqual([text(EN, 'firstrun.city.required')]);
+    expect(messagesOf(input(NAME))).toEqual([
+      getLocaleText(ENGLISH_CODE, 'firstrun.name.required'),
+    ]);
+    expect(messagesOf(input(CITY))).toEqual([
+      getLocaleText(ENGLISH_CODE, 'firstrun.city.required'),
+    ]);
     // the question as a whole carries the message: its group, or else an answer
-    const question = screen.getByRole('group', { name: text(EN, 'firstrun.photo.label') });
+    const question = screen.getByRole('group', {
+      name: getLocaleText(ENGLISH_CODE, 'firstrun.photo.label'),
+    });
     expect([
       ...messagesOf(question),
       ...messagesOf(radio('firstrun.photo.yes')),
       ...messagesOf(radio('firstrun.photo.no')),
-    ]).toContain(text(EN, 'firstrun.photo.required'));
-    expect(messagesOf(box())).toEqual([text(EN, 'firstrun.terms.required')]);
+    ]).toContain(getLocaleText(ENGLISH_CODE, 'firstrun.photo.required'));
+    expect(messagesOf(box())).toEqual([getLocaleText(ENGLISH_CODE, 'firstrun.terms.required')]);
     expect(input(NAME).getAttribute('aria-invalid')).toBe('true');
     expect(input(CITY).getAttribute('aria-invalid')).toBe('true');
     expect(box().getAttribute('aria-invalid')).toBe('true');
@@ -348,7 +357,9 @@ describe('the sign-up form, what it refuses', () => {
   it('does not ask for a photo answer when there is no photo', async () => {
     await open(NEW_MEMBER);
     await press('common.continue');
-    expect(document.body.textContent).not.toContain(text(EN, 'firstrun.photo.required'));
+    expect(document.body.textContent).not.toContain(
+      getLocaleText(ENGLISH_CODE, 'firstrun.photo.required')
+    );
     expect(alerts()).toHaveLength(3);
   });
 
@@ -359,8 +370,8 @@ describe('the sign-up form, what it refuses', () => {
     fireEvent.click(radio('firstrun.photo.no'));
     await press('common.continue');
 
-    expect(alertTexts()).toEqual([text(EN, 'firstrun.terms.required')]);
-    expect(messagesOf(box())).toEqual([text(EN, 'firstrun.terms.required')]);
+    expect(alertTexts()).toEqual([getLocaleText(ENGLISH_CODE, 'firstrun.terms.required')]);
+    expect(messagesOf(box())).toEqual([getLocaleText(ENGLISH_CODE, 'firstrun.terms.required')]);
     expect(box().getAttribute('aria-invalid')).toBe('true');
     expect(input(NAME).getAttribute('aria-invalid')).not.toBe('true');
     expect(callsOf('PATCH')).toHaveLength(0);
@@ -371,7 +382,7 @@ describe('the sign-up form, what it refuses', () => {
     await open(NEW_MEMBER, '/profile', GOOGLE_PHOTO);
     fillSignUp();
     await press('common.continue');
-    expect(alertTexts()).toEqual([text(EN, 'firstrun.photo.required')]);
+    expect(alertTexts()).toEqual([getLocaleText(ENGLISH_CODE, 'firstrun.photo.required')]);
     expect(callsOf('PATCH')).toHaveLength(0);
 
     fireEvent.click(radio('firstrun.photo.yes'));
@@ -474,7 +485,7 @@ describe('pressing Continue twice', () => {
     pending.release(jsonResponse(STATUS_OK, MEMBER));
     await flush();
     expect(callsOf('PATCH')).toHaveLength(1);
-    expect(heading1()).toBe(text(EN, 'profile.heading'));
+    expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'profile.heading'));
     expect(maybeButton('common.continue')).toBeNull();
   });
 });
@@ -485,15 +496,17 @@ describe('the sign-up form takes the place of the page', () => {
   // FIRST-07, R-36, D-69, D-108: terms not accepted: the form, whatever the address, and the address stays
   it.each(['/profile', '/nowhere/at/all', '/spots/x'])('shows the form at %s', async (path) => {
     await open(NEW_MEMBER, path);
-    expect(heading1()).toBe(text(EN, 'firstrun.profile.h1'));
-    expect(currentPath()).toBe(path);
-    expect(screen.queryByRole('heading', { name: text(EN, 'profile.heading') })).toBeNull();
+    expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'firstrun.profile.h1'));
+    expect(readCurrentPath()).toBe(path);
+    expect(
+      screen.queryByRole('heading', { name: getLocaleText(ENGLISH_CODE, 'profile.heading') })
+    ).toBeNull();
   });
 
   // FIRST-07, R-36, D-69, D-108: terms accepted: the page
   it('shows the profile page once the terms are accepted', async () => {
     await open(MEMBER);
-    expect(heading1()).toBe(text(EN, 'profile.heading'));
+    expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'profile.heading'));
     expect(maybeButton('common.continue')).toBeNull();
     expect(callsOf('GET')).toHaveLength(1);
   });
@@ -501,18 +514,18 @@ describe('the sign-up form takes the place of the page', () => {
   // FIRST-07, R-36, D-69, D-108: terms accepted, any other address: not the form
   it('shows no form at an unknown address once the terms are accepted', async () => {
     await open(MEMBER, '/nowhere/at/all');
-    expect(heading1()).not.toBe(text(EN, 'firstrun.profile.h1'));
+    expect(heading1()).not.toBe(getLocaleText(ENGLISH_CODE, 'firstrun.profile.h1'));
     expect(maybeButton('common.continue')).toBeNull();
-    expect(currentPath()).toBe('/nowhere/at/all');
+    expect(readCurrentPath()).toBe('/nowhere/at/all');
   });
 
   // FIRST-07, R-36, R-08, D-69, D-72, D-108: banned and not accepted: the form, the permanent notice, Sign out
   it('shows a banned member the form with the permanent notice and a Sign out button', async () => {
     await open(BANNED_NEW_MEMBER);
-    expect(heading1()).toBe(text(EN, 'firstrun.profile.h1'));
+    expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'firstrun.profile.h1'));
     expect(noticeShown()).toBe(true);
     expect(maybeButton('profile.signOut')).not.toBeNull();
-    expect(currentPath()).toBe('/profile');
+    expect(readCurrentPath()).toBe('/profile');
   });
 
   // FIRST-07, D-72, D-59: Sign out on the form signs out
@@ -534,7 +547,7 @@ describe('the sign-up form takes the place of the page', () => {
     await press('common.continue');
     expect(callsOf('PATCH')).toHaveLength(1);
     expect(noticeShown()).toBe(true);
-    expect(heading1()).toBe(text(EN, 'firstrun.profile.h1'));
+    expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'firstrun.profile.h1'));
   });
 });
 
@@ -566,7 +579,7 @@ describe('saving the sign-up form', () => {
       accept_terms: true,
     });
 
-    expect(heading1()).toBe(text(EN, 'profile.heading'));
+    expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'profile.heading'));
     expect(maybeButton('common.continue')).toBeNull();
     expect(document.querySelector('h2 bdi')?.textContent).toBe('Dana Cohen');
     // the saved answer replaced the cached profile: no second GET
@@ -603,7 +616,7 @@ describe('saving the sign-up form', () => {
       city: 'Haifa',
       accept_terms: true,
     });
-    expect(heading1()).toBe(text(EN, 'profile.heading'));
+    expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'profile.heading'));
   });
 
   // FIRST-08, D-101: the text is sent in NFC, as the schema says
@@ -745,7 +758,7 @@ const DRIVERS: FormDriver[] = [
       await open(NEW_MEMBER);
       fillSignUp({ name: EDITED_NAME });
     },
-    savedScreenShown: () => heading1() === text(EN, 'profile.heading'),
+    savedScreenShown: () => heading1() === getLocaleText(ENGLISH_CODE, 'profile.heading'),
   },
   {
     title: 'the edit form',
@@ -864,7 +877,7 @@ describe('the profile page behind the edit form, when the member is banned durin
 
     await press('common.cancel');
     expect(maybeButton('common.save')).toBeNull();
-    expect(heading1()).toBe(text(EN, 'profile.heading'));
+    expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'profile.heading'));
     expect(noticeShown()).toBe(true);
     expect(maybeButton('profile.edit.title')).toBeNull();
     expect(maybeButton('profile.signOut')).not.toBeNull();
@@ -885,7 +898,7 @@ describe.each(DRIVERS)('$title, when the daily save limit is reached', (driver) 
     await driver.prepare();
     await press(driver.submit);
 
-    const message = text(EN, 'profile.error.dailyLimit');
+    const message = getLocaleText(ENGLISH_CODE, 'profile.error.dailyLimit');
     expect(message).not.toMatch(/\d|\{\{/);
     expect(alertTexts()).toEqual([message]);
     expect(document.body.textContent).not.toContain('{{');
@@ -948,7 +961,8 @@ const textFields = (): Element[] =>
   Array.from(document.querySelectorAll('input:not([type="radio"]):not([type="checkbox"])'));
 
 const PHOTO_HINT = 'profile.edit.photoHint';
-const hintShown = (): boolean => document.body.textContent.includes(text(EN, PHOTO_HINT));
+const hintShown = (): boolean =>
+  document.body.textContent.includes(getLocaleText(ENGLISH_CODE, PHOTO_HINT));
 
 describe('the forms wait for the ID token read', () => {
   // FIRST-10, D-108: nothing of the sign-up form is drawn until the read is done, then all of it at once
@@ -958,7 +972,7 @@ describe('the forms wait for the ID token read', () => {
     onProfileRequest = slow.engage;
     fakeUserManager.setUser(user);
     profile = NEW_MEMBER;
-    await renderApp(<App />, '/profile');
+    await renderAppAtPath(<App />, '/profile');
     await flush();
 
     expect(callsOf('GET')).toHaveLength(1);
@@ -984,7 +998,7 @@ describe('the forms wait for the ID token read', () => {
     onProfileRequest = slow.engage;
     fakeUserManager.setUser(user);
     profile = NEW_MEMBER;
-    await renderApp(<App />, '/profile');
+    await renderAppAtPath(<App />, '/profile');
     await flush();
     expect(textFields()).toHaveLength(0);
 
@@ -1004,11 +1018,11 @@ describe('the forms wait for the ID token read', () => {
     onProfileRequest = slow.engage;
     fakeUserManager.setUser(user);
     profile = MEMBER;
-    await renderApp(<App />, '/profile');
+    await renderAppAtPath(<App />, '/profile');
     await flush();
 
     expect(callsOf('GET')).toHaveLength(1);
-    expect(heading1()).not.toBe(text(EN, 'profile.heading'));
+    expect(heading1()).not.toBe(getLocaleText(ENGLISH_CODE, 'profile.heading'));
     expect(maybeButton('profile.edit.title')).toBeNull();
     expect(maybeButton('profile.signOut')).toBeNull();
     expect(document.querySelector('h2 bdi')).toBeNull();
@@ -1018,7 +1032,7 @@ describe('the forms wait for the ID token read', () => {
     expect(hintShown()).toBe(false);
 
     const pageHalfDrawn = (): boolean =>
-      heading1() === text(EN, 'profile.heading') &&
+      heading1() === getLocaleText(ENGLISH_CODE, 'profile.heading') &&
       (maybeButton('profile.edit.title') === null ||
         maybeButton('profile.signOut') === null ||
         document.querySelector('h2 bdi') === null);
@@ -1027,7 +1041,7 @@ describe('the forms wait for the ID token read', () => {
     await flush();
     expect(watch.stop()).toBe(false);
 
-    expect(heading1()).toBe(text(EN, 'profile.heading'));
+    expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'profile.heading'));
     expect(maybeButton('profile.edit.title')).not.toBeNull();
 
     // no press-and-wait: the form is whole the moment the pencil is pressed
@@ -1044,7 +1058,7 @@ describe('the forms wait for the ID token read', () => {
     ['a Google photo', GOOGLE_PHOTO, true],
     ['no photo', undefined, false],
   ])('shows the photo note in the edit form for a token with %s', async (_name, picture, shown) => {
-    expect(text(EN, PHOTO_HINT)).not.toContain('{{');
+    expect(getLocaleText(ENGLISH_CODE, PHOTO_HINT)).not.toContain('{{');
     await open(MEMBER, '/profile', picture);
     await press('profile.edit.title');
     expect(input(NAME).value).toBe('Dana Levi');
@@ -1073,7 +1087,7 @@ describe('the profile page', () => {
   // ME-07, D-21, D-27: a chosen Google photo, the name and the city, and a way out
   it('shows the chosen photo, the name, the city and Sign out', async () => {
     await open(MEMBER, '/profile', GOOGLE_PHOTO);
-    expect(heading1()).toBe(text(EN, 'profile.heading'));
+    expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'profile.heading'));
     const image = avatarImage();
     expect(image?.getAttribute('src')).toBe(GOOGLE_PHOTO);
     // decorative: the name beside it says who it is
@@ -1165,19 +1179,21 @@ describe('the profile page', () => {
   });
 
   // A11Y-05, D-58: the pencil is an icon: it has a translated name in every language
-  it.each(CODES)('names the pencil in %s', async (code) => {
+  it.each(LANGUAGE_CODES)('names the pencil in %s', async (code) => {
     profile = MEMBER;
     signIn();
-    await renderApp(<App />, '/profile', code);
+    await renderAppAtPath(<App />, '/profile', code);
     await flush();
-    expect(screen.getByRole('button', { name: text(code, 'profile.edit.title') })).toBeDefined();
-    expect(heading1()).toBe(text(code, 'profile.heading'));
+    expect(
+      screen.getByRole('button', { name: getLocaleText(code, 'profile.edit.title') })
+    ).toBeDefined();
+    expect(heading1()).toBe(getLocaleText(code, 'profile.heading'));
   });
 
   // ME-09, R-08, D-72: a banned member sees the permanent notice, has no pencil, and can sign out
   it('shows a banned member the notice and no pencil, and Sign out works', async () => {
     await open({ ...MEMBER, status: 'banned' });
-    expect(heading1()).toBe(text(EN, 'profile.heading'));
+    expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'profile.heading'));
     expect(noticeShown()).toBe(true);
     expect(maybeButton('profile.edit.title')).toBeNull();
 
@@ -1204,7 +1220,7 @@ describe('editing the profile', () => {
   it('opens the form with the current values, the photo answer and no terms box', async () => {
     await open(MEMBER, '/profile', GOOGLE_PHOTO);
     await press('profile.edit.title');
-    const title = text(EN, 'profile.edit.title');
+    const title = getLocaleText(ENGLISH_CODE, 'profile.edit.title');
     expect(screen.getByRole('heading', { level: 2, name: title })).toBeDefined();
     expect(input(NAME).value).toBe('Dana Levi');
     expect(input(CITY).value).toBe('Haifa');
