@@ -51,7 +51,7 @@ const SETTLE_ROUNDS = 6;
 /** Two hours: a wait the daily save limit must not write out (FIRST-09, D-108). */
 const DAILY_LIMIT_RETRY_AFTER = 7200;
 
-const flush = (): Promise<void> => settleAsyncUpdates(SETTLE_ROUNDS);
+const settleScreen = (): Promise<void> => settleAsyncUpdates(SETTLE_ROUNDS);
 
 /** A picture claim that does not count as a Google photo (D-108). */
 const NOT_A_GOOGLE_PHOTO: [string, string][] = [
@@ -218,7 +218,7 @@ function type(field: HTMLInputElement, value: string): void {
 
 async function press(key: string): Promise<void> {
   fireEvent.click(buttonNamed(key));
-  await flush();
+  await settleScreen();
 }
 
 /** A text with its `{{...}}` placeholders filled in. */
@@ -254,7 +254,7 @@ async function open(
   profile = answerWith;
   signIn(picture);
   await renderAppAtPath(<App />, path);
-  await flush();
+  await settleScreen();
 }
 
 /** Fill the sign-up form with values that pass the checks. */
@@ -320,7 +320,7 @@ describe('the sign-up form, what it shows', () => {
     profile = NEW_MEMBER;
     signIn();
     await renderAppAtPath(<App />, '/profile', code);
-    await flush();
+    await settleScreen();
     expect(heading1()).toBe(getLocaleText(code, 'firstrun.profile.h1'));
   });
 });
@@ -476,14 +476,14 @@ describe('pressing Continue twice', () => {
 
     fireEvent.click(buttonNamed('common.continue'));
     fireEvent.click(buttonNamed('common.continue'));
-    await flush();
+    await settleScreen();
     expect(buttonNamed('common.continue').getAttribute('aria-busy')).toBe('true');
     fireEvent.click(buttonNamed('common.continue'));
-    await flush();
+    await settleScreen();
     expect(callsOf('PATCH')).toHaveLength(1);
 
     pending.release(jsonResponse(STATUS_OK, MEMBER));
-    await flush();
+    await settleScreen();
     expect(callsOf('PATCH')).toHaveLength(1);
     expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'profile.heading'));
     expect(maybeButton('common.continue')).toBeNull();
@@ -835,7 +835,7 @@ describe.each(DRIVERS)('$title, when the server refuses', (driver) => {
     await press(driver.submit);
     const field = refusal.where === 'city' ? input(CITY) : input(NAME);
     type(field, `${field.value}x`);
-    await flush();
+    await settleScreen();
     expect(alerts()).toHaveLength(0);
   });
 });
@@ -851,10 +851,10 @@ describe.each(DRIVERS)('$title, when an active member is banned during a save', 
     expect(noticeShown()).toBe(true);
 
     type(input(NAME), `${input(NAME).value}x`);
-    await flush();
+    await settleScreen();
     expect(noticeShown()).toBe(true);
     type(input(CITY), 'Akko');
-    await flush();
+    await settleScreen();
     expect(noticeShown()).toBe(true);
 
     // the answer itself says the member is banned: no second GET to learn it
@@ -872,7 +872,7 @@ describe('the profile page behind the edit form, when the member is banned durin
     type(input(NAME), EDITED_NAME);
     await press('common.save');
     type(input(NAME), `${EDITED_NAME}x`);
-    await flush();
+    await settleScreen();
     expect(noticeShown()).toBe(true);
 
     await press('common.cancel');
@@ -973,7 +973,7 @@ describe('the forms wait for the ID token read', () => {
     fakeUserManager.setUser(user);
     profile = NEW_MEMBER;
     await renderAppAtPath(<App />, '/profile');
-    await flush();
+    await settleScreen();
 
     expect(callsOf('GET')).toHaveLength(1);
     expect(textFields()).toHaveLength(0);
@@ -983,7 +983,7 @@ describe('the forms wait for the ID token read', () => {
 
     const watch = watchPage(() => textFields().length > 0 && radios().length === 0);
     slow.release();
-    await flush();
+    await settleScreen();
     expect(watch.stop()).toBe(false);
 
     expect(textFields().length).toBeGreaterThan(0);
@@ -999,12 +999,12 @@ describe('the forms wait for the ID token read', () => {
     fakeUserManager.setUser(user);
     profile = NEW_MEMBER;
     await renderAppAtPath(<App />, '/profile');
-    await flush();
+    await settleScreen();
     expect(textFields()).toHaveLength(0);
 
     const watch = watchPage(() => radios().length > 0);
     slow.release();
-    await flush();
+    await settleScreen();
     expect(watch.stop()).toBe(false);
     expect(textFields().length).toBeGreaterThan(0);
     expect(radios()).toHaveLength(0);
@@ -1019,7 +1019,7 @@ describe('the forms wait for the ID token read', () => {
     fakeUserManager.setUser(user);
     profile = MEMBER;
     await renderAppAtPath(<App />, '/profile');
-    await flush();
+    await settleScreen();
 
     expect(callsOf('GET')).toHaveLength(1);
     expect(heading1()).not.toBe(getLocaleText(ENGLISH_CODE, 'profile.heading'));
@@ -1038,7 +1038,7 @@ describe('the forms wait for the ID token read', () => {
         document.querySelector('h2 bdi') === null);
     const watch = watchPage(pageHalfDrawn);
     slow.release();
-    await flush();
+    await settleScreen();
     expect(watch.stop()).toBe(false);
 
     expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'profile.heading'));
@@ -1115,7 +1115,7 @@ describe('the profile page', () => {
     expect(hiddenTextShown('DL')).toBe(false);
     if (image === null) throw new Error('no image');
     fireEvent.error(image);
-    await flush();
+    await settleScreen();
     expect(avatarImage()).toBeNull();
     expect(hiddenTextShown('DL')).toBe(true);
     expect(maybeButton('profile.signOut')).not.toBeNull();
@@ -1183,7 +1183,7 @@ describe('the profile page', () => {
     profile = MEMBER;
     signIn();
     await renderAppAtPath(<App />, '/profile', code);
-    await flush();
+    await settleScreen();
     expect(
       screen.getByRole('button', { name: getLocaleText(code, 'profile.edit.title') })
     ).toBeDefined();
@@ -1351,11 +1351,11 @@ describe('editing the profile', () => {
     type(input(NAME), EDITED_NAME);
     fireEvent.click(buttonNamed('common.save'));
     fireEvent.click(buttonNamed('common.save'));
-    await flush();
+    await settleScreen();
     expect(buttonNamed('common.save').getAttribute('aria-busy')).toBe('true');
     expect(callsOf('PATCH')).toHaveLength(1);
     pending.release(jsonResponse(STATUS_OK, { ...MEMBER, display_name: EDITED_NAME }));
-    await flush();
+    await settleScreen();
     expect(callsOf('PATCH')).toHaveLength(1);
     expect(document.querySelector('h2 bdi')?.textContent).toBe(EDITED_NAME);
   });

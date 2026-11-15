@@ -1,18 +1,24 @@
 // @vitest-environment jsdom
-import { readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { createInstance } from 'i18next';
 import { ErrorResponse } from 'oidc-client-ts';
 import { StrictMode } from 'react';
-import type { ReactElement } from 'react';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
-import { MemoryRouter, useLocation, useNavigationType } from 'react-router';
-import { z } from 'zod';
+import { MemoryRouter } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
 import type { App as AppComponent } from '@app/App';
+import {
+  ENGLISH_CODE,
+  getLocaleMessages,
+  getLocaleText,
+  LANGUAGE_CODES,
+} from '@shared/test-support/locale-texts';
+import { RouterLocationProbe } from '@shared/test-support/RouterLocationProbe';
+import {
+  readCurrentPath,
+  ROUTER_LOCATION_PROBE_TEST_ID,
+} from '@shared/test-support/router-location';
 import type { fakeUserManager as FakeUserManager } from '@shared/test-support/sign-in-fakes';
 import {
   ACCESS_TOKEN,
@@ -36,7 +42,6 @@ import {
   STATUS_UNAUTHORIZED,
   STATUS_UNAVAILABLE,
 } from '@constants/http';
-import { LANGUAGES } from '@constants/languages';
 import {
   AFTER_SIGN_IN_PATH,
   OIDC_STORAGE_PREFIX,
@@ -51,31 +56,6 @@ vi.mock('@shared/auth/user-manager', async () => {
   return { userManager: fake, COGNITO_DOMAIN: domain };
 });
 
-const localeSchema = z.record(z.string(), z.string());
-
-const here = dirname(fileURLToPath(import.meta.url));
-
-const localeText = (code: string): string =>
-  readFileSync(resolve(here, '../../../public/locales', `${code}.json`), 'utf8');
-
-const locales = new Map<string, Record<string, string>>(
-  LANGUAGES.map(({ code }) => [code, localeSchema.parse(JSON.parse(localeText(code)))])
-);
-
-const getLocale = (code: string): Record<string, string> => {
-  const locale = locales.get(code);
-  if (locale === undefined) throw new Error(`no locale ${code}`);
-  return locale;
-};
-
-const text = (code: string, key: string): string => {
-  const locale = getLocale(code);
-  if (!Object.hasOwn(locale, key)) throw new Error(`${code}.json has no key ${key}`);
-  return locale[key];
-};
-
-const CODES = LANGUAGES.map(({ code }) => code);
-const EN = 'en';
 const NOW = new Date('2026-11-14T10:00:00Z');
 const ORIGIN = 'https://app.example.test';
 const CALLBACK_PATH = auth.callback_path;
@@ -132,14 +112,6 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-/** Shows where the router is and how it got there (a replace is not a push). */
-function Probe(): ReactElement {
-  const location = useLocation();
-  const type = useNavigationType();
-  const label = `${location.pathname}${location.search}${location.hash}|${type}`;
-  return <output data-testid="probe">{label}</output>;
-}
-
 /** A countdown needs the timers themselves faked; other tests fake the clock only. */
 let allTimersFaked = false;
 
@@ -172,12 +144,12 @@ async function waitSeconds(seconds: number): Promise<void> {
   });
 }
 
-async function open(path: string, code = EN, strict = false): Promise<void> {
+async function open(path: string, code = ENGLISH_CODE, strict = false): Promise<void> {
   const i18n = createInstance();
   await i18n.use(initReactI18next).init({
     lng: code,
     fallbackLng: false,
-    resources: { [code]: { translation: getLocale(code) } },
+    resources: { [code]: { translation: getLocaleMessages(code) } },
     interpolation: { escapeValue: false },
     react: { useSuspense: false },
   });
@@ -185,7 +157,7 @@ async function open(path: string, code = EN, strict = false): Promise<void> {
     <I18nextProvider i18n={i18n}>
       <MemoryRouter initialEntries={[path]}>
         <App />
-        <Probe />
+        <RouterLocationProbe />
       </MemoryRouter>
     </I18nextProvider>
   );
@@ -193,16 +165,18 @@ async function open(path: string, code = EN, strict = false): Promise<void> {
   await flush();
 }
 
-const probe = (): string => document.querySelector('[data-testid="probe"]')?.textContent ?? '';
-const currentPath = (): string => probe().split('|')[0];
+/** The probe's whole text, with how the router got there (`|REPLACE`). */
+const probe = (): string =>
+  document.querySelector(`[data-testid="${ROUTER_LOCATION_PROBE_TEST_ID}"]`)?.textContent ?? '';
 const h1 = (): string | null => document.querySelector('h1')?.textContent ?? null;
 const button = (label: string): HTMLButtonElement | undefined =>
   Array.from(document.querySelectorAll('button')).find((b) => b.textContent.trim() === label);
-const signOutButton = (): HTMLButtonElement | undefined => button(text(EN, 'profile.signOut'));
+const signOutButton = (): HTMLButtonElement | undefined =>
+  button(getLocaleText(ENGLISH_CODE, 'profile.signOut'));
 const googleAt = (state: string): unknown[] => [{ state, extraQueryParams: GOOGLE }];
 
 async function pressRetry(): Promise<void> {
-  const retry = button(text(EN, 'common.retry'));
+  const retry = button(getLocaleText(ENGLISH_CODE, 'common.retry'));
   expect(retry).toBeDefined();
   if (retry === undefined) return;
   fireEvent.click(retry);
@@ -210,15 +184,15 @@ async function pressRetry(): Promise<void> {
 }
 
 /** The retry screen of a refused or looping sign-in (`states.signIn`, D-59, D-107). */
-function expectSignInFailedScreen(code = EN): void {
-  expect(h1()).toBe(text(code, 'states.signIn.title'));
-  expect(document.body.textContent).toContain(text(code, 'states.signIn.text'));
+function expectSignInFailedScreen(code = ENGLISH_CODE): void {
+  expect(h1()).toBe(getLocaleText(code, 'states.signIn.title'));
+  expect(document.body.textContent).toContain(getLocaleText(code, 'states.signIn.text'));
   // SHELL-12: a failure is announced to a screen reader
   expect(document.querySelector('[role="alert"]')?.textContent).toContain(
-    text(code, 'states.signIn.title')
+    getLocaleText(code, 'states.signIn.title')
   );
-  expect(button(text(code, 'common.retry'))).toBeDefined();
-  expect(button(text(code, 'profile.signOut'))).toBeUndefined();
+  expect(button(getLocaleText(code, 'common.retry'))).toBeDefined();
+  expect(button(getLocaleText(code, 'profile.signOut'))).toBeUndefined();
 }
 
 describe('the guard, signed out', () => {
@@ -234,7 +208,7 @@ describe('the guard, signed out', () => {
     await open('/profile');
     expect(h1()).toBeNull();
     expect(signOutButton()).toBeUndefined();
-    expect(button(text(EN, 'common.retry'))).toBeUndefined();
+    expect(button(getLocaleText(ENGLISH_CODE, 'common.retry'))).toBeUndefined();
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -283,7 +257,7 @@ describe('the guard, signed out', () => {
   });
 
   // SHELL-12, D-59, D-107: the retry screen is in the visitor's language
-  it.each(CODES)('shows the retry screen in %s', async (code) => {
+  it.each(LANGUAGE_CODES)('shows the retry screen in %s', async (code) => {
     sessionStorage.setItem(SIGN_IN_STARTED_STORAGE_KEY, String(Date.now()));
     await open('/profile', code);
     expectSignInFailedScreen(code);
@@ -317,11 +291,11 @@ describe('the guard, signed out, redirect on its way', () => {
     ['already settled', settled],
   ])('calls signinRedirect once under StrictMode, redirect %s', async (_name, redirect) => {
     fakeUserManager.signinRedirect.mockImplementation(redirect);
-    await open('/profile?tab=2', EN, true);
+    await open('/profile?tab=2', ENGLISH_CODE, true);
     expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(1);
     expect(fakeUserManager.signinRedirect.mock.calls[0]).toEqual(googleAt('/profile?tab=2'));
     expect(h1()).toBeNull();
-    expect(button(text(EN, 'common.retry'))).toBeUndefined();
+    expect(button(getLocaleText(ENGLISH_CODE, 'common.retry'))).toBeUndefined();
   });
 
   // SHELL-21, D-59, D-107: the page comes back from the cache: inside the window a loop, past it not
@@ -369,8 +343,8 @@ describe('the guard, signed out, redirect on its way', () => {
     await pageshow(true);
     expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(1);
     // the member is there: no sign-in-failed screen (the Profile page may show now)
-    expect(h1()).not.toBe(text(EN, 'states.signIn.title'));
-    expect(button(text(EN, 'common.retry'))).toBeUndefined();
+    expect(h1()).not.toBe(getLocaleText(ENGLISH_CODE, 'states.signIn.title'));
+    expect(button(getLocaleText(ENGLISH_CODE, 'common.retry'))).toBeUndefined();
   });
 });
 
@@ -410,19 +384,21 @@ describe('the guard, signed in', () => {
   ])('shows the connection screen after %s', async (_name, failure) => {
     fetchMock.mockImplementationOnce(failure);
     await open('/profile');
-    expect(h1()).toBe(text(EN, 'states.error.title'));
-    expect(document.body.textContent).toContain(text(EN, 'states.loadFailed.text'));
+    expect(h1()).toBe(getLocaleText(ENGLISH_CODE, 'states.error.title'));
+    expect(document.body.textContent).toContain(
+      getLocaleText(ENGLISH_CODE, 'states.loadFailed.text')
+    );
     expect(signOutButton()).toBeUndefined();
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fakeUserManager.signinRedirect).not.toHaveBeenCalled();
     expect(fakeUserManager.removeUser).not.toHaveBeenCalled();
     // SHELL-18: only a 429 holds the button back
-    expect(button(text(EN, 'common.retry'))?.disabled).toBe(false);
+    expect(button(getLocaleText(ENGLISH_CODE, 'common.retry'))?.disabled).toBe(false);
 
     await pressRetry();
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(signOutButton()).toBeDefined();
-    expect(h1()).not.toBe(text(EN, 'states.error.title'));
+    expect(h1()).not.toBe(getLocaleText(ENGLISH_CODE, 'states.error.title'));
   });
 
   // SHELL-17, D-59: tab A signed out; tab B's next call sends nothing, and its guard goes to Google
@@ -448,7 +424,7 @@ describe('the guard, signed in', () => {
     await open('/profile');
     await pressRetry();
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(h1()).toBe(text(EN, 'states.error.title'));
+    expect(h1()).toBe(getLocaleText(ENGLISH_CODE, 'states.error.title'));
     expect(signOutButton()).toBeUndefined();
   });
 
@@ -460,14 +436,14 @@ describe('the guard, signed in', () => {
     expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(1);
     expect(fakeUserManager.signinRedirect.mock.calls[0]).toEqual(googleAt('/profile'));
     expect(signOutButton()).toBeUndefined();
-    expect(h1()).not.toBe(text(EN, 'states.error.title'));
+    expect(h1()).not.toBe(getLocaleText(ENGLISH_CODE, 'states.error.title'));
   });
 });
 
 describe('the guard, signed in, too many requests', () => {
   const RETRY_AFTER = DEFAULT_RETRY_AFTER_SECONDS + 5;
   const rateLimitText = (code: string, seconds: number): string =>
-    text(code, 'common.rateLimit.text').replace('{{n}}', String(seconds));
+    getLocaleText(code, 'common.rateLimit.text').replace('{{n}}', String(seconds));
 
   const tooMany = (headers: Record<string, string> = {}): Promise<Response> =>
     Promise.resolve(jsonResponse(STATUS_TOO_MANY_REQUESTS, undefined, headers));
@@ -485,21 +461,21 @@ describe('the guard, signed in, too many requests', () => {
     const headers: Record<string, string> = header === undefined ? {} : { 'retry-after': header };
     fetchMock.mockImplementationOnce(() => tooMany(headers));
     await open('/profile');
-    expect(h1()).toBe(text(EN, 'common.rateLimit.title'));
+    expect(h1()).toBe(getLocaleText(ENGLISH_CODE, 'common.rateLimit.title'));
     // a failure is announced to a screen reader
     expect(document.querySelector('[role="alert"]')?.textContent).toContain(
-      text(EN, 'common.rateLimit.title')
+      getLocaleText(ENGLISH_CODE, 'common.rateLimit.title')
     );
-    expect(document.body.textContent).toContain(rateLimitText(EN, seconds));
+    expect(document.body.textContent).toContain(rateLimitText(ENGLISH_CODE, seconds));
     expect(signOutButton()).toBeUndefined();
-    expect(button(text(EN, 'common.retry'))?.disabled).toBe(true);
+    expect(button(getLocaleText(ENGLISH_CODE, 'common.retry'))?.disabled).toBe(true);
 
     await waitSeconds(seconds - 1);
-    expect(button(text(EN, 'common.retry'))?.disabled).toBe(true);
+    expect(button(getLocaleText(ENGLISH_CODE, 'common.retry'))?.disabled).toBe(true);
     expect(fetchMock).toHaveBeenCalledTimes(1);
 
     await waitSeconds(1);
-    expect(button(text(EN, 'common.retry'))?.disabled).toBe(false);
+    expect(button(getLocaleText(ENGLISH_CODE, 'common.retry'))?.disabled).toBe(false);
     expect(fetchMock).toHaveBeenCalledTimes(1);
 
     await pressRetry();
@@ -516,19 +492,19 @@ describe('the guard, signed in, too many requests', () => {
     fetchMock.mockImplementationOnce(() => tooMany());
     await open('/profile');
     await waitSeconds(DEFAULT_RETRY_AFTER_SECONDS);
-    expect(button(text(EN, 'common.retry'))?.disabled).toBe(false);
+    expect(button(getLocaleText(ENGLISH_CODE, 'common.retry'))?.disabled).toBe(false);
 
     fetchMock.mockImplementationOnce(() => tooMany({ 'retry-after': String(RETRY_AFTER) }));
     await pressRetry();
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(h1()).toBe(text(EN, 'common.rateLimit.title'));
-    expect(document.body.textContent).toContain(rateLimitText(EN, RETRY_AFTER));
-    expect(button(text(EN, 'common.retry'))?.disabled).toBe(true);
+    expect(h1()).toBe(getLocaleText(ENGLISH_CODE, 'common.rateLimit.title'));
+    expect(document.body.textContent).toContain(rateLimitText(ENGLISH_CODE, RETRY_AFTER));
+    expect(button(getLocaleText(ENGLISH_CODE, 'common.retry'))?.disabled).toBe(true);
 
     await waitSeconds(RETRY_AFTER - 1);
-    expect(button(text(EN, 'common.retry'))?.disabled).toBe(true);
+    expect(button(getLocaleText(ENGLISH_CODE, 'common.retry'))?.disabled).toBe(true);
     await waitSeconds(1);
-    expect(button(text(EN, 'common.retry'))?.disabled).toBe(false);
+    expect(button(getLocaleText(ENGLISH_CODE, 'common.retry'))?.disabled).toBe(false);
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
@@ -541,11 +517,11 @@ describe('the guard, signed in, too many requests', () => {
   });
 
   // SHELL-18: the screen is in the member's language and the text carries the number
-  it.each(CODES)('has its words in %s', async (code) => {
-    expect(text(code, 'common.rateLimit.text')).toContain('{{n}}');
+  it.each(LANGUAGE_CODES)('has its words in %s', async (code) => {
+    expect(getLocaleText(code, 'common.rateLimit.text')).toContain('{{n}}');
     fetchMock.mockImplementationOnce(() => tooMany());
     await open('/profile', code);
-    expect(h1()).toBe(text(code, 'common.rateLimit.title'));
+    expect(h1()).toBe(getLocaleText(code, 'common.rateLimit.title'));
     expect(document.body.textContent).toContain(rateLimitText(code, DEFAULT_RETRY_AFTER_SECONDS));
   });
 });
@@ -639,9 +615,9 @@ describe('the callback page, a good code', () => {
   // SHELL-15, D-59: the library is asked once, even when React runs the effect twice
   it('reads the sign-in answer once under React StrictMode', async () => {
     goodCode('/spots/x');
-    await open(CALLBACK_PATH, EN, true);
+    await open(CALLBACK_PATH, ENGLISH_CODE, true);
     expect(fakeUserManager.signinRedirectCallback).toHaveBeenCalledTimes(1);
-    expect(currentPath()).toBe('/spots/x');
+    expect(readCurrentPath()).toBe('/spots/x');
   });
 });
 
@@ -659,7 +635,7 @@ describe('the callback page, a refusal', () => {
     await open(CALLBACK_PATH);
     expectSignInFailedScreen();
     expect(fakeUserManager.signinRedirect).not.toHaveBeenCalled();
-    expect(currentPath()).toBe(CALLBACK_PATH);
+    expect(readCurrentPath()).toBe(CALLBACK_PATH);
   });
 
   // SHELL-15, D-59, D-107: a good code the browser cannot keep is a failed sign-in
@@ -669,11 +645,11 @@ describe('the callback page, a refusal', () => {
     await open(CALLBACK_PATH);
     expectSignInFailedScreen();
     expect(fakeUserManager.signinRedirect).not.toHaveBeenCalled();
-    expect(currentPath()).toBe(CALLBACK_PATH);
+    expect(readCurrentPath()).toBe(CALLBACK_PATH);
   });
 
   // SHELL-15, D-59: the retry screen is in the visitor's language
-  it.each(CODES)('shows the retry screen in %s', async (code) => {
+  it.each(LANGUAGE_CODES)('shows the retry screen in %s', async (code) => {
     fakeUserManager.signinRedirectCallback.mockRejectedValue(
       new ErrorResponse({ error: 'access_denied' })
     );
