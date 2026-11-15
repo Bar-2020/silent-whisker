@@ -3,8 +3,8 @@ import { ApiError } from '@shared/api/api-error';
 import { signIn } from '@shared/auth/session';
 import { AuthFailedScreen } from '../auth-failed-screen/AuthFailedScreen';
 import { useMemberProfile } from '../use-member-profile';
-import { useSignInRedirect } from '../use-sign-in-redirect';
 import { useSignInStatus } from '../use-sign-in-status';
+import { SignInStatus } from '../use-sign-in-status.types';
 
 /**
  * Every route below it needs a sign-in (R-22): a signed-out visit goes to Google and comes back to
@@ -14,21 +14,18 @@ import { useSignInStatus } from '../use-sign-in-status';
 export function RequireSignIn() {
   const { pathname, search, hash } = useLocation();
   const returnTo = `${pathname}${search}${hash}`;
-  const status = useSignInStatus();
-  const redirectStopped = useSignInRedirect(status, returnTo);
+  const status = useSignInStatus(returnTo);
   const { profile, failure, retry } = useMemberProfile(status);
 
-  if (redirectStopped) {
+  if (status === SignInStatus.RedirectStopped) {
     return <AuthFailedScreen kind="signIn" onRetry={() => void signIn(returnTo)} />;
   }
   if (failure) {
     const waitSeconds = failure instanceof ApiError ? failure.retryAfterSeconds : undefined;
-    return (
-      <AuthFailedScreen
-        kind={waitSeconds === undefined ? 'connection' : 'rateLimited'}
-        waitSeconds={waitSeconds}
-        onRetry={retry}
-      />
+    return waitSeconds === undefined ? (
+      <AuthFailedScreen kind="connection" onRetry={retry} />
+    ) : (
+      <AuthFailedScreen kind="rateLimited" waitSeconds={waitSeconds} onRetry={retry} />
     );
   }
   // F4: while `profile.terms_accepted` is false, show the sign-up form here instead of the page.

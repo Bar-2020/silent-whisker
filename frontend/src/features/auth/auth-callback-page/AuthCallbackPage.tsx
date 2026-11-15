@@ -6,9 +6,7 @@ import { signIn } from '@shared/auth/session';
 import { userManager } from '@shared/auth/user-manager';
 import { AuthFailedScreen } from '../auth-failed-screen/AuthFailedScreen';
 import { returnToSchema } from '../return-to.schema';
-
-/** Thrown when the code was accepted but the browser kept no tokens (storage blocked): no loop. */
-class TokensNotKeptError extends Error {}
+import { TokensNotKeptError } from '../tokens-not-kept-error';
 
 async function completeSignIn(): Promise<string> {
   const user = await userManager.signinRedirectCallback();
