@@ -128,7 +128,7 @@ One phase, one PR or smaller. Finish a phase before the next. Inside a phase, bu
    layer; municipal stations become loggable (D-35). Proposed: when several members dispute one
    member's logs, an admin gets a flag and that member's next logs need a photo.
 5. Cats, the feed, likes, comments, chat.
-6. Cat alerts, stats, landing-page ads, donation link, launch checklist (privacy policy, terms, Hebrew text moderation test).
+6. Cat alerts, stats, landing-page ads, donation link, launch checklist (privacy policy, terms, Hebrew text moderation test, and a native speaker's read of every text in all four languages: the screens are built with texts written by Claude, and all of them are checked together at the end).
 7. Automated testing of the whole app, frontend and backend (D-90): every scenario of [TESTING.md](TESTING.md) becomes a test, written from the specs, plus browser journeys, mutation checks and a deployed smoke test.
 
 ## Evidence on Hand

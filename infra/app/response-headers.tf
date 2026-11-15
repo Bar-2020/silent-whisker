@@ -8,8 +8,11 @@ locals {
   # Everything loads from the answer's own address. A third party is added here by name, in the
   # change that first needs it: the sign-in host (D-59), the geocoder (D-88), Google's photo host
   # for `avatar_url` (D-21) and the map tiles of the real app.
+  # The app's token request goes to Cognito's own address (D-107); the redirects are navigations, which this does not limit.
+  cognito_origin = "https://${local.auth.domain_prefix}.auth.${local.constants.selected_region}.amazoncognito.com"
+
   content_security_policy = {
-    app = "default-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+    app = "default-src 'self'; connect-src 'self' ${local.cognito_origin}; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
     # The mocks load Leaflet from cdnjs and map tiles from OpenStreetMap, and the viewer frames its own pages (D-89).
     design = "default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://cdnjs.cloudflare.com; img-src 'self' data: https://cdnjs.cloudflare.com https://tile.openstreetmap.org; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
     api    = "default-src 'none'; frame-ancestors 'none'"

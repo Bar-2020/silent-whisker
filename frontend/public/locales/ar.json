@@ -2,6 +2,9 @@
   "app.name": "Silent Whisker",
   "common.close": "إغلاق",
   "common.contact": "التواصل",
+  "common.rateLimit.text": "يمكن المحاولة بعد {{n}} ثانية.",
+  "common.rateLimit.title": "طلبات كثيرة",
+  "common.retry": "إعادة المحاولة",
   "landing.footer": "Silent Whisker. مفتوح المصدر بترخيص MIT.",
   "landing.footer.label": "روابط التذييل",
   "landing.footer.tagline": "خريطة مجانية لمن يطعمون قطط الشوارع.",
@@ -74,7 +77,12 @@
   "legal.terms.title": "شروط الاستخدام",
   "legal.toc": "المحتويات",
   "nav.home": "الرئيسية",
+  "profile.signOut": "تسجيل الخروج",
+  "states.error.title": "حدث خطأ ما",
+  "states.loadFailed.text": "تعذّر تحميل حسابك. تحقق من الاتصال وحاول مجددًا.",
   "states.notFound.back": "العودة إلى الخريطة",
   "states.notFound.text": "ربما الرابط خاطئ أو أُزيلت الصفحة.",
-  "states.notFound.title": "الصفحة غير موجودة"
+  "states.notFound.title": "الصفحة غير موجودة",
+  "states.signIn.text": "لم تُكمل Google تسجيل دخولك. يمكن المحاولة مجددًا.",
+  "states.signIn.title": "لم يكتمل تسجيل الدخول"
 }

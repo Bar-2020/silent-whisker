@@ -12,6 +12,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { App } from '@app/App';
 import { CONTACT_EMAIL, SOURCE_CODE_URL } from '@constants/contact';
 import { LANGUAGES } from '@constants/languages';
+import { AFTER_SIGN_IN_PATH, SIGN_IN_IDENTITY_PROVIDER } from '@constants/sign-in';
+import { fakeUserManager } from '@shared/test-support/sign-in-fakes';
+
+vi.mock('@shared/auth/user-manager', async () => {
+  const { fakeUserManager: fake, FAKE_COGNITO_DOMAIN } =
+    await import('@shared/test-support/sign-in-fakes');
+  return { userManager: fake, COGNITO_DOMAIN: FAKE_COGNITO_DOMAIN };
+});
 
 const localeSchema = z.record(z.string(), z.string());
 
@@ -48,6 +56,7 @@ const PAGES = [
 let fetchSpy: ReturnType<typeof vi.fn>;
 
 beforeEach(() => {
+  fakeUserManager.reset();
   fetchSpy = vi.fn(() => Promise.reject(new Error('no network in tests')));
   vi.stubGlobal('fetch', fetchSpy);
 });
@@ -206,8 +215,8 @@ describe.each(CODES)('landing page signed out, language %s', (code) => {
     expect(document.querySelectorAll(`[id="${id}"]`)).toHaveLength(1);
   });
 
-  // LAND-06, D-39: sign-in is not built yet, so every sign-in button is disabled
-  it('has every sign-in button disabled, and clicking one does nothing', async () => {
+  // LAND-06, D-39, D-59: every sign-in button is enabled and starts the Google sign-in
+  it('has every sign-in button enabled, starting the Google sign-in with AFTER_SIGN_IN_PATH', async () => {
     await openRoute('/', code);
     const labels = [text(code, 'landing.signInShort'), text(code, 'landing.signIn')];
     const buttons = Array.from(document.querySelectorAll('button')).filter((b) =>
@@ -215,12 +224,46 @@ describe.each(CODES)('landing page signed out, language %s', (code) => {
     );
     // top bar, hero and the closing section
     expect(buttons.length).toBeGreaterThanOrEqual(3);
-    const before = window.location.href;
-    for (const button of buttons) {
-      expect(button.disabled).toBe(true);
+    for (const [index, button] of buttons.entries()) {
+      expect(button.disabled).toBe(false);
       fireEvent.click(button);
+      await waitFor(() => {
+        expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(index + 1);
+      });
+      expect(fakeUserManager.signinRedirect).toHaveBeenLastCalledWith({
+        state: AFTER_SIGN_IN_PATH,
+        extraQueryParams: { identity_provider: SIGN_IN_IDENTITY_PROVIDER },
+      });
     }
-    expect(window.location.href).toBe(before);
     expect(apiCalls()).toEqual([]);
+  });
+
+  // SHELL-19, D-59: the redirect cannot start: the button shows the retry word, and a second press tries again
+  it('shows the retry word on a sign-in button whose redirect fails, and tries again', async () => {
+    fakeUserManager.signinRedirect.mockRejectedValue(new Error('cannot reach Google'));
+    await openRoute('/', code);
+    const label = text(code, 'landing.signInShort');
+    const retryWord = text(code, 'common.retry');
+    const first = Array.from(document.querySelectorAll('button')).find(
+      (b) => b.textContent.trim() === label || b.textContent.trim() === text(code, 'landing.signIn')
+    );
+    expect(first).toBeDefined();
+    if (first === undefined) return;
+
+    fireEvent.click(first);
+    await waitFor(() => {
+      expect(first.textContent.trim()).toBe(retryWord);
+    });
+    expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(1);
+    expect(first.disabled).toBe(false);
+
+    fireEvent.click(first);
+    await waitFor(() => {
+      expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(2);
+    });
+    expect(fakeUserManager.signinRedirect).toHaveBeenLastCalledWith({
+      state: AFTER_SIGN_IN_PATH,
+      extraQueryParams: { identity_provider: SIGN_IN_IDENTITY_PROVIDER },
+    });
   });
 });

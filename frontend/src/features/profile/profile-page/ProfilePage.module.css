@@ -1,0 +1,10 @@
+.signOut {
+  min-block-size: var(--tap);
+  padding-inline: var(--s-5);
+  border: 1.5px solid var(--dado);
+  border-radius: var(--r-m);
+  background: var(--surface);
+  color: var(--dado);
+  font: var(--type-body-strong);
+  cursor: pointer;
+}
