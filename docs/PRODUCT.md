@@ -12,7 +12,7 @@ web
 
 ## Stack
 
-React, Vite, TypeScript, TanStack Query, react-leaflet, react-i18next, liquid-glass-react (the glass navigation,
+React, Vite, TypeScript, TanStack Query, react-hook-form (every form, with a zod schema, D-108), react-leaflet, react-i18next, liquid-glass-react (the glass navigation,
 D-73). AWS: S3 + CloudFront, Lambda, DynamoDB, Cognito. Terraform, deployed from GitHub Actions with a deploy-only key (D-02).
 
 ## Who uses it

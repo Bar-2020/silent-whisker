@@ -13,3 +13,6 @@ export const PROFILE_SAVES_PER_DAY = 5;
 
 /** The text check gives up after this long and the save answers CHECK_UNAVAILABLE (D-62). */
 export const TEXT_CHECK_TIMEOUT_MS = 4000;
+
+/** The avatar shows the first letter of this many words of the name when there is no photo. */
+export const AVATAR_INITIALS_COUNT = 2;

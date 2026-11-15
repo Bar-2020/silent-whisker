@@ -5,24 +5,26 @@ import { SECTION_ID } from '../sections';
 import { SignInButton } from '../sign-in-button/SignInButton';
 import styles from './LandingNav.module.css';
 
-/** A floating glass pill over the hero band (DESIGN.md, Landing). */
+/** A floating glass pill over the hero band (DESIGN.md, Landing). It sits in a rail with no height of its own, so the band starts at the very top of the page. */
 export function LandingNav() {
   const { t } = useTranslation();
 
   return (
-    <header className={styles.nav}>
-      <div className={styles.brand}>
-        <BrandLink />
-      </div>
-      <nav className={styles.links} aria-label={t('landing.nav.label')}>
-        <a href={`#${SECTION_ID.how}`}>{t('landing.nav.how')}</a>
-        <a href={`#${SECTION_ID.privacy}`}>{t('landing.nav.privacy')}</a>
-        <a href={`#${SECTION_ID.support}`}>{t('landing.nav.support')}</a>
-      </nav>
-      <div className={styles.end}>
-        <LanguageMenu />
-        <SignInButton size="small" onBand />
-      </div>
-    </header>
+    <div className={styles.rail}>
+      <header className={styles.nav}>
+        <div className={styles.brand}>
+          <BrandLink />
+        </div>
+        <nav className={styles.links} aria-label={t('landing.nav.label')}>
+          <a href={`#${SECTION_ID.how}`}>{t('landing.nav.how')}</a>
+          <a href={`#${SECTION_ID.privacy}`}>{t('landing.nav.privacy')}</a>
+          <a href={`#${SECTION_ID.support}`}>{t('landing.nav.support')}</a>
+        </nav>
+        <div className={styles.end}>
+          <LanguageMenu />
+          <SignInButton size="small" onBand />
+        </div>
+      </header>
+    </div>
   );
 }

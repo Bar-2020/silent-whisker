@@ -36,10 +36,14 @@ async function refusal(response: Response): Promise<ApiError> {
   return new ApiError(kind, code, wait.success ? wait.data : DEFAULT_RETRY_AFTER_SECONDS);
 }
 
-async function send(path: string, token: string): Promise<Response> {
+async function send(path: string, token: string, init: RequestInit): Promise<Response> {
   try {
     return await fetch(`${API_PATH_PREFIX}${path}`, {
-      headers: { authorization: `Bearer ${token}` },
+      ...init,
+      headers: {
+        authorization: `Bearer ${token}`,
+        ...(init.body && { 'content-type': 'application/json' }),
+      },
     });
   } catch {
     // No connection: nothing is queued, the caller says so and the member tries again (SHELL-06).
@@ -47,10 +51,11 @@ async function send(path: string, token: string): Promise<Response> {
   }
 }
 
-/** One GET to the API with the member's ID token. The answer is parsed with `schema` (D-101). */
+/** One call to the API with the member's ID token, a GET unless `init` says otherwise (a JSON `body` is a string). The answer is parsed with `schema` (D-101). */
 export async function apiRequest<Schema extends z.ZodType>(
   path: string,
-  schema: Schema
+  schema: Schema,
+  init: RequestInit = {}
 ): Promise<z.infer<Schema>> {
   const token = await getIdToken().catch(() => {
     throw new ApiError('unavailable');
@@ -60,7 +65,7 @@ export async function apiRequest<Schema extends z.ZodType>(
     await forgetSession();
     throw new ApiError('sessionExpired');
   }
-  const response = await send(path, token);
+  const response = await send(path, token, init);
   if (!response.ok) throw await refusal(response);
   return schema.parse(await response.json());
 }

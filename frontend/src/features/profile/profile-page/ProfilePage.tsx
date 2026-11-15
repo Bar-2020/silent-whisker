@@ -1,14 +1,75 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useOutletContext } from 'react-router';
 import { signOut } from '@shared/auth/session';
+import { FormButton } from '@shared/components/form-button/FormButton';
+import { FormButtonVariant } from '@shared/components/form-button/FormButton.types';
+import { EditIcon } from '@shared/components/icon/EditIcon';
+import { BannedAccountNotice } from '../banned-account-notice/BannedAccountNotice';
+import { EditProfileForm } from '../edit-profile-form/EditProfileForm';
+import { MemberAvatar } from '../member-avatar/MemberAvatar';
+import { AvatarSize } from '../member-avatar/MemberAvatar.types';
+import { profileContextSchema } from '../profile-context.schema';
 import styles from './ProfilePage.module.css';
 
-/** F4 builds the page; until then it holds the one thing a signed-in member must be able to do. */
+/** Who the member is to everyone else, a way to change it, and sign out. Stats and settings come with their own backend. */
 export function ProfilePage() {
   const { t } = useTranslation();
+  const { profile, hasGooglePhoto } = profileContextSchema.parse(useOutletContext());
+  const [editing, setEditing] = useState(false);
+  const banned = profile.status === 'banned';
+  const fullName = profile.display_name ?? '';
 
   return (
-    <button type="button" className={styles.signOut} onClick={() => void signOut()}>
-      {t('profile.signOut')}
-    </button>
+    <div className={styles.page}>
+      <title>{`${t('profile.heading')} | ${t('app.name')}`}</title>
+      <header className={styles.header}>
+        <h1>{t('profile.heading')}</h1>
+        {!banned && !editing && (
+          <button
+            type="button"
+            className={styles.edit}
+            aria-label={t('profile.edit.title')}
+            onClick={() => {
+              setEditing(true);
+            }}
+          >
+            <EditIcon />
+          </button>
+        )}
+      </header>
+      {banned && <BannedAccountNotice />}
+      {editing ? (
+        <EditProfileForm
+          profile={profile}
+          hasGooglePhoto={hasGooglePhoto}
+          onClose={() => {
+            setEditing(false);
+          }}
+        />
+      ) : (
+        <div className={styles.identity}>
+          <MemberAvatar fullName={fullName} photoUrl={profile.avatar_url} size={AvatarSize.Large} />
+          <div className={styles.text}>
+            <h2>
+              <bdi>{fullName}</bdi>
+            </h2>
+            <p className={styles.city}>
+              <bdi>{profile.city}</bdi>
+            </p>
+          </div>
+        </div>
+      )}
+      <FormButton
+        type="button"
+        variant={FormButtonVariant.Secondary}
+        pending={false}
+        onClick={() => {
+          void signOut();
+        }}
+      >
+        {t('profile.signOut')}
+      </FormButton>
+    </div>
   );
 }

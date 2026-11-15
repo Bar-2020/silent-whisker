@@ -1,0 +1,4 @@
+.message {
+  font: var(--type-label);
+  color: var(--bad-ink);
+}

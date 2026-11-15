@@ -1,0 +1,78 @@
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--tap-l);
+  padding-inline: var(--s-5);
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  border-radius: var(--r-m);
+  font: var(--type-body-strong);
+  transition:
+    background-color var(--dur-1) var(--ease),
+    border-color var(--dur-1) var(--ease);
+}
+
+.button[data-variant='primary'] {
+  background: var(--dado);
+  color: var(--dado-ink);
+}
+
+.button[data-variant='primary']:hover {
+  background: var(--dado-deep);
+}
+
+.button[data-variant='secondary'] {
+  border-color: var(--dado);
+  background: var(--surface);
+  color: var(--dado);
+}
+
+.button[data-variant='secondary']:hover {
+  background: var(--dado-tint);
+}
+
+.button[data-variant='quiet'] {
+  background: transparent;
+  color: var(--dado);
+}
+
+.button[data-variant='quiet']:hover {
+  background: var(--dado-tint);
+}
+
+/* Pending: no taps, the label hidden but still in the page, one spinner in its place. */
+.button[aria-busy='true'] {
+  pointer-events: none;
+}
+
+.button[aria-busy='true'] .label {
+  visibility: hidden;
+}
+
+.spinner {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  inline-size: 20px;
+  block-size: 20px;
+  margin-block-start: -10px;
+  margin-inline-start: -10px;
+  border: 2.5px solid currentcolor;
+  border-block-start-color: transparent;
+  border-radius: 50%;
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 2400ms;
+  }
+}

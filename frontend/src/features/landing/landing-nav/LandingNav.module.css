@@ -1,9 +1,15 @@
 @import '../../../styles/breakpoints.css';
 
-.nav {
+/* No height: the content below starts at the page top and the pill floats over it. */
+.rail {
   position: sticky;
-  inset-block-start: var(--nav-gap);
+  inset-block-start: 0;
   z-index: var(--z-nav);
+  display: flow-root;
+  block-size: 0;
+}
+
+.nav {
   display: flex;
   align-items: center;
   gap: var(--s-3);

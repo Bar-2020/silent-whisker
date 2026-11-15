@@ -1,0 +1,48 @@
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.illustration {
+  display: grid;
+  place-items: center;
+  inline-size: 56px;
+  block-size: 56px;
+  border-radius: 50%;
+  background: var(--dado-tint);
+  color: var(--dado);
+  --icon-size: 1.75rem;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.lead {
+  color: var(--ink-2);
+}
+
+/* The buttons sit on a flat white bar at the bottom of the screen, above the safe area (DESIGN.md). */
+.footbar {
+  position: sticky;
+  inset-block-end: 0;
+  z-index: var(--z-bar);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  margin-block-start: var(--s-5);
+  padding-block: var(--s-3) calc(var(--s-3) + env(safe-area-inset-bottom, 0px));
+  background: var(--surface);
+}
+
+.footbar > * {
+  inline-size: 100%;
+}

@@ -1,0 +1,43 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.label {
+  font: var(--type-body-strong);
+}
+
+.hint {
+  font: var(--type-small);
+  color: var(--ink-2);
+}
+
+.input {
+  inline-size: 100%;
+  min-block-size: var(--tap);
+  padding: var(--s-3) var(--s-4);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--r-s);
+  background: var(--surface);
+}
+
+.input::placeholder {
+  color: var(--ink-3);
+  opacity: 1;
+}
+
+.input:focus-visible {
+  border-color: var(--dado);
+  outline-offset: 0;
+}
+
+.input[aria-invalid='true'] {
+  border-color: var(--bad);
+  background: var(--bad-tint);
+}
+
+/* On the red tint the usual placeholder grey is just under 4.5:1. */
+.input[aria-invalid='true']::placeholder {
+  color: var(--ink-2);
+}

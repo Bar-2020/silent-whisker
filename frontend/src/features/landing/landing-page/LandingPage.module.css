@@ -1,4 +1,4 @@
-/* How far the hero band runs up under the navigation pill. */
+/* Room the hero keeps clear for the navigation pill, which floats over the band's top. */
 .page {
-  --nav-offset: 84px;
+  --nav-offset: 90px;
 }

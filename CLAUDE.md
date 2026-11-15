@@ -47,7 +47,7 @@ hooks and data access. **Every component has its own folder** (kebab-case, `land
 (`<name>.types.ts`); constants stay in the repo's `shared/constants/`. **Features never import from
 each other.** In the frontend a folder is imported through its alias (`@app`, `@features`, `@shared`,
 `@styles`, `@locales`, `@constants`, `@schemas`; the `paths` of `tsconfig.json`); one `../` is fine,
-two or more is a lint error. Text takes a `--type-*` variant whole and a `z-index` is a `--z-*` layer
+two or more is a lint error. Every form uses `react-hook-form` with a zod schema (D-108); a form never keeps its own field state. Text takes a `--type-*` variant whole and a `z-index` is a `--z-*` layer
 (`frontend/src/styles/global.css`); Stylelint refuses anything else.
 
 @.claude/instructions/working-style.md

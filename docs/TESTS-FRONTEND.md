@@ -72,6 +72,10 @@ unless a row says otherwise.
 | FIRST-04 | e | The server answers `MODERATION_REJECTED`, `CITY_NOT_FOUND`, `CHECK_UNAVAILABLE`, `PROFILE_SAVE_DAILY_LIMIT`, 429, offline | Each its own plain message; a refused name shows the contact address; the form keeps its values | D-62, D-74 |
 | FIRST-05 | e | The location screen: granted, denied, ignored, already granted, no geolocation in the browser | Map at the phone; city map with a one-line notice; never blocks; screen skipped; still works. Shown once per device; "continue" disabled while the prompt is open | D-31 |
 | FIRST-06 | e | The install guide on iPhone, Android, Chrome or Edge, Safari on a Mac, and an unknown browser | The right guide, or the list; Continue works; "later from Profile" is true | D-01 |
+| FIRST-07 | c | Signed in, `GET /profile` answers `terms_accepted` false, then true, then false with `status` `banned` | The sign-up form takes the place of the page and the address stays; then the page; the banned member sees the form with the permanent notice and a Sign out button | R-36, D-69, D-72, D-108 |
+| FIRST-08 | c | Fill the sign-up form (spaces around the name) and press Continue, with a Google photo in the ID token and without one | One `PATCH /api/profile` carrying the ID token and the trimmed name, the city, the photo answer and `accept_terms: true`; the answer is parsed with the profile schema and the page replaces the form; with no photo in the token the question is not shown and `show_google_photo` is not sent | D-27, D-69, D-101, D-108 |
+| FIRST-09 | c | The server answers `INVALID_INPUT`, `MODERATION_REJECTED`, `CITY_NOT_FOUND`, `PROFILE_SAVE_DAILY_LIMIT` with `Retry-After: 7200`, a bare `429`, `CHECK_UNAVAILABLE`, `BANNED`, `503` and no connection | Each its own plain message: the refused text names the contact address, the city one sits under the city field, the daily limit says to try again later (no wait is counted), the banned one is the permanent notice; the typed values stay and the button works again | D-62, D-61, D-72, D-74, D-60 |
+| FIRST-10 | c | The ID token read is slow (the fake user answers late); then a form for a member whose token has no Google photo | Nothing of the sign-up form and nothing of the Profile page (so none of the edit form) is drawn until the read is done, so the photo question never appears late; with no photo the edit form has no note about the picture | D-108 |
 
 ## Profile (ME)
 
@@ -81,8 +85,12 @@ unless a row says otherwise.
 | ME-02 | e | A banned member in every screen | A permanent notice in Profile; every write refused with a plain message; reads and the feed work; delete account works | R-08, D-72 |
 | ME-03 | e | Delete the account: cancel, confirm, sign in again | Cancel keeps it; confirm signs out to the landing page; signing in again starts the first-run steps from the beginning | D-71 |
 | ME-04 | e | The admin group as admin and member, with and without location; clear the flag | Only admins see it, at the top: pending spots, requests, reports, nearest first, or oldest first with no location; gone after the flag is cleared; a typed URL shows nothing | D-78 |
-| ME-05 | c | Avatar: chosen photo, broken address, names in Hebrew, Arabic, Russian, emoji | Falls back to initials, taken as characters, never half an emoji | D-21 |
+| ME-05 | c | Avatar: chosen photo, broken address, names in Hebrew, Arabic, Russian, emoji (also one made of several parts, such as a family emoji, and a letter with a combining mark) | Falls back to initials, taken as whole visible characters, never half an emoji or a bare mark | D-21 |
 | ME-06 | e | Location help in Profile after a denial | Says how to turn it back on, per browser | D-31 |
+| ME-07 | c | Open Profile as a member with a chosen Google photo, one without, and one whose photo address is broken; names in Hebrew, Arabic, Russian and with emoji | Name, city and the photo or the initials; a broken address falls back to initials; sign out is there | D-21, D-27 |
+| ME-08 | c | Press the pencil, change the name, Save; press it again and Cancel; change nothing and Save | One `PATCH /api/profile` with name, city and photo answer and no `accept_terms`, the page shows the new values; Cancel and an unchanged Save send nothing; the same errors as the sign-up form, under their fields | D-27, D-62, D-108 |
+| ME-09 | c | Profile of a banned member | The permanent notice; no pencil; Sign out works | R-08, D-72 |
+| ME-10 | c | An active member presses Save and the server answers `BANNED`; then types in a field | The permanent notice shows and stays while typing, also on the Profile page behind the form (no pencil any more) | R-08, D-72 |
 
 ## Landing and legal (LAND)
 

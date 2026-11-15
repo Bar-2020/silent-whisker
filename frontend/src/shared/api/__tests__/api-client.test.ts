@@ -43,6 +43,7 @@ const STATUS_LAST_CLIENT_ERROR = STATUS_SERVER_ERROR - 1;
 const RETRY_AFTER = DEFAULT_RETRY_AFTER_SECONDS + 5;
 
 const answerSchema = z.object({ value: z.string() });
+const EMPTY_JSON = JSON.stringify({});
 
 const fetchMock = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>();
 
@@ -256,6 +257,64 @@ describe('apiRequest maps every failure to one kind', () => {
   });
 });
 
+describe('apiRequest with a body maps every failure the same way', () => {
+  // SHELL-06, R-36, D-60, D-72: a PATCH is refused as a GET is; nothing is retried
+  it.each(CASES)('PATCH, $name', async ({ status, code, kind, tokensRemoved }) => {
+    fetchMock.mockResolvedValue(jsonResponse(status, code === undefined ? undefined : { code }));
+    const error = await failureOf(
+      apiRequest('/thing', answerSchema, { method: 'PATCH', body: JSON.stringify({ a: 1 }) })
+    );
+    expect(error).toBeInstanceOf(ApiError);
+    if (!(error instanceof ApiError)) throw new Error('not an ApiError');
+    expect(error.kind).toBe(kind);
+    expect(error.code).toBe(code);
+    expect(fakeUserManager.removeUser).toHaveBeenCalledTimes(tokensRemoved ? 1 : 0);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  // SHELL-06, R-21, D-60: a 429 on a PATCH carries its wait
+  it('PATCH, 429 with Retry-After', async () => {
+    fetchMock.mockResolvedValue(
+      jsonResponse(
+        STATUS_TOO_MANY_REQUESTS,
+        { code: 'RATE_LIMITED' },
+        { 'retry-after': String(RETRY_AFTER) }
+      )
+    );
+    const error = await failureOf(
+      apiRequest('/thing', answerSchema, { method: 'PATCH', body: EMPTY_JSON })
+    );
+    expect(error).toBeInstanceOf(ApiError);
+    if (!(error instanceof ApiError)) throw new Error('not an ApiError');
+    expect(error.kind).toBe('rateLimited');
+    expect(error.retryAfterSeconds).toBe(RETRY_AFTER);
+  });
+
+  // SHELL-06, D-60: no connection, once
+  it('PATCH, no connection is unavailable and is sent once', async () => {
+    fetchMock.mockRejectedValue(new TypeError('Failed to fetch'));
+    const error = await failureOf(
+      apiRequest('/thing', answerSchema, { method: 'PATCH', body: EMPTY_JSON })
+    );
+    expect(error).toBeInstanceOf(ApiError);
+    if (!(error instanceof ApiError)) throw new Error('not an ApiError');
+    expect(error.kind).toBe('unavailable');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  // SHELL-06, SHELL-17, D-59: nobody signed in: nothing leaves the browser
+  it('PATCH, no signed-in user sends nothing', async () => {
+    fakeUserManager.setUser(null);
+    const error = await failureOf(
+      apiRequest('/thing', answerSchema, { method: 'PATCH', body: EMPTY_JSON })
+    );
+    expect(error).toBeInstanceOf(ApiError);
+    if (!(error instanceof ApiError)) throw new Error('not an ApiError');
+    expect(error.kind).toBe('sessionExpired');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
 describe('apiRequest and 429', () => {
   const WAITS: [string, string | undefined, number][] = [
     ['no header', undefined, DEFAULT_RETRY_AFTER_SECONDS],
@@ -367,6 +426,53 @@ describe('apiRequest on success', () => {
     fetchMock.mockResolvedValue(jsonResponse(STATUS_OK, PROFILE));
     await expect(getProfile()).resolves.toEqual(PROFILE);
     expect(fetchMock.mock.calls[0][0]).toBe(`${API_PATH_PREFIX}/profile`);
+  });
+
+  // SHELL-13, D-59: the method given is the method sent, and a plain GET carries no body
+  it('sends GET with no body when the method is GET', async () => {
+    await apiRequest('/thing', answerSchema, { method: 'GET' });
+    const [, init] = fetchMock.mock.calls[0];
+    expect((init?.method ?? 'GET').toUpperCase()).toBe('GET');
+    expect(init?.body ?? null).toBeNull();
+    expect(new Headers(init?.headers).get('content-type')).toBeNull();
+  });
+
+  // SHELL-13, D-59: with no third argument the call is a GET with no body and no JSON type
+  it('is a GET with no body and no content-type when no init is given', async () => {
+    await apiRequest('/thing', answerSchema);
+    const [, init] = fetchMock.mock.calls[0];
+    expect((init?.method ?? 'GET').toUpperCase()).toBe('GET');
+    expect(init?.body ?? null).toBeNull();
+    expect(new Headers(init?.headers).get('content-type')).toBeNull();
+  });
+
+  // SHELL-13, D-59, D-101: a PATCH carries the ID token, the JSON type and the body as JSON text
+  it('sends PATCH with the JSON text of the body and the ID token', async () => {
+    const body = { display_name: 'דנה', note: 'a "quoted" 🐱' };
+    const result = await apiRequest('/thing', answerSchema, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    });
+    expect(result).toEqual({ value: 'ok' });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe(`${API_PATH_PREFIX}/thing`);
+    expect(init?.method?.toUpperCase()).toBe('PATCH');
+    const headers = new Headers(init?.headers);
+    expect(headers.get('content-type')).toBe('application/json');
+    expect(headers.get('authorization')).toBe(`Bearer ${ID_TOKEN}`);
+    expect(headers.get('authorization')).not.toContain(ACCESS_TOKEN);
+    expect(init?.body).toBe(JSON.stringify(body));
+  });
+
+  // SHELL-13, D-101: the answer of a PATCH is parsed too
+  it('throws a ZodError when the answer to a PATCH does not fit the schema', async () => {
+    fetchMock.mockResolvedValue(jsonResponse(STATUS_OK, { value: 5 }));
+    const error = await failureOf(
+      apiRequest('/thing', answerSchema, { method: 'PATCH', body: EMPTY_JSON })
+    );
+    expect(error).toBeInstanceOf(ZodError);
+    expect(error).not.toBeInstanceOf(ApiError);
   });
 
   // SHELL-13, D-101: a profile with a wrong field never reaches a screen

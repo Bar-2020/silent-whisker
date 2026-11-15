@@ -1,0 +1,25 @@
+.notice {
+  display: flex;
+  gap: var(--s-3);
+  align-items: flex-start;
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-m);
+  background: var(--bad-tint);
+  color: var(--ink);
+}
+
+.notice svg {
+  margin-block-start: 1px;
+  color: var(--bad-ink);
+}
+
+.notice p {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  min-inline-size: 0;
+}
+
+.notice strong {
+  color: var(--bad-ink);
+}
