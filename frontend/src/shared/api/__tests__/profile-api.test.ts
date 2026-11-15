@@ -1,5 +1,4 @@
 // @vitest-environment jsdom
-import { secondsInHour } from 'date-fns/constants';
 import { z, ZodError } from 'zod';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
@@ -61,6 +60,9 @@ async function failureOf(call: Promise<unknown>): Promise<unknown> {
   throw new Error('the call did not fail');
 }
 
+/** Two hours, as the server sends it with the daily save limit (FIRST-09). */
+const DAILY_LIMIT_RETRY_AFTER = 7200;
+
 const VALID = { display_name: 'Dana Levi', city: 'Haifa' };
 
 /** A refused body may be thrown at once or rejected later: both are a refusal. */
@@ -80,7 +82,7 @@ const REFUSALS: Refusal[] = [
     status: STATUS_TOO_MANY_REQUESTS,
     code: 'PROFILE_SAVE_DAILY_LIMIT',
     kind: 'rateLimited',
-    retryAfter: secondsInHour * 2,
+    retryAfter: DAILY_LIMIT_RETRY_AFTER,
   },
   { status: STATUS_UNPROCESSABLE, code: 'MODERATION_REJECTED', kind: 'rejected' },
   { status: STATUS_UNPROCESSABLE, code: 'CITY_NOT_FOUND', kind: 'rejected' },

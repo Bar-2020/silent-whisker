@@ -6,8 +6,8 @@ export enum PhotoChoice {
 }
 
 export interface ProfileFormValues {
-  name: string;
-  city: string;
-  photo: PhotoChoice;
-  terms: boolean;
+  fullName: string;
+  cityName: string;
+  photoChoice: PhotoChoice;
+  termsAccepted: boolean;
 }

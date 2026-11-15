@@ -13,7 +13,7 @@ export function ProfileTextField({
   hintKey,
   autoComplete,
 }: {
-  name: 'name' | 'city';
+  name: 'fullName' | 'cityName';
   labelKey: ParseKeys;
   placeholderKey: ParseKeys;
   hintKey: ParseKeys;

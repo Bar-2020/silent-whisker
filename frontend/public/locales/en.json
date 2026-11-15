@@ -106,7 +106,7 @@
   "profile.edit.photoHint": "Changing the picture itself will come later.",
   "profile.edit.title": "Edit details",
   "profile.error.checkUnavailable": "The check is not available right now. Try again a little later.",
-  "profile.error.dailyLimit": "Your details were saved too many times today. Try again in {{wait}}.",
+  "profile.error.dailyLimit": "Your details were saved too many times today. Try again later.",
   "profile.error.generic": "The details could not be saved. Try again.",
   "profile.error.invalid": "Some details are not valid. Check them and try again.",
   "profile.error.unavailable": "Could not reach the server. Check the connection and try again.",

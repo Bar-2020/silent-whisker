@@ -106,7 +106,7 @@
   "profile.edit.photoHint": "שינוי התמונה עצמה יתאפשר בהמשך.",
   "profile.edit.title": "עריכת פרטים",
   "profile.error.checkUnavailable": "הבדיקה אינה זמינה כרגע. אפשר לנסות שוב מעט מאוחר יותר.",
-  "profile.error.dailyLimit": "הפרטים נשמרו יותר מדי פעמים היום. אפשר לנסות שוב בעוד {{wait}}.",
+  "profile.error.dailyLimit": "הפרטים נשמרו יותר מדי פעמים היום. אפשר לנסות שוב מאוחר יותר.",
   "profile.error.generic": "לא ניתן היה לשמור את הפרטים. אפשר לנסות שוב.",
   "profile.error.invalid": "חלק מהפרטים אינם תקינים. כדאי לבדוק ולנסות שוב.",
   "profile.error.unavailable": "אין חיבור לשרת. כדאי לבדוק את החיבור ולנסות שוב.",

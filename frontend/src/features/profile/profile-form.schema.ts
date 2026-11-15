@@ -18,12 +18,12 @@ export function createProfileFormSchema(t: TFunction, requireTerms: boolean) {
       .refine((value) => profileText.safeParse(value).success, invalid);
 
   return z.object({
-    name: text(t('firstrun.name.required'), t('firstrun.name.invalid', LENGTH_LIMITS)),
-    city: text(t('firstrun.city.required'), t('firstrun.city.invalid', LENGTH_LIMITS)),
-    photo: z
+    fullName: text(t('firstrun.name.required'), t('firstrun.name.invalid', LENGTH_LIMITS)),
+    cityName: text(t('firstrun.city.required'), t('firstrun.city.invalid', LENGTH_LIMITS)),
+    photoChoice: z
       .enum(PhotoChoice)
       .refine((choice) => choice !== PhotoChoice.Unanswered, t('firstrun.photo.required')),
-    terms: z
+    termsAccepted: z
       .boolean()
       .refine((accepted) => accepted || !requireTerms, t('firstrun.terms.required')),
   });

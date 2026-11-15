@@ -17,8 +17,8 @@ export function PhotoChoiceField() {
     watch,
     formState: { errors },
   } = useFormContext<ProfileFormValues>();
-  const chosen = watch('photo');
-  const message = errors.photo?.message;
+  const chosen = watch('photoChoice');
+  const message = errors.photoChoice?.message;
 
   return (
     <fieldset className={styles.field} aria-describedby={message ? 'photo-error' : undefined}>
@@ -26,7 +26,7 @@ export function PhotoChoiceField() {
       <p className={styles.hint}>{t('firstrun.photo.hint')}</p>
       <div className={styles.choices}>
         <label className={styles.choice}>
-          <input type="radio" value={PhotoChoice.Show} {...register('photo')} />
+          <input type="radio" value={PhotoChoice.Show} {...register('photoChoice')} />
           <span className={styles.tile}>
             <span className={styles.stand}>
               <UserIcon />
@@ -40,9 +40,9 @@ export function PhotoChoiceField() {
           </span>
         </label>
         <label className={styles.choice}>
-          <input type="radio" value={PhotoChoice.Initials} {...register('photo')} />
+          <input type="radio" value={PhotoChoice.Initials} {...register('photoChoice')} />
           <span className={styles.tile}>
-            <MemberAvatar fullName={watch('name')} photoUrl={null} size={AvatarSize.Small} />
+            <MemberAvatar fullName={watch('fullName')} photoUrl={null} size={AvatarSize.Small} />
             {t('firstrun.photo.no')}
             {chosen === PhotoChoice.Initials && (
               <span className={styles.mark}>

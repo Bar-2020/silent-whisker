@@ -9,6 +9,6 @@ export enum ProfileErrorCode {
 
 /** Where react-hook-form shows it: under a field, or above the buttons (`root.server`). */
 export interface SaveFailure {
-  readonly field: 'name' | 'city' | 'root.server';
+  readonly field: 'fullName' | 'cityName' | 'root.server';
   readonly message: string;
 }

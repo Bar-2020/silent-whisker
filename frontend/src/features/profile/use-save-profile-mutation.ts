@@ -9,11 +9,11 @@ import { describeSaveFailure } from './save-failure';
 
 /**
  * `PATCH /profile`. Its answer replaces the cached profile, so the guard and the page see it at
- * once; a refusal is put on the form through `setError`, where the member reads it.
+ * once; a refusal is put on the form through `setFormError`, where the member reads it.
  */
-export function useSaveProfile(setError: UseFormSetError<ProfileFormValues>) {
+export function useSaveProfileMutation(setFormError: UseFormSetError<ProfileFormValues>) {
   const queryClient = useQueryClient();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: updateProfile,
@@ -28,8 +28,8 @@ export function useSaveProfile(setError: UseFormSetError<ProfileFormValues>) {
           (profile) => profile && { ...profile, status: 'banned' }
         );
       }
-      const failure = describeSaveFailure(error, t, i18n.language);
-      if (failure) setError(failure.field, { message: failure.message });
+      const failure = describeSaveFailure(error, t);
+      if (failure) setFormError(failure.field, { message: failure.message });
     },
   });
 }

@@ -3,17 +3,18 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import type { ProfileResponse } from '@schemas/profile.schema';
 import { signOut } from '@shared/auth/session';
+import { FormButton } from '@shared/components/form-button/FormButton';
+import { FormButtonVariant } from '@shared/components/form-button/FormButton.types';
 import { UserIcon } from '@shared/components/icon/UserIcon';
 import { buildProfileUpdate } from '../build-profile-update';
 import { BannedAccountNotice } from '../banned-account-notice/BannedAccountNotice';
-import { FormButton } from '../form-button/FormButton';
 import { ProfileFields } from '../profile-fields/ProfileFields';
 import { createProfileFormSchema } from '../profile-form.schema';
 import { PhotoChoice } from '../profile-form.types';
 import type { ProfileFormValues } from '../profile-form.types';
 import { TermsCheckbox } from '../terms-checkbox/TermsCheckbox';
 import { SaveFailureMessage } from '../save-failure-message/SaveFailureMessage';
-import { useSaveProfile } from '../use-save-profile';
+import { useSaveProfileMutation } from '../use-save-profile-mutation';
 import styles from './SignUpForm.module.css';
 
 /**
@@ -31,18 +32,21 @@ export function SignUpForm({
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(createProfileFormSchema(t, true)),
     defaultValues: {
-      name: '',
-      city: '',
-      photo: hasGooglePhoto ? PhotoChoice.Unanswered : PhotoChoice.Initials,
-      terms: false,
+      fullName: '',
+      cityName: '',
+      photoChoice: hasGooglePhoto ? PhotoChoice.Unanswered : PhotoChoice.Initials,
+      termsAccepted: false,
     },
   });
-  const save = useSaveProfile(form.setError);
+  const saveProfileMutation = useSaveProfileMutation(form.setError);
   // Busy from the press (the check runs first) until the answer: a second press does nothing (FIRST-03).
-  const pending = save.isPending || form.formState.isSubmitting;
+  const isSubmitPending = form.formState.isSubmitting || saveProfileMutation.isPending;
   const submit = form.handleSubmit((values) => {
-    if (pending) return;
-    save.mutate({ ...buildProfileUpdate(values, hasGooglePhoto), accept_terms: true });
+    if (isSubmitPending) return;
+    saveProfileMutation.mutate({
+      ...buildProfileUpdate(values, hasGooglePhoto),
+      accept_terms: true,
+    });
   });
 
   return (
@@ -62,12 +66,12 @@ export function SignUpForm({
           <SaveFailureMessage />
         </div>
         <div className={styles.footbar}>
-          <FormButton type="submit" variant="primary" pending={pending}>
+          <FormButton type="submit" variant={FormButtonVariant.Primary} pending={isSubmitPending}>
             {t('common.continue')}
           </FormButton>
           <FormButton
             type="button"
-            variant="quiet"
+            variant={FormButtonVariant.Quiet}
             pending={false}
             onClick={() => {
               void signOut();

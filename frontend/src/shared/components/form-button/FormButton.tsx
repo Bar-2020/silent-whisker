@@ -1,23 +1,11 @@
-import type { ReactNode } from 'react';
+import type { FormButtonProps } from './FormButton.types';
 import styles from './FormButton.module.css';
 
 /**
- * A button of the profile forms. While `pending` it keeps its size and shows only a spinner; the
+ * A button of a form or a screen. While `pending` it keeps its size and shows only a spinner; the
  * label stays in the page, invisible, so a screen reader still hears it (DESIGN.md, Buttons).
  */
-export function FormButton({
-  type,
-  variant,
-  pending,
-  onClick,
-  children,
-}: {
-  type: 'submit' | 'button';
-  variant: 'primary' | 'secondary' | 'quiet';
-  pending: boolean;
-  onClick?: () => void;
-  children: ReactNode;
-}) {
+export function FormButton({ type, variant, pending, onClick, children }: FormButtonProps) {
   return (
     <button
       type={type}

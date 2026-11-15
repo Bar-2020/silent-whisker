@@ -6,14 +6,14 @@ export function ProfileFields({ hasGooglePhoto }: { hasGooglePhoto: boolean }) {
   return (
     <>
       <ProfileTextField
-        name="name"
+        name="fullName"
         labelKey="firstrun.name.label"
         placeholderKey="firstrun.name.placeholder"
         hintKey="firstrun.name.hint"
         autoComplete="name"
       />
       <ProfileTextField
-        name="city"
+        name="cityName"
         labelKey="firstrun.city.label"
         placeholderKey="firstrun.city.placeholder"
         hintKey="firstrun.city.hint"

@@ -5,7 +5,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 
 import { ApiError } from '@shared/api/api-error';
 import { apiRequest } from '@shared/api/api-client';
-import { HttpMethod } from '@shared/api/api-client.types';
 import { getProfile } from '@shared/api/profile-api';
 import {
   ACCESS_TOKEN,
@@ -44,6 +43,7 @@ const STATUS_LAST_CLIENT_ERROR = STATUS_SERVER_ERROR - 1;
 const RETRY_AFTER = DEFAULT_RETRY_AFTER_SECONDS + 5;
 
 const answerSchema = z.object({ value: z.string() });
+const EMPTY_JSON = JSON.stringify({});
 
 const fetchMock = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>();
 
@@ -262,7 +262,7 @@ describe('apiRequest with a body maps every failure the same way', () => {
   it.each(CASES)('PATCH, $name', async ({ status, code, kind, tokensRemoved }) => {
     fetchMock.mockResolvedValue(jsonResponse(status, code === undefined ? undefined : { code }));
     const error = await failureOf(
-      apiRequest('/thing', answerSchema, { method: HttpMethod.Patch, body: { a: 1 } })
+      apiRequest('/thing', answerSchema, { method: 'PATCH', body: JSON.stringify({ a: 1 }) })
     );
     expect(error).toBeInstanceOf(ApiError);
     if (!(error instanceof ApiError)) throw new Error('not an ApiError');
@@ -282,7 +282,7 @@ describe('apiRequest with a body maps every failure the same way', () => {
       )
     );
     const error = await failureOf(
-      apiRequest('/thing', answerSchema, { method: HttpMethod.Patch, body: {} })
+      apiRequest('/thing', answerSchema, { method: 'PATCH', body: EMPTY_JSON })
     );
     expect(error).toBeInstanceOf(ApiError);
     if (!(error instanceof ApiError)) throw new Error('not an ApiError');
@@ -294,7 +294,7 @@ describe('apiRequest with a body maps every failure the same way', () => {
   it('PATCH, no connection is unavailable and is sent once', async () => {
     fetchMock.mockRejectedValue(new TypeError('Failed to fetch'));
     const error = await failureOf(
-      apiRequest('/thing', answerSchema, { method: HttpMethod.Patch, body: {} })
+      apiRequest('/thing', answerSchema, { method: 'PATCH', body: EMPTY_JSON })
     );
     expect(error).toBeInstanceOf(ApiError);
     if (!(error instanceof ApiError)) throw new Error('not an ApiError');
@@ -306,7 +306,7 @@ describe('apiRequest with a body maps every failure the same way', () => {
   it('PATCH, no signed-in user sends nothing', async () => {
     fakeUserManager.setUser(null);
     const error = await failureOf(
-      apiRequest('/thing', answerSchema, { method: HttpMethod.Patch, body: {} })
+      apiRequest('/thing', answerSchema, { method: 'PATCH', body: EMPTY_JSON })
     );
     expect(error).toBeInstanceOf(ApiError);
     if (!(error instanceof ApiError)) throw new Error('not an ApiError');
@@ -429,17 +429,30 @@ describe('apiRequest on success', () => {
   });
 
   // SHELL-13, D-59: the method given is the method sent, and a plain GET carries no body
-  it('sends GET with no body when the method is Get', async () => {
-    await apiRequest('/thing', answerSchema, { method: HttpMethod.Get });
+  it('sends GET with no body when the method is GET', async () => {
+    await apiRequest('/thing', answerSchema, { method: 'GET' });
     const [, init] = fetchMock.mock.calls[0];
     expect((init?.method ?? 'GET').toUpperCase()).toBe('GET');
     expect(init?.body ?? null).toBeNull();
+    expect(new Headers(init?.headers).get('content-type')).toBeNull();
+  });
+
+  // SHELL-13, D-59: with no third argument the call is a GET with no body and no JSON type
+  it('is a GET with no body and no content-type when no init is given', async () => {
+    await apiRequest('/thing', answerSchema);
+    const [, init] = fetchMock.mock.calls[0];
+    expect((init?.method ?? 'GET').toUpperCase()).toBe('GET');
+    expect(init?.body ?? null).toBeNull();
+    expect(new Headers(init?.headers).get('content-type')).toBeNull();
   });
 
   // SHELL-13, D-59, D-101: a PATCH carries the ID token, the JSON type and the body as JSON text
   it('sends PATCH with the JSON text of the body and the ID token', async () => {
     const body = { display_name: 'דנה', note: 'a "quoted" 🐱' };
-    const result = await apiRequest('/thing', answerSchema, { method: HttpMethod.Patch, body });
+    const result = await apiRequest('/thing', answerSchema, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    });
     expect(result).toEqual({ value: 'ok' });
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const [url, init] = fetchMock.mock.calls[0];
@@ -456,7 +469,7 @@ describe('apiRequest on success', () => {
   it('throws a ZodError when the answer to a PATCH does not fit the schema', async () => {
     fetchMock.mockResolvedValue(jsonResponse(STATUS_OK, { value: 5 }));
     const error = await failureOf(
-      apiRequest('/thing', answerSchema, { method: HttpMethod.Patch, body: {} })
+      apiRequest('/thing', answerSchema, { method: 'PATCH', body: EMPTY_JSON })
     );
     expect(error).toBeInstanceOf(ZodError);
     expect(error).not.toBeInstanceOf(ApiError);

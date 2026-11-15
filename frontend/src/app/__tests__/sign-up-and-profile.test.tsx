@@ -1,6 +1,5 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, screen } from '@testing-library/react';
-import { secondsInHour, secondsInMinute } from 'date-fns/constants';
 import { z } from 'zod';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
@@ -53,6 +52,8 @@ const GOOGLE_PHOTO = `https://lh3${GOOGLE_IMAGE_HOST_SUFFIX}/a/photo=s96`;
 const BROKEN_PHOTO = `https://lh3${GOOGLE_IMAGE_HOST_SUFFIX}/a/broken`;
 const RETRY_AFTER = DEFAULT_RETRY_AFTER_SECONDS + 5;
 const SETTLE_ROUNDS = 6;
+/** Two hours: a wait the daily save limit must not write out (FIRST-09, D-108). */
+const DAILY_LIMIT_RETRY_AFTER = 7200;
 
 const flush = (): Promise<void> => flushRounds(SETTLE_ROUNDS);
 
@@ -237,19 +238,6 @@ function words(key: string, values: Record<string, string> = {}): string {
 /** The one placeholder of a text, whatever its name, filled with `value`. */
 const withValue = (key: string, value: string): string =>
   text(EN, key).replace(/\{\{\w+\}\}/g, value);
-
-const WAIT_UNITS: [string, number][] = [
-  ['hour', secondsInHour],
-  ['minute', secondsInMinute],
-  ['second', 1],
-];
-
-/** The wait as the app writes it: hours from an hour, minutes from a minute, else seconds (D-108). */
-function waitText(seconds: number): string {
-  const [unit, size] = WAIT_UNITS.find(([, length]) => seconds >= length) ?? WAIT_UNITS[0];
-  const format = new Intl.NumberFormat(EN, { style: 'unit', unit, unitDisplay: 'long' });
-  return format.format(Math.floor(seconds / size));
-}
 
 const noticeShown = (): boolean =>
   document.body.textContent.includes(text(EN, 'common.banned.title')) &&
@@ -669,10 +657,10 @@ const REFUSALS: Refusal[] = [
   {
     name: 'PROFILE_SAVE_DAILY_LIMIT with Retry-After',
     answer: refuse(STATUS_TOO_MANY_REQUESTS, 'PROFILE_SAVE_DAILY_LIMIT', {
-      'retry-after': String(secondsInHour * 2),
+      'retry-after': String(DAILY_LIMIT_RETRY_AFTER),
     }),
     where: 'form',
-    message: withValue('profile.error.dailyLimit', waitText(secondsInHour * 2)),
+    message: words('profile.error.dailyLimit'),
   },
   {
     name: 'a bare 429',
@@ -886,26 +874,22 @@ describe('the profile page behind the edit form, when the member is banned durin
   });
 });
 
-describe('the daily save limit says its wait in the largest unit', () => {
-  // FIRST-09, D-108: hours from an hour, minutes from a minute, else seconds
-  it.each([
-    secondsInHour * 2,
-    secondsInHour,
-    secondsInHour - secondsInMinute,
-    secondsInMinute * 5,
-    secondsInMinute,
-    secondsInMinute - 1,
-    1,
-  ])('for Retry-After of %s seconds', async (seconds) => {
-    const limit = refuse(STATUS_TOO_MANY_REQUESTS, 'PROFILE_SAVE_DAILY_LIMIT', {
-      'retry-after': String(seconds),
-    });
-    patchQueue.push(limit);
-    await open(NEW_MEMBER);
-    fillSignUp();
-    await press('common.continue');
-    expect(alertTexts()).toContain(withValue('profile.error.dailyLimit', waitText(seconds)));
+describe.each(DRIVERS)('$title, when the daily save limit is reached', (driver) => {
+  // FIRST-09, D-61, D-108: the text of profile.error.dailyLimit, with no wait in it, though Retry-After is sent
+  it('shows the daily limit text and no wait', async () => {
+    patchQueue.push(
+      refuse(STATUS_TOO_MANY_REQUESTS, 'PROFILE_SAVE_DAILY_LIMIT', {
+        'retry-after': String(DAILY_LIMIT_RETRY_AFTER),
+      })
+    );
+    await driver.prepare();
+    await press(driver.submit);
+
+    const message = text(EN, 'profile.error.dailyLimit');
+    expect(message).not.toMatch(/\d|\{\{/);
+    expect(alertTexts()).toEqual([message]);
     expect(document.body.textContent).not.toContain('{{');
+    expect(document.body.textContent).not.toContain(String(DAILY_LIMIT_RETRY_AFTER));
   });
 });
 

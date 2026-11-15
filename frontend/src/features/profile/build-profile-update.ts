@@ -4,12 +4,12 @@ import type { ProfileFormValues } from './profile-form.types';
 
 /** The body of `PATCH /profile` from the form; the photo answer is sent only when it was asked (D-108). */
 export function buildProfileUpdate(
-  { name, city, photo }: ProfileFormValues,
+  { fullName, cityName, photoChoice }: ProfileFormValues,
   hasGooglePhoto: boolean
 ): ProfileUpdate {
   return {
-    display_name: name,
-    city,
-    ...(hasGooglePhoto && { show_google_photo: photo === PhotoChoice.Show }),
+    display_name: fullName,
+    city: cityName,
+    ...(hasGooglePhoto && { show_google_photo: photoChoice === PhotoChoice.Show }),
   };
 }

@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router';
 import { signOut } from '@shared/auth/session';
+import { FormButton } from '@shared/components/form-button/FormButton';
+import { FormButtonVariant } from '@shared/components/form-button/FormButton.types';
 import { EditIcon } from '@shared/components/icon/EditIcon';
 import { BannedAccountNotice } from '../banned-account-notice/BannedAccountNotice';
 import { EditProfileForm } from '../edit-profile-form/EditProfileForm';
-import { FormButton } from '../form-button/FormButton';
 import { MemberAvatar } from '../member-avatar/MemberAvatar';
 import { AvatarSize } from '../member-avatar/MemberAvatar.types';
 import { profileContextSchema } from '../profile-context.schema';
@@ -61,7 +62,7 @@ export function ProfilePage() {
       )}
       <FormButton
         type="button"
-        variant="secondary"
+        variant={FormButtonVariant.Secondary}
         pending={false}
         onClick={() => {
           void signOut();

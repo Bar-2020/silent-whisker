@@ -9,7 +9,6 @@ import {
 } from '@constants/http';
 import { forgetSession, getIdToken } from '@shared/auth/session';
 import { ApiError, type ApiErrorKind } from './api-error';
-import { type ApiRequestInit, HttpMethod } from './api-client.types';
 
 const errorBodySchema = z.object({ code: z.string() });
 const retryAfterSchema = z.coerce.number().int().positive();
@@ -37,16 +36,14 @@ async function refusal(response: Response): Promise<ApiError> {
   return new ApiError(kind, code, wait.success ? wait.data : DEFAULT_RETRY_AFTER_SECONDS);
 }
 
-async function send(path: string, token: string, init: ApiRequestInit): Promise<Response> {
-  const hasBody = init.body !== undefined;
+async function send(path: string, token: string, init: RequestInit): Promise<Response> {
   try {
     return await fetch(`${API_PATH_PREFIX}${path}`, {
-      method: init.method,
+      ...init,
       headers: {
         authorization: `Bearer ${token}`,
-        ...(hasBody && { 'content-type': 'application/json' }),
+        ...(init.body && { 'content-type': 'application/json' }),
       },
-      body: hasBody ? JSON.stringify(init.body) : undefined,
     });
   } catch {
     // No connection: nothing is queued, the caller says so and the member tries again (SHELL-06).
@@ -54,13 +51,11 @@ async function send(path: string, token: string, init: ApiRequestInit): Promise<
   }
 }
 
-const GET: ApiRequestInit = { method: HttpMethod.Get };
-
-/** One call to the API with the member's ID token, a GET unless `init` says otherwise. The answer is parsed with `schema` (D-101). */
+/** One call to the API with the member's ID token, a GET unless `init` says otherwise (a JSON `body` is a string). The answer is parsed with `schema` (D-101). */
 export async function apiRequest<Schema extends z.ZodType>(
   path: string,
   schema: Schema,
-  init: ApiRequestInit = GET
+  init: RequestInit = {}
 ): Promise<z.infer<Schema>> {
   const token = await getIdToken().catch(() => {
     throw new ApiError('unavailable');

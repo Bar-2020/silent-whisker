@@ -17,7 +17,7 @@ export function TermsCheckbox() {
     watch,
     formState: { errors },
   } = useFormContext<ProfileFormValues>();
-  const message = errors.terms?.message;
+  const message = errors.termsAccepted?.message;
 
   return (
     <div className={styles.field}>
@@ -27,9 +27,9 @@ export function TermsCheckbox() {
           aria-required="true"
           aria-invalid={message !== undefined}
           aria-describedby={message ? 'terms-error' : undefined}
-          {...register('terms')}
+          {...register('termsAccepted')}
         />
-        <span className={styles.box}>{watch('terms') && <CheckIcon />}</span>
+        <span className={styles.box}>{watch('termsAccepted') && <CheckIcon />}</span>
         <span className={styles.text}>
           <Trans
             i18nKey="firstrun.terms.label"
