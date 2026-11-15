@@ -1,5 +1,6 @@
 import { ErrorResponse, type User } from 'oidc-client-ts';
 import { MS_PER_SECOND } from '@constants/cost';
+import { GOOGLE_IMAGE_HOST_SUFFIX } from '@constants/profile';
 import {
   OIDC_STORAGE_PREFIX,
   SIGN_IN_IDENTITY_PROVIDER,
@@ -77,4 +78,18 @@ export async function getIdToken(): Promise<string | null> {
     const current = latest && expiresSoon(latest) ? await refresh() : latest;
     return current?.id_token ?? null;
   });
+}
+
+const isGoogleImage = (address: string): boolean =>
+  URL.canParse(address) &&
+  new URL(address).protocol === 'https:' &&
+  new URL(address).hostname.endsWith(GOOGLE_IMAGE_HOST_SUFFIX);
+
+/**
+ * Whether Google sent a photo the server would keep (an https address on Google's image host, D-21).
+ * `GET /profile` hides the address until the member says yes, so the sign-up form asks the token (D-105).
+ */
+export async function hasGooglePhoto(): Promise<boolean> {
+  const user = await userManager.getUser();
+  return isGoogleImage(user?.profile.picture ?? '');
 }

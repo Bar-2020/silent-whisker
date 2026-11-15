@@ -1,0 +1,27 @@
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--dado-tint);
+  color: var(--dado);
+  font: var(--type-label);
+}
+
+.avatar[data-size='small'] {
+  inline-size: 40px;
+  block-size: 40px;
+}
+
+.avatar[data-size='large'] {
+  inline-size: 72px;
+  block-size: 72px;
+  font: var(--type-title);
+}
+
+.photo {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}

@@ -368,7 +368,9 @@ describe('the guard, signed out, redirect on its way', () => {
     vi.setSystemTime(Date.now() + (SIGN_IN_LOOP_SECONDS + 1) * MS_PER_SECOND);
     await pageshow(true);
     expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(1);
-    expect(h1()).toBeNull();
+    // the member is there: no sign-in-failed screen (the Profile page may show now)
+    expect(h1()).not.toBe(text(EN, 'states.signIn.title'));
+    expect(button(text(EN, 'common.retry'))).toBeUndefined();
   });
 });
 

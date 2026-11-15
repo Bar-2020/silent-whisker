@@ -28,6 +28,7 @@
   --ok-tint: #e0f0e5;
   --bad: #d32f2f;
   --bad-tint: #fbe0e0;
+  --bad-ink: #9a1f24;
 
   --focus: #0b57d0;
 
@@ -57,6 +58,7 @@
   --s-8: 72px;
   --nav-gap: 12px;
 
+  --r-s: 8px;
   --r-m: 12px;
   --r-l: 20px;
   --r-pill: 999px;

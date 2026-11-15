@@ -34,6 +34,7 @@ export function makeUser({
   refreshToken = REFRESH_TOKEN,
   secondsLeft = FAR_SECONDS,
   state,
+  picture,
 }: UserOptions = {}): User {
   const now = Math.floor(Date.now() / MS_PER_SECOND);
   const exp = now + secondsLeft;
@@ -43,7 +44,14 @@ export function makeUser({
     refresh_token: refreshToken,
     token_type: 'Bearer',
     expires_at: exp,
-    profile: { sub: 'user-1', iss: 'https://issuer.test', aud: 'client', exp, iat: now },
+    profile: {
+      sub: 'user-1',
+      iss: 'https://issuer.test',
+      aud: 'client',
+      exp,
+      iat: now,
+      ...(picture === undefined ? {} : { picture }),
+    },
     userState: state,
   });
 }

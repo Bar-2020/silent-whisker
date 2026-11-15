@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { ApiError } from '@shared/api/api-error';
-import { getProfile } from '@shared/api/profile-api';
+import { getProfile, PROFILE_QUERY_KEY } from '@shared/api/profile-api';
 import { SignInStatus } from './use-sign-in-status.types';
 
 /** The first call after sign-in; `failure` is why it did not load, and `retry` asks again. */
@@ -11,7 +11,7 @@ export function useMemberProfile(status: SignInStatus) {
     errorUpdatedAt,
     refetch,
   } = useQuery({
-    queryKey: ['profile'],
+    queryKey: PROFILE_QUERY_KEY,
     queryFn: getProfile,
     enabled: status === SignInStatus.SignedIn,
   });
