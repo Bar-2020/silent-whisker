@@ -228,6 +228,19 @@ describe('signOut', () => {
     expect([...url.searchParams.keys()].sort()).toEqual(['client_id', 'logout_uri']);
   });
 
+  // SHELL-22, D-59: removing the tokens failed: the error still comes out, and the visit still leaves
+  it('still goes to Cognito /logout, with no Google sign-in, when removeUser rejects', async () => {
+    const failure = new Error('storage is not available');
+    fakeUserManager.removeUser.mockRejectedValue(failure);
+    await expect(signOut()).rejects.toBe(failure);
+    expect(replace).toHaveBeenCalledTimes(1);
+    const url = new URL(replace.mock.calls[0][0]);
+    expect(`${url.origin}${url.pathname}`).toBe(`${FAKE_COGNITO_DOMAIN}/logout`);
+    expect(url.searchParams.get('client_id')).toBe(auth.client_id);
+    expect(url.searchParams.get('logout_uri')).toBe(`${ORIGIN}/`);
+    expect(fakeUserManager.signinRedirect).not.toHaveBeenCalled();
+  });
+
   // SHELL-14, D-59: after sign-out no call can carry a token
   it('leaves no ID token behind', async () => {
     fakeUserManager.setUser(makeUser());

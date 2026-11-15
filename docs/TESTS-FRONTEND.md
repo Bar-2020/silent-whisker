@@ -26,6 +26,9 @@ unless a row says otherwise.
 | SHELL-17 | c | Signed in in two tabs, tab A signs out, then tab B makes an API call | Tab B sends nothing, its tokens are removed so its guard hears it and goes to Google with the return page kept | D-59 |
 | SHELL-18 | c | The first `GET /profile` after sign-in answers a bare `429`, then `429` with `Retry-After: 7` | A "too many requests" screen that says to try again in 30 seconds (`DEFAULT_RETRY_AFTER_SECONDS`), then in 7; its retry button is off until that time has passed and then asks again | D-60, R-21 |
 | SHELL-19 | c | The redirect to Google cannot start (the sign-in call fails) from a landing button, and from a guarded page | The button shows the retry word instead of its label and a second press tries again; the guarded page shows the sign-in-failed screen with its retry button | D-59 |
+| SHELL-20 | c | The guard shows a signed-out visit while React runs its effect twice (strict mode), and while the redirect is still on its way | `signinRedirect` is called once and the retry screen does not show | D-59 |
+| SHELL-21 | c | After the redirect started the browser shows the page again from its back-forward cache (`pageshow` with `persisted: true`), within `SIGN_IN_LOOP_SECONDS`, and then after it | Within the window the retry screen shows instead of a blank page; after it the visit goes to Google again | D-59 |
+| SHELL-22 | c | Sign out when removing the tokens fails (`removeUser` rejects) | The page still goes to the Cognito `/logout` address, and no Google sign-in starts | D-59 |
 
 ## Languages and direction (I18N)
 

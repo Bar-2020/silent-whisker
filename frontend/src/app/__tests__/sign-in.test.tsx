@@ -213,6 +213,10 @@ async function pressRetry(): Promise<void> {
 function expectSignInFailedScreen(code = EN): void {
   expect(h1()).toBe(text(code, 'states.signIn.title'));
   expect(document.body.textContent).toContain(text(code, 'states.signIn.text'));
+  // SHELL-12: a failure is announced to a screen reader
+  expect(document.querySelector('[role="alert"]')?.textContent).toContain(
+    text(code, 'states.signIn.title')
+  );
   expect(button(text(code, 'common.retry'))).toBeDefined();
   expect(button(text(code, 'profile.signOut'))).toBeUndefined();
 }
@@ -283,6 +287,88 @@ describe('the guard, signed out', () => {
     sessionStorage.setItem(SIGN_IN_STARTED_STORAGE_KEY, String(Date.now()));
     await open('/profile', code);
     expectSignInFailedScreen(code);
+  });
+});
+
+describe('the guard, signed out, redirect on its way', () => {
+  const never = (): Promise<void> =>
+    new Promise<void>(() => {
+      // like the real redirect, it settles only when the browser brings the page back
+    });
+
+  const settled = (): Promise<void> => Promise.resolve();
+
+  /** The browser showing a page again from its back-forward cache (or a plain pageshow). */
+  async function pageshow(persisted: boolean): Promise<void> {
+    // a browser sends a PageTransitionEvent; where the test DOM lacks the class, a plain event carries the flag
+    const event =
+      typeof PageTransitionEvent === 'function'
+        ? new PageTransitionEvent('pageshow', { persisted })
+        : Object.assign(new Event('pageshow'), { persisted });
+    act(() => {
+      window.dispatchEvent(event);
+    });
+    await flush();
+  }
+
+  // SHELL-20, D-59: React runs the effect twice, the redirect starts once and no retry screen shows
+  it.each([
+    ['still on its way', never],
+    ['already settled', settled],
+  ])('calls signinRedirect once under StrictMode, redirect %s', async (_name, redirect) => {
+    fakeUserManager.signinRedirect.mockImplementation(redirect);
+    await open('/profile?tab=2', EN, true);
+    expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(1);
+    expect(fakeUserManager.signinRedirect.mock.calls[0]).toEqual(googleAt('/profile?tab=2'));
+    expect(h1()).toBeNull();
+    expect(button(text(EN, 'common.retry'))).toBeUndefined();
+  });
+
+  // SHELL-21, D-59, D-104: the page comes back from the cache: inside the window a loop, past it not
+  it.each([
+    ['one second inside the window', SIGN_IN_LOOP_SECONDS - 1, true, never],
+    ['exactly the window', SIGN_IN_LOOP_SECONDS, false, never],
+    ['one second past the window', SIGN_IN_LOOP_SECONDS + 1, false, never],
+    ['inside the window, redirect settled', SIGN_IN_LOOP_SECONDS - 1, true, settled],
+    ['past the window, redirect settled', SIGN_IN_LOOP_SECONDS + 1, false, settled],
+  ])('after pageshow persisted, %s', async (_name, secondsLater, isLoop, redirect) => {
+    fakeUserManager.signinRedirect.mockImplementation(redirect);
+    await open('/profile');
+    expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(1);
+    expect(sessionStorage.getItem(SIGN_IN_STARTED_STORAGE_KEY)).toBe(String(Date.now()));
+
+    vi.setSystemTime(Date.now() + secondsLater * MS_PER_SECOND);
+    await pageshow(true);
+
+    if (isLoop) {
+      expectSignInFailedScreen();
+      expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(1);
+    } else {
+      expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(2);
+      expect(fakeUserManager.signinRedirect.mock.calls[1]).toEqual(googleAt('/profile'));
+      expect(h1()).toBeNull();
+    }
+  });
+
+  // SHELL-21, D-59: a pageshow that is not from the cache does nothing, whatever the age of the marker
+  it('ignores pageshow with persisted false', async () => {
+    fakeUserManager.signinRedirect.mockImplementation(never);
+    await open('/profile');
+    vi.setSystemTime(Date.now() + (SIGN_IN_LOOP_SECONDS + 1) * MS_PER_SECOND);
+    await pageshow(false);
+    expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(1);
+    expect(h1()).toBeNull();
+  });
+
+  // SHELL-21, D-59: the cache brings the page back for a member who is signed in now: no redirect
+  it('does not leave for Google on pageshow persisted when a user is there', async () => {
+    fakeUserManager.signinRedirect.mockImplementation(never);
+    await open('/profile');
+    fakeUserManager.setUser(makeUser());
+    vi.setSystemTime(Date.now() + (SIGN_IN_LOOP_SECONDS + 1) * MS_PER_SECOND);
+    await pageshow(true);
+    expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(1);
+    expect(h1()).toBeNull();
   });
 });
 
@@ -398,6 +484,10 @@ describe('the guard, signed in, too many requests', () => {
     fetchMock.mockImplementationOnce(() => tooMany(headers));
     await open('/profile');
     expect(h1()).toBe(text(EN, 'common.rateLimit.title'));
+    // a failure is announced to a screen reader
+    expect(document.querySelector('[role="alert"]')?.textContent).toContain(
+      text(EN, 'common.rateLimit.title')
+    );
     expect(document.body.textContent).toContain(rateLimitText(EN, seconds));
     expect(signOutButton()).toBeUndefined();
     expect(button(text(EN, 'common.retry'))?.disabled).toBe(true);

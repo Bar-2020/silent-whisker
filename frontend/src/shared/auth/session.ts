@@ -37,12 +37,16 @@ function clearSignInRecords(): void {
 /** Removes every token from this browser, then ends Cognito's own session so the next sign-in asks again (SHELL-05). */
 export async function signOut(): Promise<void> {
   signOutStarted.abort();
-  await forgetSession();
-  clearSignInRecords();
   const logout = new URL(`${COGNITO_DOMAIN}/logout`);
   logout.searchParams.set('client_id', auth.client_id);
   logout.searchParams.set('logout_uri', `${window.location.origin}/`);
-  window.location.replace(logout);
+  try {
+    await forgetSession();
+    clearSignInRecords();
+  } finally {
+    // The page always leaves: staying behind half signed out would block every later sign-in.
+    window.location.replace(logout);
+  }
 }
 
 const expiresSoon = (user: User): boolean =>
