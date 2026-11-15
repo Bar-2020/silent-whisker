@@ -130,7 +130,7 @@ describe('getIdToken', () => {
     expect(token).toBe(shouldRefresh ? REFRESHED_ID_TOKEN : ID_TOKEN);
   });
 
-  // SHELL-16, D-59, D-104: the refresh runs inside the one lock shared by all tabs
+  // SHELL-16, D-59, D-107: the refresh runs inside the one lock shared by all tabs
   it('refreshes inside the named lock', async () => {
     fakeUserManager.setUser(expiring());
     refreshesTo(refreshed());

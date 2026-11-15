@@ -209,7 +209,7 @@ async function pressRetry(): Promise<void> {
   await flush();
 }
 
-/** The retry screen of a refused or looping sign-in (`states.signIn`, D-59, D-104). */
+/** The retry screen of a refused or looping sign-in (`states.signIn`, D-59, D-107). */
 function expectSignInFailedScreen(code = EN): void {
   expect(h1()).toBe(text(code, 'states.signIn.title'));
   expect(document.body.textContent).toContain(text(code, 'states.signIn.text'));
@@ -238,13 +238,13 @@ describe('the guard, signed out', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  // SHELL-12, D-104: the start of a redirect is recorded, as the time in ms
+  // SHELL-12, D-107: the start of a redirect is recorded, as the time in ms
   it('records the start of the redirect in sessionStorage', async () => {
     await open('/profile');
     expect(sessionStorage.getItem(SIGN_IN_STARTED_STORAGE_KEY)).toBe(String(Date.now()));
   });
 
-  // SHELL-12, D-59, D-104: sign-in came back and was refused: a second visit does not leave again
+  // SHELL-12, D-59, D-107: sign-in came back and was refused: a second visit does not leave again
   it('shows a retry screen on the second visit and does not leave for Google again', async () => {
     await open('/profile?tab=2');
     expect(fakeUserManager.signinRedirect).toHaveBeenCalledTimes(1);
@@ -261,7 +261,7 @@ describe('the guard, signed out', () => {
     expect(fakeUserManager.signinRedirect.mock.calls[1]).toEqual(googleAt('/profile?tab=2'));
   });
 
-  // SHELL-12, D-104: the window is SIGN_IN_LOOP_SECONDS: inside it a loop, from it on not
+  // SHELL-12, D-107: the window is SIGN_IN_LOOP_SECONDS: inside it a loop, from it on not
   it.each([
     ['one second inside the window', SIGN_IN_LOOP_SECONDS - 1, true],
     ['exactly the window', SIGN_IN_LOOP_SECONDS, false],
@@ -282,7 +282,7 @@ describe('the guard, signed out', () => {
     }
   });
 
-  // SHELL-12, D-59, D-104: the retry screen is in the visitor's language
+  // SHELL-12, D-59, D-107: the retry screen is in the visitor's language
   it.each(CODES)('shows the retry screen in %s', async (code) => {
     sessionStorage.setItem(SIGN_IN_STARTED_STORAGE_KEY, String(Date.now()));
     await open('/profile', code);
@@ -324,7 +324,7 @@ describe('the guard, signed out, redirect on its way', () => {
     expect(button(text(EN, 'common.retry'))).toBeUndefined();
   });
 
-  // SHELL-21, D-59, D-104: the page comes back from the cache: inside the window a loop, past it not
+  // SHELL-21, D-59, D-107: the page comes back from the cache: inside the window a loop, past it not
   it.each([
     ['one second inside the window', SIGN_IN_LOOP_SECONDS - 1, true, never],
     ['exactly the window', SIGN_IN_LOOP_SECONDS, false, never],
@@ -648,7 +648,7 @@ describe('the callback page, a refusal', () => {
     ['no parameters', new Error('No state in response')],
   ];
 
-  // SHELL-15, D-59, D-104: a retry screen, and no sign-in starts by itself
+  // SHELL-15, D-59, D-107: a retry screen, and no sign-in starts by itself
   it.each(REFUSALS)('shows the retry screen for %s', async (_name, error) => {
     fakeUserManager.signinRedirectCallback.mockRejectedValue(error);
     await open(CALLBACK_PATH);
@@ -657,7 +657,7 @@ describe('the callback page, a refusal', () => {
     expect(currentPath()).toBe(CALLBACK_PATH);
   });
 
-  // SHELL-15, D-59, D-104: a good code the browser cannot keep is a failed sign-in
+  // SHELL-15, D-59, D-107: a good code the browser cannot keep is a failed sign-in
   it('shows the retry screen for a good code when the browser keeps no tokens', async () => {
     fakeUserManager.signinRedirectCallback.mockResolvedValue(makeUser({ state: '/spots/x' }));
     fakeUserManager.getUser.mockResolvedValue(null);
