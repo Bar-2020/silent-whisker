@@ -1,4 +1,4 @@
-/* How far the hero band runs up under the navigation pill. */
+/* How far the hero band runs up under the navigation pill: its margins and its own height (about 89px), so no white strip shows above the band. */
 .page {
-  --nav-offset: 84px;
+  --nav-offset: 90px;
 }
