@@ -37,7 +37,7 @@ unless a row says otherwise.
 | I18N-04 | e | Every screen in Hebrew and Arabic | Mirrored back arrow, chevrons and tab order; the map canvas stays left to right; no `left` or `right` in our CSS | D-56 |
 | I18N-05 | e | A spot called `Café Roma`, a Hebrew name with Latin letters, a name with `U+202E`, in lists and cards | Order is right, and the name cannot reorder the text around it | D-56 |
 | I18N-06 | e | Longest values: 35 character name and city, 60 character spot name, 40 character cat name, 140 character note, Russian text | No overflow and nothing cut off at 360 px | R-18 |
-| I18N-07 | m | Copy review: a native speaker reads Arabic and Russian; the gender-neutral rule | Not automatable: a checklist item before launch | D-85 |
+| I18N-07 | m | Copy review at the end, after the last screen: a native speaker reads every text of every language (Hebrew, English, Arabic, Russian), including the sign-in screens; the gender-neutral rule | Not automatable: a checklist item before launch | D-85 |
 
 ## Sizes (RESP)
 
