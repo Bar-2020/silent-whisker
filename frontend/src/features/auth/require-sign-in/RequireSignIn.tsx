@@ -15,17 +15,23 @@ export function RequireSignIn() {
   const { pathname, search, hash } = useLocation();
   const returnTo = `${pathname}${search}${hash}`;
   const status = useSignInStatus(returnTo);
-  const { profile, failure, retry } = useMemberProfile(status);
+  const { profile, failure, failedAt, retry } = useMemberProfile(status);
 
   if (status === SignInStatus.RedirectStopped) {
     return <AuthFailedScreen kind="signIn" onRetry={() => void signIn(returnTo)} />;
   }
   if (failure) {
     const waitSeconds = failure instanceof ApiError ? failure.retryAfterSeconds : undefined;
+    // The key makes a new failure a new screen, so its wait starts again.
     return waitSeconds === undefined ? (
-      <AuthFailedScreen kind="connection" onRetry={retry} />
+      <AuthFailedScreen key={failedAt} kind="connection" onRetry={retry} />
     ) : (
-      <AuthFailedScreen kind="rateLimited" waitSeconds={waitSeconds} onRetry={retry} />
+      <AuthFailedScreen
+        key={failedAt}
+        kind="rateLimited"
+        waitSeconds={waitSeconds}
+        onRetry={retry}
+      />
     );
   }
   // F4: while `profile.terms_accepted` is false, show the sign-up form here instead of the page.

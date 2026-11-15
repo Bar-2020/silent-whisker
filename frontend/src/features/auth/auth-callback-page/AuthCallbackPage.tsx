@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
 import { ErrorResponse } from 'oidc-client-ts';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Navigate, useLocation } from 'react-router';
 import { AFTER_SIGN_IN_PATH } from '@constants/sign-in';
 import { signIn } from '@shared/auth/session';
 import { userManager } from '@shared/auth/user-manager';
@@ -14,34 +14,23 @@ async function completeSignIn(): Promise<string> {
   return returnToSchema.parse(user.state);
 }
 
-// React runs an effect twice in development, and a code works once: both runs share one answer.
-let pending: { href: string; result: Promise<string> } | undefined;
-
-function completeOnce(): Promise<string> {
-  const href = window.location.href;
-  if (pending?.href !== href) pending = { href, result: completeSignIn() };
-  return pending.result;
-}
-
 /** Where Cognito sends the visitor back (D-59): store the tokens and return to the page they came from. */
 export function AuthCallbackPage() {
-  const navigate = useNavigate();
-  const [retryPath, setRetryPath] = useState<string>();
+  const { pathname, search } = useLocation();
+  // A code works once: the query runs it once per address, also when React mounts the page twice.
+  const { data: returnTo, error } = useQuery({
+    queryKey: ['sign-in-callback', pathname, search],
+    queryFn: completeSignIn,
+    staleTime: Infinity,
+  });
 
-  useEffect(() => {
-    completeOnce()
-      .then((returnTo) => {
-        void navigate(returnTo, { replace: true });
-      })
-      .catch((error: unknown) => {
-        // A refusal still carries the page the visitor came from, so a retry returns there too.
-        setRetryPath(
-          error instanceof ErrorResponse ? returnToSchema.parse(error.state) : AFTER_SIGN_IN_PATH
-        );
-      });
-  }, [navigate]);
-
+  if (returnTo) return <Navigate to={returnTo} replace />;
   // No automatic retry here: a refused sign-in that restarts itself would loop.
-  if (retryPath === undefined) return null;
-  return <AuthFailedScreen kind="signIn" onRetry={() => void signIn(retryPath)} />;
+  if (error) {
+    // A refusal still carries the page the visitor came from, so a retry returns there too.
+    const retryPath =
+      error instanceof ErrorResponse ? returnToSchema.parse(error.state) : AFTER_SIGN_IN_PATH;
+    return <AuthFailedScreen kind="signIn" onRetry={() => void signIn(retryPath)} />;
+  }
+  return null;
 }

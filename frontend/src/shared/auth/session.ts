@@ -21,10 +21,10 @@ export function signIn(returnTo: string): Promise<void> {
 /** Drops the tokens of this browser only: the session ended on the server, or the member signed out. */
 export const forgetSession = (): Promise<void> => userManager.removeUser();
 
-let signingOut = false;
+// A one-way latch: once the member presses Sign out the page is leaving, so nothing may start a sign-in.
+const signOutStarted = new AbortController();
 
-/** True from the moment the member presses Sign out: the page is leaving, so nothing may start a sign-in. */
-export const isSigningOut = (): boolean => signingOut;
+export const isSigningOut = (): boolean => signOutStarted.signal.aborted;
 
 /** The tokens go with removeUser; this takes the rest: the requests still waiting for Google and the loop marker (SHELL-05). */
 function clearSignInRecords(): void {
@@ -36,7 +36,7 @@ function clearSignInRecords(): void {
 
 /** Removes every token from this browser, then ends Cognito's own session so the next sign-in asks again (SHELL-05). */
 export async function signOut(): Promise<void> {
-  signingOut = true;
+  signOutStarted.abort();
   await forgetSession();
   clearSignInRecords();
   const logout = new URL(`${COGNITO_DOMAIN}/logout`);

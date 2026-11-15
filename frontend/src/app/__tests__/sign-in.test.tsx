@@ -149,16 +149,21 @@ function fakeAllTimers(): void {
   allTimersFaked = true;
 }
 
+/** Query results reach the screen a macrotask after the answer, and a page can chain several of them. */
+const SETTLE_ROUNDS = 6;
+
 async function flush(): Promise<void> {
-  await act(async () => {
-    if (allTimersFaked) {
-      await vi.advanceTimersByTimeAsync(0);
-      return;
-    }
-    await new Promise((done) => {
-      setTimeout(done, 0);
+  for (let round = 0; round < SETTLE_ROUNDS; round += 1) {
+    await act(async () => {
+      if (allTimersFaked) {
+        await vi.advanceTimersByTimeAsync(0);
+        return;
+      }
+      await new Promise((done) => {
+        setTimeout(done, 0);
+      });
     });
-  });
+  }
 }
 
 async function waitSeconds(seconds: number): Promise<void> {
@@ -409,6 +414,27 @@ describe('the guard, signed in, too many requests', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(fetchMock.mock.calls[1][0]).toBe(`${API_PATH_PREFIX}/profile`);
     expect(signOutButton()).toBeDefined();
+  });
+
+  // SHELL-18, D-60, R-21: a new 429 after the first wait started a new wait, with its own number
+  it('holds the button again for the new wait after a second 429', async () => {
+    fetchMock.mockImplementationOnce(() => tooMany());
+    await open('/profile');
+    await waitSeconds(DEFAULT_RETRY_AFTER_SECONDS);
+    expect(button(text(EN, 'common.retry'))?.disabled).toBe(false);
+
+    fetchMock.mockImplementationOnce(() => tooMany({ 'retry-after': String(RETRY_AFTER) }));
+    await pressRetry();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(h1()).toBe(text(EN, 'common.rateLimit.title'));
+    expect(document.body.textContent).toContain(rateLimitText(EN, RETRY_AFTER));
+    expect(button(text(EN, 'common.retry'))?.disabled).toBe(true);
+
+    await waitSeconds(RETRY_AFTER - 1);
+    expect(button(text(EN, 'common.retry'))?.disabled).toBe(true);
+    await waitSeconds(1);
+    expect(button(text(EN, 'common.retry'))?.disabled).toBe(false);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   // SHELL-18, D-60: no sign-in is started and no token is removed for a 429
