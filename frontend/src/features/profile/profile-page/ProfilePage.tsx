@@ -15,6 +15,7 @@ import { profileContextSchema } from '../profile-context.schema';
 import { ProfileRow } from '../profile-row/ProfileRow';
 import { ProfileRowTone } from '../profile-row/ProfileRow.types';
 import styles from './ProfilePage.module.css';
+import { INSTALL_GUIDE_PATH } from '@constants/routes';
 
 /** Who the member is to everyone else, a way to change it, sign out and delete the account. Stats and the other settings come with their own backend. */
 export function ProfilePage() {
@@ -77,7 +78,7 @@ export function ProfilePage() {
             opensPage
             tone={ProfileRowTone.Normal}
             onClick={() => {
-              void navigate('/profile/install');
+              void navigate(INSTALL_GUIDE_PATH);
             }}
           />
           <ProfileRow

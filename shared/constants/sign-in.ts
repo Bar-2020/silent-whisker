@@ -1,5 +1,7 @@
+import { PROFILE_PATH } from './routes';
+
 /** Where a visitor lands after a sign-in button; the map takes this place in Phase 3. */
-export const AFTER_SIGN_IN_PATH = '/profile';
+export const AFTER_SIGN_IN_PATH = PROFILE_PATH;
 
 /** Sends the visitor straight to Google, so Cognito's own page is never seen (D-59). */
 export const SIGN_IN_IDENTITY_PROVIDER = 'Google';

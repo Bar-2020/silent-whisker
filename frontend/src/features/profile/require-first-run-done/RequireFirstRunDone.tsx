@@ -8,7 +8,7 @@ import { InstallStep } from '../install-step/InstallStep';
  * of every page until each one's flag is set on this device (D-110). Only pressing Continue sets it,
  * so closing the tab at a step shows the step again.
  */
-export function CompleteFirstRun() {
+export function RequireFirstRunDone() {
   const context: unknown = useOutletContext();
   const [isInstallDone, setIsInstallDone] = useState(isInstallStepDone);
   if (!isInstallDone) {

@@ -1,4 +1,4 @@
 export { ProfilePage } from './profile-page/ProfilePage';
 export { RequireAcceptedTerms } from './require-accepted-terms/RequireAcceptedTerms';
-export { CompleteFirstRun } from './complete-first-run/CompleteFirstRun';
+export { RequireFirstRunDone } from './require-first-run-done/RequireFirstRunDone';
 export { InstallGuidePage } from './install-guide-page/InstallGuidePage';
