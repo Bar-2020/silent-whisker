@@ -1,0 +1,23 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.back {
+  display: grid;
+  place-items: center;
+  inline-size: var(--tap);
+  block-size: var(--tap);
+  border-radius: var(--r-m);
+  color: var(--dado);
+}
+
+.back:hover {
+  background: var(--dado-tint);
+}
+
+/* The arrow points toward the start of the line, so it turns over in right-to-left languages. */
+.back:dir(rtl) svg {
+  scale: -1 1;
+}

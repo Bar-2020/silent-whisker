@@ -1,0 +1,24 @@
+.why {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.why li {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.why svg {
+  flex: none;
+  color: var(--dado);
+}
+
+.optional {
+  color: var(--ink-2);
+  font: var(--type-small);
+}

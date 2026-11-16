@@ -35,6 +35,29 @@
   font: var(--type-small);
 }
 
+/* A state chip: pill, an icon then a word (DESIGN.md, Chips and tags). */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  min-block-size: 28px;
+  padding-inline: var(--s-3);
+  border-radius: var(--r-pill);
+  background: var(--surface-sunk);
+  color: var(--ink-2);
+  font: var(--type-label);
+  --icon-size: 1rem;
+}
+
+.chip[data-on='true'] {
+  background: var(--ok-tint);
+  color: var(--ink);
+}
+
+.chip[data-on='true'] svg {
+  color: var(--ok);
+}
+
 .chevron {
   display: grid;
   color: var(--ink-3);

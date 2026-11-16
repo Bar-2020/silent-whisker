@@ -7,6 +7,7 @@ import { LegalLayout, PrivacyPage, TermsPage } from '@features/legal';
 import {
   CompleteFirstRun,
   InstallGuidePage,
+  LocationHelpPage,
   ProfilePage,
   RequireAcceptedTerms,
 } from '@features/profile';
@@ -38,6 +39,7 @@ export function App() {
               <Route element={<CompleteFirstRun />}>
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="profile/install" element={<InstallGuidePage />} />
+                <Route path="profile/location" element={<LocationHelpPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Route>

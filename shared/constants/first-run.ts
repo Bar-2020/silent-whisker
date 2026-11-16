@@ -3,3 +3,6 @@ export const FIRST_RUN_STORAGE_PREFIX = 'first-run.';
 
 /** Set when the member presses Continue on the install step, never earlier, so closing the tab resumes at it (D-110). */
 export const INSTALL_STEP_DONE_STORAGE_KEY = `${FIRST_RUN_STORAGE_PREFIX}install-done`;
+
+/** Set when the member presses either button of the location step, never earlier, so closing the tab resumes at it (D-111). */
+export const LOCATION_STEP_DONE_STORAGE_KEY = `${FIRST_RUN_STORAGE_PREFIX}location-done`;

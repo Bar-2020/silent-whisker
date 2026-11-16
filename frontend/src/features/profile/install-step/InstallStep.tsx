@@ -2,8 +2,8 @@ import { useTranslation } from 'react-i18next';
 import { FormButton } from '@shared/components/form-button/FormButton';
 import { FormButtonVariant } from '@shared/components/form-button/FormButton.types';
 import { PhoneIcon } from '@shared/components/icon/PhoneIcon';
-import { FirstRunFootbar } from '../first-run-footbar/FirstRunFootbar';
 import { FirstRunHeading } from '../first-run-heading/FirstRunHeading';
+import { FirstRunLayout } from '../first-run-layout/FirstRunLayout';
 import { InstallGuide } from '../install-guide/InstallGuide';
 import styles from './InstallStep.module.css';
 
@@ -15,17 +15,8 @@ export function InstallStep({ onContinue }: { onContinue: () => void }) {
   const { t } = useTranslation();
 
   return (
-    <div className={styles.step}>
-      <div className={styles.body}>
-        <FirstRunHeading
-          icon={<PhoneIcon />}
-          title={t('firstrun.install.h1')}
-          lead={t('firstrun.install.lead')}
-        />
-        <InstallGuide />
-        <p className={styles.later}>{t('firstrun.install.later')}</p>
-      </div>
-      <FirstRunFootbar>
+    <FirstRunLayout
+      actions={
         <FormButton
           type="button"
           variant={FormButtonVariant.Primary}
@@ -34,7 +25,15 @@ export function InstallStep({ onContinue }: { onContinue: () => void }) {
         >
           {t('common.continue')}
         </FormButton>
-      </FirstRunFootbar>
-    </div>
+      }
+    >
+      <FirstRunHeading
+        icon={<PhoneIcon />}
+        title={t('firstrun.install.h1')}
+        lead={t('firstrun.install.lead')}
+      />
+      <InstallGuide />
+      <p className={styles.later}>{t('firstrun.install.later')}</p>
+    </FirstRunLayout>
   );
 }
