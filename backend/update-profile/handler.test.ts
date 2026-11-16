@@ -95,7 +95,7 @@ function fakeCounters(): void {
 }
 
 /** The members table: reads give `member`, a write answers with the row as the real update would. */
-function fakeUsers(member: UserRow | undefined): void {
+function fakeUsers(member: Record<string, unknown> | undefined): void {
   dbMock.on(GetCommand, { TableName: USERS }).resolves({ Item: member });
   dbMock.on(UpdateCommand, { TableName: USERS }).callsFake((input: StoreInput) => {
     const written = Object.fromEntries(
@@ -176,6 +176,108 @@ describe('PATCH /api/profile only accepts a member (R-22)', () => {
 
     expect(result.statusCode).toBe(403);
     expect(bodyOf(result)).toEqual({ code: 'BANNED' });
+  });
+});
+
+const DELETED_AT = '2026-10-30T11:00:00.000Z';
+const MARKED = { user_id: 'user-1', status: 'active', deleted_at: DELETED_AT };
+const MARKED_BANNED = { ...MARKED, status: 'banned' };
+
+describe('PATCH /api/profile reads the caller first, in this order (PROF-14, R-08, D-109)', () => {
+  it('reads the row once, by the token subject and with a consistent read, before anything else', async () => {
+    // PROF-14, D-109, D-59
+    const result = await handler(patch({ show_google_photo: true }));
+
+    expect(result.statusCode).toBe(200);
+    const reads = dbMock.commandCalls(GetCommand, { TableName: USERS });
+    expect(reads).toHaveLength(1);
+    expect(reads[0].args[0].input.Key).toEqual({ user_id: 'user-1' });
+    expect(reads[0].args[0].input.ConsistentRead).toBe(true);
+    expect(dbMock.calls()[0].args[0]).toBeInstanceOf(GetCommand);
+  });
+
+  it.each([
+    ['an active member', MARKED],
+    ['a banned member', MARKED_BANNED],
+  ])('answers 401 for the deleted account of %s, reading only once', async (_name, marked) => {
+    // PROF-14, D-109
+    fakeUsers(marked);
+
+    const result = await handler(patch(FIRST_SAVE));
+
+    expect(result.statusCode).toBe(401);
+    expect(bodyOf(result)).toEqual({ code: 'UNAUTHORIZED' });
+    expect(dbMock.calls()).toHaveLength(1);
+    expect(counters.size).toBe(0);
+    expect(lookup).not.toHaveBeenCalled();
+    expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
+  });
+
+  it('answers 401 for a deleted account even when the body is bad: the row is read before the body', async () => {
+    // PROF-14, D-109
+    fakeUsers(MARKED);
+
+    const result = await handler(patch('not json'));
+
+    expect(result.statusCode).toBe(401);
+    expect(dbMock.calls()).toHaveLength(1);
+  });
+
+  it('answers NOT_FOUND for a caller with no row before it looks at the body', async () => {
+    // PROF-14, D-109
+    fakeUsers(undefined);
+
+    const result = await handler(patch('not json'));
+
+    expect(result.statusCode).toBe(404);
+    expect(counters.size).toBe(0);
+  });
+
+  it('answers BANNED for a banned member before it looks at the body (R-08)', async () => {
+    // PROF-14, R-08, D-109
+    fakeUsers(row({ status: 'banned' }));
+
+    const result = await handler(patch('not json'));
+
+    expect(result.statusCode).toBe(403);
+    expect(bodyOf(result)).toEqual({ code: 'BANNED' });
+    expect(counters.size).toBe(0);
+  });
+
+  it('answers 400 for a bad body only once the member is known, live and not banned', async () => {
+    // PROF-14, D-109
+    const result = await handler(patch('not json'));
+
+    expect(result.statusCode).toBe(400);
+    expect(bodyOf(result)).toEqual({ code: 'INVALID_INPUT' });
+    expect(userWrites()).toHaveLength(0);
+  });
+
+  it('makes its row update conditional on the row not being marked deleted', async () => {
+    // PROF-14, D-109
+    await handler(patch({ show_google_photo: true }));
+
+    const [write] = userWrites();
+    expect(write.args[0].input.ConditionExpression).toContain('attribute_not_exists(deleted_at)');
+  });
+
+  it('does not save over a delete that lands between the read and the write', async () => {
+    // PROF-14, D-109
+    fakeUsers(row());
+    const refusedWhenMarked = (input: { ConditionExpression?: string }) => {
+      if (input.ConditionExpression?.includes('attribute_not_exists(deleted_at)')) {
+        throw conditionFailed();
+      }
+      return { Attributes: row({ show_google_photo: true }) };
+    };
+    dbMock.on(UpdateCommand, { TableName: USERS }).callsFake(refusedWhenMarked);
+
+    const result = await handler(patch({ show_google_photo: true }));
+
+    // What the answer is for this race is not in the docs (reported); it must refuse, and not as a server error.
+    expect(result.statusCode).toBeGreaterThanOrEqual(400);
+    expect(result.statusCode).toBeLessThan(500);
+    expect(bodyOf(result)).not.toMatchObject({ show_google_photo: true });
   });
 });
 
