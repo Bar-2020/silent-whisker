@@ -12,14 +12,31 @@ export interface ProfileRowChip {
   readonly isOn: boolean;
 }
 
-export interface ProfileRowProps {
+export interface ProfileRowBase {
   readonly icon: ReactNode;
   readonly title: string;
   /** A quiet line under the title. */
-  readonly hint?: string;
+  readonly hint?: ReactNode;
   readonly chip?: ProfileRowChip;
   /** Draws the arrow of a row that opens another page. */
   readonly opensPage?: boolean;
   readonly tone: ProfileRowTone;
-  readonly onClick: () => void;
 }
+
+/** What pressing the row does: runs a function, goes to a page of the app, or leaves the app for an address. */
+export type ProfileRowProps = ProfileRowBase &
+  (
+    | {
+        readonly onClick: () => void;
+        readonly to?: never;
+        readonly href?: never;
+      }
+    | { readonly to: string; readonly onClick?: never; readonly href?: never }
+    | {
+        readonly href: string;
+        /** Opens a new tab with no link back to the app (for a web page, not for a `mailto:`). */
+        readonly opensNewTab?: boolean;
+        readonly onClick?: never;
+        readonly to?: never;
+      }
+  );

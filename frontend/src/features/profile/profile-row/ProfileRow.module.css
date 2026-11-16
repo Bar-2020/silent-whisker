@@ -11,6 +11,7 @@
   color: var(--ink);
   font: var(--type-body-strong);
   text-align: start;
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -58,7 +59,8 @@
   color: var(--ok);
 }
 
-.chevron {
+.chevron,
+.external {
   display: grid;
   color: var(--ink-3);
 }

@@ -9,9 +9,10 @@ import { MemberAvatar } from '../member-avatar/MemberAvatar';
 import { AvatarSize } from '../member-avatar/MemberAvatar.types';
 import { profileContextSchema } from '../profile-context.schema';
 import { ProfileSettings } from '../profile-settings/ProfileSettings';
+import { ProfileSupport } from '../profile-support/ProfileSupport';
 import styles from './ProfilePage.module.css';
 
-/** Who the member is to everyone else, a way to change it, sign out and delete the account. Stats and the other settings come with their own backend. */
+/** Who the member is to everyone else, a way to change it, sign out, delete the account, and the support links. Stats and the admin group come with their own backend. */
 export function ProfilePage() {
   const { t } = useTranslation();
   const { profile, hasGooglePhoto } = profileContextSchema.parse(useOutletContext());
@@ -65,6 +66,7 @@ export function ProfilePage() {
           setIsDeleting(true);
         }}
       />
+      <ProfileSupport />
       {isDeleting && (
         <DeleteAccountDialog
           onClose={() => {
