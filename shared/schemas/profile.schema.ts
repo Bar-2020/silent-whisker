@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { PROFILE_TEXT_MAX_LENGTH, PROFILE_TEXT_MIN_LENGTH } from '../constants/profile';
+import { MEMBER_STATUS } from '../constants/member-status';
 
 // The shape of `GET` and `PATCH /profile` (docs/API.md), once: the checks and the types come from here.
 
@@ -34,7 +35,7 @@ export const profileResponseSchema = z.object({
   city: z.string().nullable(),
   avatar_url: z.string().nullable(),
   show_google_photo: z.boolean(),
-  status: z.enum(['active', 'banned']),
+  status: z.enum(MEMBER_STATUS),
   terms_accepted: z.boolean(),
 });
 export type ProfileResponse = z.infer<typeof profileResponseSchema>;

@@ -87,6 +87,7 @@ interface DbInput {
   UpdateExpression?: string;
   ExpressionAttributeNames?: Record<string, string>;
   ExpressionAttributeValues?: Record<string, unknown>;
+  ReturnValues?: string;
 }
 
 // The users table as the real one answers, so a second call sees what the first wrote.
@@ -119,7 +120,7 @@ function splitTopLevel(text: string): string[] {
 }
 
 /** DynamoDB's own reading of `SET a = :v, b = if_not_exists(b, :w) REMOVE c, d`; an update that makes a missing row makes it from its key. */
-function applyUpdate(input: DbInput): void {
+function applyUpdate(input: DbInput): Item {
   const names = input.ExpressionAttributeNames ?? {};
   const values = input.ExpressionAttributeValues ?? {};
   const expression = input.UpdateExpression ?? '';
@@ -145,6 +146,7 @@ function applyUpdate(input: DbInput): void {
   }
   for (const name of clause('REMOVE')) Reflect.deleteProperty(row, nameOf(name));
   users.set(id, row);
+  return structuredClone(row);
 }
 
 function fakeDatabase(): void {
@@ -169,8 +171,9 @@ function fakeDatabase(): void {
   });
   dbMock.on(UpdateCommand, { TableName: USERS }).callsFake((input: DbInput) => {
     order.push('update');
-    applyUpdate(input);
-    return {};
+    const after = applyUpdate(input);
+    // As DynamoDB does with ALL_NEW: the row as it is after the update, status included.
+    return input.ReturnValues === 'ALL_NEW' ? { Attributes: after } : {};
   });
   // D-109: the delete never moves a write counter; if it asked, the budget is used up.
   dbMock.on(GetCommand, { TableName: COUNTERS }).rejects(conditionFailed());
@@ -285,8 +288,8 @@ describe('DELETE /api/profile reads the caller first (PROF-14, PROF-29, D-109, D
 });
 
 describe('DELETE /api/profile with confirm true deletes an active member (PROF-12, D-71, R-07, D-109)', () => {
-  it('reads the row, erases and marks it in one update, disables the Cognito user, and answers deleted true', async () => {
-    // PROF-12, D-71, R-07, D-109
+  it('reads the row, erases and marks it in one update, deletes the Cognito user, and answers deleted true', async () => {
+    // PROF-12, D-71, R-07, D-109, D-112
     users.set('user-1', { ...FULL_ROW });
 
     const result = await handler(confirm(true));
@@ -294,7 +297,7 @@ describe('DELETE /api/profile with confirm true deletes an active member (PROF-1
     expect(result.statusCode).toBe(200);
     expect(bodyOf(result)).toEqual({ deleted: true });
     expect(users.get('user-1')).toEqual(MARKED_ACTIVE);
-    expect(order).toEqual(['read', 'update', 'cognito-disable']);
+    expect(order).toEqual(['read', 'update', 'cognito-delete']);
   });
 
   it('makes one update on the member own row, with no condition, and no put and no delete', async () => {
@@ -314,15 +317,15 @@ describe('DELETE /api/profile with confirm true deletes an active member (PROF-1
     expect(users.get('user-2')).toEqual({ ...FULL_ROW, user_id: 'user-2' });
   });
 
-  it('disables the Cognito user of this pool by the token username, and never deletes it', async () => {
-    // PROF-12, R-07, D-109
+  it('deletes the Cognito user of this pool by the token username, and does not disable it', async () => {
+    // PROF-12, R-07, D-109, D-112
     users.set('user-1', { ...FULL_ROW });
 
     await handler(confirm(true));
 
-    expect(disableCalls()).toHaveLength(1);
-    expect(disableCalls()[0].args[0].input).toEqual({ UserPoolId: POOL, Username: 'Google_1001' });
-    expect(deleteCalls()).toHaveLength(0);
+    expect(deleteCalls()).toHaveLength(1);
+    expect(deleteCalls()[0].args[0].input).toEqual({ UserPoolId: POOL, Username: 'Google_1001' });
+    expect(disableCalls()).toHaveLength(0);
   });
 
   it('removes every personal attribute, whatever the row held', async () => {
@@ -341,7 +344,7 @@ describe('DELETE /api/profile with confirm true deletes an active member (PROF-1
 
 describe('DELETE /api/profile before the terms are accepted, or with no row (PROF-13, R-36, D-109)', () => {
   it('works for a member who has not accepted the terms yet', async () => {
-    // PROF-13, R-36
+    // PROF-13, R-36, D-112
     users.set('user-1', { ...NEW_ROW });
 
     const result = await handler(confirm(true));
@@ -349,24 +352,25 @@ describe('DELETE /api/profile before the terms are accepted, or with no row (PRO
     expect(result.statusCode).toBe(200);
     expect(bodyOf(result)).toEqual({ deleted: true });
     expect(users.get('user-1')).toEqual(MARKED_ACTIVE);
-    expect(disableCalls()).toHaveLength(1);
+    expect(deleteCalls()).toHaveLength(1);
+    expect(disableCalls()).toHaveLength(0);
   });
 
   it('gives a caller with no row a row holding only user_id, status active and deleted_at', async () => {
-    // PROF-13, D-109
+    // PROF-13, D-109, D-112
     const result = await handler(confirm(true));
 
     expect(result.statusCode).toBe(200);
     expect(bodyOf(result)).toEqual({ deleted: true });
     expect(users.get('user-1')).toEqual(MARKED_ACTIVE);
-    expect(disableCalls()).toHaveLength(1);
-    expect(deleteCalls()).toHaveLength(0);
+    expect(deleteCalls()).toHaveLength(1);
+    expect(disableCalls()).toHaveLength(0);
   });
 });
 
-describe('DELETE /api/profile with confirm true for a banned member keeps the ban (AUTH-06, D-71, R-08, D-109)', () => {
+describe('DELETE /api/profile with confirm true for a banned member keeps the ban (AUTH-06, D-71, R-08, D-109, D-112)', () => {
   it('leaves user_id, status banned and deleted_at, disables the Cognito user and never deletes it', async () => {
-    // AUTH-06, D-71, R-08, D-109
+    // AUTH-06, D-71, R-08, D-109, D-112
     users.set('user-1', { ...BANNED_ROW });
 
     const result = await handler(confirm(true));
@@ -426,12 +430,12 @@ describe('DELETE /api/profile reads its body strictly (PROF-22, D-101, D-109)', 
 
 describe('DELETE /api/profile does not use the daily write budget (PROF-23, R-21, D-109)', () => {
   it.each([
-    ['an active member', FULL_ROW, MARKED_ACTIVE],
-    ['a banned member', BANNED_ROW, MARKED_BANNED],
+    ['an active member', FULL_ROW, MARKED_ACTIVE, 1, 0],
+    ['a banned member', BANNED_ROW, MARKED_BANNED, 0, 1],
   ])(
     'confirm true works for %s whose daily writes are used up (the counters table refuses every call)',
-    async (_name, stored, expected) => {
-      // PROF-23, R-21, D-109
+    async (_name, stored, expected, deletes, disables) => {
+      // PROF-23, R-21, D-109, D-112
       users.set('user-1', { ...stored });
 
       const result = await handler(confirm(true));
@@ -440,6 +444,8 @@ describe('DELETE /api/profile does not use the daily write budget (PROF-23, R-21
       expect(bodyOf(result)).toEqual({ deleted: true });
       expect(users.get('user-1')).toEqual(expected);
       expect(counterTouched()).toBe(false);
+      expect(deleteCalls()).toHaveLength(deletes);
+      expect(disableCalls()).toHaveLength(disables);
     }
   );
 
@@ -630,23 +636,31 @@ describe('DELETE /api/profile when Cognito fails after the row was erased (PROF-
     ['a throttle', Object.assign(new Error('Rate exceeded'), { name: 'TooManyRequestsException' })],
   ];
 
-  it.each(failures)('throws on %s, and the row is already marked', async (_name, failure) => {
-    // PROF-24, D-109
-    vi.spyOn(console, 'error').mockImplementation(() => undefined);
-    users.set('user-1', { ...FULL_ROW });
-    cognitoError = failure;
+  it.each(
+    failures.flatMap(([name, failure]) => [
+      [name, failure, 'an active member', FULL_ROW, MARKED_ACTIVE, 'cognito-delete'] as const,
+      [name, failure, 'a banned member', BANNED_ROW, MARKED_BANNED, 'cognito-disable'] as const,
+    ])
+  )(
+    'throws on %s for %s, and the row is already marked',
+    async (_name, failure, _who, stored, left, call) => {
+      // PROF-24, D-109, D-112
+      vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      users.set('user-1', { ...stored });
+      cognitoError = failure;
 
-    await expect(handler(confirm(true))).rejects.toThrow();
+      await expect(handler(confirm(true))).rejects.toThrow();
 
-    expect(users.get('user-1')).toEqual(MARKED_ACTIVE);
-    expect(order).toEqual(['read', 'update', 'cognito-disable']);
-  });
+      expect(users.get('user-1')).toEqual(left);
+      expect(order).toEqual(['read', 'update', call]);
+    }
+  );
 
   it.each([
     ['an active member', FULL_ROW, MARKED_ACTIVE],
     ['a banned member', BANNED_ROW, MARKED_BANNED],
   ])('answers 401 to every later call, old token or new, for %s', async (_name, stored, left) => {
-    // PROF-24, D-109
+    // PROF-24, D-109, D-112
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
     Object.assign(process.env, UPDATE_PROFILE_SETTINGS);
     users.set('user-1', { ...stored });
@@ -670,22 +684,30 @@ describe('DELETE /api/profile when Cognito fails after the row was erased (PROF-
     expect(snapshot()).toEqual({ 'user-1': left });
   });
 
-  it('counts a Cognito user that does not exist as done', async () => {
-    // PROF-24, D-109
-    users.set('user-1', { ...FULL_ROW });
-    cognitoError = new UserNotFoundException({ message: 'User does not exist.', $metadata: {} });
+  it.each([
+    ['an active member', FULL_ROW, MARKED_ACTIVE, 1, 0],
+    ['a banned member', BANNED_ROW, MARKED_BANNED, 0, 1],
+  ])(
+    'counts a Cognito user that is already gone as done, for %s',
+    async (_name, stored, left, deletes, disables) => {
+      // PROF-31, D-112
+      users.set('user-1', { ...stored });
+      cognitoError = new UserNotFoundException({ message: 'User does not exist.', $metadata: {} });
 
-    const result = await handler(confirm(true));
+      const result = await handler(confirm(true));
 
-    expect(result.statusCode).toBe(200);
-    expect(bodyOf(result)).toEqual({ deleted: true });
-    expect(users.get('user-1')).toEqual(MARKED_ACTIVE);
-  });
+      expect(result.statusCode).toBe(200);
+      expect(bodyOf(result)).toEqual({ deleted: true });
+      expect(users.get('user-1')).toEqual(left);
+      expect(deleteCalls()).toHaveLength(deletes);
+      expect(disableCalls()).toHaveLength(disables);
+    }
+  );
 });
 
-describe('DELETE /api/profile never writes status (PROF-25, D-71, R-08, D-109)', () => {
+describe('DELETE /api/profile never writes status (PROF-25, D-71, R-08, D-109, D-112)', () => {
   it('keeps a member who is banned after the row was read banned, and disables the Cognito user', async () => {
-    // PROF-25, D-71, R-08, D-109
+    // PROF-25, D-71, R-08, D-109, D-112
     users.set('user-1', { ...FULL_ROW });
     afterRead = () => users.set('user-1', { ...BANNED_ROW });
 
@@ -698,8 +720,8 @@ describe('DELETE /api/profile never writes status (PROF-25, D-71, R-08, D-109)',
     expect(deleteCalls()).toHaveLength(0);
   });
 
-  it('keeps a member who is unbanned after the row was read active, and disables the Cognito user', async () => {
-    // PROF-25, D-71, D-109
+  it('keeps a member who is unbanned after the row was read active, and deletes the Cognito user', async () => {
+    // PROF-25, D-71, D-109, D-112
     users.set('user-1', { ...BANNED_ROW });
     afterRead = () => users.set('user-1', { ...FULL_ROW });
 
@@ -707,17 +729,30 @@ describe('DELETE /api/profile never writes status (PROF-25, D-71, R-08, D-109)',
 
     expect(result.statusCode).toBe(200);
     expect(users.get('user-1')).toEqual(MARKED_ACTIVE);
-    expect(disableCalls()).toHaveLength(1);
+    expect(deleteCalls()).toHaveLength(1);
+    expect(disableCalls()).toHaveLength(0);
   });
 
-  it('keeps the status of a member who is not banned as it is: active stays active', async () => {
-    // PROF-25, D-109
+  it('keeps the status of a member who is not banned as it is: active stays active, and is deleted', async () => {
+    // PROF-25, D-109, D-112
     users.set('user-1', { ...FULL_ROW });
 
     await handler(confirm(true));
 
     expect(users.get('user-1')?.status).toBe('active');
-    expect(disableCalls()).toHaveLength(1);
+    expect(deleteCalls()).toHaveLength(1);
+    expect(disableCalls()).toHaveLength(0);
+  });
+
+  it('asks for the row as it is after the update, and keeps a banned status', async () => {
+    // PROF-25, D-109, D-112
+    users.set('user-1', { ...BANNED_ROW });
+
+    await handler(confirm(true));
+
+    const [update] = dbMock.commandCalls(UpdateCommand, { TableName: USERS });
+    expect(update.args[0].input.ReturnValues).toBe('ALL_NEW');
+    expect(users.get('user-1')?.status).toBe('banned');
   });
 });
 
@@ -726,7 +761,7 @@ describe('DELETE /api/profile acts only on the token, never on the body (PROF-26
     ['an active member', FULL_ROW],
     ['a banned member', BANNED_ROW],
   ])('calls Cognito with the token username, body ignored, for %s', async (_name, stored) => {
-    // PROF-26, R-01, D-109
+    // PROF-26, R-01, D-109, D-112
     users.set('user-1', { ...stored });
     users.set('victim', { ...FULL_ROW, user_id: 'victim' });
 
@@ -740,20 +775,22 @@ describe('DELETE /api/profile acts only on the token, never on the body (PROF-26
       })
     );
 
-    expect(disableCalls()).toHaveLength(1);
-    expect(disableCalls()[0].args[0].input).toEqual({ UserPoolId: POOL, Username: 'Google_1001' });
+    const calls = stored.status === 'banned' ? disableCalls() : deleteCalls();
+    expect(cognitoCalls()).toHaveLength(1);
+    expect(calls).toHaveLength(1);
+    expect(calls[0].args[0].input).toEqual({ UserPoolId: POOL, Username: 'Google_1001' });
     const touched = JSON.stringify(dbMock.calls().map((call) => call.args[0].input));
     expect(touched).not.toContain('victim');
     expect(users.get('victim')).toEqual({ ...FULL_ROW, user_id: 'victim' });
   });
 
   it('uses the username, not the subject, for a member whose two differ', async () => {
-    // PROF-26, D-109
+    // PROF-26, D-109, D-112
     users.set('user-1', { ...FULL_ROW });
 
     await handler(confirm(true));
 
-    expect(disableCalls()[0].args[0].input.Username).not.toBe('user-1');
+    expect(deleteCalls()[0].args[0].input.Username).not.toBe('user-1');
   });
 
   it.each([
