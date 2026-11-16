@@ -1,0 +1,14 @@
+.settings {
+  inline-size: 100%;
+}
+
+.settings h2 {
+  padding-block-end: var(--s-2);
+  color: var(--ink-2);
+  font: var(--type-heading);
+}
+
+.rows {
+  border-block-start: 1px solid var(--line);
+  background: var(--surface);
+}

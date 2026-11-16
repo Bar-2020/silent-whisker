@@ -1,6 +1,7 @@
-import { InstallBrowser, type InstallGuideEntry } from './install-guide.types';
+import type { BrowserGuideEntry } from '../browser-guides/BrowserGuides.types';
+import { InstallBrowser } from './install-guide.types';
 
-export const INSTALL_GUIDES: readonly InstallGuideEntry[] = [
+export const INSTALL_GUIDES: readonly BrowserGuideEntry[] = [
   {
     browser: InstallBrowser.Iphone,
     titleKey: 'profile.install.iphone',

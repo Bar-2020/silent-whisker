@@ -7,3 +7,4 @@ export const TERMS_PATH = '/terms';
 export const AUTH_CALLBACK_PATH = auth.callback_path;
 export const PROFILE_PATH = '/profile';
 export const INSTALL_GUIDE_PATH = `${PROFILE_PATH}/install`;
+export const LOCATION_HELP_PATH = `${PROFILE_PATH}/location`;

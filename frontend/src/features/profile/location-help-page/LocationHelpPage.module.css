@@ -1,0 +1,20 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.steps h2 {
+  font: var(--type-heading);
+}
+
+.without {
+  color: var(--ink-2);
+  font: var(--type-small);
+}

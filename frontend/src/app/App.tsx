@@ -7,6 +7,7 @@ import { LegalLayout, PrivacyPage, TermsPage } from '@features/legal';
 import {
   RequireFirstRunDone,
   InstallGuidePage,
+  LocationHelpPage,
   ProfilePage,
   RequireAcceptedTerms,
 } from '@features/profile';
@@ -15,6 +16,7 @@ import { AppShell } from './app-shell/AppShell';
 import {
   AUTH_CALLBACK_PATH,
   INSTALL_GUIDE_PATH,
+  LOCATION_HELP_PATH,
   PRIVACY_PATH,
   PROFILE_PATH,
   TERMS_PATH,
@@ -45,6 +47,7 @@ export function App() {
               <Route element={<RequireFirstRunDone />}>
                 <Route path={PROFILE_PATH} element={<ProfilePage />} />
                 <Route path={INSTALL_GUIDE_PATH} element={<InstallGuidePage />} />
+                <Route path={LOCATION_HELP_PATH} element={<LocationHelpPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Route>

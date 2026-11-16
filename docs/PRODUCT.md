@@ -124,8 +124,8 @@ One phase, one PR or smaller. Finish a phase before the next. Inside a phase, bu
    (D-39), so it comes before the map. **Under way.**
 3. Map and spots (exact; custom spots per D-47), municipal stations loaded into `spots`, custom spots
    (a separate form, admin approval, D-43), the spots list (D-82), the admin list in Profile (D-78), moderated photo upload.
-4. Feeding and water logs (no photo), the first-run location screen and the "needs food/water"
-   layer; municipal stations become loggable (D-35). Proposed: when several members dispute one
+4. Feeding and water logs (no photo), the "needs food/water"
+   layer (the first-run location screen was built early, in Phase 2, at the owner's request: D-111); municipal stations become loggable (D-35). Proposed: when several members dispute one
    member's logs, an admin gets a flag and that member's next logs need a photo.
 5. Cats, the feed, likes, comments, chat.
 6. Cat alerts, stats, landing-page ads, donation link, launch checklist (privacy policy, terms, Hebrew text moderation test, and a native speaker's read of every text in all four languages: the screens are built with texts written by Claude, and all of them are checked together at the end).
