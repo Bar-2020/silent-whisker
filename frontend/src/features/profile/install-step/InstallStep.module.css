@@ -1,0 +1,15 @@
+.step {
+  display: flex;
+  flex-direction: column;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.later {
+  color: var(--ink-2);
+  font: var(--type-small);
+}

@@ -9,6 +9,10 @@ export enum ProfileRowTone {
 export interface ProfileRowProps {
   readonly icon: ReactNode;
   readonly title: string;
+  /** A quiet line under the title. */
+  readonly hint?: string;
+  /** Draws the arrow of a row that opens another page. */
+  readonly opensPage?: boolean;
   readonly tone: ProfileRowTone;
   readonly onClick: () => void;
 }

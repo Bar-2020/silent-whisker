@@ -1,0 +1,20 @@
+.illustration {
+  display: grid;
+  place-items: center;
+  inline-size: 56px;
+  block-size: 56px;
+  border-radius: 50%;
+  background: var(--dado-tint);
+  color: var(--dado);
+  --icon-size: 1.75rem;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.lead {
+  color: var(--ink-2);
+}

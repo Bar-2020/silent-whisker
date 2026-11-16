@@ -9,6 +9,7 @@ import {
   TOKEN_REFRESH_MARGIN_SECONDS,
 } from '@constants/sign-in';
 import auth from '@constants/auth.json';
+import { removeStoredKeysWithPrefix } from '@shared/utils/stored-keys';
 import { COGNITO_DOMAIN, userManager } from './user-manager';
 
 /** Goes to Google through Cognito's code flow with PKCE; `returnTo` is where the visitor comes back to. */
@@ -29,9 +30,7 @@ export const isSigningOut = (): boolean => signOutStarted.signal.aborted;
 
 /** The tokens go with removeUser; this takes the rest: the requests still waiting for Google and the loop marker (SHELL-05). */
 function clearSignInRecords(): void {
-  for (const key of Object.keys(localStorage)) {
-    if (key.startsWith(OIDC_STORAGE_PREFIX)) localStorage.removeItem(key);
-  }
+  removeStoredKeysWithPrefix(OIDC_STORAGE_PREFIX);
   sessionStorage.removeItem(SIGN_IN_STARTED_STORAGE_KEY);
 }
 

@@ -4,7 +4,12 @@ import { Route, Routes } from 'react-router';
 import { AuthCallbackPage, RequireSignIn } from '@features/auth';
 import { LandingPage } from '@features/landing';
 import { LegalLayout, PrivacyPage, TermsPage } from '@features/legal';
-import { ProfilePage, RequireAcceptedTerms } from '@features/profile';
+import {
+  CompleteFirstRun,
+  InstallGuidePage,
+  ProfilePage,
+  RequireAcceptedTerms,
+} from '@features/profile';
 import { NotFoundPage } from './not-found-page/NotFoundPage';
 import { AppShell } from './app-shell/AppShell';
 
@@ -30,8 +35,11 @@ export function App() {
           <Route path="auth/callback" element={<AuthCallbackPage />} />
           <Route element={<RequireSignIn />}>
             <Route element={<RequireAcceptedTerms />}>
-              <Route path="profile" element={<ProfilePage />} />
-              <Route path="*" element={<NotFoundPage />} />
+              <Route element={<CompleteFirstRun />}>
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="profile/install" element={<InstallGuidePage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Route>
             </Route>
           </Route>
         </Route>

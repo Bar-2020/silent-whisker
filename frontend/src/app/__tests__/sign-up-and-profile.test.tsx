@@ -18,6 +18,7 @@ import {
 } from '@shared/test-support/sign-in-fakes';
 import type { ProfileResponse } from '@schemas/profile.schema';
 import { CONTACT_EMAIL } from '@constants/contact';
+import { INSTALL_STEP_DONE_STORAGE_KEY } from '@constants/first-run';
 import {
   API_PATH_PREFIX,
   DEFAULT_RETRY_AFTER_SECONDS,
@@ -106,6 +107,8 @@ beforeEach(async () => {
   fakeUserManager.reset();
   sessionStorage.clear();
   localStorage.clear();
+  // FIRST-11, D-110: without the install flag the install step takes the place of every page
+  localStorage.setItem(INSTALL_STEP_DONE_STORAGE_KEY, 'true');
   profile = MEMBER;
   patchQueue = [];
   onProfileRequest = undefined;

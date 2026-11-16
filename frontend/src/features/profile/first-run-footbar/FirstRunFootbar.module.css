@@ -1,0 +1,15 @@
+.footbar {
+  position: sticky;
+  inset-block-end: 0;
+  z-index: var(--z-bar);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  margin-block-start: var(--s-5);
+  padding-block: var(--s-3) calc(var(--s-3) + env(safe-area-inset-bottom, 0px));
+  background: var(--surface);
+}
+
+.footbar > * {
+  inline-size: 100%;
+}
