@@ -8,6 +8,7 @@ import { FormButtonVariant } from '@shared/components/form-button/FormButton.typ
 import { ModalDialog } from '@shared/components/modal-dialog/ModalDialog';
 import { CancelButton } from '../cancel-button/CancelButton';
 import { describeDeleteFailure } from '../delete-failure';
+import { forgetFirstRunProgress } from '../first-run-progress';
 import { FormMessage } from '../form-message/FormMessage';
 import styles from './DeleteAccountDialog.module.css';
 
@@ -29,7 +30,11 @@ export function DeleteAccountDialog({ onClose }: { onClose: () => void }) {
   const isDeleteSent = useRef(false);
   const deletion = useMutation({
     mutationFn: () => deleteProfile(true),
-    onSuccess: () => signOut(),
+    onSuccess: () => {
+      // Before sign-out leaves the page, so signing in again starts the first run from the beginning (ME-03, D-110).
+      forgetFirstRunProgress();
+      return signOut();
+    },
     onSettled: () => {
       isDeleteSent.current = false;
     },

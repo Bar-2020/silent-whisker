@@ -8,6 +8,8 @@ import { FormButtonVariant } from '@shared/components/form-button/FormButton.typ
 import { UserIcon } from '@shared/components/icon/UserIcon';
 import { buildProfileUpdate } from '../build-profile-update';
 import { BannedAccountNotice } from '../banned-account-notice/BannedAccountNotice';
+import { FirstRunFootbar } from '../first-run-footbar/FirstRunFootbar';
+import { FirstRunHeading } from '../first-run-heading/FirstRunHeading';
 import { ProfileFields } from '../profile-fields/ProfileFields';
 import { createProfileFormSchema } from '../profile-form.schema';
 import { PhotoChoice } from '../profile-form.types';
@@ -53,19 +55,17 @@ export function SignUpForm({
     <FormProvider {...form}>
       <form className={styles.form} noValidate onSubmit={(event) => void submit(event)}>
         <div className={styles.body}>
-          <span className={styles.illustration}>
-            <UserIcon />
-          </span>
-          <div className={styles.heading}>
-            <h1>{t('firstrun.profile.h1')}</h1>
-            <p className={styles.lead}>{t('firstrun.profile.lead')}</p>
-          </div>
+          <FirstRunHeading
+            icon={<UserIcon />}
+            title={t('firstrun.profile.h1')}
+            lead={t('firstrun.profile.lead')}
+          />
           {profile.status === 'banned' && <BannedAccountNotice />}
           <ProfileFields hasGooglePhoto={hasGooglePhoto} />
           <TermsCheckbox />
           <ProfileSaveErrorMessage />
         </div>
-        <div className={styles.footbar}>
+        <FirstRunFootbar>
           <FormButton type="submit" variant={FormButtonVariant.Primary} pending={isSubmitPending}>
             {t('common.continue')}
           </FormButton>
@@ -79,7 +79,7 @@ export function SignUpForm({
           >
             {t('profile.signOut')}
           </FormButton>
-        </div>
+        </FirstRunFootbar>
       </form>
     </FormProvider>
   );

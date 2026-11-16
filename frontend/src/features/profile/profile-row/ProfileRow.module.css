@@ -23,9 +23,26 @@
   color: var(--dado);
 }
 
-.title {
+.text {
+  display: flex;
   flex: 1;
+  flex-direction: column;
   min-inline-size: 0;
+}
+
+.hint {
+  color: var(--ink-2);
+  font: var(--type-small);
+}
+
+.chevron {
+  display: grid;
+  color: var(--ink-3);
+}
+
+/* The arrow points toward the end of the line, so it turns over in right-to-left languages. */
+.chevron:dir(rtl) svg {
+  scale: -1 1;
 }
 
 .row[data-tone='bad'],

@@ -34,6 +34,7 @@ import {
 } from '@shared/test-support/sign-in-fakes';
 import auth from '@constants/auth.json';
 import { MS_PER_SECOND } from '@constants/cost';
+import { INSTALL_STEP_DONE_STORAGE_KEY } from '@constants/first-run';
 import {
   API_PATH_PREFIX,
   DEFAULT_RETRY_AFTER_SECONDS,
@@ -98,6 +99,8 @@ beforeEach(async () => {
   fakeUserManager.reset();
   sessionStorage.clear();
   localStorage.clear();
+  // FIRST-11, D-110: without the install flag the install step takes the place of every page
+  localStorage.setItem(INSTALL_STEP_DONE_STORAGE_KEY, 'true');
   fetchMock.mockReset();
   fetchMock.mockImplementation(() => Promise.resolve(jsonResponse(STATUS_OK, PROFILE)));
   vi.stubGlobal('fetch', fetchMock);

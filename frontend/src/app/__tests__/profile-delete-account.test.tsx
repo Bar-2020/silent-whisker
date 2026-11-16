@@ -22,6 +22,7 @@ import {
 } from '@shared/test-support/sign-in-fakes';
 import type { ProfileResponse } from '@schemas/profile.schema';
 import auth from '@constants/auth.json';
+import { FIRST_RUN_STORAGE_PREFIX, INSTALL_STEP_DONE_STORAGE_KEY } from '@constants/first-run';
 import {
   API_PATH_PREFIX,
   DEFAULT_RETRY_AFTER_SECONDS,
@@ -102,6 +103,8 @@ beforeEach(async () => {
   fakeUserManager.reset();
   sessionStorage.clear();
   localStorage.clear();
+  // FIRST-11, D-110: without the install flag the install step takes the place of every page
+  localStorage.setItem(INSTALL_STEP_DONE_STORAGE_KEY, 'true');
   installDialogMethods();
   profile = ACTIVE;
   deleteQueue = [];
@@ -602,5 +605,128 @@ describe.each(MEMBERS)('the delete dialog, when the server refuses, for %s', (_w
     expect(confirmsSent()).toEqual([false, true]);
     expectOnlyMessage(MESSAGES.unavailable);
     expect(isBusy()).toBe(false);
+  });
+});
+
+// ---- FIRST-13
+
+const LOCATION_DONE_KEY = `${FIRST_RUN_STORAGE_PREFIX}location-done`;
+const FIRST_RUN_KEYS = [INSTALL_STEP_DONE_STORAGE_KEY, LOCATION_DONE_KEY].sort();
+/** Names that only look like the prefix: they are not under it, so they stay. */
+const LOOKALIKE_KEYS = ['first-run', 'my.first-run.install-done'];
+
+/** What a device holds after the first run: the install flag, a second key under the prefix, and others. */
+function seedFirstRunStorage(): void {
+  localStorage.setItem(LOCATION_DONE_KEY, 'true');
+  localStorage.setItem(UNRELATED_STORAGE_KEY, UNRELATED_STORAGE_VALUE);
+  for (const key of LOOKALIKE_KEYS) localStorage.setItem(key, 'kept');
+  seedSignInStorage();
+}
+
+const firstRunKeys = (): string[] =>
+  Object.keys(localStorage)
+    .filter((key) => key.startsWith(FIRST_RUN_STORAGE_PREFIX))
+    .sort();
+
+function expectOtherKeysKept(): void {
+  expect(localStorage.getItem(UNRELATED_STORAGE_KEY)).toBe(UNRELATED_STORAGE_VALUE);
+  for (const key of LOOKALIKE_KEYS) expect(localStorage.getItem(key)).toBe('kept');
+}
+
+const heading1 = (): string | null => document.querySelector('h1')?.textContent ?? null;
+
+describe.each(MEMBERS)('deleting the account clears the first run, for %s', (_who, member) => {
+  // FIRST-13, ME-03, D-110: every first-run key is gone before the visit goes to /logout; other keys stay
+  it('removes every first-run key before the visit goes to /logout', async () => {
+    let keysAtRedirect: string[] | undefined;
+    replace.mockImplementation(() => {
+      keysAtRedirect = Object.keys(localStorage);
+    });
+    await openDialog(member);
+    seedFirstRunStorage();
+    expect(firstRunKeys()).toEqual(FIRST_RUN_KEYS);
+    await pressRed();
+
+    expectSignedOutToCognito();
+    expect(keysAtRedirect).toBeDefined();
+    expect(keysAtRedirect?.filter((key) => key.startsWith(FIRST_RUN_STORAGE_PREFIX))).toEqual([]);
+    expect(keysAtRedirect).toContain(UNRELATED_STORAGE_KEY);
+    expect(firstRunKeys()).toEqual([]);
+    expect(localStorage.getItem(INSTALL_STEP_DONE_STORAGE_KEY)).toBeNull();
+    expect(localStorage.getItem(LOCATION_DONE_KEY)).toBeNull();
+    expectOtherKeysKept();
+  });
+
+  // FIRST-13, ME-03, D-110: signing in again shows the install step, and only Continue gets past it
+  it('shows the install step again at the next sign-in', async () => {
+    await openDialog(member);
+    seedFirstRunStorage();
+    await pressRed();
+    expectSignedOutToCognito();
+
+    cleanup();
+    vi.resetModules();
+    const seam = await import('@shared/auth/user-manager');
+    if (!isFake(seam.userManager)) throw new Error('the user-manager seam is not the fake');
+    fakeUserManager = seam.userManager;
+    ({ App } = await import('@app/App'));
+    fakeUserManager.reset();
+    await openProfile(member);
+
+    expect(heading1()).toBe(text('firstrun.install.h1'));
+    fireEvent.click(screen.getByRole('button', { name: text('common.continue') }));
+    await settleScreen();
+    expect(heading1()).toBe(text('profile.heading'));
+  });
+});
+
+describe('the first run, when the account is not deleted', () => {
+  // FIRST-13, D-110: a plain sign-out keeps the flags: they describe the device, not the member
+  it('keeps every first-run key on a plain sign-out', async () => {
+    await openProfile(ACTIVE);
+    seedFirstRunStorage();
+    fireEvent.click(screen.getByRole('button', { name: text('profile.signOut') }));
+    await settleScreen();
+
+    expectSignedOutToCognito();
+    expect(firstRunKeys()).toEqual(FIRST_RUN_KEYS);
+    expectOtherKeysKept();
+    expect(deleteCalls()).toHaveLength(0);
+  });
+
+  // FIRST-13, ME-03, D-110: the check call, Cancel and Escape delete nothing, so the keys stay
+  it('keeps every first-run key through the check, Cancel and Escape', async () => {
+    await openDialog(ACTIVE);
+    seedFirstRunStorage();
+    expect(firstRunKeys()).toEqual(FIRST_RUN_KEYS);
+    fireEvent.click(cancelButton());
+    await settleScreen();
+    expect(firstRunKeys()).toEqual(FIRST_RUN_KEYS);
+
+    fireEvent.click(rowButton());
+    await settleScreen();
+    pressEscapeIn(dialog());
+    await settleScreen();
+    expect(firstRunKeys()).toEqual(FIRST_RUN_KEYS);
+    expectOtherKeysKept();
+    expectStillSignedIn();
+  });
+
+  // FIRST-13, ME-12, D-109, D-110: a refused or failed delete keeps the keys, since the account is still there
+  it.each([
+    ['a 503', answer(STATUS_UNAVAILABLE)],
+    ['a 400 with a code', answer(STATUS_BAD_REQUEST, { code: 'INVALID_INPUT' })],
+    ['a bare 429', answer(STATUS_TOO_MANY_REQUESTS)],
+    ['no connection', offline],
+  ])('keeps every first-run key when the delete answers %s', async (_name, refusal) => {
+    await openDialog(ACTIVE);
+    seedFirstRunStorage();
+    deleteQueue.push(refusal);
+    await pressRed();
+
+    expect(confirmsSent()).toEqual([false, true]);
+    expectStillSignedIn();
+    expect(firstRunKeys()).toEqual(FIRST_RUN_KEYS);
+    expectOtherKeysKept();
   });
 });

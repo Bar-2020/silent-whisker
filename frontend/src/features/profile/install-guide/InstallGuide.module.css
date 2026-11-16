@@ -1,0 +1,76 @@
+.guide {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.details {
+  --chevron: 45deg;
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  background: var(--surface);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  min-block-size: var(--tap);
+  padding: var(--s-3) var(--s-4);
+  font: var(--type-body-strong);
+  list-style: none;
+  cursor: pointer;
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+/* The open or closed mark is a drawn chevron, not a text glyph; it turns over when the part opens. */
+.summary::after {
+  content: '';
+  inline-size: 9px;
+  block-size: 9px;
+  flex: none;
+  border-block-end: 2px solid var(--dado);
+  border-inline-end: 2px solid var(--dado);
+  rotate: var(--chevron);
+  transition: rotate var(--dur-1) var(--ease);
+}
+
+.details[open] {
+  --chevron: -135deg;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  margin: 0;
+  padding: 0 var(--s-4) var(--s-4);
+  counter-reset: step;
+  list-style: none;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: var(--s-3);
+  counter-increment: step;
+}
+
+/* The number is a small badge, so it reads the same in Hebrew and in English. */
+.step::before {
+  content: counter(step);
+  display: grid;
+  place-items: center;
+  inline-size: 28px;
+  block-size: 28px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--dado-tint);
+  color: var(--dado);
+  font: var(--type-label);
+}
