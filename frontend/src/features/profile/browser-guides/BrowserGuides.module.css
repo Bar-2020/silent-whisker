@@ -43,6 +43,11 @@
   --chevron: -135deg;
 }
 
+/* The corner sits on the end side of the line, so in right-to-left it is mirrored first; the same turns then point it down and up. */
+.summary:dir(rtl)::after {
+  scale: -1 1;
+}
+
 .steps {
   display: flex;
   flex-direction: column;
