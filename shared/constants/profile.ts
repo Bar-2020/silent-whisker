@@ -8,6 +8,28 @@ export const TERMS_VERSION = 1;
 export const PROFILE_TEXT_MIN_LENGTH = 2;
 export const PROFILE_TEXT_MAX_LENGTH = 35;
 
+/** The full name is stricter than the city: at least three characters and three letters (D-116). */
+export const PROFILE_NAME_MIN_LENGTH = 3;
+
+/** A name made only of these words is refused, in any case: obvious fakes and words that pass for staff (D-116). */
+export const PROFILE_NAME_BLOCKED_WORDS = [
+  'test',
+  'admin',
+  'administrator',
+  'moderator',
+  'qwerty',
+  'asdf',
+  'anonymous',
+  'unknown',
+  'בדיקה',
+  'אדמין',
+  'מנהל',
+  'אנונימי',
+  'тест',
+  'админ',
+  'аноним',
+] as const;
+
 /** Each save that changes the name or city runs one paid text check (D-61). */
 export const PROFILE_SAVES_PER_DAY = 5;
 

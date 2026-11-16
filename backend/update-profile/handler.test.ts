@@ -7,6 +7,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { BREAKER_DAILY_MICRO_USD, TEXT_CHECK_COST_MICRO_USD } from '../../shared/constants/cost';
 import { WRITES_PER_DAY } from '../../shared/constants/limits';
 import {
+  PROFILE_NAME_BLOCKED_WORDS,
+  PROFILE_NAME_MIN_LENGTH,
   PROFILE_SAVES_PER_DAY,
   PROFILE_TEXT_MAX_LENGTH,
   PROFILE_TEXT_MIN_LENGTH,
@@ -281,10 +283,21 @@ describe('PATCH /api/profile reads the caller first, in this order (PROF-14, R-0
   });
 });
 
-describe('PATCH /api/profile reads its input strictly (PROF-05, D-61, D-92)', () => {
+/** `length` letters of a two-letter pattern: no letter three times in a row (D-116). */
+const spell = (pair: string, length: number): string => pair.repeat(length).slice(0, length);
+
+describe('PATCH /api/profile reads its input strictly (PROF-05, D-61, D-92, D-116)', () => {
   it.each([
     ['a name of 1 character', { display_name: 'ד' }],
-    ['a name of 36 characters', { display_name: 'א'.repeat(36) }],
+    // PROF-05, D-116: one under the name's minimum of 3 (the city's is still 2)
+    ['a name of one under the minimum', { display_name: spell('דנ', PROFILE_NAME_MIN_LENGTH - 1) }],
+    ['a name of 36 characters', { display_name: spell('אב', PROFILE_TEXT_MAX_LENGTH + 1) }],
+    ['a name of 36 Latin letters', { display_name: spell('da', PROFILE_TEXT_MAX_LENGTH + 1) }],
+    ['a name of 35 emoji', { display_name: '🐱'.repeat(PROFILE_TEXT_MAX_LENGTH) }],
+    [
+      'a name that is an emoji family joined by invisible joiners',
+      { display_name: '\u{1F468}‍\u{1F469}‍\u{1F467}' },
+    ],
     ['a name of only spaces', { display_name: '    ' }],
     ['a city of 1 character', { city: 'x' }],
     ['a city of 36 characters', { city: 'x'.repeat(36) }],
@@ -311,12 +324,10 @@ describe('PATCH /api/profile reads its input strictly (PROF-05, D-61, D-92)', ()
   });
 
   it.each([
-    ['2 Hebrew letters', 'דנ'],
-    ['35 Hebrew letters (70 bytes)', 'ד'.repeat(35)],
-    ['35 Arabic letters', 'ع'.repeat(35)],
+    ['the minimum of Hebrew letters', spell('דנ', PROFILE_NAME_MIN_LENGTH)],
+    ['35 Hebrew letters (70 bytes)', spell('אב', PROFILE_TEXT_MAX_LENGTH)],
+    ['35 Arabic letters', spell('عس', PROFILE_TEXT_MAX_LENGTH)],
     ['Russian', 'Иван Петров'],
-    ['35 emoji, each one character', '🐱'.repeat(35)],
-    ['an emoji family joined by invisible joiners', '\u{1F468}‍\u{1F469}‍\u{1F467}'],
     ['a Persian name with a half-space', 'می‌خواهم'],
     ['Hebrew with a right-to-left mark', 'דנה‏ לוי'],
   ])('takes %s, counted in characters not bytes', async (_name, display_name) => {
@@ -370,9 +381,46 @@ const ZERO_WIDTH_SPACE = '\u{200B}';
 const MIXED_INVISIBLE =
   HANGUL_FILLER + HALFWIDTH_HANGUL_FILLER + BRAILLE_BLANK + VARIATION_SELECTOR + ZERO_WIDTH_SPACE;
 
-describe.each(['display_name', 'city'])(
-  'PATCH /api/profile and a %s that draws nothing (PROF-19, D-61, D-92)',
-  (field) => {
+const FILLERS_AROUND_A_LETTER = `${HANGUL_FILLER}Da${HANGUL_FILLER}na${HANGUL_FILLER}`;
+const EMOJI_WITH_VARIATION_SELECTOR = '\u{2764}\u{FE0F}';
+const TWO_BRAILLE_LETTERS = '\u{2801}\u{2803}';
+
+/** Real in a name and in a city alike. */
+const REAL_TEXTS: [string, string][] = [
+  ['Hebrew with points (niqqud)', 'ש\u{5B8}\u{5C1}לו\u{5B9}ם'],
+  ['Arabic with a zero-width non-joiner', 'عبد\u{200C}الله'],
+  ['Russian', 'Анна Иванова'],
+];
+
+type Row = [string, string][];
+const CITY_ONLY_SAVED: Row = [
+  ['a letter with fillers around it', FILLERS_AROUND_A_LETTER],
+  ['an emoji with a variation selector', EMOJI_WITH_VARIATION_SELECTOR],
+  ['two braille letters', TWO_BRAILLE_LETTERS],
+];
+const NAME_ONLY_SAVED: Row = [
+  ['Persian with a half-space', 'می\u{200C}خواهم'],
+  ['Hebrew with a right-to-left mark', 'דנה\u{200F} לוי'],
+];
+const CITY_ONLY_REFUSED: Row = [
+  ['braille blanks and a space', `${BRAILLE_BLANK} ${BRAILLE_BLANK}`],
+];
+const NAME_ONLY_REFUSED: Row = [
+  ['a letter with fillers around it', FILLERS_AROUND_A_LETTER],
+  ['an emoji with a variation selector', EMOJI_WITH_VARIATION_SELECTOR],
+  ['two braille letters', TWO_BRAILLE_LETTERS],
+  ['three braille letters', `${TWO_BRAILLE_LETTERS}\u{2805}`],
+  ['a letter with a variation selector', `Dana${VARIATION_SELECTOR}`],
+  ['a zero-width space inside a name', `Da${ZERO_WIDTH_SPACE}na`],
+  ['a Hangul filler between two words', `Dana${HALFWIDTH_HANGUL_FILLER}Levi`],
+];
+
+describe.each([
+  ['display_name', NAME_ONLY_SAVED, NAME_ONLY_REFUSED],
+  ['city', CITY_ONLY_SAVED, CITY_ONLY_REFUSED],
+])(
+  'PATCH /api/profile and a %s that draws nothing (PROF-19, D-61, D-92, D-116)',
+  (field, extraSaved, extraRefused) => {
     const refusedWithNothingSpent = async (value: string) => {
       const result = await handler(patch({ ...FIRST_SAVE, [field]: value }));
 
@@ -407,28 +455,126 @@ describe.each(['display_name', 'city'])(
       await refusedWithNothingSpent(value);
     });
 
-    it('saves a letter with fillers around it as typed, with the paid check run', async () => {
-      // PROF-19, D-61, D-92
-      await savedAsTyped(`${HANGUL_FILLER}Da${HANGUL_FILLER}na${HANGUL_FILLER}`);
-    });
+    // What differs: the city keeps its old rule (D-92), the full name does not (D-116)
+    it.each(extraRefused)(
+      'refuses %s: INVALID_INPUT, nothing saved, no paid check',
+      async (_name, value) => {
+        // PROF-19, D-61, D-92, D-116
+        await refusedWithNothingSpent(value);
+      }
+    );
 
-    it.each([
-      ['Hebrew with points (niqqud)', 'ש\u{5B8}\u{5C1}לו\u{5B9}ם'],
-      ['Arabic with a zero-width non-joiner', 'عبد\u{200C}الله'],
-      ['Russian', 'Анна Иванова'],
-      ['an emoji with a variation selector', '\u{2764}\u{FE0F}'],
-      ['two braille letters', '\u{2801}\u{2803}'],
-    ])('saves a real name as typed: %s', async (_name, value) => {
-      // PROF-19, D-61, D-92
-      await savedAsTyped(value);
-    });
+    it.each([...extraSaved, ...REAL_TEXTS])(
+      'saves a real text as typed: %s',
+      async (_name, value) => {
+        // PROF-19, D-61, D-92, D-116
+        await savedAsTyped(value);
+      }
+    );
 
     it('counts a filler as a character: the longest text plus a filler is too long', async () => {
       // PROF-19, D-61, D-92
-      await refusedWithNothingSpent(`${'x'.repeat(PROFILE_TEXT_MAX_LENGTH)}${HANGUL_FILLER}`);
+      await refusedWithNothingSpent(`${spell('da', PROFILE_TEXT_MAX_LENGTH)}${HANGUL_FILLER}`);
     });
   }
 );
+
+describe('PATCH /api/profile and the full name that does not look like a name (PROF-32, D-116, R-01)', () => {
+  const refused = async (display_name: string) => {
+    const result = await handler(patch({ ...FIRST_SAVE, display_name }));
+
+    expect(result.statusCode).toBe(400);
+    expect(bodyOf(result)).toEqual({ code: 'INVALID_INPUT' });
+    expect(counters.size).toBe(0);
+    expect(userWrites()).toHaveLength(0);
+    expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
+    expect(lookup).not.toHaveBeenCalled();
+  };
+
+  const saved = async (display_name: string, stored: string) => {
+    fakeUsers(row({ display_name: 'Old Name' }));
+
+    const result = await handler(patch({ display_name }));
+
+    expect(result.statusCode).toBe(200);
+    expect(userWrites()[0].args[0].input.ExpressionAttributeValues).toMatchObject({
+      ':display_name': stored,
+    });
+    expect(bodyOf(result)).toMatchObject({ display_name: stored });
+    expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(1);
+  };
+
+  it.each([
+    ['2 letters', 'Da'],
+    ['a digit', 'Dana2'],
+    ['an emoji', 'Dana 😀'],
+    ['an underscore', 'Dana_Levi'],
+    ['digits after a name', 'Dana Levi 99'],
+    ['a letter three times, in any case', 'Aaa Bbb'],
+    ['a letter three times in the second word', 'Dana Lllevi'],
+    ['only hyphens', '---'],
+    ['only dots and spaces', '. . .'],
+    ['two letters and a space', 'D a'],
+    ['a blocked word', 'Test'],
+    ['a blocked word first', 'admin cohen'],
+    ['a blocked word in capitals', 'ADMIN'],
+    ['a blocked Hebrew word', 'בדיקה'],
+    ['a blocked word after a hyphen', 'Dana-Test'],
+    ['a blocked word followed by a dot', 'Test.'],
+    ['a blocked word, capitalised, followed by a dot', 'Admin.'],
+    ['a blocked word and spaces around it', '  Test  '],
+    ['two braille letters', '\u{2801}\u{2803}'],
+    ['a letter with Hangul fillers', `D${HANGUL_FILLER}${HANGUL_FILLER}a`],
+    ['a letter with a variation selector', `Dana${VARIATION_SELECTOR}`],
+    ['a letter from another script (Greek)', 'Αλέξης'],
+    ['Chinese characters', '王小明'],
+  ])(
+    'refuses a name with %s: INVALID_INPUT, nothing saved, no paid check',
+    async (_name, value) => {
+      // PROF-32, D-116, R-01
+      await refused(value);
+    }
+  );
+
+  it.each([...PROFILE_NAME_BLOCKED_WORDS])(
+    'refuses the blocked word %s alone, in capitals and next to a real name',
+    async (word) => {
+      // PROF-32, D-116, R-01
+      for (const value of [
+        word,
+        word.toUpperCase(),
+        `Dana ${word}`,
+        `${word} Levi`,
+        `Dana-${word}`,
+        `${word}.`,
+      ]) {
+        await refused(value);
+      }
+    }
+  );
+
+  it.each([
+    ['two spaces turned into one', 'Dana  Levi', 'Dana Levi'],
+    ['a run of spaces turned into one', 'Dana     Levi', 'Dana Levi'],
+    ['Hebrew', 'דנה לוי', 'דנה לוי'],
+    ['Russian', 'Анна', 'Анна'],
+    ['Arabic', 'سارה', 'سارה'],
+    ['a hyphen', 'Tom-Ali', 'Tom-Ali'],
+    ['an apostrophe', "D'Souza", "D'Souza"],
+    ['a curly apostrophe', 'D’Souza', 'D’Souza'],
+    ['Hebrew with a geresh', 'ג׳ק כהן', 'ג׳ק כהן'],
+    ['Hebrew with gershayim', 'צה״ל לוי', 'צה״ל לוי'],
+    ['Hebrew with a maqaf', 'בן־עמי', 'בן־עמי'],
+    ['dots', 'O.K. Lee', 'O.K. Lee'],
+    ['a Persian name with a half-space', 'می\u{200C}خواهم', 'می\u{200C}خواهم'],
+    ['Hebrew with a right-to-left mark', 'דנה\u{200F} לוי', 'דנה\u{200F} לוי'],
+    ['a word that only contains a blocked word', 'Contest Levi', 'Contest Levi'],
+    ['the same letter twice in a row', 'Anna Lee', 'Anna Lee'],
+  ])('saves a name with %s, with the paid check run', async (_name, value, stored) => {
+    // PROF-32, D-116, R-01
+    await saved(value, stored);
+  });
+});
 
 describe('PATCH /api/profile and the terms (PROF-11, D-69, R-36)', () => {
   const NEW_MEMBER = row({
@@ -605,7 +751,17 @@ describe('PATCH /api/profile when the check cannot run (PROF-07, D-62, R-05)', (
 });
 
 describe('PATCH /api/profile and the per-member limits (PROF-08, COST-06, LIM-01, LIM-04, R-21)', () => {
-  const save = (n: number) => handler(patch({ display_name: `Name Number ${String(n)}` }));
+  // D-116: a name has no digits, so each save takes another real-looking name
+  const NAMES = [
+    'Noa Katz',
+    'Yael Mizrahi',
+    'Tom Ali',
+    'Ron Peretz',
+    'Lior Avni',
+    'Maya Bar',
+    'Eli Zur',
+  ];
+  const save = (n: number) => handler(patch({ display_name: NAMES[n - 1] }));
 
   it(`refuses save ${String(PROFILE_SAVES_PER_DAY + 1)} of the day with PROFILE_SAVE_DAILY_LIMIT and the time to midnight`, async () => {
     for (let n = 1; n <= PROFILE_SAVES_PER_DAY; n += 1) {

@@ -21,7 +21,11 @@ import {
   STATUS_UNPROCESSABLE,
 } from '@constants/http';
 import type { ProfileResponse, ProfileUpdate } from '@schemas/profile.schema';
-import { PROFILE_TEXT_MAX_LENGTH, PROFILE_TEXT_MIN_LENGTH } from '@constants/profile';
+import {
+  PROFILE_NAME_BLOCKED_WORDS,
+  PROFILE_NAME_MIN_LENGTH,
+  PROFILE_TEXT_MAX_LENGTH,
+} from '@constants/profile';
 
 vi.mock('@shared/auth/user-manager', async () => {
   const { fakeUserManager: fake, FAKE_COGNITO_DOMAIN } =
@@ -133,14 +137,15 @@ describe('updateProfile', () => {
     await expect(updateProfile(VALID)).rejects.toBeInstanceOf(ZodError);
   });
 
-  // FIRST-02, D-61, D-92: the body is checked by the schema; a text outside the length is not sent
+  // FIRST-02, D-61, D-92, D-116: the body is checked by the schema; a text outside the length is not sent
   it.each([
-    ['one under the minimum', PROFILE_TEXT_MIN_LENGTH - 1, false],
-    ['the minimum', PROFILE_TEXT_MIN_LENGTH, true],
+    ['one under the minimum', PROFILE_NAME_MIN_LENGTH - 1, false],
+    ['the minimum', PROFILE_NAME_MIN_LENGTH, true],
     ['the maximum', PROFILE_TEXT_MAX_LENGTH, true],
     ['one over the maximum', PROFILE_TEXT_MAX_LENGTH + 1, false],
   ])('a name of %s characters', async (_name, length, accepted) => {
-    const call = attempt({ display_name: 'a'.repeat(length) });
+    // 'dana' repeated: no letter three times in a row (D-116)
+    const call = attempt({ display_name: 'dana'.repeat(length).slice(0, length) });
     if (accepted) {
       await call;
       expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -149,6 +154,61 @@ describe('updateProfile', () => {
       expect(fetchMock).not.toHaveBeenCalled();
     }
   });
+
+  // FIRST-14, PROF-32, D-116: the same names the server refuses are not sent; the others go with one space
+  it.each([
+    ['digits', 'Dana2'],
+    ['an emoji', 'Dana 😀'],
+    ['an underscore', 'Dana_Levi'],
+    ['digits after a name', 'Dana Levi 99'],
+    ['a letter three times, any case', 'Aaa Bbb'],
+    ['a letter three times in the second word', 'Dana Lllevi'],
+    ['only hyphens', '---'],
+    ['a blocked word', 'Test'],
+    ['a blocked word as the first word', 'admin cohen'],
+    ['a blocked word in capitals', 'ADMIN'],
+    ['a blocked word followed by a dot', 'Test.'],
+    ['a blocked word, capitalised, followed by a dot', 'Admin.'],
+    ['a blocked Hebrew word', 'בדיקה'],
+    ['two braille letters', '\u{2801}\u{2803}'],
+    ['a letter with Hangul fillers', 'D\u{3164}\u{3164}a'],
+    ['a letter with a variation selector', 'Dana\u{FE0F}'],
+  ])('does not send a name with %s', async (_name, display_name) => {
+    await expect(attempt({ display_name })).rejects.toBeInstanceOf(ZodError);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['two spaces turned into one', 'Dana  Levi', 'Dana Levi'],
+    ['Hebrew', 'דנה לוי', 'דנה לוי'],
+    ['Russian', 'Анна', 'Анна'],
+    ['Arabic', 'سارة', 'سارة'],
+    ['a hyphen', 'Tom-Ali', 'Tom-Ali'],
+    ['an apostrophe', "D'Souza", "D'Souza"],
+    ['dots', 'O.K. Lee', 'O.K. Lee'],
+    ['a half-space', 'می\u{200C}خواهم', 'می\u{200C}خواهم'],
+    ['a right-to-left mark', 'דנה\u{200F} לוי', 'דנה\u{200F} לוי'],
+  ])('sends a name with %s', async (_name, display_name, sent) => {
+    await attempt({ display_name });
+    expect(sentBody()).toEqual({ display_name: sent });
+  });
+
+  // FIRST-14, D-116: every word of the constant is refused, in any case, but only as a whole word
+  it.each([...PROFILE_NAME_BLOCKED_WORDS])(
+    'does not send the blocked word %s, in capitals or after a name',
+    async (word) => {
+      for (const display_name of [
+        word,
+        word.toUpperCase(),
+        `Dana ${word}`,
+        `Dana-${word}`,
+        `${word}.`,
+      ]) {
+        await expect(attempt({ display_name })).rejects.toBeInstanceOf(ZodError);
+      }
+      expect(fetchMock).not.toHaveBeenCalled();
+    }
+  );
 
   // FIRST-02, D-61: characters, not code units: an emoji counts one
   it.each([
