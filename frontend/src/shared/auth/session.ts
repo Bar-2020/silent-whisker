@@ -11,6 +11,7 @@ import {
 import auth from '@constants/auth.json';
 import { removeStoredKeysWithPrefix } from '@shared/utils/stored-keys';
 import { COGNITO_DOMAIN, userManager } from './user-manager';
+import { HOME_PATH } from '@constants/routes';
 
 /** Goes to Google through Cognito's code flow with PKCE; `returnTo` is where the visitor comes back to. */
 export function signIn(returnTo: string): Promise<void> {
@@ -39,7 +40,7 @@ export async function signOut(): Promise<void> {
   signOutStarted.abort();
   const logout = new URL(`${COGNITO_DOMAIN}/logout`);
   logout.searchParams.set('client_id', auth.client_id);
-  logout.searchParams.set('logout_uri', `${window.location.origin}/`);
+  logout.searchParams.set('logout_uri', `${window.location.origin}${HOME_PATH}`);
   try {
     await forgetSession();
     clearSignInRecords();

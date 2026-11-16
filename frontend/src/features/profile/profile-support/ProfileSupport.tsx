@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { CONTACT_EMAIL, SOURCE_CODE_URL } from '@constants/contact';
+import { PRIVACY_PATH, TERMS_PATH } from '@constants/routes';
 import { CodeIcon } from '@shared/components/icon/CodeIcon';
 import { CommentIcon } from '@shared/components/icon/CommentIcon';
 import { InfoIcon } from '@shared/components/icon/InfoIcon';
@@ -31,14 +32,14 @@ export function ProfileSupport() {
       <ProfileRow
         icon={<InfoIcon />}
         title={t('legal.terms.title')}
-        to="/terms"
+        to={TERMS_PATH}
         opensPage
         tone={ProfileRowTone.Normal}
       />
       <ProfileRow
         icon={<ShieldIcon />}
         title={t('legal.privacy.title')}
-        to="/privacy"
+        to={PRIVACY_PATH}
         opensPage
         tone={ProfileRowTone.Normal}
       />

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { LANGUAGES } from '@constants/languages';
+import { INSTALL_GUIDE_PATH, LOCATION_HELP_PATH } from '@constants/routes';
 import { signOut } from '@shared/auth/session';
 import { GlobeIcon } from '@shared/components/icon/GlobeIcon';
 import { LocateIcon } from '@shared/components/icon/LocateIcon';
@@ -59,7 +60,7 @@ export function ProfileSettings({ onDeleteAccount }: { onDeleteAccount: () => vo
         opensPage
         tone={ProfileRowTone.Normal}
         onClick={() => {
-          void navigate('/profile/location');
+          void navigate(LOCATION_HELP_PATH);
         }}
       />
       <ProfileRow
@@ -69,7 +70,7 @@ export function ProfileSettings({ onDeleteAccount }: { onDeleteAccount: () => vo
         opensPage
         tone={ProfileRowTone.Normal}
         onClick={() => {
-          void navigate('/profile/install');
+          void navigate(INSTALL_GUIDE_PATH);
         }}
       />
       <ProfileRow
