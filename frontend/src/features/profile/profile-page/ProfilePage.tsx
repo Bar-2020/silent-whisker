@@ -15,8 +15,8 @@ import styles from './ProfilePage.module.css';
 export function ProfilePage() {
   const { t } = useTranslation();
   const { profile, hasGooglePhoto } = profileContextSchema.parse(useOutletContext());
-  const [editing, setEditing] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const banned = profile.status === 'banned';
   const fullName = profile.display_name ?? '';
 
@@ -25,13 +25,13 @@ export function ProfilePage() {
       <title>{`${t('profile.heading')} | ${t('app.name')}`}</title>
       <header className={styles.header}>
         <h1>{t('profile.heading')}</h1>
-        {!banned && !editing && (
+        {!banned && !isEditingProfile && (
           <button
             type="button"
             className={styles.edit}
             aria-label={t('profile.edit.title')}
             onClick={() => {
-              setEditing(true);
+              setIsEditingProfile(true);
             }}
           >
             <EditIcon />
@@ -39,12 +39,12 @@ export function ProfilePage() {
         )}
       </header>
       {banned && <BannedAccountNotice />}
-      {editing ? (
+      {isEditingProfile ? (
         <EditProfileForm
           profile={profile}
           hasGooglePhoto={hasGooglePhoto}
           onClose={() => {
-            setEditing(false);
+            setIsEditingProfile(false);
           }}
         />
       ) : (
@@ -62,13 +62,13 @@ export function ProfilePage() {
       )}
       <ProfileSettings
         onDeleteAccount={() => {
-          setIsDeleting(true);
+          setIsDeleteDialogOpen(true);
         }}
       />
-      {isDeleting && (
+      {isDeleteDialogOpen && (
         <DeleteAccountDialog
           onClose={() => {
-            setIsDeleting(false);
+            setIsDeleteDialogOpen(false);
           }}
         />
       )}

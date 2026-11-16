@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
+import { PROFILE_PATH } from '@constants/routes';
 import { BackIcon } from '@shared/components/icon/BackIcon';
 import styles from './ProfileSubpageHeader.module.css';
 
@@ -9,7 +10,7 @@ export function ProfileSubpageHeader({ title }: { title: string }) {
 
   return (
     <header className={styles.header}>
-      <Link to="/profile" className={styles.back} aria-label={t('common.back')}>
+      <Link to={PROFILE_PATH} className={styles.back} aria-label={t('common.back')}>
         <BackIcon />
       </Link>
       <h1>{title}</h1>

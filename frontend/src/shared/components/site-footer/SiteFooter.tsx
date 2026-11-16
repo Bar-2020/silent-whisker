@@ -5,6 +5,7 @@ import { CONTACT_EMAIL, SOURCE_CODE_URL } from '@constants/contact';
 import { BrandLink } from '@shared/components/brand-link/BrandLink';
 import { HeartIcon } from '@shared/components/icon/HeartIcon';
 import styles from './SiteFooter.module.css';
+import { PRIVACY_PATH, TERMS_PATH } from '@constants/routes';
 
 /** The slate footer of the public pages. `anchors` are list items that jump within the page. */
 export function SiteFooter({ anchors }: { anchors?: ReactNode }) {
@@ -21,10 +22,10 @@ export function SiteFooter({ anchors }: { anchors?: ReactNode }) {
           <ul className={styles.links}>
             {anchors}
             <li>
-              <Link to="/terms">{t('legal.terms.title')}</Link>
+              <Link to={TERMS_PATH}>{t('legal.terms.title')}</Link>
             </li>
             <li>
-              <Link to="/privacy">{t('legal.privacy.title')}</Link>
+              <Link to={PRIVACY_PATH}>{t('legal.privacy.title')}</Link>
             </li>
             <li>
               <a href={SOURCE_CODE_URL} target="_blank" rel="noopener noreferrer">

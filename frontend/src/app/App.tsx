@@ -5,7 +5,7 @@ import { AuthCallbackPage, RequireSignIn } from '@features/auth';
 import { LandingPage } from '@features/landing';
 import { LegalLayout, PrivacyPage, TermsPage } from '@features/legal';
 import {
-  CompleteFirstRun,
+  RequireFirstRunDone,
   InstallGuidePage,
   LocationHelpPage,
   ProfilePage,
@@ -13,6 +13,14 @@ import {
 } from '@features/profile';
 import { NotFoundPage } from './not-found-page/NotFoundPage';
 import { AppShell } from './app-shell/AppShell';
+import {
+  AUTH_CALLBACK_PATH,
+  INSTALL_GUIDE_PATH,
+  LOCATION_HELP_PATH,
+  PRIVACY_PATH,
+  PROFILE_PATH,
+  TERMS_PATH,
+} from '@constants/routes';
 
 export function App() {
   // One cache per app, made fresh on each mount. The wait after a 429 is the screen's to show (D-60),
@@ -29,17 +37,17 @@ export function App() {
       <Routes>
         <Route index element={<LandingPage />} />
         <Route element={<LegalLayout />}>
-          <Route path="privacy" element={<PrivacyPage />} />
-          <Route path="terms" element={<TermsPage />} />
+          <Route path={PRIVACY_PATH} element={<PrivacyPage />} />
+          <Route path={TERMS_PATH} element={<TermsPage />} />
         </Route>
         <Route element={<AppShell />}>
-          <Route path="auth/callback" element={<AuthCallbackPage />} />
+          <Route path={AUTH_CALLBACK_PATH} element={<AuthCallbackPage />} />
           <Route element={<RequireSignIn />}>
             <Route element={<RequireAcceptedTerms />}>
-              <Route element={<CompleteFirstRun />}>
-                <Route path="profile" element={<ProfilePage />} />
-                <Route path="profile/install" element={<InstallGuidePage />} />
-                <Route path="profile/location" element={<LocationHelpPage />} />
+              <Route element={<RequireFirstRunDone />}>
+                <Route path={PROFILE_PATH} element={<ProfilePage />} />
+                <Route path={INSTALL_GUIDE_PATH} element={<InstallGuidePage />} />
+                <Route path={LOCATION_HELP_PATH} element={<LocationHelpPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Route>

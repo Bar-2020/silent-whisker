@@ -16,7 +16,7 @@ import { LocationPermission } from '../use-location-permission.types';
  * of every page until each one's flag is set on this device (D-110, D-111). Only pressing a button
  * sets a flag, so closing the tab at a step shows the step again.
  */
-export function CompleteFirstRun() {
+export function RequireFirstRunDone() {
   const context: unknown = useOutletContext();
   const [isInstallDone, setIsInstallDone] = useState(isInstallStepDone);
   const [isLocationDone, setIsLocationDone] = useState(isLocationStepDone);
