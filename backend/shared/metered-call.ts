@@ -7,7 +7,7 @@ import {
   MICRO_USD_PER_USD,
   MS_PER_SECOND,
 } from '../../shared/constants/cost';
-import type { BreakerMemory, CostGuard, Metered } from './metered-call.types';
+import type { BreakerMemory, CostGuard, CounterTable, Metered } from './metered-call.types';
 
 // The cost limits of D-52. Every paid AWS call goes through `meteredCall` (R-05); every paid
 // action also takes a per-member allowance with `takeDailyAllowance` when it starts.
@@ -44,7 +44,7 @@ function assertPositiveWhole(amount: number): void {
  * throws: no allowance is ever assumed.
  */
 export async function takeDailyAllowance(
-  guard: CostGuard,
+  guard: CounterTable,
   name: string,
   amount: number,
   max: number,
@@ -76,7 +76,7 @@ export async function takeDailyAllowance(
 
 /** Gives back an allowance taken for an action that never ran (D-62); never below zero. */
 export async function giveBackDailyAllowance(
-  guard: CostGuard,
+  guard: CounterTable,
   name: string,
   amount: number,
   now = new Date()

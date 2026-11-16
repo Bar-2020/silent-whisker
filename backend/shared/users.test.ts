@@ -29,9 +29,26 @@ describe('parseUserRow checks a stored row instead of trusting it (DATA.md)', ()
   });
 
   it('names every wrong field at once, with the member id', () => {
-    const broken = { ...FULL, show_google_photo: 'yes', cats_helped: undefined, status: 'gone' };
+    const broken = { ...FULL, show_google_photo: 'yes', cats_helped: 'many', status: 'gone' };
 
     expect(() => parseUserRow(broken)).toThrow(/user-1.*status.*show_google_photo.*cats_helped/s);
+  });
+
+  it('reads the stub a deleted banned member leaves, with the missing fields at zero (D-71, D-109)', () => {
+    expect(parseUserRow({ user_id: 'user-1', status: 'banned' })).toEqual({
+      user_id: 'user-1',
+      status: 'banned',
+      show_google_photo: false,
+      is_admin: false,
+      cats_helped: 0,
+      feedings: 0,
+      waters: 0,
+    });
+  });
+
+  it('still refuses a row with no status or no user id', () => {
+    expect(() => parseUserRow({ ...FULL, status: undefined })).toThrow(/status/);
+    expect(() => parseUserRow({ ...FULL, user_id: undefined })).toThrow(/user_id/);
   });
 
   it('refuses an optional field of the wrong type', () => {

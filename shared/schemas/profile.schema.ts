@@ -38,3 +38,6 @@ export const profileResponseSchema = z.object({
   terms_accepted: z.boolean(),
 });
 export type ProfileResponse = z.infer<typeof profileResponseSchema>;
+
+/** The body of `DELETE /profile`: `false` only checks, `true` deletes (D-109). */
+export const profileDeleteSchema = z.object({ confirm: z.boolean() });

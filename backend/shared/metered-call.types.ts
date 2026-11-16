@@ -10,6 +10,9 @@ export interface CostGuard {
   readonly alertTopicArn: string;
 }
 
+/** What a per-member daily limit needs of the guard: the counters table, and no email topic (D-52). */
+export type CounterTable = Pick<CostGuard, 'db' | 'tableName'>;
+
 /** What one Lambda instance knows about the breaker on one UTC day, to spare the database. */
 export interface BreakerMemory {
   readonly day: string;

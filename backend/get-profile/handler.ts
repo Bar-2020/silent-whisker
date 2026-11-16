@@ -4,6 +4,7 @@ import { STATUS_OK, STATUS_UNAUTHORIZED } from '../../shared/constants/http';
 import { GOOGLE_IMAGE_HOST_SUFFIX } from '../../shared/constants/profile';
 import { refuse, reply, verifiedClaims } from '../shared/api';
 import type { ApiEvent, ApiResult } from '../shared/api.types';
+import { checkAccountDeleted } from '../shared/deleted-account';
 import { readSettings } from '../shared/env';
 import { getProfileSettings } from '../shared/schemas/settings.schema';
 import type { UserRow } from '../shared/schemas/user-row.schema';
@@ -92,7 +93,11 @@ async function loadUser(table: string, { userId, photo }: Member): Promise<UserR
 export async function handler(event: ApiEvent): Promise<ApiResult> {
   const member = memberFrom(event);
   if (!member) return refuse(STATUS_UNAUTHORIZED, 'UNAUTHORIZED');
-  const { USERS_TABLE } = readSettings(getProfileSettings);
+  const { USERS_TABLE, COUNTERS_TABLE } = readSettings(getProfileSettings);
+  // A deleted member's token stays valid until it expires, and must not make an empty row (D-109).
+  if (await checkAccountDeleted(db, COUNTERS_TABLE, member.userId)) {
+    return refuse(STATUS_UNAUTHORIZED, 'UNAUTHORIZED');
+  }
   // A banned member still gets the profile (API.md).
   return reply(STATUS_OK, buildProfileResponse(await loadUser(USERS_TABLE, member)));
 }

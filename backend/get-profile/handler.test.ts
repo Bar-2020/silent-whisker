@@ -7,6 +7,7 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
+import { DELETED_ACCOUNT_KEY_PREFIX } from '../../shared/constants/account';
 import { TERMS_VERSION } from '../../shared/constants/profile';
 import { handler } from './handler';
 import type { ApiEvent as ProfileEvent } from '../shared/api.types';
@@ -14,6 +15,9 @@ import type { UserRow } from '../shared/schemas/user-row.schema';
 
 const dbMock = mockClient(DynamoDBDocumentClient);
 
+const USERS = 'users';
+const COUNTERS = 'daily_usage_counters';
+const MARKER = `${DELETED_ACCOUNT_KEY_PREFIX}user-1`;
 const NOW = new Date('2026-10-28T12:00:00Z');
 const PHOTO = 'https://lh3.googleusercontent.com/a/photo=s96-c';
 
@@ -43,8 +47,10 @@ const row = (extra: Partial<UserRow> = {}): UserRow => ({
 const body = (result: { body: string }): unknown => JSON.parse(result.body);
 
 beforeEach(() => {
-  process.env.USERS_TABLE = 'users';
+  process.env.USERS_TABLE = USERS;
+  process.env.COUNTERS_TABLE = COUNTERS;
   dbMock.reset();
+  dbMock.on(GetCommand, { TableName: COUNTERS }).resolves({});
   vi.useFakeTimers({ toFake: ['Date'] });
   vi.setSystemTime(NOW);
 });
@@ -77,7 +83,7 @@ describe('GET /api/profile (R-22: a member is a valid ID token)', () => {
   });
 
   it('takes the user id from the token, never from the request (D-59)', async () => {
-    dbMock.on(GetCommand).resolves({ Item: row() });
+    dbMock.on(GetCommand, { TableName: USERS }).resolves({ Item: row() });
     const hostile = {
       ...idToken(),
       queryStringParameters: { user_id: 'someone-else' },
@@ -86,12 +92,16 @@ describe('GET /api/profile (R-22: a member is a valid ID token)', () => {
 
     await handler(hostile);
 
-    const [read] = dbMock.commandCalls(GetCommand);
+    const [read] = dbMock.commandCalls(GetCommand, { TableName: USERS });
     expect(read.args[0].input.Key).toEqual({ user_id: 'user-1' });
+    const markerKeys = dbMock
+      .commandCalls(GetCommand, { TableName: COUNTERS })
+      .map((call) => call.args[0].input.Key);
+    expect(markerKeys).toEqual([{ key: MARKER }]);
   });
 
   it('is never kept by a cache: it answers about one person', async () => {
-    dbMock.on(GetCommand).resolves({ Item: row() });
+    dbMock.on(GetCommand, { TableName: USERS }).resolves({ Item: row() });
 
     const result = await handler(idToken());
 
@@ -101,7 +111,7 @@ describe('GET /api/profile (R-22: a member is a valid ID token)', () => {
 
 describe('GET /api/profile creates the row on the first call (D-59)', () => {
   it('writes a new active member with no name or city, from the token', async () => {
-    dbMock.on(GetCommand).resolves({});
+    dbMock.on(GetCommand, { TableName: USERS }).resolves({});
     dbMock.on(PutCommand).resolves({});
 
     const result = await handler(idToken());
@@ -135,14 +145,14 @@ describe('GET /api/profile creates the row on the first call (D-59)', () => {
 
   it('makes one row when two first calls arrive at once, and both get that row', async () => {
     const winner = row({ display_name: 'Dana', city: 'Haifa' });
-    dbMock.on(GetCommand).resolvesOnce({}).resolvesOnce({ Item: winner });
+    dbMock.on(GetCommand, { TableName: USERS }).resolvesOnce({}).resolvesOnce({ Item: winner });
     dbMock.on(PutCommand).rejects(conditionFailed());
 
     const result = await handler(idToken());
 
     expect(dbMock.commandCalls(PutCommand)).toHaveLength(1);
     expect(dbMock.commandCalls(UpdateCommand)).toHaveLength(0);
-    const [, rereading] = dbMock.commandCalls(GetCommand);
+    const [, rereading] = dbMock.commandCalls(GetCommand, { TableName: USERS });
     expect(rereading.args[0].input.ConsistentRead).toBe(true);
     expect(body(result)).toMatchObject({ display_name: 'Dana', city: 'Haifa' });
   });
@@ -157,7 +167,7 @@ describe('GET /api/profile and the Google photo (D-21)', () => {
     ['a script address', 'javascript:alert(1)'],
     ['no address at all', ''],
   ])('does not store a picture on %s', async (_name, picture) => {
-    dbMock.on(GetCommand).resolves({});
+    dbMock.on(GetCommand, { TableName: USERS }).resolves({});
     dbMock.on(PutCommand).resolves({});
 
     const result = await handler(idToken({ picture }));
@@ -169,7 +179,7 @@ describe('GET /api/profile and the Google photo (D-21)', () => {
 
   it('sends the picture only once the member chose to show it, and never before', async () => {
     dbMock
-      .on(GetCommand)
+      .on(GetCommand, { TableName: USERS })
       .resolvesOnce({ Item: row() })
       .resolvesOnce({
         Item: row({ show_google_photo: true }),
@@ -183,7 +193,9 @@ describe('GET /api/profile and the Google photo (D-21)', () => {
   });
 
   it('keeps the stored picture when the new one is not on Google', async () => {
-    dbMock.on(GetCommand).resolves({ Item: row({ show_google_photo: true }) });
+    dbMock
+      .on(GetCommand, { TableName: USERS })
+      .resolves({ Item: row({ show_google_photo: true }) });
 
     const result = await handler(idToken({ picture: 'https://evil.example.com/a/photo' }));
 
@@ -192,7 +204,7 @@ describe('GET /api/profile and the Google photo (D-21)', () => {
   });
 
   it('writes nothing when nothing changed, so most calls only read', async () => {
-    dbMock.on(GetCommand).resolves({ Item: row() });
+    dbMock.on(GetCommand, { TableName: USERS }).resolves({ Item: row() });
 
     await handler(idToken());
 
@@ -202,7 +214,9 @@ describe('GET /api/profile and the Google photo (D-21)', () => {
 
   it('copies a changed Google picture into avatar_url', async () => {
     const newer = 'https://lh3.googleusercontent.com/a/newer=s96-c';
-    dbMock.on(GetCommand).resolves({ Item: row({ show_google_photo: true }) });
+    dbMock
+      .on(GetCommand, { TableName: USERS })
+      .resolves({ Item: row({ show_google_photo: true }) });
     dbMock.on(UpdateCommand).resolves({});
 
     const result = await handler(idToken({ picture: newer }));
@@ -228,7 +242,7 @@ const NAMED_MEMBER = row({
 
 // The row is there for the read and gone for the write: the update is refused, the put makes the row.
 const rowDeletedAfterRead = () => {
-  dbMock.on(GetCommand).resolves({ Item: NAMED_MEMBER });
+  dbMock.on(GetCommand, { TableName: USERS }).resolves({ Item: NAMED_MEMBER });
   dbMock.on(UpdateCommand).rejects(conditionFailed());
   dbMock.on(PutCommand).resolves({});
 };
@@ -236,7 +250,9 @@ const rowDeletedAfterRead = () => {
 describe('GET /api/profile when the row is deleted while the photo is updated (PROF-18, D-59, D-92)', () => {
   it('makes the photo update conditional on the row still existing, and still copies the photo', async () => {
     // PROF-18, D-59, D-92
-    dbMock.on(GetCommand).resolves({ Item: row({ show_google_photo: true }) });
+    dbMock
+      .on(GetCommand, { TableName: USERS })
+      .resolves({ Item: row({ show_google_photo: true }) });
     dbMock.on(UpdateCommand).resolves({});
 
     const result = await handler(idToken({ picture: NEWER_PHOTO }));
@@ -316,7 +332,7 @@ describe('GET /api/profile for a banned member whose Google picture changed (PRO
     ['a banned member', BANNED_MEMBER, BANNED_PROFILE],
   ])('writes no photo for %s, and still answers 200', async (_name, stored, expected) => {
     // PROF-20, D-71, D-21
-    dbMock.on(GetCommand).resolves({ Item: stored });
+    dbMock.on(GetCommand, { TableName: USERS }).resolves({ Item: stored });
 
     const result = await handler(idToken({ picture: NEWER_PHOTO }));
 
@@ -329,7 +345,7 @@ describe('GET /api/profile for a banned member whose Google picture changed (PRO
   it('gives back the banned row as it is when the ban lands between the read and the photo update', async () => {
     // PROF-20, D-71, D-21
     dbMock
-      .on(GetCommand)
+      .on(GetCommand, { TableName: USERS })
       .resolvesOnce({ Item: { ...BANNED_MEMBER, status: 'active' } })
       .resolvesOnce({ Item: BANNED_MEMBER });
     dbMock.on(UpdateCommand).rejects(conditionFailed());
@@ -344,7 +360,7 @@ describe('GET /api/profile for a banned member whose Google picture changed (PRO
     const puts = dbMock.commandCalls(PutCommand);
     expect(puts).toHaveLength(1);
     expect(puts[0].args[0].input.ConditionExpression).toBe('attribute_not_exists(user_id)');
-    const [, rereading] = dbMock.commandCalls(GetCommand);
+    const [, rereading] = dbMock.commandCalls(GetCommand, { TableName: USERS });
     expect(rereading.args[0].input.ConsistentRead).toBe(true);
     expect(result.statusCode).toBe(200);
     expect(body(result)).toEqual(BANNED_PROFILE);
@@ -357,7 +373,7 @@ describe('GET /api/profile and the terms (R-36)', () => {
     ['accepted an older version', { terms_version: TERMS_VERSION - 1 }, false],
     ['accepted the current version', { terms_version: TERMS_VERSION }, true],
   ])('says terms_accepted for a member who %s', async (_name, accepted, expected) => {
-    dbMock.on(GetCommand).resolves({ Item: row(accepted) });
+    dbMock.on(GetCommand, { TableName: USERS }).resolves({ Item: row(accepted) });
 
     const result = await handler(idToken());
 
@@ -367,15 +383,101 @@ describe('GET /api/profile and the terms (R-36)', () => {
 
 describe('GET /api/profile when the stored row is damaged', () => {
   it('fails loudly and says which fields are wrong, instead of passing bad data on', async () => {
-    dbMock.on(GetCommand).resolves({ Item: { user_id: 'user-1', status: 'active' } });
+    dbMock
+      .on(GetCommand, { TableName: USERS })
+      .resolves({ Item: { ...row(), show_google_photo: 'yes' } });
 
     await expect(handler(idToken())).rejects.toThrow(/user-1.*show_google_photo/s);
   });
 });
 
+describe('GET /api/profile reads the stub a deleted banned member leaves (PROF-14, D-71, D-109)', () => {
+  it('answers 200 with status banned and every other field at its zero value', async () => {
+    // PROF-14, D-71, D-109
+    dbMock
+      .on(GetCommand, { TableName: USERS })
+      .resolves({ Item: { user_id: 'user-1', status: 'banned' } });
+
+    const result = await handler(idToken());
+
+    expect(result.statusCode).toBe(200);
+    expect(body(result)).toEqual({
+      display_name: null,
+      city: null,
+      avatar_url: null,
+      show_google_photo: false,
+      status: 'banned',
+      terms_accepted: false,
+    });
+    expect(dbMock.commandCalls(PutCommand)).toHaveLength(0);
+  });
+});
+
+describe('GET /api/profile refuses the token of a deleted account (PROF-14, PROF-28, D-109)', () => {
+  const marked = (userId: string) => {
+    const key = `${DELETED_ACCOUNT_KEY_PREFIX}${userId}`;
+    dbMock.on(GetCommand, { TableName: COUNTERS, Key: { key } }).resolves({ Item: { key } });
+  };
+
+  it.each([
+    ['no row at all', undefined],
+    ['the stub of a banned member', { user_id: 'user-1', status: 'banned' }],
+    ['a row that is still there', row()],
+  ])(
+    'answers 401 UNAUTHORIZED while the marker exists, with %s, and makes no row',
+    async (_name, stored) => {
+      // PROF-14, PROF-28, D-109
+      marked('user-1');
+      dbMock.on(GetCommand, { TableName: USERS }).resolves({ Item: stored });
+
+      const result = await handler(idToken());
+
+      expect(result.statusCode).toBe(401);
+      expect(body(result)).toEqual({ code: 'UNAUTHORIZED' });
+      expect(dbMock.commandCalls(PutCommand)).toHaveLength(0);
+      expect(dbMock.commandCalls(UpdateCommand)).toHaveLength(0);
+    }
+  );
+
+  it('keeps answering 401 on every call while the marker exists', async () => {
+    // PROF-14, PROF-28, D-109
+    marked('user-1');
+    dbMock.on(GetCommand, { TableName: USERS }).resolves({});
+
+    const results = [await handler(idToken()), await handler(idToken())];
+
+    expect(results.map((result) => result.statusCode)).toEqual([401, 401]);
+    expect(dbMock.commandCalls(PutCommand)).toHaveLength(0);
+  });
+
+  it("never lets one member's marker touch another member's token", async () => {
+    // PROF-28, D-109
+    marked('user-2');
+    dbMock.on(GetCommand, { TableName: USERS }).resolves({ Item: row() });
+
+    const result = await handler(idToken());
+
+    expect(result.statusCode).toBe(200);
+  });
+
+  it('still makes a row for another member while the first member has a marker', async () => {
+    // PROF-14, D-109
+    marked('user-1');
+    dbMock.on(GetCommand, { TableName: USERS }).resolves({});
+    dbMock.on(PutCommand).resolves({});
+
+    const other = await handler(eventWith({ sub: 'user-2', token_use: 'id' }));
+
+    expect(other.statusCode).toBe(200);
+    expect(dbMock.commandCalls(PutCommand)[0].args[0].input.Item).toMatchObject({
+      user_id: 'user-2',
+    });
+  });
+});
+
 describe('GET /api/profile for a banned member (API.md)', () => {
   it('still answers, with the status, so the app can say so', async () => {
-    dbMock.on(GetCommand).resolves({ Item: row({ status: 'banned' }) });
+    dbMock.on(GetCommand, { TableName: USERS }).resolves({ Item: row({ status: 'banned' }) });
 
     const result = await handler(idToken());
 

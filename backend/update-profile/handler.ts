@@ -23,6 +23,7 @@ import {
   withMemberLimit,
 } from '../shared/member-limits';
 import type { MemberDay } from '../shared/member-limits';
+import type { CostGuard } from '../shared/metered-call.types';
 import { updateProfileSettings } from '../shared/schemas/settings.schema';
 import type { UpdateProfileSettings } from '../shared/schemas/settings.schema';
 import type { UserRow, UserRowUpdate } from '../shared/schemas/user-row.schema';
@@ -37,6 +38,7 @@ const sns = new SNSClient({});
 
 /** Everything one save needs: who, when, the settings, the stored row and what was asked. */
 interface ProfileSaveContext extends MemberDay {
+  readonly guard: CostGuard;
   readonly settings: UpdateProfileSettings;
   readonly user: UserRow;
   readonly request: ProfileUpdate;
