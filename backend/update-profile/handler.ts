@@ -5,14 +5,13 @@ import {
   STATUS_FORBIDDEN,
   STATUS_NOT_FOUND,
   STATUS_OK,
-  STATUS_UNAUTHORIZED,
   STATUS_UNAVAILABLE,
   STATUS_UNPROCESSABLE,
 } from '../../shared/constants/http';
 import { TERMS_VERSION } from '../../shared/constants/profile';
 import { profileUpdateSchema } from '../../shared/schemas/profile.schema';
 import type { ProfileUpdate } from '../../shared/schemas/profile.schema';
-import { invalidInput, parseBody, Refusal, refuse, reply, verifiedClaims } from '../shared/api';
+import { invalidInput, parseBody, Refusal, refuse, reply } from '../shared/api';
 import type { ApiEvent, ApiResult } from '../shared/api.types';
 import { readSettings } from '../shared/env';
 import { GeocoderUnavailable, lookupPlace } from '../shared/geocode';
@@ -23,10 +22,12 @@ import {
   withMemberLimit,
 } from '../shared/member-limits';
 import type { MemberDay } from '../shared/member-limits';
+import type { CostGuard } from '../shared/metered-call.types';
 import { updateProfileSettings } from '../shared/schemas/settings.schema';
 import type { UpdateProfileSettings } from '../shared/schemas/settings.schema';
 import type { UserRow, UserRowUpdate } from '../shared/schemas/user-row.schema';
-import { buildProfileResponse, parseUserRow, readUserRow } from '../shared/users';
+import { requireLiveMember } from '../shared/session';
+import { buildProfileResponse, parseUserRow } from '../shared/users';
 import { CheckUnavailable, moderateText } from './moderate';
 
 // PATCH /api/profile (D-62): the name and city are checked on the spot and saved only if the check
@@ -37,6 +38,7 @@ const sns = new SNSClient({});
 
 /** Everything one save needs: who, when, the settings, the stored row and what was asked. */
 interface ProfileSaveContext extends MemberDay {
+  readonly guard: CostGuard;
   readonly settings: UpdateProfileSettings;
   readonly user: UserRow;
   readonly request: ProfileUpdate;
@@ -45,11 +47,12 @@ interface ProfileSaveContext extends MemberDay {
 const isCheckUnavailable = (error: unknown): boolean =>
   error instanceof CheckUnavailable || error instanceof GeocoderUnavailable;
 
-async function readActiveMember(settings: UpdateProfileSettings, userId: string): Promise<UserRow> {
-  const user = await readUserRow(db, settings.USERS_TABLE, userId, true);
+/** A member with a row who is not banned: the live member of the token, or a refusal. */
+async function readActiveMember(event: ApiEvent, settings: UpdateProfileSettings) {
+  const { claims, user } = await requireLiveMember(event, db, settings.USERS_TABLE, true);
   if (!user) throw new Refusal(refuse(STATUS_NOT_FOUND, 'NOT_FOUND'));
   if (user.status === 'banned') throw new Refusal(refuse(STATUS_FORBIDDEN, 'BANNED'));
-  return user;
+  return { claims, user };
 }
 
 /** The first save needs both texts and the terms (D-28, D-69); later ones may send less. */
@@ -136,7 +139,8 @@ async function writeRowUpdate(
         TableName: settings.USERS_TABLE,
         Key: { user_id: userId },
         UpdateExpression: `SET ${entries.map(([key]) => assignmentFor(key)).join(', ')}`,
-        ConditionExpression: 'attribute_exists(user_id) AND #status = :active',
+        ConditionExpression:
+          'attribute_exists(user_id) AND attribute_not_exists(deleted_at) AND #status = :active',
         ExpressionAttributeNames: {
           '#status': 'status',
           ...Object.fromEntries(entries.map(([key]) => [`#${key}`, key])),
@@ -161,15 +165,14 @@ async function saveProfile(context: ProfileSaveContext): Promise<UserRow> {
 }
 
 export async function handler(event: ApiEvent): Promise<ApiResult> {
-  const claims = verifiedClaims(event);
-  if (!claims) return refuse(STATUS_UNAUTHORIZED, 'UNAUTHORIZED');
   try {
-    const request = parseBody(profileUpdateSchema, event.body);
     const settings = readSettings(updateProfileSettings);
+    const { claims, user } = await readActiveMember(event, settings);
+    const request = parseBody(profileUpdateSchema, event.body);
     const context: ProfileSaveContext = {
       settings,
       request,
-      user: await readActiveMember(settings, claims.sub),
+      user,
       userId: claims.sub,
       now: new Date(),
       guard: {

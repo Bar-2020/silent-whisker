@@ -3,7 +3,7 @@ import { WRITES_PER_DAY } from '../../shared/constants/limits';
 import { PROFILE_SAVES_PER_DAY } from '../../shared/constants/profile';
 import { Refusal, rateLimited } from './api';
 import { giveBackDailyAllowance, secondsUntilNextUtcDay, takeDailyAllowance } from './metered-call';
-import type { CostGuard } from './metered-call.types';
+import type { CounterTable } from './metered-call.types';
 
 /** A per-member daily limit: its counter's name (DATA.md), how many a day, and the answer past it. */
 export interface MemberLimit {
@@ -26,7 +26,7 @@ export const PROFILE_SAVE: MemberLimit = {
 
 /** Who is asking and when: one reading of the clock, so a request is about one UTC day. */
 export interface MemberDay {
-  readonly guard: CostGuard;
+  readonly guard: CounterTable;
   readonly userId: string;
   readonly now: Date;
 }

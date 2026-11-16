@@ -4,12 +4,13 @@ import { z } from 'zod';
 export const userRowSchema = z.object({
   user_id: z.string(),
   status: z.enum(['active', 'banned']),
-  show_google_photo: z.boolean(),
-  is_admin: z.boolean(),
-  cats_helped: z.number(),
-  feedings: z.number(),
-  waters: z.number(),
-  created_at: z.string(),
+  // A banned member's deleted account leaves only `user_id` and `status` (D-71), read with these defaults (D-109).
+  show_google_photo: z.boolean().default(false),
+  is_admin: z.boolean().default(false),
+  cats_helped: z.number().default(0),
+  feedings: z.number().default(0),
+  waters: z.number().default(0),
+  created_at: z.string().optional(),
   avatar_url: z.string().optional(),
   display_name: z.string().optional(),
   city: z.string().optional(),
@@ -18,6 +19,8 @@ export const userRowSchema = z.object({
   terms_accepted_at: z.string().optional(),
   terms_version: z.number().optional(),
   chat_restricted_until: z.string().optional(),
+  /** Set when the member deletes the account: the row then holds only `user_id`, `status` and this (D-109). */
+  deleted_at: z.string().optional(),
 });
 export type UserRow = z.infer<typeof userRowSchema>;
 

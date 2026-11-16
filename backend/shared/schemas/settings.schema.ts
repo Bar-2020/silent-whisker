@@ -5,6 +5,9 @@ const setting = z.string().min(1);
 /** The settings Terraform gives each Lambda (infra/app), by handler. */
 export const getProfileSettings = z.object({ USERS_TABLE: setting });
 
+export const deleteProfileSettings = z.object({ USERS_TABLE: setting, USER_POOL_ID: setting });
+export type DeleteProfileSettings = z.infer<typeof deleteProfileSettings>;
+
 export const updateProfileSettings = z.object({
   USERS_TABLE: setting,
   GEOCODE_TABLE: setting,

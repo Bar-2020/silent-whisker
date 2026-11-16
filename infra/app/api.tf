@@ -5,8 +5,9 @@ locals {
 
   # A new route goes here and in api.json; a test fails if it lacks the authorizer or a throttle.
   route_functions = {
-    "GET /api/profile"   = module.get_profile.function
-    "PATCH /api/profile" = module.update_profile.function
+    "GET /api/profile"    = module.get_profile.function
+    "PATCH /api/profile"  = module.update_profile.function
+    "DELETE /api/profile" = module.delete_profile.function
   }
 }
 
