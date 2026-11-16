@@ -6,15 +6,14 @@ import {
   STATUS_NOT_FOUND,
   STATUS_OK,
   STATUS_UNAVAILABLE,
-  STATUS_UNPROCESSABLE,
 } from '../../shared/constants/http';
 import { TERMS_VERSION } from '../../shared/constants/profile';
 import { profileUpdateSchema } from '../../shared/schemas/profile.schema';
 import type { ProfileUpdate } from '../../shared/schemas/profile.schema';
+import { findCity } from '../shared/cities';
 import { invalidInput, parseBody, Refusal, refuse, reply } from '../shared/api';
 import type { ApiEvent, ApiResult } from '../shared/api.types';
 import { readSettings } from '../shared/env';
-import { GeocoderUnavailable, lookupPlace } from '../shared/geocode';
 import {
   isDailyLimitRefusal,
   PROFILE_SAVE,
@@ -31,8 +30,8 @@ import { buildProfileResponse, parseUserRow } from '../shared/users';
 import { CheckUnavailable, moderateText } from './moderate';
 import { MEMBER_STATUS } from '../../shared/constants/member-status';
 
-// PATCH /api/profile (D-62): the name and city are checked on the spot and saved only if the check
-// passes. `user_id` is always the token's `sub`, and only the fields of the schema are read.
+// PATCH /api/profile (D-62, D-117): the name is checked on the spot and saved only if the check
+// passes; the city is a code from the list. `user_id` is always the token's `sub`, and only the fields of the schema are read.
 
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const sns = new SNSClient({});
@@ -45,8 +44,7 @@ interface ProfileSaveContext extends MemberDay {
   readonly request: ProfileUpdate;
 }
 
-const isCheckUnavailable = (error: unknown): boolean =>
-  error instanceof CheckUnavailable || error instanceof GeocoderUnavailable;
+const isCheckUnavailable = (error: unknown): boolean => error instanceof CheckUnavailable;
 
 /** A member with a row who is not banned: the live member of the token, or a refusal. */
 async function readActiveMember(event: ApiEvent, settings: UpdateProfileSettings) {
@@ -56,48 +54,38 @@ async function readActiveMember(event: ApiEvent, settings: UpdateProfileSettings
   return { claims, user };
 }
 
-/** The first save needs both texts and the terms (D-28, D-69); later ones may send less. */
+/** The first save needs the name, the city and the terms (D-28, D-69); later ones may send less. */
 function requireTermsAndTexts({ user, request }: ProfileSaveContext): void {
   const termsAccepted = user.terms_version === TERMS_VERSION;
   if (!termsAccepted && request.accept_terms !== true) throw invalidInput();
-  if (!(request.display_name ?? user.display_name) || !(request.city ?? user.city)) {
+  if (!(request.display_name ?? user.display_name) || !(request.city_id ?? user.city_id)) {
     throw invalidInput();
   }
 }
 
-/** Unchanged city: the stored centre. Otherwise the cached lookup (D-29), or `CITY_NOT_FOUND`. */
-async function resolveCityCentre(
-  { settings, user }: ProfileSaveContext,
-  city: string
-): Promise<{ lat: number; lng: number }> {
-  if (city === user.city && user.city_lat !== undefined && user.city_lng !== undefined) {
-    return { lat: user.city_lat, lng: user.city_lng };
-  }
-  const place = await lookupPlace(
-    { db, cacheTable: settings.GEOCODE_TABLE, counterTable: settings.COUNTERS_TABLE },
-    city
-  );
-  if (!place) throw new Refusal(refuse(STATUS_UNPROCESSABLE, 'CITY_NOT_FOUND'));
-  return place;
+/** A picked city must be on the list (D-117), refused before anything is spent. */
+function requireListedCity({ request }: ProfileSaveContext): void {
+  if (request.city_id !== undefined && !findCity(request.city_id)) throw invalidInput();
 }
 
+/** Only the city's code is stored; its position stays in the list. */
+const cityUpdate = ({ user, request }: ProfileSaveContext): UserRowUpdate =>
+  request.city_id === undefined || request.city_id === user.city_id
+    ? {}
+    : { city_id: request.city_id };
+
 /**
- * Allowance first, then the city, then one check for both texts (D-62). A rejection or an unknown
- * city keeps the allowance spent; a check or lookup that could not run gives it back.
+ * Allowance first, then the one check of the name (D-62). A rejection keeps the allowance spent; a
+ * check that could not run gives it back.
  */
-async function checkNameAndCity(
-  context: ProfileSaveContext,
-  name: string,
-  city: string
-): Promise<UserRowUpdate> {
+async function checkName(context: ProfileSaveContext, name: string): Promise<UserRowUpdate> {
   try {
     return await withMemberLimit(
       context,
       PROFILE_SAVE,
       async () => {
-        const centre = await resolveCityCentre(context, city);
-        await moderateText(context.guard, context.settings, `${name}\n${city}`);
-        return { display_name: name, city, city_lat: centre.lat, city_lng: centre.lng };
+        await moderateText(context.guard, context.settings, name);
+        return { display_name: name };
       },
       isCheckUnavailable
     );
@@ -107,12 +95,10 @@ async function checkNameAndCity(
   }
 }
 
-async function nameAndCityUpdate(context: ProfileSaveContext): Promise<UserRowUpdate> {
+async function nameUpdate(context: ProfileSaveContext): Promise<UserRowUpdate> {
   const { user, request } = context;
   const name = request.display_name ?? user.display_name;
-  const city = request.city ?? user.city;
-  const changed = name !== user.display_name || city !== user.city;
-  return name && city && changed ? checkNameAndCity(context, name, city) : {};
+  return name && name !== user.display_name ? checkName(context, name) : {};
 }
 
 function photoAndTermsUpdate({ user, request, now }: ProfileSaveContext): UserRowUpdate {
@@ -161,7 +147,11 @@ async function writeRowUpdate(
 }
 
 async function saveProfile(context: ProfileSaveContext): Promise<UserRow> {
-  const update = { ...(await nameAndCityUpdate(context)), ...photoAndTermsUpdate(context) };
+  const update = {
+    ...cityUpdate(context),
+    ...(await nameUpdate(context)),
+    ...photoAndTermsUpdate(context),
+  };
   return writeRowUpdate(context, update);
 }
 
@@ -184,6 +174,7 @@ export async function handler(event: ApiEvent): Promise<ApiResult> {
       },
     };
     requireTermsAndTexts(context);
+    requireListedCity(context);
     const saved = await withMemberLimit(
       context,
       WRITE_BUDGET,

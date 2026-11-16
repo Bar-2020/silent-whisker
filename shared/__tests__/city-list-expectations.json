@@ -1,0 +1,17 @@
+{
+  "latitudeRange": { "min": 29, "max": 34 },
+  "longitudeRange": { "min": 34, "max": 36 },
+  "placesWithoutArabicName": [528],
+  "wellKnownPlaces": [
+    {
+      "id": 5000,
+      "he": "תל אביב - יפו",
+      "en": "Tel Aviv - Yafo",
+      "ar": "تل أبيب – يافا",
+      "ru": "Тель-Авив Яффо"
+    },
+    { "id": 3000, "he": "ירושלים", "en": "Jerusalem", "ar": "أورشليم القدس", "ru": "Иерусалим" },
+    { "id": 4000, "he": "חיפה", "en": "Haifa", "ar": "حيفا", "ru": "Хайфа" },
+    { "id": 9000, "he": "באר שבע", "en": "Be'er Sheva", "ar": "بِئير شيڤع", "ru": "Беэр-Шева" }
+  ]
+}

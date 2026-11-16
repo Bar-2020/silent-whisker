@@ -1,0 +1,14 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.label {
+  font: var(--type-body-strong);
+}
+
+.hint {
+  font: var(--type-small);
+  color: var(--ink-2);
+}

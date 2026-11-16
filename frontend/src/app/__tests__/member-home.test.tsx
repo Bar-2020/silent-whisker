@@ -8,6 +8,7 @@ import {
   restoreBrowserLocation,
 } from '@shared/test-support/geolocation-fakes';
 import { ENGLISH_CODE, getLocaleText, LANGUAGE_CODES } from '@shared/test-support/locale-texts';
+import { HAIFA_ID, pickCity } from '@shared/test-support/pick-city';
 import { renderAppAtPath } from '@shared/test-support/render-app-in-memory-router';
 import {
   readCurrentPath,
@@ -40,11 +41,11 @@ const GOOGLE = { identity_provider: SIGN_IN_IDENTITY_PROVIDER };
 
 const settleScreen = (): Promise<void> => settleAsyncUpdates(SETTLE_ROUNDS);
 
-const MEMBER: ProfileResponse = { ...PROFILE, display_name: 'Dana Levi', city: 'Haifa' };
+const MEMBER: ProfileResponse = { ...PROFILE, display_name: 'Dana Levi', city_id: HAIFA_ID };
 const NEW_MEMBER: ProfileResponse = {
   ...MEMBER,
   display_name: null,
-  city: null,
+  city_id: null,
   terms_accepted: false,
 };
 
@@ -304,9 +305,7 @@ describe('/home behind the guards', () => {
     fireEvent.change(screen.getByRole('textbox', { name: text('firstrun.name.label') }), {
       target: { value: 'Dana Cohen' },
     });
-    fireEvent.change(screen.getByRole('textbox', { name: text('firstrun.city.label') }), {
-      target: { value: 'Haifa' },
-    });
+    await pickCity('Haifa', 'Haifa');
     fireEvent.click(screen.getByRole('checkbox'));
     await press(text('common.continue'));
     expect(heading1()).toBe(text('firstrun.install.h1'));

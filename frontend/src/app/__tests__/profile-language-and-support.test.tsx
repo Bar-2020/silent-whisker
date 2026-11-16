@@ -15,6 +15,7 @@ import {
   getLocaleText,
   LANGUAGE_CODES,
 } from '@shared/test-support/locale-texts';
+import { HAIFA_ID } from '@shared/test-support/pick-city';
 import { RouterLocationProbe } from '@shared/test-support/RouterLocationProbe';
 import { readCurrentPath } from '@shared/test-support/router-location';
 import { settleAsyncUpdates } from '@shared/test-support/settle-async-updates';
@@ -44,7 +45,7 @@ const settleScreen = (): Promise<void> => settleAsyncUpdates(SETTLE_ROUNDS);
 const MEMBER: ProfileResponse = {
   ...PROFILE,
   display_name: 'Dana Levi',
-  city: 'Haifa',
+  city_id: HAIFA_ID,
   terms_accepted: true,
 };
 

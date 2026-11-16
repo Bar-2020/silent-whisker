@@ -21,10 +21,11 @@ import {
   STATUS_UNPROCESSABLE,
 } from '@constants/http';
 import type { ProfileResponse, ProfileUpdate } from '@schemas/profile.schema';
+import { HAIFA_ID } from '@constants/cities';
 import {
   PROFILE_NAME_BLOCKED_WORDS,
+  PROFILE_NAME_MAX_LENGTH,
   PROFILE_NAME_MIN_LENGTH,
-  PROFILE_TEXT_MAX_LENGTH,
 } from '@constants/profile';
 
 vi.mock('@shared/auth/user-manager', async () => {
@@ -67,7 +68,7 @@ async function failureOf(call: Promise<unknown>): Promise<unknown> {
 /** Two hours, as the server sends it with the daily save limit (FIRST-09). */
 const DAILY_LIMIT_RETRY_AFTER = 7200;
 
-const VALID = { display_name: 'Dana Levi', city: 'Haifa' };
+const VALID = { display_name: 'Dana Levi', city_id: HAIFA_ID };
 
 /** A refused body may be thrown at once or rejected later: both are a refusal. */
 async function attempt(update: ProfileUpdate): Promise<ProfileResponse> {
@@ -89,7 +90,6 @@ const REFUSALS: Refusal[] = [
     retryAfter: DAILY_LIMIT_RETRY_AFTER,
   },
   { status: STATUS_UNPROCESSABLE, code: 'MODERATION_REJECTED', kind: 'rejected' },
-  { status: STATUS_UNPROCESSABLE, code: 'CITY_NOT_FOUND', kind: 'rejected' },
   { status: STATUS_BAD_REQUEST, code: 'INVALID_INPUT', kind: 'rejected' },
   { status: STATUS_UNAVAILABLE, code: 'CHECK_UNAVAILABLE', kind: 'unavailable' },
   { status: STATUS_FORBIDDEN, code: 'BANNED', kind: 'banned' },
@@ -111,8 +111,24 @@ describe('updateProfile', () => {
 
   // FIRST-08, D-61, D-101: the text is trimmed and in NFC before it leaves, and a missing field is not invented
   it('sends the name and city trimmed and in NFC, and no field that was not given', async () => {
-    await updateProfile({ display_name: '  Café  ', city: '\tHaifa ' });
-    expect(sentBody()).toEqual({ display_name: 'Café', city: 'Haifa' });
+    await updateProfile({ display_name: '  Café  ', city_id: HAIFA_ID });
+    expect(sentBody()).toEqual({ display_name: 'Café', city_id: HAIFA_ID });
+  });
+
+  // FIRST-08, D-117: the request carries city_id, a number, and no text city
+  it('sends the city as city_id only', async () => {
+    await updateProfile({ city_id: HAIFA_ID });
+    expect(sentBody()).toEqual({ city_id: HAIFA_ID });
+  });
+
+  // FIRST-15, D-117, D-101: a code that cannot be a locality code is not sent
+  it.each([
+    ['zero', 0],
+    ['a negative number', -1],
+    ['a fraction', 1.5],
+  ])('does not send a city_id of %s', async (_name, city_id) => {
+    await expect(attempt({ city_id })).rejects.toBeInstanceOf(ZodError);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   // ME-08, D-108: an edit never carries accept_terms unless the caller gave it
@@ -141,8 +157,8 @@ describe('updateProfile', () => {
   it.each([
     ['one under the minimum', PROFILE_NAME_MIN_LENGTH - 1, false],
     ['the minimum', PROFILE_NAME_MIN_LENGTH, true],
-    ['the maximum', PROFILE_TEXT_MAX_LENGTH, true],
-    ['one over the maximum', PROFILE_TEXT_MAX_LENGTH + 1, false],
+    ['the maximum', PROFILE_NAME_MAX_LENGTH, true],
+    ['one over the maximum', PROFILE_NAME_MAX_LENGTH + 1, false],
   ])('a name of %s characters', async (_name, length, accepted) => {
     // 'dana' repeated: no letter three times in a row (D-116)
     const call = attempt({ display_name: 'dana'.repeat(length).slice(0, length) });
@@ -209,17 +225,6 @@ describe('updateProfile', () => {
       expect(fetchMock).not.toHaveBeenCalled();
     }
   );
-
-  // FIRST-02, D-61: characters, not code units: an emoji counts one
-  it.each([
-    ['the maximum', PROFILE_TEXT_MAX_LENGTH, true],
-    ['one over the maximum', PROFILE_TEXT_MAX_LENGTH + 1, false],
-  ])('a city of %s emoji', async (_name, length, accepted) => {
-    const call = attempt({ city: '🐱'.repeat(length) });
-    if (accepted) await call;
-    else await expect(call).rejects.toBeInstanceOf(ZodError);
-    expect(fetchMock).toHaveBeenCalledTimes(accepted ? 1 : 0);
-  });
 
   // FIRST-02, D-61: a name with a newline is not sent
   it('does not send a name with a newline', async () => {

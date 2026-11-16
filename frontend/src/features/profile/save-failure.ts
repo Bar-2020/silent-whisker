@@ -14,8 +14,6 @@ export function describeSaveFailure(error: Error, t: TFunction): SaveFailure | n
   switch (error.code) {
     case ProfileErrorCode.ModerationRejected:
       return { field: 'fullName', message: t('firstrun.name.refused', { email: CONTACT_EMAIL }) };
-    case ProfileErrorCode.CityNotFound:
-      return { field: 'cityName', message: t('firstrun.city.notFound') };
     case ProfileErrorCode.InvalidInput:
       return { field: 'root.server', message: t('profile.error.invalid') };
     case ProfileErrorCode.CheckUnavailable:

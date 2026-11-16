@@ -18,7 +18,7 @@ export const REFRESHED_ACCESS_TOKEN = 'access-token-refreshed';
 
 export const PROFILE: ProfileResponse = {
   display_name: 'דנה ‏Dana',
-  city: null,
+  city_id: null,
   avatar_url: null,
   show_google_photo: false,
   status: 'active',

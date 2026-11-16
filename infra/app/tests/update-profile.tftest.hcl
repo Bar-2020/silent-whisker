@@ -64,17 +64,16 @@ run "the_profile_save_gets_its_tables_topic_and_guardrail_by_name" {
   assert {
     condition = (
       module.update_profile.function.environment[0].variables["USERS_TABLE"] == aws_dynamodb_table.users.name &&
-      module.update_profile.function.environment[0].variables["GEOCODE_TABLE"] == aws_dynamodb_table.geocode_cache.name &&
       module.update_profile.function.environment[0].variables["COUNTERS_TABLE"] == aws_dynamodb_table.daily_usage_counters.name &&
       module.update_profile.function.environment[0].variables["ALERT_TOPIC_ARN"] == aws_sns_topic.cost_alerts.arn &&
       module.update_profile.function.environment[0].variables["GUARDRAIL_ID"] == aws_bedrock_guardrail.text_moderation.guardrail_id &&
       module.update_profile.function.environment[0].variables["GUARDRAIL_VERSION"] == aws_bedrock_guardrail_version.text_moderation.version
     )
-    error_message = "The handler reads these six settings (backend/update-profile/): a missing one fails every save."
+    error_message = "The handler reads these five settings (backend/update-profile/): a missing one fails every save."
   }
 
   assert {
     condition     = module.update_profile.function.timeout == local.api.update_profile.timeout_seconds
-    error_message = "The save has its own timeout: a geocoder slot and two outside calls need more than the default."
+    error_message = "The save has its own timeout: the text check is an outside call and needs more than the default."
   }
 }

@@ -13,6 +13,7 @@ import {
   restoreBrowserLocation,
 } from '@shared/test-support/geolocation-fakes';
 import { ENGLISH_CODE, getLocaleText, LANGUAGE_CODES } from '@shared/test-support/locale-texts';
+import { HAIFA_ID } from '@shared/test-support/pick-city';
 import { renderAppAtPath } from '@shared/test-support/render-app-in-memory-router';
 import { readCurrentPath } from '@shared/test-support/router-location';
 import { settleAsyncUpdates } from '@shared/test-support/settle-async-updates';
@@ -42,13 +43,13 @@ const settleScreen = (): Promise<void> => settleAsyncUpdates(SETTLE_ROUNDS);
 const MEMBER: ProfileResponse = {
   ...PROFILE,
   display_name: 'Dana Levi',
-  city: 'Haifa',
+  city_id: HAIFA_ID,
   terms_accepted: true,
 };
 const NEW_MEMBER: ProfileResponse = {
   ...MEMBER,
   display_name: null,
-  city: null,
+  city_id: null,
   terms_accepted: false,
 };
 

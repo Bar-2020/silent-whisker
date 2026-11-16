@@ -5,6 +5,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 
 import type { App as AppComponent } from '@app/App';
 import { ENGLISH_CODE, getLocaleText, LANGUAGE_CODES } from '@shared/test-support/locale-texts';
+import {
+  cityBox,
+  HAIFA_ID,
+  JERUSALEM_ID,
+  pickCity,
+  typeInCityBox,
+} from '@shared/test-support/pick-city';
 import { renderAppAtPath } from '@shared/test-support/render-app-in-memory-router';
 import { readCurrentPath } from '@shared/test-support/router-location';
 import { settleAsyncUpdates } from '@shared/test-support/settle-async-updates';
@@ -34,9 +41,8 @@ import {
 import {
   AVATAR_INITIALS_COUNT,
   GOOGLE_IMAGE_HOST_SUFFIX,
+  PROFILE_NAME_MAX_LENGTH,
   PROFILE_NAME_MIN_LENGTH,
-  PROFILE_TEXT_MAX_LENGTH,
-  PROFILE_TEXT_MIN_LENGTH,
 } from '@constants/profile';
 
 vi.mock('@shared/auth/user-manager', async () => {
@@ -62,7 +68,7 @@ const NOT_A_GOOGLE_PHOTO: [string, string][] = [
   ['plain http', `http://lh3${GOOGLE_IMAGE_HOST_SUFFIX}/a/photo`],
 ];
 
-// D-116: a full name is letters of the four languages; emoji are for the city only
+// D-116: a full name is letters of the four languages
 const NAMES_IN_SCRIPTS = ['דנה כהן', 'سارة أحمد', 'Иван Петров'];
 
 /** A text of `length` letters no letter of which comes three times in a row (D-116). */
@@ -71,14 +77,14 @@ const letters = (length: number): string => 'dana'.repeat(length).slice(0, lengt
 const NEW_MEMBER: ProfileResponse = {
   ...PROFILE,
   display_name: null,
-  city: null,
+  city_id: null,
   terms_accepted: false,
 };
 const BANNED_NEW_MEMBER: ProfileResponse = { ...NEW_MEMBER, status: 'banned' };
 const MEMBER: ProfileResponse = {
   ...PROFILE,
   display_name: 'Dana Levi',
-  city: 'Haifa',
+  city_id: HAIFA_ID,
   avatar_url: GOOGLE_PHOTO,
   show_google_photo: true,
 };
@@ -192,7 +198,8 @@ function input(key: string): HTMLInputElement {
 }
 
 const NAME = 'firstrun.name.label';
-const CITY = 'firstrun.city.label';
+/** Haifa in the language of the screen (the English app shows the English names). */
+const HAIFA_NAME = 'Haifa';
 
 function box(): HTMLInputElement {
   const found = screen.getByRole('checkbox');
@@ -232,8 +239,8 @@ async function press(key: string): Promise<void> {
 /** A text with its `{{...}}` placeholders filled in. */
 function words(key: string, values: Record<string, string> = {}): string {
   const filled: Record<string, string> = {
-    min: String(PROFILE_TEXT_MIN_LENGTH),
-    max: String(PROFILE_TEXT_MAX_LENGTH),
+    min: String(PROFILE_NAME_MIN_LENGTH),
+    max: String(PROFILE_NAME_MAX_LENGTH),
     ...values,
   };
   return getLocaleText(ENGLISH_CODE, key).replace(
@@ -265,10 +272,10 @@ async function open(
   await settleScreen();
 }
 
-/** Fill the sign-up form with values that pass the checks. */
-function fillSignUp({ name = 'Dana Cohen', city = 'Haifa', tick = true } = {}): void {
+/** Fill the sign-up form with values that pass the checks: the city is picked from the list (D-117). */
+async function fillSignUp({ name = 'Dana Cohen', tick = true } = {}): Promise<void> {
   type(input(NAME), name);
-  type(input(CITY), city);
+  await pickCity('Haifa', HAIFA_NAME);
   if (tick) fireEvent.click(box());
 }
 
@@ -280,7 +287,7 @@ describe('the sign-up form, what it shows', () => {
     await open(NEW_MEMBER, '/profile', GOOGLE_PHOTO);
     expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'firstrun.profile.h1'));
     expect(input(NAME).value).toBe('');
-    expect(input(CITY).value).toBe('');
+    expect(cityBox().value).toBe('');
     expect(
       screen.getByRole('group', { name: getLocaleText(ENGLISH_CODE, 'firstrun.photo.label') })
     ).toBeDefined();
@@ -342,9 +349,8 @@ describe('the sign-up form, what it refuses', () => {
     expect(messagesOf(input(NAME))).toEqual([
       getLocaleText(ENGLISH_CODE, 'firstrun.name.required'),
     ]);
-    expect(messagesOf(input(CITY))).toEqual([
-      getLocaleText(ENGLISH_CODE, 'firstrun.city.required'),
-    ]);
+    // D-117: nothing picked from the list is "Choose a city from the list"
+    expect(messagesOf(cityBox())).toEqual([getLocaleText(ENGLISH_CODE, 'firstrun.city.required')]);
     // the question as a whole carries the message: its group, or else an answer
     const question = screen.getByRole('group', {
       name: getLocaleText(ENGLISH_CODE, 'firstrun.photo.label'),
@@ -356,7 +362,7 @@ describe('the sign-up form, what it refuses', () => {
     ]).toContain(getLocaleText(ENGLISH_CODE, 'firstrun.photo.required'));
     expect(messagesOf(box())).toEqual([getLocaleText(ENGLISH_CODE, 'firstrun.terms.required')]);
     expect(input(NAME).getAttribute('aria-invalid')).toBe('true');
-    expect(input(CITY).getAttribute('aria-invalid')).toBe('true');
+    expect(cityBox().getAttribute('aria-invalid')).toBe('true');
     expect(box().getAttribute('aria-invalid')).toBe('true');
     expect(callsOf('PATCH')).toHaveLength(0);
   });
@@ -374,7 +380,7 @@ describe('the sign-up form, what it refuses', () => {
   // FIRST-02, D-69: only the box unticked: only the box is wrong, and nothing is sent
   it('with only the box unticked, marks only the box', async () => {
     await open(NEW_MEMBER, '/profile', GOOGLE_PHOTO);
-    fillSignUp({ tick: false });
+    await fillSignUp({ tick: false });
     fireEvent.click(radio('firstrun.photo.no'));
     await press('common.continue');
 
@@ -388,7 +394,7 @@ describe('the sign-up form, what it refuses', () => {
   // FIRST-02: the photo question, answered, is no longer missing
   it('with only the photo unanswered, marks only the photo question', async () => {
     await open(NEW_MEMBER, '/profile', GOOGLE_PHOTO);
-    fillSignUp();
+    await fillSignUp();
     await press('common.continue');
     expect(alertTexts()).toEqual([getLocaleText(ENGLISH_CODE, 'firstrun.photo.required')]);
     expect(callsOf('PATCH')).toHaveLength(0);
@@ -402,35 +408,32 @@ describe('the sign-up form, what it refuses', () => {
   it('shows no error for a filled form', async () => {
     await open(NEW_MEMBER, '/profile', GOOGLE_PHOTO);
     patchQueue.push(accept({ ...MEMBER }));
-    fillSignUp();
+    await fillSignUp();
     fireEvent.click(radio('firstrun.photo.yes'));
     await press('common.continue');
     expect(alerts()).toHaveLength(0);
     expect(callsOf('PATCH')).toHaveLength(1);
   });
 
-  // FIRST-02, D-61, D-92, D-116: the length is counted in characters, edges from the constants (the name needs more than the city)
-  describe.each([
-    ['name', NAME, 'firstrun.name.invalid', PROFILE_NAME_MIN_LENGTH, letters],
-    ['city', CITY, 'firstrun.city.invalid', PROFILE_TEXT_MIN_LENGTH, (n: number) => 'a'.repeat(n)],
-  ])('the %s', (_field, label, invalidKey, minLength, textOf) => {
+  // FIRST-02, D-61, D-92, D-116: the length is counted in characters, edges from the constants
+  describe('the name', () => {
     it.each([
-      ['one under the minimum', minLength - 1, false],
-      ['the minimum', minLength, true],
-      ['the maximum', PROFILE_TEXT_MAX_LENGTH, true],
-      ['one over the maximum', PROFILE_TEXT_MAX_LENGTH + 1, false],
+      ['one under the minimum', PROFILE_NAME_MIN_LENGTH - 1, false],
+      ['the minimum', PROFILE_NAME_MIN_LENGTH, true],
+      ['the maximum', PROFILE_NAME_MAX_LENGTH, true],
+      ['one over the maximum', PROFILE_NAME_MAX_LENGTH + 1, false],
     ])('of %s characters', async (_name, length, accepted) => {
       await open(NEW_MEMBER);
       patchQueue.push(accept(MEMBER));
-      fillSignUp();
-      type(input(label), textOf(length));
+      await fillSignUp();
+      type(input(NAME), letters(length));
       await press('common.continue');
       if (accepted) {
         expect(alerts()).toHaveLength(0);
         expect(callsOf('PATCH')).toHaveLength(1);
       } else {
-        expect(messagesOf(input(label))).toEqual([words(invalidKey, { min: String(minLength) })]);
-        expect(input(label).getAttribute('aria-invalid')).toBe('true');
+        expect(messagesOf(input(NAME))).toEqual([words('firstrun.name.invalid')]);
+        expect(input(NAME).getAttribute('aria-invalid')).toBe('true');
         expect(callsOf('PATCH')).toHaveLength(0);
       }
     });
@@ -438,10 +441,10 @@ describe('the sign-up form, what it refuses', () => {
     // FIRST-02, D-61: spaces are not text
     it('of only spaces is refused and nothing is sent', async () => {
       await open(NEW_MEMBER);
-      fillSignUp();
-      type(input(label), ' '.repeat(PROFILE_TEXT_MAX_LENGTH));
+      await fillSignUp();
+      type(input(NAME), ' '.repeat(PROFILE_NAME_MAX_LENGTH));
       await press('common.continue');
-      expect(input(label).getAttribute('aria-invalid')).toBe('true');
+      expect(input(NAME).getAttribute('aria-invalid')).toBe('true');
       expect(callsOf('PATCH')).toHaveLength(0);
     });
 
@@ -449,34 +452,20 @@ describe('the sign-up form, what it refuses', () => {
     it('with spaces around a text of the minimum length is accepted', async () => {
       await open(NEW_MEMBER);
       patchQueue.push(accept(MEMBER));
-      fillSignUp();
-      type(input(label), ` ${textOf(minLength)} `);
+      await fillSignUp();
+      type(input(NAME), ` ${letters(PROFILE_NAME_MIN_LENGTH)} `);
       await press('common.continue');
       expect(callsOf('PATCH')).toHaveLength(1);
     });
   });
 
-  // FIRST-02, D-61, D-92: characters are not UTF-16 units: an emoji is one; the city may be emoji
-  it.each([
-    ['the maximum', PROFILE_TEXT_MAX_LENGTH, true],
-    ['one over the maximum', PROFILE_TEXT_MAX_LENGTH + 1, false],
-  ])('the city of %s emoji', async (_name, length, accepted) => {
-    await open(NEW_MEMBER);
-    patchQueue.push(accept(MEMBER));
-    fillSignUp();
-    type(input(CITY), '🐱'.repeat(length));
-    await press('common.continue');
-    expect(callsOf('PATCH')).toHaveLength(accepted ? 1 : 0);
-    if (!accepted) expect(messagesOf(input(CITY))).toEqual([words('firstrun.city.invalid')]);
-  });
-
   // FIRST-02, FIRST-14, D-116: a name is never emoji; the length message wins only when the length is wrong
   it.each([
-    ['the maximum', PROFILE_TEXT_MAX_LENGTH, 'firstrun.name.notName'],
-    ['one over the maximum', PROFILE_TEXT_MAX_LENGTH + 1, 'firstrun.name.invalid'],
+    ['the maximum', PROFILE_NAME_MAX_LENGTH, 'firstrun.name.notName'],
+    ['one over the maximum', PROFILE_NAME_MAX_LENGTH + 1, 'firstrun.name.invalid'],
   ])('the name of %s emoji is refused and nothing is sent', async (_name, length, key) => {
     await open(NEW_MEMBER);
-    fillSignUp();
+    await fillSignUp();
     type(input(NAME), '🐱'.repeat(length));
     await press('common.continue');
     expect(messagesOf(input(NAME))).toEqual([words(key, { min: String(PROFILE_NAME_MIN_LENGTH) })]);
@@ -492,7 +481,7 @@ describe('pressing Continue twice', () => {
     const pending = held();
     patchQueue.push(pending.answer);
     await open(NEW_MEMBER);
-    fillSignUp();
+    await fillSignUp();
     expect(buttonNamed('common.continue').getAttribute('aria-busy')).not.toBe('true');
 
     fireEvent.click(buttonNamed('common.continue'));
@@ -564,7 +553,7 @@ describe('the sign-up form takes the place of the page', () => {
   it('keeps the notice when a banned member presses Continue', async () => {
     patchQueue.push(refuse(STATUS_FORBIDDEN, 'BANNED'));
     await open(BANNED_NEW_MEMBER);
-    fillSignUp();
+    await fillSignUp();
     await press('common.continue');
     expect(callsOf('PATCH')).toHaveLength(1);
     expect(noticeShown()).toBe(true);
@@ -577,11 +566,11 @@ describe('the sign-up form takes the place of the page', () => {
 describe('saving the sign-up form', () => {
   // FIRST-08, D-27, D-69, D-101, D-108: with a Google photo, one PATCH with everything, then the page
   it('sends one PATCH with the token, the trimmed text and the photo answer, then the page', async () => {
-    const saved = { ...MEMBER, display_name: 'Dana Cohen', city: 'Haifa' };
+    const saved = { ...MEMBER, display_name: 'Dana Cohen', city_id: HAIFA_ID };
     patchQueue.push(accept(saved));
     await open(NEW_MEMBER, '/profile', GOOGLE_PHOTO);
     type(input(NAME), '   Dana Cohen  ');
-    type(input(CITY), ' Haifa ');
+    await pickCity('Haifa', HAIFA_NAME);
     fireEvent.click(radio('firstrun.photo.yes'));
     fireEvent.click(box());
     await press('common.continue');
@@ -593,9 +582,10 @@ describe('saving the sign-up form', () => {
     const headers = new Headers(init?.headers);
     expect(headers.get('authorization')).toBe(`Bearer ${ID_TOKEN}`);
     expect(headers.get('content-type')).toBe('application/json');
+    // FIRST-15, D-117: the request carries city_id, the code of the picked place, and no text city
     expect(bodyOf(patches[0])).toEqual({
       display_name: 'Dana Cohen',
-      city: 'Haifa',
+      city_id: HAIFA_ID,
       show_google_photo: true,
       accept_terms: true,
     });
@@ -611,12 +601,12 @@ describe('saving the sign-up form', () => {
   it('sends show_google_photo false for the answer no', async () => {
     patchQueue.push(accept({ ...MEMBER, show_google_photo: false, avatar_url: null }));
     await open(NEW_MEMBER, '/profile', GOOGLE_PHOTO);
-    fillSignUp();
+    await fillSignUp();
     fireEvent.click(radio('firstrun.photo.no'));
     await press('common.continue');
     expect(bodyOf(callsOf('PATCH')[0])).toEqual({
       display_name: 'Dana Cohen',
-      city: 'Haifa',
+      city_id: HAIFA_ID,
       show_google_photo: false,
       accept_terms: true,
     });
@@ -627,14 +617,14 @@ describe('saving the sign-up form', () => {
     patchQueue.push(accept({ ...MEMBER, show_google_photo: false, avatar_url: null }));
     await open(NEW_MEMBER);
     type(input(NAME), '  Dana Cohen ');
-    type(input(CITY), 'Haifa');
+    await pickCity('Haifa', HAIFA_NAME);
     fireEvent.click(box());
     await press('common.continue');
     const patches = callsOf('PATCH');
     expect(patches).toHaveLength(1);
     expect(bodyOf(patches[0])).toEqual({
       display_name: 'Dana Cohen',
-      city: 'Haifa',
+      city_id: HAIFA_ID,
       accept_terms: true,
     });
     expect(heading1()).toBe(getLocaleText(ENGLISH_CODE, 'profile.heading'));
@@ -644,7 +634,7 @@ describe('saving the sign-up form', () => {
   it('sends the name in NFC', async () => {
     patchQueue.push(accept(MEMBER));
     await open(NEW_MEMBER);
-    fillSignUp({ name: 'Café Levi' });
+    await fillSignUp({ name: 'Café Levi' });
     await press('common.continue');
     expect(bodyOf(callsOf('PATCH')[0]).display_name).toBe('Café Levi');
   });
@@ -653,7 +643,7 @@ describe('saving the sign-up form', () => {
   it.each(NAMES_IN_SCRIPTS)('sends the name %s as typed', async (name) => {
     patchQueue.push(accept(MEMBER));
     await open(NEW_MEMBER);
-    fillSignUp({ name });
+    await fillSignUp({ name });
     await press('common.continue');
     expect(bodyOf(callsOf('PATCH')[0]).display_name).toBe(name);
   });
@@ -665,7 +655,7 @@ interface Refusal {
   name: string;
   answer: () => Promise<Response>;
   /** Under which field the message sits: `form` is above the buttons; `banned` is the notice. */
-  where: 'name' | 'city' | 'form' | 'banned';
+  where: 'name' | 'form' | 'banned';
   message: string;
 }
 
@@ -681,12 +671,6 @@ const REFUSALS: Refusal[] = [
     answer: refuse(STATUS_UNPROCESSABLE, 'MODERATION_REJECTED'),
     where: 'name',
     message: '',
-  },
-  {
-    name: 'CITY_NOT_FOUND',
-    answer: refuse(STATUS_UNPROCESSABLE, 'CITY_NOT_FOUND'),
-    where: 'city',
-    message: words('firstrun.city.notFound'),
   },
   {
     name: 'PROFILE_SAVE_DAILY_LIMIT with Retry-After',
@@ -757,7 +741,6 @@ const PLAIN_MESSAGES = [
   'profile.error.checkUnavailable',
   'profile.error.unavailable',
   'profile.error.generic',
-  'firstrun.city.notFound',
 ].map((key) => words(key));
 
 const EDITED_NAME = 'Dana Cohen';
@@ -777,7 +760,7 @@ const DRIVERS: FormDriver[] = [
     submit: 'common.continue',
     async prepare() {
       await open(NEW_MEMBER);
-      fillSignUp({ name: EDITED_NAME });
+      await fillSignUp({ name: EDITED_NAME });
     },
     savedScreenShown: () => heading1() === getLocaleText(ENGLISH_CODE, 'profile.heading'),
   },
@@ -816,9 +799,6 @@ describe.each(DRIVERS)('$title, when the server refuses', (driver) => {
       expect(mail?.getAttribute('href')).toBe(`mailto:${CONTACT_EMAIL}`);
       expect(under[0].textContent).not.toMatch(/\{\{|</);
       expect(input(NAME).getAttribute('aria-invalid')).toBe('true');
-    } else if (refusal.where === 'city') {
-      expect(messagesOf(input(CITY))).toEqual([refusal.message]);
-      expect(input(CITY).getAttribute('aria-invalid')).toBe('true');
     } else {
       const shown = alerts().filter((node) => node.textContent.includes(refusal.message));
       expect(shown).toHaveLength(1);
@@ -826,7 +806,7 @@ describe.each(DRIVERS)('$title, when the server refuses', (driver) => {
       const position = shown[0].compareDocumentPosition(buttonNamed(driver.submit));
       expect(position).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
       expect(messagesOf(input(NAME))).toEqual([]);
-      expect(messagesOf(input(CITY))).toEqual([]);
+      expect(messagesOf(cityBox())).toEqual([]);
     }
     for (const plain of PLAIN_MESSAGES.filter((other) => other !== refusal.message)) {
       expect(document.body.textContent).not.toContain(plain);
@@ -840,7 +820,7 @@ describe.each(DRIVERS)('$title, when the server refuses', (driver) => {
     await press(driver.submit);
 
     expect(input(NAME).value).toBe(EDITED_NAME);
-    expect(input(CITY).value).toBe('Haifa');
+    expect(cityBox().value).toBe(HAIFA_NAME);
     expect(buttonNamed(driver.submit).getAttribute('aria-busy')).not.toBe('true');
 
     await press(driver.submit);
@@ -854,7 +834,7 @@ describe.each(DRIVERS)('$title, when the server refuses', (driver) => {
     patchQueue.push(refusal.answer);
     await driver.prepare();
     await press(driver.submit);
-    const field = refusal.where === 'city' ? input(CITY) : input(NAME);
+    const field = input(NAME);
     type(field, `${field.value}x`);
     await settleScreen();
     expect(alerts()).toHaveLength(0);
@@ -874,8 +854,7 @@ describe.each(DRIVERS)('$title, when an active member is banned during a save', 
     type(input(NAME), `${input(NAME).value}x`);
     await settleScreen();
     expect(noticeShown()).toBe(true);
-    type(input(CITY), 'Akko');
-    await settleScreen();
+    await typeInCityBox('Akko');
     expect(noticeShown()).toBe(true);
 
     // the answer itself says the member is banned: no second GET to learn it
@@ -930,9 +909,9 @@ describe.each(DRIVERS)('$title, when the daily save limit is reached', (driver) 
 describe('a refusal with a Google photo asked', () => {
   // FIRST-09, D-27: the photo answer stays too
   it('keeps the chosen photo answer', async () => {
-    patchQueue.push(refuse(STATUS_UNPROCESSABLE, 'CITY_NOT_FOUND'));
+    patchQueue.push(refuse(STATUS_BAD_REQUEST, 'INVALID_INPUT'));
     await open(NEW_MEMBER, '/profile', GOOGLE_PHOTO);
-    fillSignUp();
+    await fillSignUp();
     fireEvent.click(radio('firstrun.photo.yes'));
     await press('common.continue');
     expect(radio('firstrun.photo.yes').checked).toBe(true);
@@ -1244,7 +1223,8 @@ describe('editing the profile', () => {
     const title = getLocaleText(ENGLISH_CODE, 'profile.edit.title');
     expect(screen.getByRole('heading', { level: 2, name: title })).toBeDefined();
     expect(input(NAME).value).toBe('Dana Levi');
-    expect(input(CITY).value).toBe('Haifa');
+    // ME-19, D-117: the box starts with the picked place, in the app's language
+    expect(cityBox().value).toBe(HAIFA_NAME);
     expect(photoAnswer('yes').checked).toBe(true);
     expect(photoAnswer('no').checked).toBe(false);
     expect(screen.queryByRole('checkbox')).toBeNull();
@@ -1284,7 +1264,7 @@ describe('editing the profile', () => {
     expect(new Headers(init?.headers).get('authorization')).toBe(`Bearer ${ID_TOKEN}`);
     expect(bodyOf(patches[0])).toEqual({
       display_name: 'Dana Cohen',
-      city: 'Haifa',
+      city_id: HAIFA_ID,
       show_google_photo: true,
     });
     expect(Object.hasOwn(bodyOf(patches[0]), 'accept_terms')).toBe(false);
@@ -1305,7 +1285,7 @@ describe('editing the profile', () => {
     await press('common.save');
     expect(bodyOf(callsOf('PATCH')[0])).toEqual({
       display_name: 'Dana Levi',
-      city: 'Haifa',
+      city_id: HAIFA_ID,
       show_google_photo: false,
     });
     expect(avatarImage()).toBeNull();
@@ -1313,12 +1293,17 @@ describe('editing the profile', () => {
 
   // ME-08, D-27, D-108: with no photo question, the PATCH has no show_google_photo
   it('sends no show_google_photo when the token has no photo', async () => {
-    patchQueue.push(accept({ ...MEMBER, city: 'Akko' }));
+    patchQueue.push(accept({ ...MEMBER, city_id: JERUSALEM_ID }));
     await open(MEMBER);
     await press('profile.edit.title');
-    type(input(CITY), 'Akko');
+    await pickCity('Jerusalem', 'Jerusalem');
+    expect(cityBox().value).toBe('Jerusalem');
     await press('common.save');
-    expect(bodyOf(callsOf('PATCH')[0])).toEqual({ display_name: 'Dana Levi', city: 'Akko' });
+    expect(bodyOf(callsOf('PATCH')[0])).toEqual({
+      display_name: 'Dana Levi',
+      city_id: JERUSALEM_ID,
+    });
+    expect(document.querySelector('p bdi')?.textContent).toBe('Jerusalem');
   });
 
   // ME-08, D-108: Cancel sends nothing, closes the form and drops what was typed
@@ -1348,19 +1333,31 @@ describe('editing the profile', () => {
 
   // ME-08, D-61, D-62: the same checks as the sign-up form, under their fields, and nothing is sent
   it.each([
-    ['an empty name', NAME, '', 'firstrun.name.required'],
-    ['an empty city', CITY, '', 'firstrun.city.required'],
-    ['a short name', NAME, 'a'.repeat(PROFILE_NAME_MIN_LENGTH - 1), 'firstrun.name.invalid'],
-    ['a long city', CITY, 'a'.repeat(PROFILE_TEXT_MAX_LENGTH + 1), 'firstrun.city.invalid'],
-  ])('says what is wrong with %s', async (_name, label, value, key) => {
+    ['an empty name', '', 'firstrun.name.required'],
+    ['a short name', 'a'.repeat(PROFILE_NAME_MIN_LENGTH - 1), 'firstrun.name.invalid'],
+  ])('says what is wrong with %s', async (_name, value, key) => {
     await open(MEMBER);
     await press('profile.edit.title');
     expect(alerts()).toHaveLength(0);
-    type(input(label), value);
+    type(input(NAME), value);
     await press('common.save');
-    const min = label === NAME ? PROFILE_NAME_MIN_LENGTH : PROFILE_TEXT_MIN_LENGTH;
-    expect(messagesOf(input(label))).toEqual([words(key, { min: String(min) })]);
-    expect(input(label).getAttribute('aria-invalid')).toBe('true');
+    expect(messagesOf(input(NAME))).toEqual([words(key)]);
+    expect(input(NAME).getAttribute('aria-invalid')).toBe('true');
+    expect(callsOf('PATCH')).toHaveLength(0);
+  });
+
+  // ME-08, FIRST-15, D-117: a cleared city, or text typed and not chosen, is refused under the box and nothing is sent
+  it.each([
+    ['a cleared city', ''],
+    ['text typed and not chosen', 'Hai'],
+  ])('refuses %s with "Choose a city from the list"', async (_name, typed) => {
+    await open(MEMBER);
+    await press('profile.edit.title');
+    type(cityBox(), typed);
+    await settleScreen();
+    await press('common.save');
+    expect(messagesOf(cityBox())).toEqual([words('firstrun.city.required')]);
+    expect(cityBox().getAttribute('aria-invalid')).toBe('true');
     expect(callsOf('PATCH')).toHaveLength(0);
   });
 
@@ -1389,7 +1386,7 @@ describe('editing the profile', () => {
 function wordsIn(code: string, key: string): string {
   const filled: Record<string, string> = {
     min: String(PROFILE_NAME_MIN_LENGTH),
-    max: String(PROFILE_TEXT_MAX_LENGTH),
+    max: String(PROFILE_NAME_MAX_LENGTH),
   };
   return getLocaleText(code, key).replace(
     /\{\{(\w+)\}\}/g,
@@ -1408,6 +1405,9 @@ async function pressIn(code: string, key: string): Promise<void> {
   await settleScreen();
 }
 
+/** Haifa as each language's list entry shows it (D-117). */
+const HAIFA_NAMES: Record<string, string> = { he: 'חיפה', en: 'Haifa', ar: 'حيفا', ru: 'Хайфа' };
+
 /** The name typed into the sign-up form or the edit form, in the language `code`, and the form sent. */
 async function sendNameIn(form: 'sign-up' | 'edit', code: string, name: string): Promise<void> {
   profile = form === 'sign-up' ? NEW_MEMBER : { ...MEMBER, display_name: 'Old Name' };
@@ -1415,7 +1415,7 @@ async function sendNameIn(form: 'sign-up' | 'edit', code: string, name: string):
   await renderAppAtPath(<App />, '/profile', code);
   await settleScreen();
   if (form === 'sign-up') {
-    type(fieldIn(code, CITY), 'Haifa');
+    await pickCity('Haifa', HAIFA_NAMES[code], code);
     fireEvent.click(box());
     type(fieldIn(code, NAME), name);
     await pressIn(code, 'common.continue');
@@ -1428,7 +1428,7 @@ async function sendNameIn(form: 'sign-up' | 'edit', code: string, name: string):
 
 const LENGTH_REFUSED = [
   ['too short', letters(PROFILE_NAME_MIN_LENGTH - 1)],
-  ['too long', letters(PROFILE_TEXT_MAX_LENGTH + 1)],
+  ['too long', letters(PROFILE_NAME_MAX_LENGTH + 1)],
 ];
 const NOT_A_NAME = [
   ['a digit', 'Dana2'],

@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import type { App as AppComponent } from '@app/App';
 import { installDialogMethods, pressEscapeIn } from '@shared/test-support/dialog-methods';
 import { ENGLISH_CODE, getLocaleText, LANGUAGE_CODES } from '@shared/test-support/locale-texts';
+import { HAIFA_ID } from '@shared/test-support/pick-city';
 import { renderAppAtPath } from '@shared/test-support/render-app-in-memory-router';
 import { settleAsyncUpdates } from '@shared/test-support/settle-async-updates';
 import type { fakeUserManager as FakeUserManager } from '@shared/test-support/sign-in-fakes';
@@ -50,7 +51,7 @@ const settleScreen = (): Promise<void> => settleAsyncUpdates(SETTLE_ROUNDS);
 const ACTIVE: ProfileResponse = {
   ...PROFILE,
   display_name: 'Dana Levi',
-  city: 'Haifa',
+  city_id: HAIFA_ID,
   terms_accepted: true,
 };
 const BANNED: ProfileResponse = { ...ACTIVE, status: 'banned' };

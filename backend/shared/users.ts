@@ -32,7 +32,7 @@ export async function readUserRow(
 /** The answer body of `GET` and `PATCH /profile`; the photo goes out only if shown (D-21). */
 export const buildProfileResponse = (user: UserRow): ProfileResponse => ({
   display_name: user.display_name ?? null,
-  city: user.city ?? null,
+  city_id: user.city_id ?? null,
   avatar_url: user.show_google_photo ? (user.avatar_url ?? null) : null,
   show_google_photo: user.show_google_photo,
   status: user.status,

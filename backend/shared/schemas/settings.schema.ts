@@ -10,7 +10,6 @@ export type DeleteProfileSettings = z.infer<typeof deleteProfileSettings>;
 
 export const updateProfileSettings = z.object({
   USERS_TABLE: setting,
-  GEOCODE_TABLE: setting,
   COUNTERS_TABLE: setting,
   ALERT_TOPIC_ARN: setting,
   GUARDRAIL_ID: setting,

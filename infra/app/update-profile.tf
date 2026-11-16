@@ -1,6 +1,6 @@
-# PATCH /api/profile (backend/update-profile/): checks the name and city on the spot (D-62), so its
-# role also reaches the geocoder cache, the daily counters, the cost alert topic and the text
-# moderation guardrail. A longer timeout than the others: a geocoder slot and two outside calls.
+# PATCH /api/profile (backend/update-profile/): checks the name on the spot (D-62), so its role also
+# reaches the daily counters, the cost alert topic and the text moderation guardrail. The city is a
+# code from a list in the code (D-117): no geocoder. A longer timeout than the others: an outside call.
 
 module "update_profile" {
   source             = "./modules/lambda"
@@ -14,7 +14,6 @@ module "update_profile" {
 
   environment = {
     USERS_TABLE       = aws_dynamodb_table.users.name
-    GEOCODE_TABLE     = aws_dynamodb_table.geocode_cache.name
     COUNTERS_TABLE    = aws_dynamodb_table.daily_usage_counters.name
     ALERT_TOPIC_ARN   = aws_sns_topic.cost_alerts.arn
     GUARDRAIL_ID      = aws_bedrock_guardrail.text_moderation.guardrail_id
@@ -27,11 +26,6 @@ module "update_profile" {
       Effect   = "Allow"
       Action   = ["dynamodb:GetItem", "dynamodb:UpdateItem"]
       Resource = aws_dynamodb_table.users.arn
-    },
-    {
-      Effect   = "Allow"
-      Action   = ["dynamodb:GetItem", "dynamodb:PutItem"]
-      Resource = aws_dynamodb_table.geocode_cache.arn
     },
     {
       Effect   = "Allow"
