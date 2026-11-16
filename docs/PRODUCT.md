@@ -121,7 +121,7 @@ One phase, one PR or smaller. Finish a phase before the next. Inside a phase, bu
    (D-38, D-49). **Done** (live since 2026-10-21; the Budget was made by hand, not in Terraform).
 2. Design of every screen, approved (UI and UX design, `DESIGN.md`), then Google sign-in, the sign-up form and profile,
    the public landing and legal pages, the four-language shell, responsive shell. Sign-in is required
-   (D-39), so it comes before the map. **Under way.**
+   (D-39), so it comes before the map. **Done** (2026-11-16; stats, the admin group and the two-column layout of Profile wait for the data of Phases 3 and 4).
 3. Map and spots (exact; custom spots per D-47), municipal stations loaded into `spots`, custom spots
    (a separate form, admin approval, D-43), the spots list (D-82), the admin list in Profile (D-78), moderated photo upload.
 4. Feeding and water logs (no photo), the "needs food/water"
