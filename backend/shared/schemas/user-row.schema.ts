@@ -19,6 +19,8 @@ export const userRowSchema = z.object({
   terms_accepted_at: z.string().optional(),
   terms_version: z.number().optional(),
   chat_restricted_until: z.string().optional(),
+  /** Set when the member deletes the account: the row then holds only `user_id`, `status` and this (D-109). */
+  deleted_at: z.string().optional(),
 });
 export type UserRow = z.infer<typeof userRowSchema>;
 
