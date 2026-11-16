@@ -91,6 +91,8 @@ unless a row says otherwise.
 | ME-08 | c | Press the pencil, change the name, Save; press it again and Cancel; change nothing and Save | One `PATCH /api/profile` with name, city and photo answer and no `accept_terms`, the page shows the new values; Cancel and an unchanged Save send nothing; the same errors as the sign-up form, under their fields | D-27, D-62, D-108 |
 | ME-09 | c | Profile of a banned member | The permanent notice; no pencil; Sign out works | R-08, D-72 |
 | ME-10 | c | An active member presses Save and the server answers `BANNED`; then types in a field | The permanent notice shows and stays while typing, also on the Profile page behind the form (no pencil any more) | R-08, D-72 |
+| ME-11 | c | Press the red "Delete my account" row in Profile (an active and a banned member); then Cancel, Escape and a tap on the scrim; then press the red button | The row opens a dialog with a red button and a quiet Cancel, and sends one `DELETE /api/profile` with `{ "confirm": false }` and the ID token (the red button shows a spinner until it answers); Cancel, Escape and the scrim close it and send nothing more; the red button sends `{ "confirm": true }`, then the tokens are gone and the visit goes to Cognito's `/logout` as in SHELL-14; the same text for both members | D-71, D-72, D-109 |
+| ME-12 | c | In the dialog: the check answers 429 with `Retry-After`, a bare 429, 503 and no connection; the delete answers the same; press the red button twice at once | Each refusal is a plain message inside the dialog (the seconds for a 429, "could not reach the server" for 503 or offline, otherwise "could not be deleted"), the dialog stays open and the member can try again; two presses send one request | R-21, D-109 |
 
 ## Landing and legal (LAND)
 
