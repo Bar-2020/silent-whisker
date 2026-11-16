@@ -109,12 +109,9 @@ resource "aws_cognito_user_pool_client" "web" {
   # through the token endpoint.
   explicit_auth_flows = ["ALLOW_USER_SRP_AUTH"]
 
-  # The ID token's life is a constant the backend reads too: it is how long a deleted account's marker lives (D-109).
   refresh_token_validity = local.auth.refresh_token_days
-  id_token_validity      = local.auth.id_token_seconds
   token_validity_units {
     refresh_token = "days"
-    id_token      = "seconds"
   }
 
   # The tokens live in the browser (D-59), so each refresh hands out a new refresh token and the

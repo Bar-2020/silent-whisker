@@ -1,6 +1,6 @@
-# DELETE /api/profile (backend/delete-profile/, D-109): deletes the member's row and Cognito sign-in,
-# or for a banned member keeps the ban (the row is reduced to `user_id` and `status`, the sign-in
-# is disabled). Its role cannot make a row: no PutItem on `users`.
+# DELETE /api/profile (backend/delete-profile/, D-109): erases the member's personal data on their
+# row and marks it deleted, then disables (never deletes) their Cognito sign-in, so the same Google
+# account can never sign in or up again. Its role has no PutItem and no DeleteItem.
 
 module "delete_profile" {
   source             = "./modules/lambda"
@@ -12,27 +12,20 @@ module "delete_profile" {
   policy_name        = "account-delete"
 
   environment = {
-    USERS_TABLE    = aws_dynamodb_table.users.name
-    COUNTERS_TABLE = aws_dynamodb_table.daily_usage_counters.name
-    USER_POOL_ID   = aws_cognito_user_pool.members.id
+    USERS_TABLE  = aws_dynamodb_table.users.name
+    USER_POOL_ID = aws_cognito_user_pool.members.id
   }
 
   policy_statements = [
     {
       Effect   = "Allow"
-      Action   = ["dynamodb:GetItem", "dynamodb:UpdateItem", "dynamodb:DeleteItem"]
+      Action   = ["dynamodb:GetItem", "dynamodb:UpdateItem"]
       Resource = aws_dynamodb_table.users.arn
     },
-    # The write limit's counter and the marker of a deleted account.
+    # IAM cannot narrow this to one member: the handler passes only the signed token's username.
     {
       Effect   = "Allow"
-      Action   = "dynamodb:UpdateItem"
-      Resource = aws_dynamodb_table.daily_usage_counters.arn
-    },
-    # IAM cannot narrow these to one member: the handler passes only the signed token's username.
-    {
-      Effect   = "Allow"
-      Action   = ["cognito-idp:AdminDeleteUser", "cognito-idp:AdminDisableUser"]
+      Action   = "cognito-idp:AdminDisableUser"
       Resource = aws_cognito_user_pool.members.arn
     },
   ]
