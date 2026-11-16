@@ -86,3 +86,23 @@ run "pages_without_a_file_serve_the_app" {
     error_message = "Only the files' behavior may carry the page fallback (D-63): on /api it would answer every call with the web page."
   }
 }
+
+run "app_files_are_rechecked_on_every_visit" {
+  command = apply
+
+  assert {
+    condition = anytrue([
+      for i in aws_cloudfront_response_headers_policy.security["app"].custom_headers_config[0].items :
+      i.header == "Cache-Control" && i.value == "no-cache" && i.override
+    ])
+    error_message = "The app's answers must say Cache-Control: no-cache, overriding the origin, so a browser never keeps an old language file (D-113)."
+  }
+
+  assert {
+    condition = alltrue([
+      for key in ["design", "api"] :
+      length(aws_cloudfront_response_headers_policy.security[key].custom_headers_config) == 0
+    ])
+    error_message = "Only the app's policy sets Cache-Control; the mocks and the API keep their own (D-113)."
+  }
+}

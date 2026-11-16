@@ -1,6 +1,6 @@
 # The security headers CloudFront adds to every answer (D-59, D-104). The ordered behaviors in
 # hosting.tf do not inherit from the default one, so each behavior sets one of these policies. They
-# differ only in the Content-Security-Policy; `override` makes CloudFront's value win over the origin's.
+# differ only in the Content-Security-Policy (and the app's Cache-Control); `override` makes CloudFront's value win over the origin's.
 
 locals {
   security_headers = jsondecode(file("${path.module}/../../shared/constants/security-headers.json"))
@@ -46,6 +46,21 @@ resource "aws_cloudfront_response_headers_policy" "security" {
       include_subdomains         = false
       preload                    = false
       override                   = true
+    }
+  }
+
+  # The app's files carry no cache lifetime of their own, so a browser kept an old `/locales/he.json`
+  # beside a new page and showed raw keys. `no-cache` makes it ask on every visit; the answer is a
+  # cheap "not changed" (ETag). The edge keeps its copy and each deploy invalidates it (D-113).
+  dynamic "custom_headers_config" {
+    for_each = each.key == "app" ? [1] : []
+
+    content {
+      items {
+        header   = "Cache-Control"
+        value    = "no-cache"
+        override = true
+      }
     }
   }
 }
