@@ -1,0 +1,22 @@
+.dialog {
+  inline-size: min(26rem, 100% - var(--s-5));
+  padding: 0;
+  border: 1px solid var(--glass-light-edge);
+  border-radius: var(--r-l);
+  background: var(--glass-panel);
+  -webkit-backdrop-filter: var(--glass-panel-blur);
+  backdrop-filter: var(--glass-panel-blur);
+  box-shadow: var(--lift);
+  color: var(--ink);
+}
+
+.dialog::backdrop {
+  background: rgb(255 255 255 / 0.4);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-5);
+}

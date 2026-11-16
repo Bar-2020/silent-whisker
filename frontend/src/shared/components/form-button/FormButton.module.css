@@ -23,14 +23,13 @@
   background: var(--dado-deep);
 }
 
-.button[data-variant='secondary'] {
-  border-color: var(--dado);
-  background: var(--surface);
-  color: var(--dado);
+.button[data-variant='danger'] {
+  background: var(--bad);
+  color: var(--surface);
 }
 
-.button[data-variant='secondary']:hover {
-  background: var(--dado-tint);
+.button[data-variant='danger']:hover {
+  background: var(--bad-ink);
 }
 
 .button[data-variant='quiet'] {
@@ -42,13 +41,13 @@
   background: var(--dado-tint);
 }
 
-/* Pending: no taps, the label hidden but still in the page, one spinner in its place. */
+/* Pending: no taps, the label invisible but still in the accessibility tree (`visibility: hidden` would take it out), one spinner in its place. */
 .button[aria-busy='true'] {
   pointer-events: none;
 }
 
 .button[aria-busy='true'] .label {
-  visibility: hidden;
+  opacity: 0;
 }
 
 .spinner {

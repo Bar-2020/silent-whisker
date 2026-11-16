@@ -5,6 +5,7 @@ import type { ProfileResponse } from '@schemas/profile.schema';
 import { FormButton } from '@shared/components/form-button/FormButton';
 import { FormButtonVariant } from '@shared/components/form-button/FormButton.types';
 import { buildProfileUpdate } from '../build-profile-update';
+import { CancelButton } from '../cancel-button/CancelButton';
 import { BannedAccountNotice } from '../banned-account-notice/BannedAccountNotice';
 import { ProfileFields } from '../profile-fields/ProfileFields';
 import { createProfileFormSchema } from '../profile-form.schema';
@@ -66,14 +67,7 @@ export function EditProfileForm({
           <FormButton type="submit" variant={FormButtonVariant.Primary} pending={isSubmitPending}>
             {t('common.save')}
           </FormButton>
-          <FormButton
-            type="button"
-            variant={FormButtonVariant.Quiet}
-            pending={false}
-            onClick={onClose}
-          >
-            {t('common.cancel')}
-          </FormButton>
+          <CancelButton onClick={onClose} />
         </div>
       </form>
     </FormProvider>

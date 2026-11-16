@@ -1,4 +1,9 @@
-import { profileResponseSchema, profileUpdateSchema } from '@schemas/profile.schema';
+import {
+  profileDeleteResponseSchema,
+  profileDeleteSchema,
+  profileResponseSchema,
+  profileUpdateSchema,
+} from '@schemas/profile.schema';
 import type { ProfileUpdate } from '@schemas/profile.schema';
 import { apiRequest } from './api-client';
 
@@ -13,4 +18,12 @@ export const updateProfile = (update: ProfileUpdate) =>
   apiRequest('/profile', profileResponseSchema, {
     method: 'PATCH',
     body: JSON.stringify(profileUpdateSchema.parse(update)),
+  });
+
+/** Two calls with one path (D-109): `false` only checks, `true` deletes the account for good. */
+export const deleteProfile = (confirm: boolean, signal?: AbortSignal) =>
+  apiRequest('/profile', profileDeleteResponseSchema, {
+    method: 'DELETE',
+    body: JSON.stringify(profileDeleteSchema.parse({ confirm })),
+    signal,
   });
