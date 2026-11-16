@@ -33,24 +33,13 @@ module "get_profile" {
   memory_mb          = local.api.lambda.memory_mb
   timeout_seconds    = local.api.lambda.timeout_seconds
   log_retention_days = local.api.lambda.log_retention_days
-  environment = {
-    USERS_TABLE    = aws_dynamodb_table.users.name
-    COUNTERS_TABLE = aws_dynamodb_table.daily_usage_counters.name
-  }
-  policy_name = "users-and-logs"
-  policy_statements = [
-    {
-      Effect   = "Allow"
-      Action   = ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:UpdateItem"]
-      Resource = aws_dynamodb_table.users.arn
-    },
-    # Only reads the marker of a deleted account (D-109).
-    {
-      Effect   = "Allow"
-      Action   = "dynamodb:GetItem"
-      Resource = aws_dynamodb_table.daily_usage_counters.arn
-    },
-  ]
+  environment        = { USERS_TABLE = aws_dynamodb_table.users.name }
+  policy_name        = "users-and-logs"
+  policy_statements = [{
+    Effect   = "Allow"
+    Action   = ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:UpdateItem"]
+    Resource = aws_dynamodb_table.users.arn
+  }]
 }
 
 # The Lambda was first written out here; these keep its live resources instead of recreating them.
