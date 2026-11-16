@@ -1,22 +1,27 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router';
 import { signOut } from '@shared/auth/session';
-import { FormButton } from '@shared/components/form-button/FormButton';
-import { FormButtonVariant } from '@shared/components/form-button/FormButton.types';
 import { EditIcon } from '@shared/components/icon/EditIcon';
+import { SignOutIcon } from '@shared/components/icon/SignOutIcon';
+import { TrashIcon } from '@shared/components/icon/TrashIcon';
 import { BannedAccountNotice } from '../banned-account-notice/BannedAccountNotice';
+import { DeleteAccountDialog } from '../delete-account-dialog/DeleteAccountDialog';
 import { EditProfileForm } from '../edit-profile-form/EditProfileForm';
 import { MemberAvatar } from '../member-avatar/MemberAvatar';
 import { AvatarSize } from '../member-avatar/MemberAvatar.types';
 import { profileContextSchema } from '../profile-context.schema';
+import { ProfileRow } from '../profile-row/ProfileRow';
+import { ProfileRowTone } from '../profile-row/ProfileRow.types';
 import styles from './ProfilePage.module.css';
 
-/** Who the member is to everyone else, a way to change it, and sign out. Stats and settings come with their own backend. */
+/** Who the member is to everyone else, a way to change it, sign out and delete the account. Stats and the other settings come with their own backend. */
 export function ProfilePage() {
   const { t } = useTranslation();
   const { profile, hasGooglePhoto } = profileContextSchema.parse(useOutletContext());
   const [editing, setEditing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const settingsTitleId = useId();
   const banned = profile.status === 'banned';
   const fullName = profile.display_name ?? '';
 
@@ -60,16 +65,34 @@ export function ProfilePage() {
           </div>
         </div>
       )}
-      <FormButton
-        type="button"
-        variant={FormButtonVariant.Secondary}
-        pending={false}
-        onClick={() => {
-          void signOut();
-        }}
-      >
-        {t('profile.signOut')}
-      </FormButton>
+      <section className={styles.settings} aria-labelledby={settingsTitleId}>
+        <h2 id={settingsTitleId}>{t('profile.settings.title')}</h2>
+        <div className={styles.rows}>
+          <ProfileRow
+            icon={<SignOutIcon />}
+            title={t('profile.signOut')}
+            tone={ProfileRowTone.Normal}
+            onClick={() => {
+              void signOut();
+            }}
+          />
+          <ProfileRow
+            icon={<TrashIcon />}
+            title={t('profile.delete.row')}
+            tone={ProfileRowTone.Bad}
+            onClick={() => {
+              setIsDeleting(true);
+            }}
+          />
+        </div>
+      </section>
+      {isDeleting && (
+        <DeleteAccountDialog
+          onClose={() => {
+            setIsDeleting(false);
+          }}
+        />
+      )}
     </div>
   );
 }

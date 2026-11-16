@@ -2,8 +2,9 @@ import type { ReactNode } from 'react';
 
 export enum FormButtonVariant {
   Primary = 'primary',
-  Secondary = 'secondary',
   Quiet = 'quiet',
+  /** For what cannot be undone, such as deleting the account (DESIGN.md, Dialogs and menus). */
+  Danger = 'danger',
 }
 
 export type FormButtonType = 'submit' | 'button';
