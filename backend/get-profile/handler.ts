@@ -2,12 +2,13 @@ import { ConditionalCheckFailedException, DynamoDBClient } from '@aws-sdk/client
 import { DynamoDBDocumentClient, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { STATUS_OK, STATUS_UNAUTHORIZED } from '../../shared/constants/http';
 import { GOOGLE_IMAGE_HOST_SUFFIX } from '../../shared/constants/profile';
-import { refuse, reply, verifiedClaims } from '../shared/api';
+import { refuse, Refusal, reply } from '../shared/api';
 import type { ApiEvent, ApiResult } from '../shared/api.types';
-import { checkAccountDeleted } from '../shared/deleted-account';
 import { readSettings } from '../shared/env';
 import { getProfileSettings } from '../shared/schemas/settings.schema';
+import type { IdTokenClaims } from '../shared/schemas/claims.schema';
 import type { UserRow } from '../shared/schemas/user-row.schema';
+import { requireLiveMember } from '../shared/session';
 import { buildProfileResponse, readUserRow } from '../shared/users';
 import type { Member } from './handler.types';
 
@@ -59,17 +60,18 @@ async function createUser(
   }
 }
 
-function memberFrom(event: ApiEvent): Member | undefined {
-  const claims = verifiedClaims(event);
-  if (!claims) return undefined;
+function memberFrom(claims: IdTokenClaims): Member {
   const photo = checkIfGooglePhoto(claims.picture) ? claims.picture : undefined;
   return { userId: claims.sub, photo };
 }
 
-async function loadUser(table: string, { userId, photo }: Member): Promise<UserRow> {
-  const user = await readUserRow(db, table, userId);
+async function loadUser(
+  table: string,
+  { userId, photo }: Member,
+  user: UserRow | undefined
+): Promise<UserRow> {
   if (!user) return createUser(table, userId, photo);
-  // A banned member's row keeps no photo: after a delete it holds only `user_id` and `status` (D-71).
+  // A banned member's row keeps no photo: after a delete it holds only `user_id`, `status` and `deleted_at` (D-71).
   if (!photo || photo === user.avatar_url || user.status !== 'active') return user;
   try {
     await db.send(
@@ -77,13 +79,14 @@ async function loadUser(table: string, { userId, photo }: Member): Promise<UserR
         TableName: table,
         Key: { user_id: userId },
         UpdateExpression: 'SET avatar_url = :photo',
-        ConditionExpression: 'attribute_exists(user_id) AND #status = :active',
+        ConditionExpression:
+          'attribute_exists(user_id) AND attribute_not_exists(deleted_at) AND #status = :active',
         ExpressionAttributeNames: { '#status': 'status' },
         ExpressionAttributeValues: { ':photo': photo, ':active': 'active' },
       })
     );
   } catch (error) {
-    // Deleted or banned since the read: a fresh row, or (the put refuses) the banned one as it is.
+    // Banned or deleted since the read: the put refuses, and the row as it is comes back.
     if (!(error instanceof ConditionalCheckFailedException)) throw error;
     return createUser(table, userId, photo);
   }
@@ -91,13 +94,16 @@ async function loadUser(table: string, { userId, photo }: Member): Promise<UserR
 }
 
 export async function handler(event: ApiEvent): Promise<ApiResult> {
-  const member = memberFrom(event);
-  if (!member) return refuse(STATUS_UNAUTHORIZED, 'UNAUTHORIZED');
-  const { USERS_TABLE, COUNTERS_TABLE } = readSettings(getProfileSettings);
-  // A deleted member's token stays valid until it expires, and must not make an empty row (D-109).
-  if (await checkAccountDeleted(db, COUNTERS_TABLE, member.userId)) {
-    return refuse(STATUS_UNAUTHORIZED, 'UNAUTHORIZED');
+  try {
+    const { USERS_TABLE } = readSettings(getProfileSettings);
+    const { claims, user } = await requireLiveMember(event, db, USERS_TABLE);
+    const profile = await loadUser(USERS_TABLE, memberFrom(claims), user);
+    // A delete that landed after the read above: the account is gone, so is the token (D-109).
+    if (profile.deleted_at !== undefined) return refuse(STATUS_UNAUTHORIZED, 'UNAUTHORIZED');
+    // A banned member still gets the profile (API.md).
+    return reply(STATUS_OK, buildProfileResponse(profile));
+  } catch (error) {
+    if (error instanceof Refusal) return error.result;
+    throw error;
   }
-  // A banned member still gets the profile (API.md).
-  return reply(STATUS_OK, buildProfileResponse(await loadUser(USERS_TABLE, member)));
 }
