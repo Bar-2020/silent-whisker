@@ -5,6 +5,9 @@
  */
 export const LOCATION_REQUEST_TIMEOUT_MS = 60_000;
 
+/** Set when the app's last request for a position was allowed, removed when it was refused (D-115). */
+export const LOCATION_GRANTED_STORAGE_KEY = 'location-granted';
+
 /** The codes of a browser's location error (the web standard's `GeolocationPositionError`). */
 export const GEOLOCATION_ERROR_CODES = {
   PERMISSION_DENIED: 1,
