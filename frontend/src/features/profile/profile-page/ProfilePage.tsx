@@ -11,6 +11,7 @@ import { profileContextSchema } from '../profile-context.schema';
 import { ProfileSettings } from '../profile-settings/ProfileSettings';
 import { ProfileSupport } from '../profile-support/ProfileSupport';
 import styles from './ProfilePage.module.css';
+import { MEMBER_STATUS } from '@constants/member-status';
 
 /** Who the member is to everyone else, a way to change it, sign out, delete the account, and the support links. Stats and the admin group come with their own backend. */
 export function ProfilePage() {
@@ -18,7 +19,7 @@ export function ProfilePage() {
   const { profile, hasGooglePhoto } = profileContextSchema.parse(useOutletContext());
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const banned = profile.status === 'banned';
+  const banned = profile.status === MEMBER_STATUS.banned;
   const fullName = profile.display_name ?? '';
 
   return (

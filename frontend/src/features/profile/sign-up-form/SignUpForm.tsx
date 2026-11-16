@@ -18,6 +18,7 @@ import { TermsCheckbox } from '../terms-checkbox/TermsCheckbox';
 import { ProfileSaveErrorMessage } from '../profile-save-error-message/ProfileSaveErrorMessage';
 import { useSaveProfileMutation } from '../use-save-profile-mutation';
 import styles from './SignUpForm.module.css';
+import { MEMBER_STATUS } from '@constants/member-status';
 
 /**
  * The first screen after the first sign-in, and again whenever the terms change (D-69, R-36): name,
@@ -60,7 +61,7 @@ export function SignUpForm({
             title={t('firstrun.profile.h1')}
             lead={t('firstrun.profile.lead')}
           />
-          {profile.status === 'banned' && <BannedAccountNotice />}
+          {profile.status === MEMBER_STATUS.banned && <BannedAccountNotice />}
           <ProfileFields hasGooglePhoto={hasGooglePhoto} />
           <TermsCheckbox />
           <ProfileSaveErrorMessage />
