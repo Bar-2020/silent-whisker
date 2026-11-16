@@ -1,0 +1,35 @@
+.options {
+  display: flex;
+  flex-direction: column;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  inline-size: 100%;
+  min-block-size: var(--tap);
+  padding-inline: var(--s-3);
+  border: 0;
+  border-radius: var(--r-m);
+  background: transparent;
+  font: var(--type-body);
+  text-align: start;
+  cursor: pointer;
+}
+
+.option:hover,
+.option[aria-current='true'] {
+  background: var(--dado-tint);
+}
+
+.close {
+  inline-size: 100%;
+  min-block-size: var(--tap);
+  border: 0;
+  border-radius: var(--r-m);
+  background: transparent;
+  color: var(--dado);
+  font: var(--type-body-strong);
+  cursor: pointer;
+}
