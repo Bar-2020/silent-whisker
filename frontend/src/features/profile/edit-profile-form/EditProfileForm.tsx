@@ -14,6 +14,7 @@ import type { ProfileFormValues } from '../profile-form.types';
 import { ProfileSaveErrorMessage } from '../profile-save-error-message/ProfileSaveErrorMessage';
 import { useSaveProfileMutation } from '../use-save-profile-mutation';
 import styles from './EditProfileForm.module.css';
+import { MEMBER_STATUS } from '@constants/member-status';
 
 /** The same fields and errors as the sign-up form, to change the name, the city or the photo choice later (D-108). */
 export function EditProfileForm({
@@ -59,7 +60,7 @@ export function EditProfileForm({
         onSubmit={(event) => void submit(event)}
       >
         <h2 id="edit-profile-title">{t('profile.edit.title')}</h2>
-        {profile.status === 'banned' && <BannedAccountNotice />}
+        {profile.status === MEMBER_STATUS.banned && <BannedAccountNotice />}
         <ProfileFields hasGooglePhoto={hasGooglePhoto} />
         {hasGooglePhoto && <p className={styles.note}>{t('profile.edit.photoHint')}</p>}
         <ProfileSaveErrorMessage />

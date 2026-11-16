@@ -5,7 +5,6 @@
 **The stray-cat feeding map that checks someone really showed up.**
 
 [![CI](https://github.com/Bar-2020/silent-whisker/actions/workflows/ci.yml/badge.svg)](https://github.com/Bar-2020/silent-whisker/actions/workflows/ci.yml)
-![Status: early, phase 2](https://img.shields.io/badge/status-early%2C%20phase%202-f59e42?style=flat-square)
 ![License: MIT](https://img.shields.io/badge/license-MIT-4ade80?style=flat-square)
 ![Languages: Hebrew, English, Arabic and Russian](https://img.shields.io/badge/languages-Hebrew%20%2B%20English%20%2B%20Arabic%20%2B%20Russian-8f9bff?style=flat-square)
 
@@ -15,12 +14,6 @@ Volunteers can pin the spots where stray cats are fed, log every feeding and wat
 danger, and chat.
 
 Free and open source. Built by a cat lover.
-
-> [!NOTE]
-> Silent Whisker is early. Phases 0 and 1 are done (the verification harness, CI, the AWS
-> infrastructure and the deploy pipeline) and phase 2, Google sign-in, the profile and the look of the
-> app, is under way. The app screens are not built yet, so this page describes what v1 will do. The plan and build order are in
-> [docs/PRODUCT.md](docs/PRODUCT.md#build-order).
 
 ## Why not a Facebook group?
 
@@ -84,15 +77,15 @@ flowchart LR
 
 ## Roadmap
 
-| Phase | What ships | Status |
-|---|---|---|
-| 0 | Repo, verification harness and CI | ✅ Done |
-| 1 | AWS infrastructure and deploy pipeline, with the daily cost cap | ✅ Done |
-| 2 | Google sign-in, sign-up form, profile, landing page, four-language shell, the look of the app | In progress |
-| 3 | Map and spots, municipal stations, moderated photo upload | Planned |
-| 4 | Feeding and water logs, first-run location screen, the needs-food-and-water layer | Planned |
-| 5 | Cats, likes, comments, chat | Planned |
-| 6 | Alerts, stats, donation link, launch checklist | Planned |
+| Phase | What ships |
+|---|---|
+| 0 | Repo, verification harness and CI |
+| 1 | AWS infrastructure and deploy pipeline, with the daily cost cap |
+| 2 | Google sign-in, sign-up form, profile, landing page, four-language shell, the look of the app |
+| 3 | Map and spots, municipal stations, moderated photo upload |
+| 4 | Feeding and water logs, first-run location screen, the needs-food-and-water layer |
+| 5 | Cats, likes, comments, chat |
+| 6 | Alerts, stats, donation link, launch checklist |
 
 ## Develop
 

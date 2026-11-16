@@ -54,28 +54,28 @@ run "delete_role_may_only_get_and_update_users" {
     condition = anytrue([
       for s in jsondecode(module.delete_profile.role_policy.policy).Statement :
       contains(flatten([s.Resource]), aws_cognito_user_pool.members.arn)
-      && toset(flatten([s.Action])) == toset(["cognito-idp:AdminDisableUser"])
+      && toset(flatten([s.Action])) == toset(["cognito-idp:AdminDeleteUser", "cognito-idp:AdminDisableUser"])
     ])
-    error_message = "The delete role must have a statement for this user pool with exactly AdminDisableUser (D-109)."
+    error_message = "The delete role must have a statement for this user pool with exactly AdminDeleteUser and AdminDisableUser (D-109, D-112)."
   }
 
   assert {
     condition = alltrue([
       for s in jsondecode(module.delete_profile.role_policy.policy).Statement :
       !contains(flatten([s.Resource]), aws_cognito_user_pool.members.arn)
-      || toset(flatten([s.Action])) == toset(["cognito-idp:AdminDisableUser"])
+      || toset(flatten([s.Action])) == toset(["cognito-idp:AdminDeleteUser", "cognito-idp:AdminDisableUser"])
     ])
-    error_message = "No statement on the user pool may grant anything beyond AdminDisableUser (D-109)."
+    error_message = "No statement on the user pool may grant anything beyond AdminDeleteUser and AdminDisableUser (D-109, D-112)."
   }
 
   assert {
     condition = alltrue([
       for s in jsondecode(module.delete_profile.role_policy.policy).Statement : alltrue([
         for a in flatten([s.Action]) :
-        !startswith(a, "dynamodb:Put") && !startswith(a, "dynamodb:Delete") && !startswith(a, "cognito-idp:AdminDelete") && !endswith(a, "*")
+        !startswith(a, "dynamodb:Put") && !startswith(a, "dynamodb:Delete") && !endswith(a, "*")
       ])
     ])
-    error_message = "The delete role must not allow PutItem, DeleteItem, deleting Cognito users, or any wildcard action (D-109)."
+    error_message = "The delete role must not allow PutItem, DeleteItem, or any wildcard action (D-109)."
   }
 
   assert {

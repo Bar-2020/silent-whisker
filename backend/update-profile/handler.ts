@@ -29,6 +29,7 @@ import type { UserRow, UserRowUpdate } from '../shared/schemas/user-row.schema';
 import { requireLiveMember } from '../shared/session';
 import { buildProfileResponse, parseUserRow } from '../shared/users';
 import { CheckUnavailable, moderateText } from './moderate';
+import { MEMBER_STATUS } from '../../shared/constants/member-status';
 
 // PATCH /api/profile (D-62): the name and city are checked on the spot and saved only if the check
 // passes. `user_id` is always the token's `sub`, and only the fields of the schema are read.
@@ -51,7 +52,7 @@ const isCheckUnavailable = (error: unknown): boolean =>
 async function readActiveMember(event: ApiEvent, settings: UpdateProfileSettings) {
   const { claims, user } = await requireLiveMember(event, db, settings.USERS_TABLE, true);
   if (!user) throw new Refusal(refuse(STATUS_NOT_FOUND, 'NOT_FOUND'));
-  if (user.status === 'banned') throw new Refusal(refuse(STATUS_FORBIDDEN, 'BANNED'));
+  if (user.status === MEMBER_STATUS.banned) throw new Refusal(refuse(STATUS_FORBIDDEN, 'BANNED'));
   return { claims, user };
 }
 
@@ -146,7 +147,7 @@ async function writeRowUpdate(
           ...Object.fromEntries(entries.map(([key]) => [`#${key}`, key])),
         },
         ExpressionAttributeValues: {
-          ':active': 'active',
+          ':active': MEMBER_STATUS.active,
           ...Object.fromEntries(entries.map(([key, value]) => [`:${key}`, value])),
         },
         ReturnValues: 'ALL_NEW',

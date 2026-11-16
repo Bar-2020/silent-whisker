@@ -11,6 +11,7 @@ import type { UserRow } from '../shared/schemas/user-row.schema';
 import { requireLiveMember } from '../shared/session';
 import { buildProfileResponse, readUserRow } from '../shared/users';
 import type { Member } from './handler.types';
+import { MEMBER_STATUS } from '../../shared/constants/member-status';
 
 // GET /api/profile (D-59): `user_id` is always the token's `sub`, never anything in the request.
 
@@ -34,7 +35,7 @@ async function createUser(
 ): Promise<UserRow> {
   const row: UserRow = {
     user_id: userId,
-    status: 'active',
+    status: MEMBER_STATUS.active,
     show_google_photo: false,
     is_admin: false,
     cats_helped: 0,
@@ -72,7 +73,7 @@ async function loadUser(
 ): Promise<UserRow> {
   if (!user) return createUser(table, userId, photo);
   // A banned member's row keeps no photo: after a delete it holds only `user_id`, `status` and `deleted_at` (D-71).
-  if (!photo || photo === user.avatar_url || user.status !== 'active') return user;
+  if (!photo || photo === user.avatar_url || user.status !== MEMBER_STATUS.active) return user;
   try {
     await db.send(
       new UpdateCommand({
@@ -82,7 +83,7 @@ async function loadUser(
         ConditionExpression:
           'attribute_exists(user_id) AND attribute_not_exists(deleted_at) AND #status = :active',
         ExpressionAttributeNames: { '#status': 'status' },
-        ExpressionAttributeValues: { ':photo': photo, ':active': 'active' },
+        ExpressionAttributeValues: { ':photo': photo, ':active': MEMBER_STATUS.active },
       })
     );
   } catch (error) {
