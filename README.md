@@ -5,7 +5,6 @@
 **The stray-cat feeding map that checks someone really showed up.**
 
 [![CI](https://github.com/Bar-2020/silent-whisker/actions/workflows/ci.yml/badge.svg)](https://github.com/Bar-2020/silent-whisker/actions/workflows/ci.yml)
-![Status: early](https://img.shields.io/badge/status-early-f59e42?style=flat-square)
 ![License: MIT](https://img.shields.io/badge/license-MIT-4ade80?style=flat-square)
 ![Languages: Hebrew, English, Arabic and Russian](https://img.shields.io/badge/languages-Hebrew%20%2B%20English%20%2B%20Arabic%20%2B%20Russian-8f9bff?style=flat-square)
 
@@ -15,10 +14,6 @@ Volunteers can pin the spots where stray cats are fed, log every feeding and wat
 danger, and chat.
 
 Free and open source. Built by a cat lover.
-
-> [!NOTE]
-> Silent Whisker is early and built in phases, so this page describes what v1 will do. The plan and
-> build order are in [docs/PRODUCT.md](docs/PRODUCT.md#build-order).
 
 ## Why not a Facebook group?
 
