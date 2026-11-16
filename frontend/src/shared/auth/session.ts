@@ -21,6 +21,9 @@ export function signIn(returnTo: string): Promise<void> {
   });
 }
 
+/** Whether this browser holds a sign-in: tokens are stored, even if the ID token has expired and the next call will refresh it (D-59). */
+export const hasSession = async (): Promise<boolean> => (await userManager.getUser()) !== null;
+
 /** Drops the tokens of this browser only: the session ended on the server, or the member signed out. */
 export const forgetSession = (): Promise<void> => userManager.removeUser();
 
