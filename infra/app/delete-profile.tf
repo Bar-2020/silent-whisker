@@ -1,6 +1,6 @@
-# DELETE /api/profile (backend/delete-profile/, D-109): erases the member's personal data on their
-# row and marks it deleted, then disables (never deletes) their Cognito sign-in, so the same Google
-# account can never sign in or up again. Its role has no PutItem and no DeleteItem.
+# DELETE /api/profile (backend/delete-profile/, D-109, D-112): erases the member's personal data on
+# their row and marks it deleted, then deletes their Cognito sign-in (an active member can sign up
+# again) or only disables it (a banned member stays blocked). Its role has no PutItem and no DeleteItem.
 
 module "delete_profile" {
   source             = "./modules/lambda"
@@ -22,10 +22,10 @@ module "delete_profile" {
       Action   = ["dynamodb:GetItem", "dynamodb:UpdateItem"]
       Resource = aws_dynamodb_table.users.arn
     },
-    # IAM cannot narrow this to one member: the handler passes only the signed token's username.
+    # IAM cannot narrow these to one member: the handler passes only the signed token's username (D-112).
     {
       Effect   = "Allow"
-      Action   = "cognito-idp:AdminDisableUser"
+      Action   = ["cognito-idp:AdminDeleteUser", "cognito-idp:AdminDisableUser"]
       Resource = aws_cognito_user_pool.members.arn
     },
   ]
