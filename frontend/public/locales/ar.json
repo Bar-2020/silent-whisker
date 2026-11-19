@@ -36,6 +36,7 @@
   "firstrun.name.hint": "يظهر الاسم لجميع الأعضاء بجانب التسجيلات والصور والرسائل.",
   "firstrun.name.invalid": "يلزم إدخال من {{min}} إلى {{max}} حرفًا.",
   "firstrun.name.label": "الاسم الكامل",
+  "firstrun.name.notName": "هذا لا يبدو اسمًا. استخدم اسمك الحقيقي مكتوبًا بالحروف.",
   "firstrun.name.placeholder": "الاسم الأول واسم العائلة",
   "firstrun.name.refused": "لم ينجح الاسم أو المدينة في الفحص. يمكن المحاولة مجددًا أو الكتابة إلى {{email}}.",
   "firstrun.name.required": "يلزم إدخال الاسم الكامل.",

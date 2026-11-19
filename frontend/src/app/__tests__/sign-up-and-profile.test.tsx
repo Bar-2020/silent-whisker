@@ -34,6 +34,7 @@ import {
 import {
   AVATAR_INITIALS_COUNT,
   GOOGLE_IMAGE_HOST_SUFFIX,
+  PROFILE_NAME_MIN_LENGTH,
   PROFILE_TEXT_MAX_LENGTH,
   PROFILE_TEXT_MIN_LENGTH,
 } from '@constants/profile';
@@ -61,7 +62,11 @@ const NOT_A_GOOGLE_PHOTO: [string, string][] = [
   ['plain http', `http://lh3${GOOGLE_IMAGE_HOST_SUFFIX}/a/photo`],
 ];
 
-const NAMES_IN_SCRIPTS = ['דנה כהן', 'سارة أحمد', 'Иван Петров', '🐱 Cat'];
+// D-116: a full name is letters of the four languages; emoji are for the city only
+const NAMES_IN_SCRIPTS = ['דנה כהן', 'سارة أحمد', 'Иван Петров'];
+
+/** A text of `length` letters no letter of which comes three times in a row (D-116). */
+const letters = (length: number): string => 'dana'.repeat(length).slice(0, length);
 
 const NEW_MEMBER: ProfileResponse = {
   ...PROFILE,
@@ -404,44 +409,30 @@ describe('the sign-up form, what it refuses', () => {
     expect(callsOf('PATCH')).toHaveLength(1);
   });
 
-  // FIRST-02, D-61, D-92: the length is counted in characters, edges from the constants
+  // FIRST-02, D-61, D-92, D-116: the length is counted in characters, edges from the constants (the name needs more than the city)
   describe.each([
-    ['name', NAME, 'firstrun.name.invalid'],
-    ['city', CITY, 'firstrun.city.invalid'],
-  ])('the %s', (_field, label, invalidKey) => {
+    ['name', NAME, 'firstrun.name.invalid', PROFILE_NAME_MIN_LENGTH, letters],
+    ['city', CITY, 'firstrun.city.invalid', PROFILE_TEXT_MIN_LENGTH, (n: number) => 'a'.repeat(n)],
+  ])('the %s', (_field, label, invalidKey, minLength, textOf) => {
     it.each([
-      ['one under the minimum', PROFILE_TEXT_MIN_LENGTH - 1, false],
-      ['the minimum', PROFILE_TEXT_MIN_LENGTH, true],
+      ['one under the minimum', minLength - 1, false],
+      ['the minimum', minLength, true],
       ['the maximum', PROFILE_TEXT_MAX_LENGTH, true],
       ['one over the maximum', PROFILE_TEXT_MAX_LENGTH + 1, false],
     ])('of %s characters', async (_name, length, accepted) => {
       await open(NEW_MEMBER);
       patchQueue.push(accept(MEMBER));
       fillSignUp();
-      type(input(label), 'a'.repeat(length));
+      type(input(label), textOf(length));
       await press('common.continue');
       if (accepted) {
         expect(alerts()).toHaveLength(0);
         expect(callsOf('PATCH')).toHaveLength(1);
       } else {
-        expect(messagesOf(input(label))).toEqual([words(invalidKey)]);
+        expect(messagesOf(input(label))).toEqual([words(invalidKey, { min: String(minLength) })]);
         expect(input(label).getAttribute('aria-invalid')).toBe('true');
         expect(callsOf('PATCH')).toHaveLength(0);
       }
-    });
-
-    // FIRST-02, D-61: characters are not UTF-16 units: an emoji is one
-    it.each([
-      ['the maximum', PROFILE_TEXT_MAX_LENGTH, true],
-      ['one over the maximum', PROFILE_TEXT_MAX_LENGTH + 1, false],
-    ])('of %s emoji', async (_name, length, accepted) => {
-      await open(NEW_MEMBER);
-      patchQueue.push(accept(MEMBER));
-      fillSignUp();
-      type(input(label), '🐱'.repeat(length));
-      await press('common.continue');
-      expect(callsOf('PATCH')).toHaveLength(accepted ? 1 : 0);
-      if (!accepted) expect(messagesOf(input(label))).toEqual([words(invalidKey)]);
     });
 
     // FIRST-02, D-61: spaces are not text
@@ -459,10 +450,37 @@ describe('the sign-up form, what it refuses', () => {
       await open(NEW_MEMBER);
       patchQueue.push(accept(MEMBER));
       fillSignUp();
-      type(input(label), ` ${'a'.repeat(PROFILE_TEXT_MIN_LENGTH)} `);
+      type(input(label), ` ${textOf(minLength)} `);
       await press('common.continue');
       expect(callsOf('PATCH')).toHaveLength(1);
     });
+  });
+
+  // FIRST-02, D-61, D-92: characters are not UTF-16 units: an emoji is one; the city may be emoji
+  it.each([
+    ['the maximum', PROFILE_TEXT_MAX_LENGTH, true],
+    ['one over the maximum', PROFILE_TEXT_MAX_LENGTH + 1, false],
+  ])('the city of %s emoji', async (_name, length, accepted) => {
+    await open(NEW_MEMBER);
+    patchQueue.push(accept(MEMBER));
+    fillSignUp();
+    type(input(CITY), '🐱'.repeat(length));
+    await press('common.continue');
+    expect(callsOf('PATCH')).toHaveLength(accepted ? 1 : 0);
+    if (!accepted) expect(messagesOf(input(CITY))).toEqual([words('firstrun.city.invalid')]);
+  });
+
+  // FIRST-02, FIRST-14, D-116: a name is never emoji; the length message wins only when the length is wrong
+  it.each([
+    ['the maximum', PROFILE_TEXT_MAX_LENGTH, 'firstrun.name.notName'],
+    ['one over the maximum', PROFILE_TEXT_MAX_LENGTH + 1, 'firstrun.name.invalid'],
+  ])('the name of %s emoji is refused and nothing is sent', async (_name, length, key) => {
+    await open(NEW_MEMBER);
+    fillSignUp();
+    type(input(NAME), '🐱'.repeat(length));
+    await press('common.continue');
+    expect(messagesOf(input(NAME))).toEqual([words(key, { min: String(PROFILE_NAME_MIN_LENGTH) })]);
+    expect(callsOf('PATCH')).toHaveLength(0);
   });
 });
 
@@ -1332,7 +1350,7 @@ describe('editing the profile', () => {
   it.each([
     ['an empty name', NAME, '', 'firstrun.name.required'],
     ['an empty city', CITY, '', 'firstrun.city.required'],
-    ['a short name', NAME, 'a'.repeat(PROFILE_TEXT_MIN_LENGTH - 1), 'firstrun.name.invalid'],
+    ['a short name', NAME, 'a'.repeat(PROFILE_NAME_MIN_LENGTH - 1), 'firstrun.name.invalid'],
     ['a long city', CITY, 'a'.repeat(PROFILE_TEXT_MAX_LENGTH + 1), 'firstrun.city.invalid'],
   ])('says what is wrong with %s', async (_name, label, value, key) => {
     await open(MEMBER);
@@ -1340,7 +1358,8 @@ describe('editing the profile', () => {
     expect(alerts()).toHaveLength(0);
     type(input(label), value);
     await press('common.save');
-    expect(messagesOf(input(label))).toEqual([words(key)]);
+    const min = label === NAME ? PROFILE_NAME_MIN_LENGTH : PROFILE_TEXT_MIN_LENGTH;
+    expect(messagesOf(input(label))).toEqual([words(key, { min: String(min) })]);
     expect(input(label).getAttribute('aria-invalid')).toBe('true');
     expect(callsOf('PATCH')).toHaveLength(0);
   });
@@ -1363,3 +1382,94 @@ describe('editing the profile', () => {
     expect(document.querySelector('h2 bdi')?.textContent).toBe(EDITED_NAME);
   });
 });
+
+// ---- FIRST-14
+
+/** A text with its placeholders filled, in any language. */
+function wordsIn(code: string, key: string): string {
+  const filled: Record<string, string> = {
+    min: String(PROFILE_NAME_MIN_LENGTH),
+    max: String(PROFILE_TEXT_MAX_LENGTH),
+  };
+  return getLocaleText(code, key).replace(
+    /\{\{(\w+)\}\}/g,
+    (whole, name: string) => filled[name] ?? whole
+  );
+}
+
+const fieldIn = (code: string, key: string): HTMLInputElement => {
+  const found = screen.getByRole('textbox', { name: getLocaleText(code, key) });
+  if (!(found instanceof HTMLInputElement)) throw new Error(`${key} is not an input`);
+  return found;
+};
+
+async function pressIn(code: string, key: string): Promise<void> {
+  fireEvent.click(screen.getByRole('button', { name: getLocaleText(code, key) }));
+  await settleScreen();
+}
+
+/** The name typed into the sign-up form or the edit form, in the language `code`, and the form sent. */
+async function sendNameIn(form: 'sign-up' | 'edit', code: string, name: string): Promise<void> {
+  profile = form === 'sign-up' ? NEW_MEMBER : { ...MEMBER, display_name: 'Old Name' };
+  signIn();
+  await renderAppAtPath(<App />, '/profile', code);
+  await settleScreen();
+  if (form === 'sign-up') {
+    type(fieldIn(code, CITY), 'Haifa');
+    fireEvent.click(box());
+    type(fieldIn(code, NAME), name);
+    await pressIn(code, 'common.continue');
+  } else {
+    await pressIn(code, 'profile.edit.title');
+    type(fieldIn(code, NAME), name);
+    await pressIn(code, 'common.save');
+  }
+}
+
+const LENGTH_REFUSED = [
+  ['too short', letters(PROFILE_NAME_MIN_LENGTH - 1)],
+  ['too long', letters(PROFILE_TEXT_MAX_LENGTH + 1)],
+];
+const NOT_A_NAME = [
+  ['a digit', 'Dana2'],
+  ['an emoji', 'Dana 😀'],
+  ['a letter three times in a row', 'Dana Lllevi'],
+  ['a blocked word', 'Test'],
+];
+const NAME_ACCEPTED = [
+  ['the minimum length', letters(PROFILE_NAME_MIN_LENGTH), letters(PROFILE_NAME_MIN_LENGTH)],
+  ['two spaces in a row, sent with one', 'Dana  Levi', 'Dana Levi'],
+  ['Hebrew', 'דנה לוי', 'דנה לוי'],
+];
+
+describe.each(['sign-up', 'edit'] as const)(
+  'the %s form and the full name (FIRST-14, D-116)',
+  (form) => {
+    describe.each(LANGUAGE_CODES)('in %s', (code) => {
+      // FIRST-14, D-116: the length message alone, nothing sent
+      it.each(LENGTH_REFUSED)('says the length alone for a name %s', async (_name, value) => {
+        await sendNameIn(form, code, value);
+        expect(messagesOf(fieldIn(code, NAME))).toEqual([wordsIn(code, 'firstrun.name.invalid')]);
+        expect(callsOf('PATCH')).toHaveLength(0);
+      });
+
+      // FIRST-14, PROF-32, D-116: one message, "that does not look like a name", under the field
+      it.each(NOT_A_NAME)('says it does not look like a name for %s', async (_name, value) => {
+        await sendNameIn(form, code, value);
+        expect(messagesOf(fieldIn(code, NAME))).toEqual([wordsIn(code, 'firstrun.name.notName')]);
+        expect(fieldIn(code, NAME).getAttribute('aria-invalid')).toBe('true');
+        expect(callsOf('PATCH')).toHaveLength(0);
+      });
+
+      // FIRST-14, PROF-32, D-116: the request carries the name with one space
+      it.each(NAME_ACCEPTED)('sends a name with %s', async (_name, value, sent) => {
+        patchQueue.push(accept(MEMBER));
+        await sendNameIn(form, code, value);
+        expect(alerts()).toHaveLength(0);
+        const patches = callsOf('PATCH');
+        expect(patches).toHaveLength(1);
+        expect(bodyOf(patches[0]).display_name).toBe(sent);
+      });
+    });
+  }
+);

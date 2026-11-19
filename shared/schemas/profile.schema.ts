@@ -1,5 +1,10 @@
 import { z } from 'zod';
-import { PROFILE_TEXT_MAX_LENGTH, PROFILE_TEXT_MIN_LENGTH } from '../constants/profile';
+import {
+  PROFILE_NAME_BLOCKED_WORDS,
+  PROFILE_NAME_MIN_LENGTH,
+  PROFILE_TEXT_MAX_LENGTH,
+  PROFILE_TEXT_MIN_LENGTH,
+} from '../constants/profile';
 import { MEMBER_STATUS } from '../constants/member-status';
 
 // The shape of `GET` and `PATCH /profile` (docs/API.md), once: the checks and the types come from here.
@@ -21,9 +26,37 @@ const profileText = z
   .refine((text) => characters(text) <= PROFILE_TEXT_MAX_LENGTH)
   .refine((text) => !FORBIDDEN.test(text) && VISIBLE.test(text));
 
+/** Letters of the four languages with their marks, the joiners and direction marks real names carry (Arabic and Persian half-spaces, pasted Hebrew), and the spaces, hyphens, apostrophes and dots names use (D-116). */
+const NAME_CHARACTERS =
+  /^(?:[\p{Script=Hebrew}\p{Script=Arabic}\p{Script=Cyrillic}\p{Script=Latin}\p{M}\u200C\u200E\u200F\u05BE '’׳״.-]|\u200D)+$/u;
+
+const LETTER = /\p{L}/gu;
+/** Variation selectors are marks to Unicode, but they draw nothing of their own (an emoji look, a letter's disguise). */
+const VARIATION_SELECTOR = /\p{Variation_Selector}/u;
+const THREE_IN_A_ROW = /(.)\1\1/iu;
+
+/**
+ * A full name is a real-looking one (D-116): spaces collapsed, only those characters, at least
+ * three letters, no character three times in a row and no word of the blocked list.
+ */
+const profileName = profileText
+  .transform((text) => text.replace(/\s+/gu, ' '))
+  .refine((text) => characters(text) >= PROFILE_NAME_MIN_LENGTH)
+  .refine((text) => NAME_CHARACTERS.test(text))
+  .refine((text) => !VARIATION_SELECTOR.test(text))
+  .refine((text) => (text.match(LETTER) ?? []).length >= PROFILE_NAME_MIN_LENGTH)
+  .refine((text) => !THREE_IN_A_ROW.test(text))
+  .refine(
+    (text) =>
+      !text
+        .toLocaleLowerCase()
+        .split(/[ .'’׳״-]/u)
+        .some((word) => PROFILE_NAME_BLOCKED_WORDS.some((blocked) => blocked === word))
+  );
+
 /** The body of `PATCH /profile`; any other field, such as `user_id` or `is_admin`, is dropped. */
 export const profileUpdateSchema = z.object({
-  display_name: profileText.optional(),
+  display_name: profileName.optional(),
   city: profileText.optional(),
   show_google_photo: z.boolean().optional(),
   accept_terms: z.boolean().optional(),

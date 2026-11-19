@@ -36,6 +36,7 @@
   "firstrun.name.hint": "Имя видно всем участникам рядом с записями, фото и сообщениями.",
   "firstrun.name.invalid": "Введите от {{min}} до {{max}} символов.",
   "firstrun.name.label": "Полное имя",
+  "firstrun.name.notName": "Это не похоже на имя. Укажите настоящее имя буквами.",
   "firstrun.name.placeholder": "Имя и фамилия",
   "firstrun.name.refused": "Имя или город не прошли проверку. Попробуйте ещё раз или напишите на {{email}}.",
   "firstrun.name.required": "Введите полное имя.",

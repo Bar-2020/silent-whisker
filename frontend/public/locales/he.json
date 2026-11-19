@@ -36,6 +36,7 @@
   "firstrun.name.hint": "השם מוצג לכל החברים ליד הרישומים, התמונות וההודעות.",
   "firstrun.name.invalid": "יש להזין {{min}} עד {{max}} תווים.",
   "firstrun.name.label": "שם מלא",
+  "firstrun.name.notName": "זה לא נראה כמו שם. אפשר להשתמש בשם האמיתי שלכם, באותיות.",
   "firstrun.name.placeholder": "שם פרטי ושם משפחה",
   "firstrun.name.refused": "השם או העיר לא עברו בדיקה. אפשר לנסות שוב או לכתוב אל {{email}}.",
   "firstrun.name.required": "יש למלא שם מלא.",
