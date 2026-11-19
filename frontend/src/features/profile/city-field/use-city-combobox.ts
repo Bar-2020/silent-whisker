@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { CITY_SUGGESTIONS_LIMIT } from '@constants/profile';
-import { matchCities } from '../cities/city-name';
+import { findMatchingCities } from '../cities/city-name';
 import type { CityName } from '../cities/city-name.types';
 import { useCities } from '../cities/use-cities';
 import type { ProfileFormValues } from '../profile-form.types';
@@ -22,7 +22,7 @@ export function useCityCombobox() {
 
   const picked = cities.find((city) => city.id === field.value);
   const text = typed ?? picked?.name ?? '';
-  const matches = typed === null ? [] : matchCities(cities, typed, CITY_SUGGESTIONS_LIMIT);
+  const matches = typed === null ? [] : findMatchingCities(cities, typed, CITY_SUGGESTIONS_LIMIT);
   const isListOpen = isOpen && matches.length > 0;
   const hasNoMatch = isOpen && typed !== null && typed.trim() !== '' && matches.length === 0;
 

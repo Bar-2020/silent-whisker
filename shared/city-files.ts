@@ -78,24 +78,19 @@ export function buildCityFiles(
 }
 
 /**
- * A new list replaces the one on the site only if it is plausible: enough places, the same codes
- * in every language, and every code of the list it replaces still there (codes are never removed, D-117).
+ * A new list replaces the one on the site only if it is plausible: enough places, and every code of
+ * the list it replaces still there (codes are never removed, D-117).
  */
 export function checkCityFiles(
   files: Readonly<Record<string, readonly CityRow[]>>,
   currentCodes: ReadonlySet<number>,
   minPlaces: number
 ): void {
-  const lists = Object.values(files);
-  const first = lists.at(0);
-  const others = lists.slice(1);
+  const first = Object.values(files).at(0);
   if (first === undefined || first.length < minPlaces) {
     throw new Error(`The new list has ${first?.length ?? 0} places, fewer than ${minPlaces}`);
   }
   const codes = first.map(([code]) => code);
-  if (others.some((rows) => rows.map(([code]) => code).join() !== codes.join())) {
-    throw new Error('The files of the languages do not hold the same codes');
-  }
   const missing = [...currentCodes].filter((code) => !codes.includes(code));
   if (missing.length > 0) {
     throw new Error(

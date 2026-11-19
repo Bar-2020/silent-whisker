@@ -69,10 +69,10 @@ function requireTermsAndTexts({ user, request }: ProfileSaveContext): void {
  * A picked city must be on the list (D-117), refused before anything is spent. The list is a file
  * of the site's bucket; when it cannot be read the save waits, like when the text check cannot run.
  */
-async function requireListedCity({ request, settings, now }: ProfileSaveContext): Promise<void> {
+async function requireListedCity({ request, settings }: ProfileSaveContext): Promise<void> {
   if (request.city_id === undefined) return;
   try {
-    if (!(await isListedCity(s3, settings.SITE_BUCKET, request.city_id, now))) throw invalidInput();
+    if (!(await isListedCity(s3, settings.SITE_BUCKET, request.city_id))) throw invalidInput();
   } catch (error) {
     if (!(error instanceof CityListUnavailable)) throw error;
     throw new Refusal(refuse(STATUS_UNAVAILABLE, 'CHECK_UNAVAILABLE'));

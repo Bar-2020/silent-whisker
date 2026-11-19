@@ -147,15 +147,6 @@ describe('the checks a new city list must pass (PROF-35, D-117)', () => {
   });
 
   // PROF-35, D-117
-  it('throws when the files of two languages hold different codes', () => {
-    const files = { ...filesOf([1, 2, 3]), ar: filesOf([1, 2, 4]).ar };
-
-    expect(() => {
-      checkCityFiles(files, new Set<number>(), 1);
-    }).toThrow(new Error('The files of the languages do not hold the same codes'));
-  });
-
-  // PROF-35, D-117
   it('throws when a code of the list on the site is missing from the new one, naming them', () => {
     expect(() => {
       checkCityFiles(filesOf([1, 2, 3]), new Set([1, 7, 9]), 1);

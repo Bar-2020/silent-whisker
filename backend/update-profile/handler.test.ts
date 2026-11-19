@@ -7,8 +7,7 @@ import { DynamoDBDocumentClient, GetCommand, UpdateCommand } from '@aws-sdk/lib-
 import { mockClient } from 'aws-sdk-client-mock';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { fixtureCity, fixtureRows } from '../../shared/__tests__/city-fixture';
-import { CITY_CODES_CACHE_SECONDS, CITY_FILES_FOLDER } from '../../shared/constants/cities';
-import { MS_PER_SECOND } from '../../shared/constants/cost';
+import { CITY_FILES_FOLDER } from '../../shared/constants/cities';
 import { BREAKER_DAILY_MICRO_USD, TEXT_CHECK_COST_MICRO_USD } from '../../shared/constants/cost';
 import { WRITES_PER_DAY } from '../../shared/constants/limits';
 import {
@@ -39,9 +38,8 @@ const JERUSALEM_ID = fixtureCity('Jerusalem').id;
 const LISTED_IDS = new Set(fixtureRows('en').map(([id]) => id));
 const ID_NOT_ON_THE_LIST = Math.max(...LISTED_IDS) + 1;
 const CITY_FILE_KEY = `${CITY_FILES_FOLDER}/en.json`;
-const CACHE_MS = CITY_CODES_CACHE_SECONDS * MS_PER_SECOND;
 
-/** The list is module state of the function (kept for an hour): each test loads the handler afresh. */
+/** The function is loaded afresh for each test. */
 let handler: typeof handlerOfModule;
 
 /** The body of a `GetObject` answer: the SDK's stream, of which the code reads the text. */
@@ -717,7 +715,7 @@ describe('PATCH /api/profile and the city list (PROF-09, D-117)', () => {
   });
 });
 
-describe('PATCH /api/profile and the list in S3, read, kept and not readable (PROF-36, D-117)', () => {
+describe('PATCH /api/profile and the list in S3, read at every save and not readable (PROF-36, D-117)', () => {
   const save = (city_id = JERUSALEM_ID) => handler(patch({ city_id }));
 
   const expectUnavailable = (result: { statusCode: number; body: string }): void => {
@@ -733,35 +731,34 @@ describe('PATCH /api/profile and the list in S3, read, kept and not readable (PR
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
   });
 
-  it('serves two saves in a row with one read', async () => {
+  it('reads the list at every save that carries a city_id: two saves in a row read twice', async () => {
     expect((await save()).statusCode).toBe(200);
     expect((await save(HAIFA_ID)).statusCode).toBe(200);
 
-    expect(listReads()).toHaveLength(1);
-  });
-
-  it('serves the saves of an hour with one read and reads again after the hour', async () => {
-    await save();
-    vi.setSystemTime(new Date(NOW.getTime() + CACHE_MS - 1));
-    await save(HAIFA_ID);
-    expect(listReads()).toHaveLength(1);
-
-    vi.setSystemTime(new Date(NOW.getTime() + CACHE_MS + 1));
-    expect((await save()).statusCode).toBe(200);
     expect(listReads()).toHaveLength(2);
+    for (const read of listReads()) {
+      expect(read.args[0].input).toEqual({ Bucket: SITE_BUCKET, Key: CITY_FILE_KEY });
+    }
   });
 
-  it('reads the list again after the hour: a code taken off the list is then refused', async () => {
+  it('refuses at the second save a code taken off the list between two saves', async () => {
     expect((await save(HAIFA_ID)).statusCode).toBe(200);
     listInS3(fileOfList(fixtureRows('en').filter(([id]) => id !== HAIFA_ID)));
 
-    // still kept: the old list answers
-    expect((await save(HAIFA_ID)).statusCode).toBe(200);
-    vi.setSystemTime(new Date(NOW.getTime() + CACHE_MS + 1));
     const result = await save(HAIFA_ID);
 
     expect(result.statusCode).toBe(400);
     expect(bodyOf(result)).toEqual({ code: 'INVALID_INPUT' });
+    expect(listReads()).toHaveLength(1);
+  });
+
+  it('accepts at the second save a code put on the list between two saves', async () => {
+    listInS3(fileOfList(fixtureRows('en').filter(([id]) => id !== HAIFA_ID)));
+    expect((await save(HAIFA_ID)).statusCode).toBe(400);
+
+    listInS3();
+
+    expect((await save(HAIFA_ID)).statusCode).toBe(200);
   });
 
   it.each([

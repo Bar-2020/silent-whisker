@@ -21,15 +21,20 @@ export interface CityListSite {
   readonly write: (language: string, text: string) => Promise<void>;
 }
 
+/** The codes of the places on the list in the site's bucket (the file `cities/en.json`); throws when it is missing or unreadable. */
+export async function readCityCodes(s3: S3Client, bucket: string): Promise<Set<number>> {
+  const { Body } = await s3.send(
+    new GetObjectCommand({ Bucket: bucket, Key: `${CITY_FILES_FOLDER}/en.json` })
+  );
+  return parseCityCodes((await Body?.transformToString()) ?? '');
+}
+
 /** The `cities/` folder of the site's bucket; no list before the first upload. */
 export function s3CityListSite(s3: S3Client, bucket: string): CityListSite {
   return {
     currentCodes: async () => {
       try {
-        const { Body } = await s3.send(
-          new GetObjectCommand({ Bucket: bucket, Key: `${CITY_FILES_FOLDER}/en.json` })
-        );
-        return parseCityCodes((await Body?.transformToString()) ?? '');
+        return await readCityCodes(s3, bucket);
       } catch (error) {
         if (error instanceof NoSuchKey) return new Set();
         throw error;

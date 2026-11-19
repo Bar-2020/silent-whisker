@@ -15,7 +15,7 @@ async function loadNames(language: string): Promise<CityName[]> {
     id,
     name,
     english,
-    isKnown: known === 1,
+    isWellKnown: known === 1,
   }));
 }
 
