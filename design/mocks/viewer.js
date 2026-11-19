@@ -521,6 +521,15 @@
       states: [['plus', 'Menu open']],
       q: [5],
       note: 'New spot, or raise a cat alert.',
+    },
+    {
+      title: 'Map: navigation while Cats and Alerts are not built (Phase 3)',
+      page: 'map.html',
+      screen: 'map',
+      extra: { nav: 'soon' },
+      states: [['default', 'Cats and Alerts: coming soon']],
+      q: [],
+      note: 'The two tabs are dimmed, say "soon" in a pill and are not links (D-136).',
     }
   );
 
@@ -697,6 +706,7 @@
     url.searchParams.set('screen', item.screen);
     url.searchParams.set('state', state);
     if (sub) url.searchParams.set('sub', sub);
+    Object.entries(item.extra || {}).forEach(([key, value]) => url.searchParams.set(key, value));
     if (view.lang !== 'he') url.searchParams.set('lang', view.lang);
     return url;
   }

@@ -72,9 +72,12 @@ Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether 
 | ADM-05 | i | A member reports a post, a comment, a message; reports one again | Gone from their lists at once, still shown to others; no second report row | D-81 |
 | ADM-06 | i | Report a spot with each reason, none and `foo`; send a `reason` for a post | Four reasons accepted and nothing hidden; the rest `INVALID_INPUT` | D-81 |
 | ADM-07 | i | An admin `hide`s a post with three reports, `keep`s another, `hide`s a spot target | Reports closed and the post hidden for everyone; kept; `INVALID_INPUT` | D-81 |
-| ADM-08 | i | An admin approves, rejects a pending spot; again; approves one already approved | `approved` (visible per R-03) or stays hidden and takes no logs; repeats change nothing | R-27 |
+| ADM-08 | i | An admin approves and rejects an `awaiting_admin` spot; again; approves one already approved; tries an `in_moderation` one | `approved` (visible per R-03) or `rejected` and hidden, taking no logs, with `reviewed_at`; repeats change nothing; the `in_moderation` one is `NOT_FOUND` | R-27, D-118 |
 | ADM-09 | i | An admin changes the name and `active` of a custom spot, then of a city station | Applies at once; the station is `FORBIDDEN` | R-32, R-20 |
 | ADM-10 | i | An admin pauses a spot's chat, posts as admin, reads, resumes | `CHAT_PAUSED` for everyone; reads work; resume works | R-33 |
+| ADM-11 | i | A member reports a spot: with each reason, with none and `foo`, a spot that is missing, one that R-03 hides from them, a post (`target_type` `cat_post`) in Phase 3 | The four reasons are saved and nothing is hidden; the others `INVALID_INPUT`; the missing and the hidden spot give the same `NOT_FOUND`, byte for byte | D-81, D-137, R-03 |
+| ADM-12 | i | One member reports the same spot twice and 21 different spots in a day, 21 at once | One report row for the pair; the 21st `DAILY_LIMIT`; exactly 20 at once | D-81, R-40 |
+| ADM-13 | i | An admin lists with `GET /admin/spots?status=awaiting_admin`: spots `in_moderation`, `awaiting_admin`, rejected, one with `photo_awaiting_admin`, an inactive request; then a member | `awaiting_admin` spots, spots with a waiting photo and inactive requests only, never an `in_moderation` or rejected one; the member `FORBIDDEN` | R-27, R-39, D-118 |
 
 ## Hostile and broken input (ROB)
 

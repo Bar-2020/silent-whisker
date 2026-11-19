@@ -7,7 +7,7 @@ Every member, every screen. The shell must make the four jobs one tap apart and 
 map visible while the member reads or logs.
 
 ## Outcome and proof
-- **Four destinations**: Map, Cats (feed), Alerts, Me. Chat has no tab: it lives inside a spot
+- **Four destinations**: Map, Cats (feed), Alerts, Me. From Phase 3 all four show; Cats and Alerts are dimmed with a "soon" pill and are not links until their phases (D-136). Chat has no tab: it lives inside a spot
   (chat is per spot only). New things are made from "+" on the map, "post a cat" in Cats, "raise
   an alert" in Alerts, and "new spot" in the "+" menu.
 - **Phone** (up to 767 px): a floating pane of slate-blue glass, 12 px in from the screen edges,

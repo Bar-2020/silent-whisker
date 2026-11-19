@@ -64,7 +64,7 @@ flowchart LR
     edge --> files["S3<br/>app files and translations"]
     edge --> api["Lambda API<br/>every rule enforced here"]
     api --> db[("DynamoDB")]
-    api --> photos["S3 photos<br/>quarantine, then public"]
+    api --> photos["S3 photos<br/>private, short-lived links"]
     api --> mod["Bedrock photo check and Guardrails<br/>moderation"]
 ```
 
