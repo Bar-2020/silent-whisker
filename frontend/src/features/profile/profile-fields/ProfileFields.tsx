@@ -1,4 +1,5 @@
 import { useId } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { CheckIcon } from '@shared/components/icon/CheckIcon';
 import { UserIcon } from '@shared/components/icon/UserIcon';
@@ -7,11 +8,10 @@ import { MemberAvatar } from '../member-avatar/MemberAvatar';
 import { AvatarSize } from '../member-avatar/MemberAvatar.types';
 import { ProfileFieldFrame } from '../profile-field-frame/ProfileFieldFrame';
 import { PhotoChoice } from '../profile-form.types';
+import type { ProfileFormValues } from '../profile-form.types';
 import { ProfileTextBox } from '../profile-text-box/ProfileTextBox';
 import styles from './ProfileFields.module.css';
 import { useCityField } from './use-city-field';
-import { useFullNameField } from './use-full-name-field';
-import { usePhotoChoiceField } from './use-photo-choice-field';
 
 /** The ids a text box points its `aria-describedby` at: its hint, and its error once there is one. */
 const describedBy = (hintId: string, errorId: string, errorMessage: string | undefined): string =>
@@ -20,7 +20,7 @@ const describedBy = (hintId: string, errorId: string, errorMessage: string | und
 /**
  * The questions both profile forms ask (DESIGN.md, Inputs): the full name, the city picked from the
  * list (D-117) and, when Google sent a photo, whether to show it (D-27). Each question is a function
- * below with its own hook, which holds its form logic; there is no generic field.
+ * below; the city keeps its form logic in a hook, there is no generic field.
  */
 export function ProfileFields({ hasGooglePhoto }: { hasGooglePhoto: boolean }) {
   return (
@@ -34,10 +34,15 @@ export function ProfileFields({ hasGooglePhoto }: { hasGooglePhoto: boolean }) {
 
 function ProfileFullNameQuestion() {
   const { t } = useTranslation();
-  const fullName = useFullNameField();
+  const {
+    register,
+    clearErrors,
+    formState: { errors },
+  } = useFormContext<ProfileFormValues>();
   const id = useId();
   const hintId = `${id}-hint`;
   const errorId = `${id}-error`;
+  const errorMessage = errors.fullName?.message;
 
   return (
     <ProfileFieldFrame
@@ -45,16 +50,21 @@ function ProfileFullNameQuestion() {
       label={t('firstrun.name.label')}
       hintId={hintId}
       hint={t('firstrun.name.hint')}
-      below={fullName.errorMessage && <FormMessage id={errorId} message={fullName.errorMessage} />}
+      below={errorMessage && <FormMessage id={errorId} message={errorMessage} />}
     >
       <ProfileTextBox
         id={id}
         autoComplete="name"
         placeholder={t('firstrun.name.placeholder')}
         aria-required="true"
-        aria-invalid={fullName.errorMessage !== undefined}
-        aria-describedby={describedBy(hintId, errorId, fullName.errorMessage)}
-        {...fullName.inputProps}
+        aria-invalid={errorMessage !== undefined}
+        aria-describedby={describedBy(hintId, errorId, errorMessage)}
+        // Typing on takes the server's refusal away, so the member can try again (FIRST-09).
+        {...register('fullName', {
+          onChange: () => {
+            clearErrors('root.server');
+          },
+        })}
       />
     </ProfileFieldFrame>
   );
@@ -146,26 +156,32 @@ function ProfileCityQuestion() {
 
 function ProfilePhotoQuestion() {
   const { t } = useTranslation();
-  const photo = usePhotoChoiceField();
+  const {
+    register,
+    watch,
+    formState: { errors },
+  } = useFormContext<ProfileFormValues>();
+  const chosenAnswer = watch('photoChoice');
+  const errorMessage = errors.photoChoice?.message;
   const id = useId();
   const errorId = `${id}-error`;
 
   return (
     <fieldset
       className={styles.photoQuestion}
-      aria-describedby={photo.errorMessage ? errorId : undefined}
+      aria-describedby={errorMessage ? errorId : undefined}
     >
       <legend className={styles.photoLegend}>{t('firstrun.photo.label')}</legend>
       <p className={styles.photoHint}>{t('firstrun.photo.hint')}</p>
       <div className={styles.photoChoices}>
         <label className={styles.photoChoice}>
-          <input type="radio" value={PhotoChoice.Show} {...photo.radioProps} />
+          <input type="radio" value={PhotoChoice.Show} {...register('photoChoice')} />
           <span className={styles.photoTile}>
             <span className={styles.photoStand}>
               <UserIcon />
             </span>
             {t('firstrun.photo.yes')}
-            {photo.chosenAnswer === PhotoChoice.Show && (
+            {chosenAnswer === PhotoChoice.Show && (
               <span className={styles.photoMark}>
                 <CheckIcon />
               </span>
@@ -173,11 +189,11 @@ function ProfilePhotoQuestion() {
           </span>
         </label>
         <label className={styles.photoChoice}>
-          <input type="radio" value={PhotoChoice.Initials} {...photo.radioProps} />
+          <input type="radio" value={PhotoChoice.Initials} {...register('photoChoice')} />
           <span className={styles.photoTile}>
-            <MemberAvatar fullName={photo.typedFullName} photoUrl={null} size={AvatarSize.Small} />
+            <MemberAvatar fullName={watch('fullName')} photoUrl={null} size={AvatarSize.Small} />
             {t('firstrun.photo.no')}
-            {photo.chosenAnswer === PhotoChoice.Initials && (
+            {chosenAnswer === PhotoChoice.Initials && (
               <span className={styles.photoMark}>
                 <CheckIcon />
               </span>
@@ -185,7 +201,7 @@ function ProfilePhotoQuestion() {
           </span>
         </label>
       </div>
-      {photo.errorMessage && <FormMessage id={errorId} message={photo.errorMessage} />}
+      {errorMessage && <FormMessage id={errorId} message={errorMessage} />}
     </fieldset>
   );
 }
