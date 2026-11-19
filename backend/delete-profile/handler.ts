@@ -12,7 +12,7 @@ import { parseBody, Refusal, refuse, reply } from '../shared/api';
 import type { ApiEvent, ApiResult } from '../shared/api.types';
 import { readSettings } from '../shared/env';
 import { deleteProfileSettings } from '../shared/schemas/settings.schema';
-import { RETIRED_PERSONAL_FIELDS, userRowSchema } from '../shared/schemas/user-row.schema';
+import { userRowSchema } from '../shared/schemas/user-row.schema';
 import type { UserRow } from '../shared/schemas/user-row.schema';
 import { requireLiveMember } from '../shared/session';
 import type { AccountDeletion } from './handler.types';
@@ -33,12 +33,9 @@ const placeholder = (key: string): string => `#${key}`;
  * stay, so a ban stays (D-71); an update, not a put, so it never replaces anything.
  */
 async function eraseRow({ settings, userId, now }: AccountDeletion): Promise<UserRow['status']> {
-  const personalFields = [
-    ...Object.keys(userRowSchema.shape).filter(
-      (key) => !['user_id', 'status', 'deleted_at'].includes(key)
-    ),
-    ...RETIRED_PERSONAL_FIELDS,
-  ];
+  const personalFields = Object.keys(userRowSchema.shape).filter(
+    (key) => !['user_id', 'status', 'deleted_at'].includes(key)
+  );
   const { Attributes } = await db.send(
     new UpdateCommand({
       TableName: settings.USERS_TABLE,

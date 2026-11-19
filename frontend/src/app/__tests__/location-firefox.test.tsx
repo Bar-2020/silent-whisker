@@ -13,6 +13,7 @@ import {
   INSTALL_STEP_DONE_STORAGE_KEY,
   LOCATION_STEP_DONE_STORAGE_KEY,
 } from '@constants/first-run';
+import { HAIFA_ID } from '@constants/cities';
 import { STATUS_OK } from '@constants/http';
 import { GEOLOCATION_ERROR_CODES, LOCATION_GRANTED_STORAGE_KEY } from '@constants/location';
 
@@ -31,7 +32,7 @@ const settleScreen = (): Promise<void> => settleAsyncUpdates(SETTLE_ROUNDS);
 const MEMBER: ProfileResponse = {
   ...PROFILE,
   display_name: 'Dana Levi',
-  city: 'Haifa',
+  city_id: HAIFA_ID,
   terms_accepted: true,
 };
 

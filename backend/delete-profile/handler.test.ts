@@ -340,44 +340,6 @@ describe('DELETE /api/profile with confirm true deletes an active member (PROF-1
   });
 });
 
-describe('DELETE /api/profile erases the retired typed city too (PROF-34, D-71, D-117)', () => {
-  // What older saves wrote before the city became a code: a typed city and its position
-  const OLDER_SAVE = { city: 'חיפה', city_lat: 32.79, city_lng: 34.99 };
-
-  it.each([
-    ['an active member', 'active'],
-    ['a banned member', 'banned'],
-  ])(
-    'leaves only user_id, status and deleted_at for %s whose row holds them',
-    async (_name, status) => {
-      // PROF-34, D-71, D-117
-      users.set('user-1', { ...FULL_ROW, status, ...OLDER_SAVE });
-      expect(Object.keys(users.get('user-1') ?? {})).toEqual(
-        expect.arrayContaining(['city', 'city_lat', 'city_lng', 'city_id', 'display_name'])
-      );
-
-      const result = await handler(confirm(true));
-
-      expect(result.statusCode).toBe(200);
-      // the stored row, not the parsed one: the parser would drop the extra attributes on its own
-      const left = users.get('user-1') ?? {};
-      expect(Object.keys(left).toSorted()).toEqual(['deleted_at', 'status', 'user_id']);
-      expect(left).toEqual({ user_id: 'user-1', status, deleted_at: DELETED_AT });
-    }
-  );
-
-  it('removes them in the one update, and touches no other member', async () => {
-    // PROF-34, D-117
-    users.set('user-1', { ...FULL_ROW, ...OLDER_SAVE });
-    users.set('user-2', { ...FULL_ROW, ...OLDER_SAVE, user_id: 'user-2' });
-
-    await handler(confirm(true));
-
-    expect(dbMock.commandCalls(UpdateCommand)).toHaveLength(1);
-    expect(users.get('user-2')).toEqual({ ...FULL_ROW, ...OLDER_SAVE, user_id: 'user-2' });
-  });
-});
-
 describe('DELETE /api/profile before the terms are accepted, or with no row (PROF-13, R-36, D-109)', () => {
   it('works for a member who has not accepted the terms yet', async () => {
     // PROF-13, R-36, D-112

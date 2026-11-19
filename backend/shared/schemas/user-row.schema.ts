@@ -24,9 +24,6 @@ export const userRowSchema = z.object({
 });
 export type UserRow = z.infer<typeof userRowSchema>;
 
-/** Personal attributes that older rows may still hold (the typed city and its lookup, D-117): not in the schema, but a deleted account must lose them too. */
-export const RETIRED_PERSONAL_FIELDS = ['city', 'city_lat', 'city_lng'] as const;
-
 /** What one save writes onto a member's row. */
 export type UserRowUpdate = Partial<
   Pick<
