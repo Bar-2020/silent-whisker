@@ -14,7 +14,6 @@ import {
   isCityFileUrl,
   resetCityFiles,
 } from '@shared/test-support/city-files-fake';
-import { CITIES, cityById, expectedFor, shownName } from '@shared/test-support/city-list';
 import { installDialogMethods } from '@shared/test-support/dialog-methods';
 import {
   ENGLISH_CODE,
@@ -25,6 +24,7 @@ import {
 import {
   cityBox,
   HAIFA_ID,
+  JERUSALEM_ID,
   NO_ARABIC_OR_RUSSIAN_ID,
   NO_RUSSIAN_ID,
   optionNames,
@@ -73,8 +73,143 @@ const NEW_MEMBER: ProfileResponse = {
 };
 const MEMBER: ProfileResponse = { ...PROFILE, display_name: 'Dana Levi', city_id: HAIFA_ID };
 
-/** What a member types for the first row of FIRST-15 in each language. */
-const TYPED_IN: Record<string, string> = { he: 'תל', en: 'tel', ar: 'تل', ru: 'Тель' };
+/**
+ * What the app shows for four places of the made-up list in each language: the name there, the English name where the
+ * list has none (D-117). Written out, not worked out from the list.
+ */
+const SHOWN_NAME: Record<number, Record<string, string>> = {
+  [HAIFA_ID]: { he: 'חיפה', en: 'Haifa', ar: 'حيفا', ru: 'Хайфа' },
+  [TEL_AVIV_ID]: {
+    he: 'תל אביב - יפו',
+    en: 'Tel Aviv - Yafo',
+    ar: 'تل أبيب – يافا',
+    ru: 'Тель-Авив Яффо',
+  },
+  [NO_RUSSIAN_ID]: { he: 'קריית אתא', en: 'Kiryat Ata', ar: 'كريات آتا', ru: 'Kiryat Ata' },
+  [NO_ARABIC_OR_RUSSIAN_ID]: { he: 'עוזייר', en: 'Uzeir', ar: 'Uzeir', ru: 'Uzeir' },
+};
+const shownName = (id: number, code: string): string => SHOWN_NAME[id][code];
+
+/**
+ * Every place that matches a text typed in an app language, in the order FIRST-15 and D-117 give: names that start
+ * with the text first, then names that only contain it; in each group the better-known places (the ones with a
+ * Russian name) first, then the others, each in order of code. A text is found by the name in the app's language or
+ * the English name. The box lists the first CITY_SUGGESTIONS_LIMIT of them.
+ */
+const MATCHES = {
+  heTel: [
+    'תל אשקלון',
+    'תל חי',
+    'תל אביב - יפו',
+    'תל מונד',
+    'תל שבע',
+    'תל יוסף',
+    'תל עדשים',
+    'תל קציר',
+    'תל יצחק',
+    'תל ציון',
+    'תל טלם',
+    'שער תל',
+  ],
+  enTel: [
+    'Tel Ashqelon',
+    'Tel Hai',
+    'Tel Aviv - Yafo',
+    'Tel Mond',
+    'Tel Sheva',
+    'Tel Yosef',
+    'Tel Adashim',
+    'Tel Qazir',
+    'Tel Yizhaq',
+    'Tel Tsiyon',
+    'Tel Telem',
+    'Shaar Tel',
+    'Bet Telem',
+  ],
+  arTel: [
+    'تل عسقلان',
+    'تل حاي',
+    'تل أبيب – يافا',
+    'تل موند',
+    'تل السبع',
+    'تل عداشيم',
+    'تل قاصر',
+    'تل صهيون',
+    'تل تيلم',
+    'تلمي يوسف',
+    'باب تل',
+  ],
+  ruTel: ['Тель-Ашкелон', 'Тель-Хай', 'Тель-Авив Яффо', 'Шаар-Тель'],
+  // typed in Latin letters, found by the English name, shown by the name in the app's language
+  heLatinTel: [
+    'תל אשקלון',
+    'תל חי',
+    'תל אביב - יפו',
+    'תל מונד',
+    'תל שבע',
+    'תל יוסף',
+    'תל עדשים',
+    'תל קציר',
+    'תל יצחק',
+    'תל ציון',
+    'תל טלם',
+    'שער תל',
+    'בית טלם',
+  ],
+  arLatinTel: [
+    'تل عسقلان',
+    'تل حاي',
+    'تل أبيب – يافا',
+    'تل موند',
+    'تل السبع',
+    'Tel Yosef',
+    'تل عداشيم',
+    'تل قاصر',
+    'Tel Yizhaq',
+    'تل صهيون',
+    'تل تيلم',
+    'باب تل',
+    'بيت تيلم',
+  ],
+  ruLatinTel: [
+    'Тель-Ашкелон',
+    'Тель-Хай',
+    'Тель-Авив Яффо',
+    'Tel Mond',
+    'Tel Sheva',
+    'Tel Yosef',
+    'Tel Adashim',
+    'Tel Qazir',
+    'Tel Yizhaq',
+    'Tel Tsiyon',
+    'Tel Telem',
+    'Шаар-Тель',
+    'Bet Telem',
+  ],
+  // a name that starts with the text comes before a better-known one that only contains it
+  enHai: ['Haifa', 'Tel Hai'],
+  enBe: ["Be'er Sheva", 'Beit Shemesh', 'Bet Telem', "Beit She'an", 'Tiberias'],
+  // file order would put Tel Telem (108) before Talmei Yosef (112)
+  heTalm: ['טלמי יוסף', 'תל טלם', 'בית טלם'],
+  arTalm: ['تلمي يوسف'],
+  // found by the English name in the Hebrew app
+  heLatinHaifa: ['חיפה'],
+  // the first matches only: more than the box lists
+  enA: [
+    'Akko',
+    'Abu Ghosh',
+    'Alon Shvut',
+    'Tel Ashqelon',
+    'Tel Hai',
+    'Tel Aviv - Yafo',
+    'Shaar Tel',
+    'Haifa',
+    'Jerusalem',
+    "Be'er Sheva",
+  ],
+};
+
+const listedOf = (matches: string[]): string[] => matches.slice(0, CITY_SUGGESTIONS_LIMIT);
 
 let fakeUserManager: typeof FakeUserManager;
 let App: typeof AppComponent;
@@ -97,9 +232,13 @@ function bodyOfRequest(init?: RequestInit): Record<string, unknown> {
   return bodySchema.parse(JSON.parse(body));
 }
 
+/** While true, a request for a city file fails like a lost connection. */
+let cityFilesOffline = false;
+
 beforeEach(async () => {
   vi.resetModules();
   resetCityFiles();
+  cityFilesOffline = false;
   const seam = await import('@shared/auth/user-manager');
   if (!isFake(seam.userManager)) throw new Error('the user-manager seam is not the fake');
   fakeUserManager = seam.userManager;
@@ -116,6 +255,9 @@ beforeEach(async () => {
     const locale = LANGUAGE_CODES.find((code) => url.endsWith(`${LOCALES_PATH}${code}.json`));
     if (locale !== undefined) {
       return Promise.resolve(jsonResponse(STATUS_OK, getLocaleMessages(locale)));
+    }
+    if (cityFilesOffline && isCityFileUrl(url)) {
+      return Promise.reject(new TypeError('Failed to fetch'));
     }
     const cityFile = answerCityFile(url);
     if (cityFile !== undefined) return Promise.resolve(cityFile);
@@ -208,92 +350,63 @@ function messagesOf(field: HTMLElement): string[] {
 
 const listIsOpen = (): boolean => screen.queryByRole('listbox') !== null;
 
-/** What the list of FIRST-15 shows for `typed` in `code`, checked against the list file (D-117). */
-function expectListFor(typed: string, code: string): void {
-  const { listed, count } = expectedFor(typed, code);
-  const shown = optionNames();
-  expect(shown).toHaveLength(count);
-  expect(shown.length).toBeLessThanOrEqual(CITY_SUGGESTIONS_LIMIT);
-  // starting with the text first, the better-known (Russian-named) places first, then the list's order
-  expect(shown).toEqual(listed.map((city) => shownName(city, code)));
-}
-
-/** Whether the place an option shows has a Russian name on the list (the better-known places). */
-function optionHasRussianName(name: string, code: string, typed: string): boolean {
-  const { starting } = expectedFor(typed, code);
-  const place = starting.find((city) => shownName(city, code) === name);
-  if (place === undefined) throw new Error(`${name} does not start with ${typed}`);
-  return place.ru !== undefined;
-}
-
 // ---- FIRST-15: the list
 
+/** A text typed in an app language and the places the box lists for it, in order (the table above). */
+const LISTS = [
+  // the first row of FIRST-15: Tel Aviv - Yafo is among the first options of the first three
+  { code: 'he', typed: 'תל', matches: MATCHES.heTel },
+  { code: 'en', typed: 'tel', matches: MATCHES.enTel },
+  { code: 'ar', typed: 'تل', matches: MATCHES.arTel },
+  { code: 'ru', typed: 'Тель', matches: MATCHES.ruTel },
+  // found by the English name, shown by the name in the app's language, English where the list has none
+  { code: 'he', typed: 'tel', matches: MATCHES.heLatinTel },
+  { code: 'ar', typed: 'tel', matches: MATCHES.arLatinTel },
+  { code: 'ru', typed: 'tel', matches: MATCHES.ruLatinTel },
+  { code: 'he', typed: 'haifa', matches: MATCHES.heLatinHaifa },
+  // a name that starts with the text comes before a better-known one that only contains it
+  { code: 'en', typed: 'hai', matches: MATCHES.enHai },
+  { code: 'en', typed: 'be', matches: MATCHES.enBe },
+  { code: 'he', typed: 'טל', matches: MATCHES.heTalm },
+  { code: 'ar', typed: 'تلم', matches: MATCHES.arTalm },
+];
+
 describe.each(FORMS)('the city box of the %s form, what it lists (FIRST-15, D-117)', (form) => {
-  it.each(LANGUAGE_CODES)('lists the places for what is typed, in %s', async (code) => {
-    await openForm(form, code);
-    await typeInCityBox(TYPED_IN[code], code);
-    expect(optionNames().length).toBeGreaterThan(0);
-    expectListFor(TYPED_IN[code], code);
-  });
-
-  // D-117: among the places whose name starts with the text, the ones with a Russian name come first
-  it.each(LANGUAGE_CODES)(
-    'lists Tel Aviv - Yafo among the options, and the places without a Russian name after those with one, in %s',
-    async (code) => {
+  // FIRST-15, D-117: starting with the text first, better-known places first, each group in the file's order
+  it.each(LISTS)(
+    'lists, for "$typed" in the $code app, the first places of the order of the rule',
+    async ({ code, typed, matches }) => {
       await openForm(form, code);
-      await typeInCityBox(TYPED_IN[code], code);
-      const shown = optionNames();
-      expect(shown).toContain(shownName(cityById(TEL_AVIV_ID), code));
-
-      const flags = shown
-        .slice(0, expectedFor(TYPED_IN[code], code).starting.length)
-        .map((name) => optionHasRussianName(name, code, TYPED_IN[code]));
-      expect(flags.length).toBeGreaterThan(0);
-      // no place without a Russian name stands before one that has it
-      expect(flags).toEqual([...flags].sort((a, b) => Number(b) - Number(a)));
-      expect(flags[0]).toBe(true);
+      await typeInCityBox(typed, code);
+      expect(optionNames()).toEqual(listedOf(matches));
     }
   );
 
-  it.each([
-    ['tel', 'en'],
-    ['תל', 'he'],
-    ['تل', 'ar'],
-  ])('lists Tel Aviv - Yafo for %s typed in the %s app', async (typed, code) => {
-    await openForm(form, code);
-    await typeInCityBox(typed, code);
-    expect(optionNames()).toContain(shownName(cityById(TEL_AVIV_ID), code));
-  });
-
+  // FIRST-15, D-117
   it('lists at most the limit of places, though more match', async () => {
+    expect(MATCHES.enA.length).toBeGreaterThan(CITY_SUGGESTIONS_LIMIT);
     await openForm(form);
     await typeInCityBox('a');
-    expect(expectedFor('a', ENGLISH_CODE).matching.length).toBeGreaterThan(CITY_SUGGESTIONS_LIMIT);
     expect(optionNames()).toHaveLength(CITY_SUGGESTIONS_LIMIT);
+    expect(optionNames()).toEqual(listedOf(MATCHES.enA));
   });
 
-  it('finds Haifa typed in Latin letters in the Hebrew app, and shows the Hebrew name', async () => {
-    await openForm(form, 'he');
-    await typeInCityBox('haifa', 'he');
-    expect(optionNames()).toContain(shownName(cityById(HAIFA_ID), 'he'));
-    expectListFor('haifa', 'he');
-  });
-
-  // D-117: what is typed is compared with the name in the app's language and the English name only
+  // FIRST-15, D-117: what is typed is compared with the name in the app's language and the English name only
   it.each(LANGUAGE_CODES)('finds Haifa by its English name in the %s app', async (code) => {
     await openForm(form, code);
     // the edit form starts with Haifa in the box: change the text first so that typing it again is a change
     await typeInCityBox('x', code);
     await typeInCityBox('Haifa', code);
-    expect(optionNames()).toContain(shownName(cityById(HAIFA_ID), code));
+    expect(optionNames()).toEqual([shownName(HAIFA_ID, code)]);
   });
 
+  // FIRST-15, D-117
   it.each(LANGUAGE_CODES)('finds Haifa by its name in the language of the %s app', async (code) => {
     await openForm(form, code);
-    const own = shownName(cityById(HAIFA_ID), code);
+    const own = shownName(HAIFA_ID, code);
     await typeInCityBox('x', code);
     await typeInCityBox(own, code);
-    expect(optionNames()).toContain(own);
+    expect(optionNames()).toEqual([own]);
   });
 
   it.each([
@@ -307,7 +420,7 @@ describe.each(FORMS)('the city box of the %s form, what it lists (FIRST-15, D-11
     ['ru', 'חיפה'],
     ['ru', 'حيفا'],
   ])('finds nothing for a name in another language: %s app, %s typed', async (code, typed) => {
-    expect(expectedFor(typed, code).matching).toHaveLength(0);
+    // FIRST-15, D-117
     await openForm(form, code);
     await typeInCityBox(typed, code);
     expect(optionNames()).toEqual([]);
@@ -317,47 +430,51 @@ describe.each(FORMS)('the city box of the %s form, what it lists (FIRST-15, D-11
     );
   });
 
-  it('ignores case, Hebrew points and Arabic marks', async () => {
+  // FIRST-15, D-117
+  it('ignores case and extra spaces', async () => {
     await openForm(form, 'en');
-    await typeInCityBox('tel');
-    const plain = optionNames();
-    await typeInCityBox('TEL');
-    expect(optionNames()).toEqual(plain);
-    await typeInCityBox('  tEl  ');
-    expect(optionNames()).toEqual(plain);
+    for (const typed of ['tel', 'TEL', '  tEl  ']) {
+      await typeInCityBox(typed);
+      expect(optionNames(), typed).toEqual(listedOf(MATCHES.enTel));
+    }
   });
 
+  // FIRST-15, D-117
   it('ignores Hebrew points', async () => {
     await openForm(form, 'he');
-    await typeInCityBox('תל', 'he');
-    const plain = optionNames();
-    await typeInCityBox('תֵּל', 'he');
-    expect(optionNames()).toEqual(plain);
+    for (const typed of ['תל', 'תֵּל']) {
+      await typeInCityBox(typed, 'he');
+      expect(optionNames(), typed).toEqual(listedOf(MATCHES.heTel));
+    }
   });
 
+  // FIRST-15, D-117
   it('ignores Arabic marks', async () => {
     await openForm(form, 'ar');
-    await typeInCityBox('تل', 'ar');
-    const plain = optionNames();
-    await typeInCityBox('تَل', 'ar');
-    expect(optionNames()).toEqual(plain);
+    for (const typed of ['تل', 'تَل']) {
+      await typeInCityBox(typed, 'ar');
+      expect(optionNames(), typed).toEqual(listedOf(MATCHES.arTel));
+    }
   });
 
+  // FIRST-15, D-117
   it.each([
-    ['an apostrophe left out', 'beer sheva', "Be'er Sheva"],
-    ['an apostrophe typed', "be'er sheva", "Be'er Sheva"],
-    ['a hyphen left out', 'tel aviv yafo', 'Tel Aviv - Yafo'],
-    ['a hyphen typed', 'tel aviv - yafo', 'Tel Aviv - Yafo'],
-    ['extra spaces', '  tel   aviv ', 'Tel Aviv - Yafo'],
+    ['an apostrophe left out', 'beer sheva', ["Be'er Sheva"]],
+    ['an apostrophe typed', "be'er sheva", ["Be'er Sheva"]],
+    ['a curly apostrophe typed', 'be’er sheva', ["Be'er Sheva"]],
+    ['a hyphen left out', 'tel aviv yafo', ['Tel Aviv - Yafo']],
+    ['a hyphen typed', 'tel aviv - yafo', ['Tel Aviv - Yafo']],
+    ['a hyphen of the name typed as a space', 'maalot tarshiha', ["Ma'alot-Tarshiha"]],
+    ['extra spaces', '  tel   aviv ', ['Tel Aviv - Yafo']],
   ])('ignores hyphens, apostrophes and extra spaces: %s', async (_name, typed, shown) => {
     await openForm(form);
     await typeInCityBox(typed);
-    expect(optionNames()).toContain(shown);
+    expect(optionNames()).toEqual(shown);
   });
 
+  // FIRST-15, D-117
   it('shows what matches nothing as "No city matches" and lists no place', async () => {
     const typed = 'qqqzzzxxx';
-    expect(expectedFor(typed, ENGLISH_CODE).matching).toHaveLength(0);
     await openForm(form);
     await typeInCityBox(typed);
     expect(optionNames()).toEqual([]);
@@ -375,9 +492,8 @@ describe.each(LANGUAGE_CODES)('what an option shows, in %s (FIRST-15, D-117)', (
     'shows place %i in the app language, the English name where the list has none',
     async (id) => {
       await openForm('sign-up', code);
-      const city = cityById(id);
-      await typeInCityBox(city.en, code);
-      expect(optionNames()).toContain(shownName(city, code));
+      await typeInCityBox(shownName(id, 'en'), code);
+      expect(optionNames()).toEqual([shownName(id, code)]);
     }
   );
 });
@@ -490,12 +606,8 @@ describe.each(FORMS)('the city box of the %s form, roles and keys (FIRST-15, D-1
     'shows the picked place in the language of the app, in %s',
     async (code) => {
       await openForm(form, code);
-      await pickCity(
-        shownName(cityById(TEL_AVIV_ID), code),
-        shownName(cityById(TEL_AVIV_ID), code),
-        code
-      );
-      expect(cityBox(code).value).toBe(shownName(cityById(TEL_AVIV_ID), code));
+      await pickCity(shownName(TEL_AVIV_ID, code), shownName(TEL_AVIV_ID, code), code);
+      expect(cityBox(code).value).toBe(shownName(TEL_AVIV_ID, code));
       expect(listIsOpen()).toBe(false);
     }
   );
@@ -507,7 +619,7 @@ describe('the sign-up form and the city it sends (FIRST-15, FIRST-08, D-117)', (
   it.each(LANGUAGE_CODES)('sends city_id, the code of the tapped place, in %s', async (code) => {
     await open(NEW_MEMBER, code);
     fillRest(code);
-    await pickCity('Haifa', shownName(cityById(HAIFA_ID), code), code);
+    await pickCity('Haifa', shownName(HAIFA_ID, code), code);
     await pressIn(code, 'common.continue');
 
     const patches = callsOf('PATCH');
@@ -522,9 +634,9 @@ describe('the sign-up form and the city it sends (FIRST-15, FIRST-08, D-117)', (
   it('sends the code of a place that has no Russian name, in the Russian app', async () => {
     await open(NEW_MEMBER, 'ru');
     fillRest('ru');
-    const city = cityById(NO_RUSSIAN_ID);
-    await pickCity(city.en, city.en, 'ru');
-    expect(cityBox('ru').value).toBe(city.en);
+    // the Russian file has the English name for this place
+    await pickCity('Kiryat Ata', 'Kiryat Ata', 'ru');
+    expect(cityBox('ru').value).toBe(shownName(NO_RUSSIAN_ID, 'ru'));
     await pressIn('ru', 'common.continue');
 
     const [patch] = callsOf('PATCH');
@@ -593,7 +705,7 @@ describe.each(FORMS)('the %s form and a city that was not chosen (FIRST-15, D-11
     const patches = callsOf('PATCH');
     expect(patches).toHaveLength(1);
     expect(bodyOfRequest(patches[0][1])).toMatchObject({
-      city_id: cityByEnglishName('Jerusalem').id,
+      city_id: JERUSALEM_ID,
     });
   });
 });
@@ -601,12 +713,6 @@ describe.each(FORMS)('the %s form and a city that was not chosen (FIRST-15, D-11
 /** The sign-up form needs a name and the box; the edit form already has a name. */
 function fillRestFor(form: Form): void {
   if (form === 'sign-up') fillRest();
-}
-
-function cityByEnglishName(name: string) {
-  const found = CITIES.find((city) => city.en === name);
-  if (found === undefined) throw new Error(`no city ${name} on the list`);
-  return found;
 }
 
 // ---- FIRST-15: the names file of the app's language loads on need
@@ -652,13 +758,30 @@ describe('the names file of the app language loads only for a screen that has th
     expect(loadsOf('ru')).toBe(0);
   });
 
+  // FIRST-15, D-117
   it.each([
-    ['is not on the site (404)', 'missing' as const],
-    ['holds rows of the wrong shape', 'invalid' as const],
+    [
+      'is not on the site (404)',
+      () => {
+        breakCityFile(ENGLISH_CODE, 'missing');
+      },
+    ],
+    [
+      'holds rows of the wrong shape',
+      () => {
+        breakCityFile(ENGLISH_CODE, 'invalid');
+      },
+    ],
+    [
+      'cannot be reached (no connection)',
+      () => {
+        cityFilesOffline = true;
+      },
+    ],
   ])(
     'says the profile is unavailable when the city file %s',
-    async (_name, fault) => {
-      breakCityFile(ENGLISH_CODE, fault);
+    async (_name, breakTheFile) => {
+      breakTheFile();
       await open(NEW_MEMBER);
       await typeInCityBox('tel');
       await waitFor(
@@ -677,7 +800,7 @@ describe('the names file of the app language loads only for a screen that has th
     breakCityFile(ENGLISH_CODE, 'missing');
     await openForm('sign-up', 'he');
     await typeInCityBox('חיפה', 'he');
-    expect(optionNames()).toContain(shownName(cityById(HAIFA_ID), 'he'));
+    expect(optionNames()).toEqual([shownName(HAIFA_ID, 'he')]);
   });
 });
 
@@ -693,7 +816,7 @@ describe.each(LANGUAGE_CODES)('the city line of Profile, in %s (ME-19, D-117)', 
     'shows place %i in the app language, the English name where the list has none',
     async (id) => {
       await open({ ...MEMBER, city_id: id }, code);
-      expect(cityLine()).toBe(shownName(cityById(id), code));
+      expect(cityLine()).toBe(shownName(id, code));
       expect(cityLine()).not.toBe('');
     }
   );
@@ -706,7 +829,7 @@ describe.each(LANGUAGE_CODES)('the city line of Profile, in %s (ME-19, D-117)', 
   it.each(PROFILE_PLACES)("starts the edit form's box with place %i", async (id) => {
     await open({ ...MEMBER, city_id: id }, code);
     await pressIn(code, 'profile.edit.title');
-    expect(cityBox(code).value).toBe(shownName(cityById(id), code));
+    expect(cityBox(code).value).toBe(shownName(id, code));
   });
 
   it("starts the edit form's box empty for a member with no city_id", async () => {
@@ -763,15 +886,15 @@ describe('the city line follows the Language row (ME-19, ME-16, D-117)', () => {
     async (id) => {
       await openWithAllLanguages({ ...MEMBER, city_id: id }, ENGLISH_CODE);
       let current = ENGLISH_CODE;
-      expect(cityLine()).toBe(shownName(cityById(id), current));
+      expect(cityLine()).toBe(shownName(id, current));
 
       for (const language of LANGUAGE_CODES.filter((one) => one !== ENGLISH_CODE)) {
         await switchLanguage(current, language);
         current = language;
-        expect(cityLine(), language).toBe(shownName(cityById(id), language));
+        expect(cityLine(), language).toBe(shownName(id, language));
       }
       await switchLanguage(current, ENGLISH_CODE);
-      expect(cityLine()).toBe(shownName(cityById(id), ENGLISH_CODE));
+      expect(cityLine()).toBe(shownName(id, ENGLISH_CODE));
     }
   );
 

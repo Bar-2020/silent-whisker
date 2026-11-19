@@ -1,11 +1,15 @@
 import { describe, expect, it } from 'vite-plus/test';
 
+import { LANGUAGES } from '../shared/constants/languages';
 import type { GovRecord } from '../shared/city-files';
-import { buildCityFiles, checkCityFiles, titleCase } from '../shared/city-files';
+import { buildCityFiles, checkCityFiles } from '../shared/city-files';
+import { titleCase, trimOrNull } from '../shared/text';
+import { cityNamesSchema } from '../shared/schemas/city-names.schema';
+import { FIXTURE_CITIES, fixtureRows } from '../shared/__tests__/city-fixture';
 
 /** PROF-33 and PROF-35, D-117: the city files built from the government's records, and the checks a new list must pass. */
 
-const LANGUAGES = ['he', 'en', 'ar', 'ru'];
+const CODES = LANGUAGES.map(({ code }) => code);
 
 /** A made-up government record; a missing name is null. */
 function record(
@@ -34,6 +38,23 @@ describe('the English name in words (PROF-33, D-117)', () => {
   });
 });
 
+describe('a name trimmed, or none (PROF-33, D-117)', () => {
+  // PROF-33, D-117
+  it.each([
+    [' חיפה ', 'חיפה'],
+    ['  HAIFA\t', 'HAIFA'],
+    ['Tel  Aviv', 'Tel  Aviv'],
+    ['x', 'x'],
+  ])('trims %j to %j', (padded, trimmed) => {
+    expect(trimOrNull(padded)).toBe(trimmed);
+  });
+
+  // PROF-33, D-117
+  it.each([[null], [''], ['   '], ['\t\n ']])('gives null for %j', (nothing) => {
+    expect(trimOrNull(nothing)).toBeNull();
+  });
+});
+
 describe('the city files built from made-up records (PROF-33, D-117)', () => {
   const records = [
     record(30, 'ירושלים', 'JERUSALEM', 'أورشليم القدس', 'Иерусалим'),
@@ -42,61 +63,90 @@ describe('the city files built from made-up records (PROF-33, D-117)', () => {
   ];
 
   // PROF-33, D-117
-  it('makes one file of rows per language, in order of code, whatever the order of the records', () => {
-    const files = buildCityFiles(records, LANGUAGES);
+  it('makes one file of rows per language, he, en, ar and ru, all in the same order', () => {
+    const files = buildCityFiles(records);
 
-    expect(Object.keys(files).toSorted()).toEqual([...LANGUAGES].toSorted());
-    for (const code of LANGUAGES) expect(codesOf(files[code])).toEqual([10, 20, 30]);
+    expect(Object.keys(files).toSorted()).toEqual(['ar', 'en', 'he', 'ru']);
+    // the places with a Russian name (20, 30) first, then the other (10)
+    for (const code of CODES) expect(codesOf(files[code])).toEqual([20, 30, 10]);
   });
 
   // PROF-33, D-117
-  it('makes only the files of the languages asked for', () => {
-    expect(Object.keys(buildCityFiles(records, ['he', 'en'])).toSorted()).toEqual(['en', 'he']);
-  });
-
-  // PROF-33, D-117
-  it('gives each row the code, the name in that language, the English name in words and 0 or 1', () => {
-    const files = buildCityFiles(records, LANGUAGES);
+  it('gives each row the code, the name in that language and the English name in words, the better-known first', () => {
+    const files = buildCityFiles(records);
 
     expect(files.he).toEqual([
-      [10, 'באר שבע', "Be'er Sheva", 0],
-      [20, 'תל אביב - יפו', 'Tel Aviv - Yafo', 1],
-      [30, 'ירושלים', 'Jerusalem', 1],
+      [20, 'תל אביב - יפו', 'Tel Aviv - Yafo'],
+      [30, 'ירושלים', 'Jerusalem'],
+      [10, 'באר שבע', "Be'er Sheva"],
     ]);
     expect(files.ru).toEqual([
-      [10, "Be'er Sheva", "Be'er Sheva", 0],
-      [20, 'Тель-Авив Яффо', 'Tel Aviv - Yafo', 1],
-      [30, 'Иерусалим', 'Jerusalem', 1],
+      [20, 'Тель-Авив Яффо', 'Tel Aviv - Yafo'],
+      [30, 'Иерусалим', 'Jerusalem'],
+      [10, "Be'er Sheva", "Be'er Sheva"],
     ]);
   });
 
   // PROF-33, D-117
   it('gives a language that has no name for a place the English name', () => {
-    const files = buildCityFiles(records, LANGUAGES);
+    const files = buildCityFiles(records);
 
-    expect(files.ar[0]).toEqual([10, "Be'er Sheva", "Be'er Sheva", 0]);
-    expect(files.ar[1]).toEqual([20, 'تل أبيب – يافا', 'Tel Aviv - Yafo', 1]);
-    expect(files.en.map((row) => row[1])).toEqual(["Be'er Sheva", 'Tel Aviv - Yafo', 'Jerusalem']);
+    expect(files.ar).toEqual([
+      [20, 'تل أبيب – يافا', 'Tel Aviv - Yafo'],
+      [30, 'أورشليم القدس', 'Jerusalem'],
+      [10, "Be'er Sheva", "Be'er Sheva"],
+    ]);
+    expect(files.en.map((row) => row[1])).toEqual(['Tel Aviv - Yafo', 'Jerusalem', "Be'er Sheva"]);
   });
 
   // PROF-33, D-117
-  it('marks with 1 exactly the places that have a Russian name, in every file', () => {
-    const files = buildCityFiles(records, LANGUAGES);
+  it('has rows of three items that the city file schema accepts, in every file', () => {
+    const files = buildCityFiles(records);
 
-    for (const code of LANGUAGES) expect(files[code].map((row) => row[3])).toEqual([0, 1, 1]);
+    for (const code of CODES) {
+      expect(() => cityNamesSchema.parse(files[code])).not.toThrow();
+      for (const row of files[code]) expect(row).toHaveLength(3);
+    }
+  });
+
+  // PROF-33, D-117
+  it('puts each group in order of code, whatever the order of the records', () => {
+    const files = buildCityFiles([
+      record(7, 'ז', 'SEVEN', null, 'Семь'),
+      record(3, 'ג', 'THREE'),
+      record(9, 'ט', 'NINE', null, 'Девять'),
+      record(1, 'א', 'ONE'),
+      record(5, 'ה', 'FIVE', 'خمسة', 'Пять'),
+    ]);
+
+    for (const code of CODES) expect(codesOf(files[code])).toEqual([5, 7, 9, 1, 3]);
+  });
+
+  // PROF-33, D-117
+  it('counts a place as better known only for a Russian name that is there', () => {
+    const files = buildCityFiles([
+      record(1, 'א', 'ONE', 'واحد', ''),
+      record(2, 'ב', 'TWO', null, '   '),
+      record(3, 'ג', 'THREE', null, 'Три'),
+    ]);
+
+    for (const code of CODES) expect(codesOf(files[code])).toEqual([3, 1, 2]);
+    // a Russian name of spaces is no name: the English one shows
+    expect(files.ru).toEqual([
+      [3, 'Три', 'Three'],
+      [1, 'One', 'One'],
+      [2, 'Two', 'Two'],
+    ]);
   });
 
   // PROF-33, D-117
   it('trims padded names', () => {
-    const files = buildCityFiles(
-      [record(1, '  חיפה ', '  HAIFA\t', ' حيفا ', ' Хайфа  ')],
-      LANGUAGES
-    );
+    const files = buildCityFiles([record(1, '  חיפה ', '  HAIFA\t', ' حيفا ', ' Хайфа  ')]);
 
-    expect(files.he).toEqual([[1, 'חיפה', 'Haifa', 1]]);
-    expect(files.ar).toEqual([[1, 'حيفا', 'Haifa', 1]]);
-    expect(files.ru).toEqual([[1, 'Хайфа', 'Haifa', 1]]);
-    expect(files.en).toEqual([[1, 'Haifa', 'Haifa', 1]]);
+    expect(files.he).toEqual([[1, 'חיפה', 'Haifa']]);
+    expect(files.ar).toEqual([[1, 'حيفا', 'Haifa']]);
+    expect(files.ru).toEqual([[1, 'Хайфа', 'Haifa']]);
+    expect(files.en).toEqual([[1, 'Haifa', 'Haifa']]);
   });
 
   // PROF-33, D-117
@@ -106,26 +156,49 @@ describe('the city files built from made-up records (PROF-33, D-117)', () => {
     ['a code of 0', record(0, 'ללא', 'NOWHERE')],
     ['a negative code', record(-5, 'ללא', 'NOWHERE')],
     ['a code that is not whole', record(5.5, 'ללא', 'NOWHERE')],
+    ['a bad code, though it has a Russian name', record(-1, 'ללא', 'NOWHERE', null, 'Нигде')],
   ])('leaves out a record with %s and keeps the others', (_name, bad) => {
-    const files = buildCityFiles(
-      [record(1, 'חיפה', 'HAIFA'), bad, record(2, 'עכו', 'AKKO')],
-      LANGUAGES
-    );
+    const files = buildCityFiles([record(1, 'חיפה', 'HAIFA'), bad, record(2, 'עכו', 'AKKO')]);
 
-    for (const code of LANGUAGES) expect(codesOf(files[code])).toEqual([1, 2]);
+    for (const code of CODES) expect(codesOf(files[code])).toEqual([1, 2]);
   });
 
   // PROF-33, D-117
   it('makes empty files from no records', () => {
-    const files = buildCityFiles([], LANGUAGES);
+    const files = buildCityFiles([]);
 
-    for (const code of LANGUAGES) expect(files[code]).toEqual([]);
+    for (const code of CODES) expect(files[code]).toEqual([]);
+  });
+});
+
+describe('the made-up city list of the tests follows the same rows (PROF-33, D-117)', () => {
+  // PROF-33, D-117: the fixture the app and the handlers are tested with has the shape and the order of a real file
+  it.each(CODES)('has rows the city file schema accepts, of three items, in %s', (code) => {
+    const rows = fixtureRows(code);
+
+    expect(() => cityNamesSchema.parse(rows)).not.toThrow();
+    expect(rows).toHaveLength(FIXTURE_CITIES.length);
+    for (const row of rows) expect(row).toHaveLength(3);
+  });
+
+  // PROF-33, D-117
+  it('lists the places with a Russian name first and the others after, each in order of code, in every language', () => {
+    // 109 Tel Ashqelon, 110 Tel Hai, 111 Tel Aviv - Yafo, 114 Shaar Tel, then 201 Haifa ...
+    const firstCodes = [109, 110, 111, 114, 201, 202, 203];
+    // the others, from 101 Tel Mond on, come after the last place with a Russian name (224 Hod HaSharon)
+    const lastBetterKnown = 224;
+    for (const code of CODES) {
+      const codes = fixtureRows(code).map(([place]) => place);
+      expect(codes.slice(0, firstCodes.length)).toEqual(firstCodes);
+      expect(codes.at(codes.indexOf(lastBetterKnown) + 1)).toBe(101);
+      expect(codes).toEqual(fixtureRows('en').map(([place]) => place));
+    }
   });
 });
 
 describe('the checks a new city list must pass (PROF-35, D-117)', () => {
   const place = (code: number) => record(code, `מקום ${String(code)}`, `PLACE ${String(code)}`);
-  const filesOf = (codes: number[]) => buildCityFiles(codes.map(place), LANGUAGES);
+  const filesOf = (codes: number[]) => buildCityFiles(codes.map(place));
 
   // PROF-35, D-117
   it('throws for fewer places than the minimum, naming the count and the minimum', () => {

@@ -13,3 +13,6 @@ export const CITY_SOURCE_URL =
 
 /** The source answers in a few seconds; slower than this it is down, and the list on the site stays. */
 export const CITY_SOURCE_TIMEOUT_MS = 30_000;
+
+/** Says what the job is; the source answers any, and a browser's name would pretend to be one. */
+export const CITY_SOURCE_USER_AGENT = 'city-list-updater/1.0';

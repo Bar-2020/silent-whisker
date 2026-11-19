@@ -46,7 +46,7 @@ let handler: typeof handlerOfModule;
 const bodyOfFile = (text: string): GetObjectCommandOutput['Body'] =>
   ({ transformToString: () => Promise.resolve(text) }) as unknown as GetObjectCommandOutput['Body'];
 
-/** The list in S3 as the upload makes it: rows of [code, name, English name, 0 or 1]. */
+/** The list in S3 as the upload makes it: rows of [code, name, English name]. */
 const fileOfList = (rows: unknown = fixtureRows('en')): string => JSON.stringify(rows);
 
 function listInS3(text: string = fileOfList()): void {
@@ -784,6 +784,12 @@ describe('PATCH /api/profile and the list in S3, read at every save and not read
       'rows of the wrong shape',
       () => {
         listInS3(fileOfList([['Haifa', 1]]));
+      },
+    ],
+    [
+      'rows with a fourth item (a row is three items)',
+      () => {
+        listInS3(fileOfList(fixtureRows('en').map((row) => [...row, 0])));
       },
     ],
     [

@@ -10,8 +10,8 @@ import {
   CITY_LIST_MIN_PLACES,
   CITY_SOURCE_TIMEOUT_MS,
   CITY_SOURCE_URL,
+  CITY_SOURCE_USER_AGENT,
 } from './constants/cities.ts';
-import { LANGUAGES } from './constants/languages.ts';
 import { parseCityCodes } from './schemas/city-names.schema.ts';
 import { govCityListSchema } from './schemas/gov-city-list.schema.ts';
 
@@ -58,7 +58,7 @@ export function s3CityListSite(s3: S3Client, bucket: string): CityListSite {
 /** The government's records, or an error when the source is down or answers something else. */
 async function fetchRecords() {
   const response = await fetch(CITY_SOURCE_URL, {
-    headers: { 'User-Agent': 'Mozilla/5.0' },
+    headers: { 'User-Agent': CITY_SOURCE_USER_AGENT },
     signal: AbortSignal.timeout(CITY_SOURCE_TIMEOUT_MS),
   });
   if (!response.ok) throw new Error(`The city list source answered ${response.status}`);
@@ -67,10 +67,7 @@ async function fetchRecords() {
 
 /** Replaces the list on `site` with the government's current one, if it passes the checks; throws otherwise and writes nothing. */
 export async function refreshCityList(site: CityListSite): Promise<{ places: number }> {
-  const files = buildCityFiles(
-    await fetchRecords(),
-    LANGUAGES.map(({ code }) => code)
-  );
+  const files = buildCityFiles(await fetchRecords());
   checkCityFiles(files, await site.currentCodes(), CITY_LIST_MIN_PLACES);
   // `en` last: the server accepts a code only when it is in that file, so a run that fails half way
   // never leaves a place the app shows and the server refuses.

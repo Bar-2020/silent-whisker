@@ -1,6 +1,9 @@
-// The pure part of the city list build, shared by the monthly job and `scripts/build-cities.ts` (D-117): government records in, one file of rows per language
-// out, and the checks a new list must pass before it replaces the one on the site. No imports, so
-// Node runs it as it is and the tests import it too.
+// The pure part of the city list build, shared by the monthly job and `scripts/build-cities.ts` (D-117):
+// government records in, one file of rows per language out, and the checks a new list must pass
+// before it replaces the one on the site. Imports carry their `.ts` extension so Node runs it as it is.
+import { LANGUAGES } from './constants/languages.ts';
+import type { LanguageCode } from './constants/languages.ts';
+import { titleCase, trimOrNull } from './text.ts';
 
 /** One record of the government's "Localities and countries" list (data.gov.il), the fields used. */
 export interface GovRecord {
@@ -11,68 +14,59 @@ export interface GovRecord {
   readonly name_in_russian: string | null;
 }
 
-/** [code, name in the file's language (the English one where the list has none), English name, 1 for a better-known place]. */
-export type CityRow = readonly [number, string, string, 0 | 1];
+/** [code, name in the file's language (the English one where the list has none), English name]. */
+export type CityRow = readonly [number, string, string];
 
 interface Place {
-  readonly id: number;
-  readonly english: string;
-  readonly known: 0 | 1;
-  readonly names: Readonly<Record<string, string | undefined>>;
+  readonly code: number;
+  readonly hebrewName: string;
+  readonly englishName: string;
+  readonly arabicName: string | null;
+  readonly russianName: string | null;
 }
 
-const clean = (text: string | null): string | undefined => {
-  const trimmed = text?.trim();
-  return trimmed === undefined || trimmed === '' ? undefined : trimmed;
+const NAME_IN: Record<LanguageCode, (place: Place) => string> = {
+  he: (place) => place.hebrewName,
+  en: (place) => place.englishName,
+  ar: (place) => place.arabicName ?? place.englishName,
+  ru: (place) => place.russianName ?? place.englishName,
 };
 
-/** The list writes English names in capitals: "BE'ER SHEVA" becomes "Be'er Sheva". */
-export const titleCase = (text: string): string =>
-  text
-    .toLowerCase()
-    .replace(
-      /(^|[ \-(])([a-z])/g,
-      (_, before: string, letter: string) => before + letter.toUpperCase()
-    );
+/** A place needs a code, a Hebrew and an English name to be listed. */
+function toPlace(record: GovRecord): Place | null {
+  const hebrewName = trimOrNull(record.name_in_hebrew);
+  const englishName = trimOrNull(record.name_in_english);
+  const hasCode = Number.isInteger(record.symbol_number) && record.symbol_number > 0;
+  if (!hasCode || hebrewName === null || englishName === null) return null;
+  return {
+    code: record.symbol_number,
+    hebrewName,
+    englishName: titleCase(englishName),
+    arabicName: trimOrNull(record.name_in_arabic),
+    russianName: trimOrNull(record.name_in_russian),
+  };
+}
 
 /**
- * One file of rows per language, in the order of the codes. A place needs a code, a Hebrew and an
- * English name to be listed. Better-known places are the ones the list gives a Russian name.
+ * Better-known places first, then by code. The list has no population, so a place with a Russian
+ * name counts as better known: typing "tel" lists Tel Aviv - Yafo before the small villages. Every
+ * file has the same order, and the app keeps it.
  */
-export function buildCityFiles(
-  records: readonly GovRecord[],
-  languages: readonly string[]
-): Record<string, CityRow[]> {
-  const places: Place[] = records
-    .flatMap((record) => {
-      const hebrew = clean(record.name_in_hebrew);
-      const english = clean(record.name_in_english);
-      if (!Number.isInteger(record.symbol_number) || record.symbol_number <= 0) return [];
-      if (hebrew === undefined || english === undefined) return [];
-      const russian = clean(record.name_in_russian);
-      const place: Place = {
-        id: record.symbol_number,
-        english: titleCase(english),
-        known: russian === undefined ? 0 : 1,
-        names: {
-          he: hebrew,
-          en: titleCase(english),
-          ar: clean(record.name_in_arabic),
-          ru: russian,
-        },
-      };
-      return [place];
-    })
-    .sort((a, b) => a.id - b.id);
+const betterKnownFirst = (a: Place, b: Place): number => {
+  const byRussianName = Number(b.russianName !== null) - Number(a.russianName !== null);
+  return byRussianName === 0 ? a.code - b.code : byRussianName;
+};
+
+/** One file of rows per language, all in the same order (see `betterKnownFirst`). */
+export function buildCityFiles(records: readonly GovRecord[]): Record<string, CityRow[]> {
+  const places = records
+    .map(toPlace)
+    .filter((place): place is Place => place !== null)
+    .sort(betterKnownFirst);
   return Object.fromEntries(
-    languages.map((language) => [
-      language,
-      places.map((place): CityRow => [
-        place.id,
-        place.names[language] ?? place.english,
-        place.english,
-        place.known,
-      ]),
+    LANGUAGES.map(({ code }) => [
+      code,
+      places.map((place): CityRow => [place.code, NAME_IN[code](place), place.englishName]),
     ])
   );
 }

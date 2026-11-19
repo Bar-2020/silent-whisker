@@ -16,7 +16,8 @@
       "@styles/*": ["./frontend/src/styles/*"],
       "@locales/*": ["./frontend/public/locales/*"],
       "@constants/*": ["./shared/constants/*"],
-      "@schemas/*": ["./shared/schemas/*"]
+      "@schemas/*": ["./shared/schemas/*"],
+      "@fixtures/*": ["./shared/__tests__/*"]
     },
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,

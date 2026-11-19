@@ -1,18 +1,18 @@
 import { fireEvent, screen } from '@testing-library/react';
 
-import { cityNamed } from './city-list';
+import { fixtureCity } from '@fixtures/city-fixture';
 import settings from './city-test-settings.json';
 import { ENGLISH_CODE, getLocaleText } from './locale-texts';
 import { settleAsyncUpdates } from './settle-async-updates';
 
 /** Codes of places on the made-up list the tests use (`shared/__tests__/city-fixture.json`, D-117). */
-export const HAIFA_ID = cityNamed('Haifa').id;
-export const TEL_AVIV_ID = cityNamed('Tel Aviv - Yafo').id;
-export const JERUSALEM_ID = cityNamed('Jerusalem').id;
+export const HAIFA_ID = fixtureCity('Haifa').id;
+export const TEL_AVIV_ID = fixtureCity('Tel Aviv - Yafo').id;
+export const JERUSALEM_ID = fixtureCity('Jerusalem').id;
 /** A place with neither an Arabic nor a Russian name on the list: Uzeir. */
-export const NO_ARABIC_OR_RUSSIAN_ID = cityNamed('Uzeir').id;
+export const NO_ARABIC_OR_RUSSIAN_ID = fixtureCity('Uzeir').id;
 /** A place with an Arabic name and no Russian one on the list: Kiryat Ata. */
-export const NO_RUSSIAN_ID = cityNamed('Kiryat Ata').id;
+export const NO_RUSSIAN_ID = fixtureCity('Kiryat Ata').id;
 
 /** The city file is fetched and read a macrotask or two after a screen with the box opens (D-117). */
 const CITY_LIST_SETTLE_ROUNDS = settings.settleRounds;

@@ -1,6 +1,7 @@
 // Puts the city files where the app reads them, from the government's list of localities in Hebrew,
-// English, Arabic and Russian (data.gov.il, "יישובים ומדינות", National Digital Agency; D-117). By
-// hand, from a computer in Israel (the source may refuse other countries):
+// English, Arabic and Russian (data.gov.il, "יישובים ומדינות", National Digital Agency, open licence that
+// asks for the source to be named: the terms of use do; D-117). By hand, from a computer in Israel
+// (the source may refuse other countries):
 //   npm run cities:upload   uploads them to the site's S3 bucket (needs the AWS login: set AWS_PROFILE
 //                           to the project's profile first); the monthly job in AWS does the same
 //   npm run cities:local    writes them to frontend/public/cities/ for `npm run dev` (not committed)

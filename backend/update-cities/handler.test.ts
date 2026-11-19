@@ -7,8 +7,10 @@ import {
   CITY_LIST_MIN_PLACES,
   CITY_SOURCE_TIMEOUT_MS,
   CITY_SOURCE_URL,
+  CITY_SOURCE_USER_AGENT,
 } from '../../shared/constants/cities';
 import { LANGUAGES } from '../../shared/constants/languages';
+import { cityNamesSchema } from '../../shared/schemas/city-names.schema';
 import type { handler as handlerOfModule } from './handler';
 
 // INFRA-11, D-117: the monthly job that refreshes the city list, with a faked government source and a faked S3
@@ -40,9 +42,14 @@ function recordsOf(count: number) {
   }));
 }
 
-/** The rows of one file for the codes 1 to `count`: [code, name in that language, English name, 0 or 1]. */
-function rowsOf(language: string, count: number): [number, string, string, number][] {
-  return Array.from({ length: count }, (_, at) => at + 1).map((code) => {
+/**
+ * The rows of one file for the codes 1 to `count`: [code, name in that language, English name], the places with a
+ * Russian name first, then the others, each group in order of code, the same order in every file (PROF-33, D-117).
+ */
+function rowsOf(language: string, count: number): [number, string, string][] {
+  const codes = Array.from({ length: count }, (_, at) => at + 1);
+  const inOrder = [...codes.filter(hasRussian), ...codes.filter((code) => !hasRussian(code))];
+  return inOrder.map((code) => {
     const english = englishName(code);
     const names: Record<string, string> = {
       he: `מקום ${String(code)}`,
@@ -50,7 +57,7 @@ function rowsOf(language: string, count: number): [number, string, string, numbe
       ar: hasArabic(code) ? `مكان ${String(code)}` : english,
       ru: hasRussian(code) ? `Место ${String(code)}` : english,
     };
-    return [code, names[language], english, hasRussian(code) ? 1 : 0];
+    return [code, names[language], english];
   });
 }
 
@@ -177,13 +184,14 @@ describe('a good run (INFRA-11, D-117)', () => {
   });
 
   // INFRA-11, D-117
-  it('reads the source at its address with a User-Agent and a way to give up', async () => {
+  it('reads the source at its address with the job User-Agent and a way to give up', async () => {
     await handler();
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const [url, init] = fetchMock.mock.calls[0];
     expect(url).toBe(CITY_SOURCE_URL);
-    expect(new Headers(init?.headers).get('user-agent')).toBeTruthy();
+    // the job says what it is: not the name of a browser
+    expect(new Headers(init?.headers).get('user-agent')).toBe(CITY_SOURCE_USER_AGENT);
     expect(init?.signal).toBeInstanceOf(AbortSignal);
   });
 
@@ -196,16 +204,34 @@ describe('a good run (INFRA-11, D-117)', () => {
   });
 
   // INFRA-11, D-117
-  it('writes the rows in order of code with the English name in words and the better-known mark', async () => {
+  it('writes the places with a Russian name first, then the others, each in order of code, three items a row', async () => {
     sourceAnswers(CITY_LIST_MIN_PLACES);
 
     await handler();
 
     const files = writtenFiles();
-    const en = files[LIST_KEY].rows as [number, string, string, number][];
-    expect(en[0]).toEqual([1, 'Place 1', 'Place 1', 0]);
-    expect(en[2]).toEqual([3, 'Place 3', 'Place 3', 1]);
-    expect(en.map(([code]) => code)).toEqual(en.map(([code]) => code).toSorted((a, b) => a - b));
+    const rowsInFile = (code: string) =>
+      cityNamesSchema.parse(files[`${CITY_FILES_FOLDER}/${code}.json`].rows);
+    const codesOf = (code: string): number[] => rowsInFile(code).map(([place]) => place);
+    const en = rowsInFile('en');
+    // codes 3, 6, 9 ... have a Russian name in this source
+    expect(en.slice(0, 3)).toEqual([
+      [3, 'Place 3', 'Place 3'],
+      [6, 'Place 6', 'Place 6'],
+      [9, 'Place 9', 'Place 9'],
+    ]);
+    const betterKnown = Array.from({ length: CITY_LIST_MIN_PLACES }, (_, at) => at + 1).filter(
+      hasRussian
+    ).length;
+    expect(en.slice(betterKnown, betterKnown + 3)).toEqual([
+      [1, 'Place 1', 'Place 1'],
+      [2, 'Place 2', 'Place 2'],
+      [4, 'Place 4', 'Place 4'],
+    ]);
+    expect(rowsInFile('ru')[0]).toEqual([3, 'Место 3', 'Place 3']);
+    expect(rowsInFile('he')[0]).toEqual([3, 'מקום 3', 'Place 3']);
+    // all four files have the same order
+    for (const code of CODES) expect(codesOf(code)).toEqual(codesOf('en'));
   });
 });
 

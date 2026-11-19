@@ -9,7 +9,7 @@ import {
   RequireFirstRunDone,
   InstallGuidePage,
   LocationHelpPage,
-  ProfilePage,
+  MemberProfilePage,
   RequireAcceptedTerms,
 } from '@features/profile';
 import { NotFoundPage } from './not-found-page/NotFoundPage';
@@ -50,7 +50,7 @@ export function App() {
             <Route element={<RequireAcceptedTerms />}>
               <Route element={<RequireFirstRunDone />}>
                 <Route path={MEMBER_HOME_PATH} element={<HomePage />} />
-                <Route path={PROFILE_PATH} element={<ProfilePage />} />
+                <Route path={PROFILE_PATH} element={<MemberProfilePage />} />
                 <Route path={INSTALL_GUIDE_PATH} element={<InstallGuidePage />} />
                 <Route path={LOCATION_HELP_PATH} element={<LocationHelpPage />} />
                 <Route path="*" element={<NotFoundPage />} />

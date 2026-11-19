@@ -1,6 +1,6 @@
 import { CITY_FILES_PATH } from '@constants/cities';
 import { STATUS_NOT_FOUND, STATUS_OK } from '@constants/http';
-import { rowsFor } from './city-list';
+import { fixtureRows } from '@fixtures/city-fixture';
 import { LANGUAGE_CODES } from './locale-texts';
 import { jsonResponse } from './sign-in-fakes';
 
@@ -40,5 +40,5 @@ export function answerCityFile(url: string): Response | undefined {
   const fault = faults.get(code);
   if (fault === 'missing') return jsonResponse(STATUS_NOT_FOUND);
   if (fault === 'invalid') return jsonResponse(STATUS_OK, [['Haifa', 1]]);
-  return jsonResponse(STATUS_OK, rowsFor(code));
+  return jsonResponse(STATUS_OK, fixtureRows(code));
 }
