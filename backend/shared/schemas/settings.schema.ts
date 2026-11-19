@@ -8,6 +8,9 @@ export const getProfileSettings = z.object({ USERS_TABLE: setting });
 export const deleteProfileSettings = z.object({ USERS_TABLE: setting, USER_POOL_ID: setting });
 export type DeleteProfileSettings = z.infer<typeof deleteProfileSettings>;
 
+/** The monthly city list job (D-117). */
+export const updateCitiesSettings = z.object({ SITE_BUCKET: setting });
+
 export const updateProfileSettings = z.object({
   USERS_TABLE: setting,
   COUNTERS_TABLE: setting,

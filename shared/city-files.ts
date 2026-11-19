@@ -1,6 +1,6 @@
-// The pure part of the city list build (D-117): government records in, one file of rows per language
+// The pure part of the city list build, shared by the monthly job and `scripts/build-cities.ts` (D-117): government records in, one file of rows per language
 // out, and the checks a new list must pass before it replaces the one on the site. No imports, so
-// Node runs it as it is (`scripts/build-cities.ts`) and the tests import it too.
+// Node runs it as it is and the tests import it too.
 
 /** One record of the government's "Localities and countries" list (data.gov.il), the fields used. */
 export interface GovRecord {
@@ -99,7 +99,11 @@ export function checkCityFiles(
   const missing = [...currentCodes].filter((code) => !codes.includes(code));
   if (missing.length > 0) {
     throw new Error(
-      `The new list lacks ${missing.length} codes of the list on the site: ${missing.slice(0, 10).join(', ')}`
+      `The new list lacks ${missing.length} codes of the list on the site: ${missing.join(', ')}`
     );
   }
 }
+
+/** The text of one city file: a row on each line. */
+export const cityFileText = (rows: readonly CityRow[]): string =>
+  ['[', rows.map((row) => `  ${JSON.stringify(row)}`).join(',\n'), ']', ''].join('\n');

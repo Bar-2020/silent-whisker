@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vite-plus/test';
 
-import type { GovRecord } from '../scripts/city-files';
-import { buildCityFiles, checkCityFiles, titleCase } from '../scripts/city-files';
+import type { GovRecord } from '../shared/city-files';
+import { buildCityFiles, checkCityFiles, titleCase } from '../shared/city-files';
 
 /** PROF-33 and PROF-35, D-117: the city files built from the government's records, and the checks a new list must pass. */
 
