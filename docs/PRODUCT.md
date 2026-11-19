@@ -21,7 +21,7 @@ D-73). AWS: S3 + CloudFront, Lambda, DynamoDB, Cognito. Terraform, deployed from
   and custom spots when nearby or when they need food or water (D-47). Signed-out people see only a landing page,
   the privacy policy and the terms (D-39).
 - **Custom spot creator**: the member who added a custom spot. Can rename it, and ask an admin to mark it inactive (R-32).
-- **Admin**: a member with an admin flag, set by hand (D-78). Approves custom spots, bans and unbans, restricts chat,
+- **Admin**: a member with an admin flag, set by hand (D-78), shown to every member as an "Admin" badge beside the name (D-128). Approves custom spots, bans and unbans, restricts chat,
   extends cat alerts, works through reports. Buttons in the normal screens, plus one admin-only group in Profile listing what waits, nearest first (D-78, D-81).
 
 ## v1 scope
@@ -83,7 +83,7 @@ No notification permission in v1 (D-12, D-66). See D-31.
 ## Location privacy
 
 Every spot and cat alert is shown at its exact point. City stations (cities publish them) and cat alerts (helpers must find the cat) show to every member. A custom spot,
-often by a home, shows only to a member within 150 m, or while it needs food or water, or to its creator and admins (R-03, D-47). A member's own phone
+often by a home, shows only to a member within 150 m, or while its food or water is red or orange (never with no data, D-135), or to its creator and admins (R-03, D-47). A member's own phone
 location is used for that check and for the proof radius (R-09, R-16) and is not stored; only a log's distance, rounded to 10 m, is kept. A cat alert's pin and a
 "my location" spot are the phone's location at submit, kept exact; a random cat photo keeps only its neighbourhood (R-28).
 
@@ -122,8 +122,8 @@ One phase, one PR or smaller. Finish a phase before the next. Inside a phase, bu
 2. Design of every screen, approved (UI and UX design, `DESIGN.md`), then Google sign-in, the sign-up form and profile,
    the public landing and legal pages, the four-language shell, responsive shell. Sign-in is required
    (D-39), so it comes before the map. **Done** (2026-11-16; stats, the admin group and the two-column layout of Profile wait for the data of Phases 3 and 4).
-3. Map and spots (exact; custom spots per D-47), municipal stations loaded into `spots`, custom spots
-   (a separate form, admin approval, D-43), the spots list (D-82), the admin list in Profile (D-78), moderated photo upload.
+3. Map and spots (exact; custom spots per D-47): stations imported from every municipality that has a source (D-141, [SOURCES.md](SOURCES.md)), custom spots (a separate form, admin approval, D-43) with a checked photo taken at the spot (D-129),
+   search of all Israel (D-127), the spots list (D-103), spot problem reports (D-137), the admin list and badge (D-78, D-128), the four tabs with Cats and Alerts "coming soon" (D-136).
 4. Feeding and water logs (no photo), the "needs food/water"
    layer (the first-run location screen was built early, in Phase 2, at the owner's request: D-111); municipal stations become loggable (D-35). Proposed: when several members dispute one
    member's logs, an admin gets a flag and that member's next logs need a photo.

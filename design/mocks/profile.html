@@ -37,7 +37,12 @@
               <div class="identity">
                 <span class="avatar avatar--l" data-t="demo.me.initials"></span>
                 <div class="identity__text">
-                  <h2><bdi data-t="demo.fullName"></bdi></h2>
+                  <h2>
+                    <bdi data-t="demo.fullName"></bdi>
+                    <span class="tag tag--admin" data-when="admin"
+                      ><i data-icon="shield"></i><span data-t="common.admin.badge"></span
+                    ></span>
+                  </h2>
                   <p class="muted" data-t="demo.city"></p>
                 </div>
               </div>
@@ -481,8 +486,11 @@
                     <h2 class="alertrow__title" data-t="demo.spot3.name"></h2>
                     <p class="small muted" data-t="demo.spot3.address"></p>
                     <p class="small muted">
-                      <span data-t="profile.admin.addedBy" data-v='{"name":"Ron Mizrahi"}'></span> ·
-                      <span class="num" data-t="spot.ago.hours" data-v='{"n":20}'></span> ·
+                      <span data-t="profile.admin.addedBy" data-v='{"name":"Ron Mizrahi"}'></span>
+                      <span class="tag tag--admin"
+                        ><i data-icon="shield"></i><span data-t="common.admin.badge"></span
+                      ></span>
+                      · <span class="num" data-t="spot.ago.hours" data-v='{"n":20}'></span> ·
                       <span data-t="profile.admin.noPhoto"></span>
                     </p>
                   </div>

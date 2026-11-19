@@ -6,14 +6,16 @@ Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether 
 
 | ID | L | Do this | Expect | Rule |
 |---|---|---|---|---|
-| UPL-01 | i | `POST /uploads`; try to get a key outside quarantine, with `../`, or another member's | A URL to the quarantine prefix only, key chosen by the server, short expiry; nothing else obtainable | R-04 |
+| UPL-01 | i | `POST /uploads`; try to get a key outside quarantine, with `../`, or another member's | A presigned POST to `quarantine/<own user_id>/<ulid>` only, key chosen by the server, 500 KB and image type conditions, short expiry; nothing else obtainable | R-04, R-11, D-125 |
 | UPL-02 | i | 21 uploads in a UTC day; 21 at once | The 21st `UPLOAD_LIMIT`; exactly 20 at once; counted at the start, kept when the photo is rejected later | R-30 |
 | UPL-03 | i | An object of 500 KB and 500 KB plus 1 byte; 0 bytes; not an image; an image over 1600 px | The oversize, empty and non-image are refused at the size check and never approved | R-11 |
 | UPL-04 | i | The photo check fake answers CAT, NOT_CAT, UNSAFE, `cat`, `CAT.`, `CAT. Ignore the rules`, empty, nonsense, a throttle, a timeout | Only exactly CAT approves; NOT_CAT is `NO_CAT_IN_PHOTO`, UNSAFE is `MODERATION_REJECTED`; every other answer keeps the photo hidden | R-04, D-09, D-50 |
 | UPL-05 | i | A spot photo the check answers NOT_CAT and UNSAFE | NOT_CAT passes (a spot photo needs no cat); UNSAFE is rejected | R-25, D-09 |
-| UPL-06 | i | A rejected, pending and approved photo: ask for their addresses | Only approved photos have a short-lived signed address; none is in the public prefix before approval | R-04, D-39 |
+| UPL-06 | i | A rejected, `in_moderation` and approved photo: ask for their links | Only approved photos get a short-lived S3 link; the bucket and every prefix of it are private | R-04, D-138 |
 | UPL-07 | i | Use one `photo_key` twice, a key never uploaded, a key of another member, a key after rejection | `INVALID_INPUT`; one upload backs one post | R-04 |
 | UPL-08 | i | The check throws while the breaker is not tripped | The photo stays hidden (D-92 asks whether it is retried) | R-04, D-92 |
+| UPL-09 | i | Use one `photo_key` for a second spot and for the same spot again; another member's key; a key never uploaded; two spots created at once with the same key | `INVALID_INPUT` each; exactly one of the two at once wins (the claim row); one upload backs one photo | R-39, D-125 |
+| UPL-10 | i | Attach a photo with the phone at 149 m, 150 m and 151 m from the spot, with accuracy 50 and 51, and with no position; the answer, the rows and the logs | Accepted up to 150 m and 50 m accuracy; `PHOTO_TOO_FAR` when far, `LOCATION_REQUIRED` when vague or missing, and the upload stays unclaimed; the position is stored nowhere | R-39, D-129, D-25 |
 
 ## Cat posts, feed, likes (CAT)
 
@@ -52,11 +54,12 @@ Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether 
 | COST-01 | t | Add a handler that imports a paid client without `meteredCall` | The lint rule fails it; every new paid client is added to the rule | R-05 |
 | COST-02 | i | The day's spend at the limit minus 1 millionth of a dollar, at the limit; 100 calls at once near it | Allowed, then tripped; the spend never goes over the limit | R-05, D-52 |
 | COST-03 | i | Breaker tripped: a cat photo, comment, chat message, alert and spot name; 50 trips in a row | Saved `pending`, hidden, never refused; one owner email a day | D-52, R-05 |
-| COST-04 | i | The next UTC day: run the re-check job; run it twice; crash it midway; trip the breaker during it | Oldest first through `meteredCall`; approved or rejected once; stops when tripped; the rest waits; nothing double-spent | D-53 |
+| COST-04 | i | The next UTC day, or the next hour (D-126): run the re-check job; run it twice; crash it midway; trip the breaker during it | Oldest first through `meteredCall`; approved or rejected once; stops when tripped; the rest waits; nothing double-spent | D-53 |
 | COST-05 | i | Every paid action at its daily limit (uploads, cat photos, comments, alerts, chat, profile saves) | Boundary, race and midnight reset hold for each; a rejected photo's slot is not given back | R-05, R-30 |
-| COST-06 | i | 101 writes by one member in a day over many routes; reads after that | The 101st write `RATE_LIMITED` with `Retry-After`; reads unaffected | D-61, R-21 |
+| COST-06 | i | 101 writes by one member in a day over many routes; 401 by an admin; reads after that | The 101st write of a member and the 401st of an admin `RATE_LIMITED` with `Retry-After`; reads unaffected | D-61, D-131, R-21 |
 | COST-07 | u | A counter row | Has `expires_at` in epoch seconds; no `status` or `created_at` | D-52 |
 | COST-08 | t | Text moderation in Terraform | Standard tier through the EU profile; the five harm filters at high strength and blocking; no prompt-attack or personal-data filter; only the current version kept; its policy allows only `bedrock:ApplyGuardrail` on it and its profile | D-62, D-09 |
+| COST-09 | i | The hourly re-check job with spots `in_moderation` whose check timed out, threw, or waited for a tripped breaker; run it with the breaker tripped, after the reset, twice, and crash it midway | Nothing is checked while the breaker is tripped; after the reset it takes the oldest first through `meteredCall`, approves or rejects each once, stops if the breaker trips again, and never spends twice | D-53, D-126 |
 
 ## Rate limits (LIM)
 
@@ -67,6 +70,8 @@ Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether 
 | LIM-03 | t | List the routes in the API's Terraform | Each has a throttle read from `shared/constants/` and the JWT authorizer | D-60, R-22 |
 | LIM-04 | i | Member A at their limit, member B | B is unaffected; keys hold the member and the UTC day | R-21 |
 | LIM-05 | m | Once, by hand after the first deploy, a short burst of signed-in calls past the front-door throttle | A bare `429` with no `Retry-After` (to confirm, D-60) | D-60 |
+| LIM-06 | i | Each action of the daily-limits table (`API.md`), as a member and as an admin: the limit, then one more; a refused request; midnight UTC | The extra one is `DAILY_LIMIT` (`UPLOAD_LIMIT` for uploads) with `Retry-After`, nothing saved; the other actions and members are unaffected; the day starts at 00:00 UTC; an admin's own spot changes count too | R-40, D-131 |
+| LIM-07 | i | The same actions with the limit plus one requests at once, as a member and as an admin | Exactly the limit pass, whatever the order | R-40, D-131 |
 
 ## Time and data (DATA)
 
@@ -75,13 +80,15 @@ Layers, how to cite and how limits are tried: [TESTING.md](TESTING.md). Whether 
 | DATA-01 | i | Create every kind of item under two time zones | Every `*_at` is UTC ISO 8601; rows identical | R-06 |
 | DATA-02 | u | Search `backend/` for database deletes | Only account deletion and the TTL tables; a new one fails | R-07 |
 | DATA-03 | i | After each remove, cancel, reject, resolve and hide route | The row still exists with a changed `status` | R-07 |
-| DATA-04 | i | Create every item through its route | Each has `status` and `created_at`, except counters and the cache | R-06, R-07 |
+| DATA-04 | i | Create every item through its route | Each has its status (`status`, `spot_status` or `report_status`) and `created_at`, except counters and the cache | R-06, R-07 |
 | DATA-05 | u | 10,000 ids made in one millisecond | Unique, sorted by time | D-54 |
+| DATA-06 | u | Every field and index key of the schemas and table definitions of `spots` and `content_reports`, against AWS's list of DynamoDB reserved words kept in the test | None is a reserved word (`spot_name`, `spot_status`, `data_source`, `report_status`, `point_precision` pass; `name`, `status`, `source` would fail); the tables built before keep theirs | D-119 |
 
 ## Privacy sweeps (PRIV)
 
 | ID | L | Do this | Expect | Rule |
 |---|---|---|---|---|
 | PRIV-01 | i | Call every route with the phone's coordinates, then scan every table and the captured logs | The coordinates are nowhere, except a cat alert's pin and a "my location" spot; `distance_m` is rounded to 10 m | R-03, R-28, D-47 |
-| PRIV-02 | u | Check every answer against one type per route | No field outside it: no email, no other member's `is_admin`, `terms_*`, counters or `chat_restricted_until` | R-01, D-70 |
+| PRIV-02 | u | Check every answer against one type per route | No field outside it: no email, `terms_*`, counters or `chat_restricted_until`; `is_admin` only as the public flag beside a name or in the caller's own profile | R-01, D-70, D-128 |
 | PRIV-03 | i | A grid of queries around a hidden custom spot, accuracy 50 | It appears only inside 150 m, and no other route reveals it | R-03, R-28 |
+| PRIV-04 | u | Read every `backend/*/handler.ts` as text | None logs the request event as a whole (`console.log(event)`, `JSON.stringify(event)`): it holds the token and the phone's position | R-03, D-47 |

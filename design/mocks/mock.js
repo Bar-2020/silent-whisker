@@ -66,12 +66,15 @@
     });
   }
 
+  /* `soon`: until the screen is built (Cats and Alerts in Phase 3, D-136) the tab shows dimmed, with the
+     word "soon", and is not a link. ?nav=soon turns it on; the viewer lists it as its own entry. */
   const NAV = [
     { id: 'map', icon: 'map', href: 'map.html' },
-    { id: 'explore', icon: 'compass', href: 'cats.html' },
-    { id: 'alerts', icon: 'siren', href: 'alerts.html' },
+    { id: 'explore', icon: 'compass', href: 'cats.html', soon: true },
+    { id: 'alerts', icon: 'siren', href: 'alerts.html', soon: true },
     { id: 'me', icon: 'user', href: 'profile.html' },
   ];
+  const NAV_SOON = params.get('nav') === 'soon';
 
   function withLang(href) {
     return lang === DEFAULT_LANG ? href : `${href}${href.includes('?') ? '&' : '?'}lang=${lang}`;
@@ -81,11 +84,16 @@
     const host = document.querySelector('[data-nav]');
     if (!host) return;
     const current = host.dataset.nav;
-    const items = NAV.map(
-      (item) =>
-        `<a data-ui="nav__item" href="${withLang(item.href)}"${item.id === current ? ' aria-current="page"' : ''}>` +
-        `<i data-icon="${item.icon}"></i><span data-t="nav.${item.id}"></span></a>`
-    ).join('');
+    const items = NAV.map((item) => {
+      const off = item.soon && NAV_SOON;
+      const attrs = off
+        ? `aria-disabled="true" aria-label="${t(`nav.${item.id}`)}, ${t('nav.comingSoon')}"`
+        : `href="${withLang(item.href)}"${item.id === current ? ' aria-current="page"' : ''}`;
+      const pill = off
+        ? '<span data-ui="nav__soon" aria-hidden="true" data-t="nav.soon"></span>'
+        : '';
+      return `<a data-ui="nav__item" ${attrs}><i data-icon="${item.icon}"></i><span data-t="nav.${item.id}"></span>${pill}</a>`;
+    }).join('');
     host.className = 'nav on-dado';
     host.setAttribute('aria-label', t('nav.label'));
     host.innerHTML =

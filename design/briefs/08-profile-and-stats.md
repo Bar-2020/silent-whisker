@@ -15,8 +15,8 @@ switches language. An admin reaches the waiting lists from here.
   permanently in each browser, **install as an app** (a guide per browser, Q28), sign out, delete
   account (Q25). The Google photo choice lives in Edit, not here.
 - **Support**: contact (the public email, D-74), donate link, source code, privacy, terms.
-- **Admin** (shown only to admins, D-78): "waiting for approval" with a count, and "reports" (content and
-  spot problems, D-81). Both lists are sorted nearest first from the phone's location, oldest first when it is off. A
+- **Admin** (shown only to admins, D-78): "waiting for approval" with a count (spots that passed the checks, and new photos a creator sent, D-118, D-130), and "reports" (content and
+  spot problems, D-81). An admin's name carries the "Admin" badge everywhere it shows, also in the header here (D-128). Both lists are sorted nearest first from the phone's location, oldest first when it is off. A
   report card also lifts a chat restriction or a block (D-81).
 - **Edit** (name, city, photo choice): the same fields and the same errors as first run.
 

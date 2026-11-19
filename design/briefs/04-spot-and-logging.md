@@ -37,13 +37,13 @@ good the reading is), a one-line promise about who will see it, a short tip to p
 out-of-the-way place (D-68), submit, then a "waiting for an
 admin" state. Errors: address not found, location too vague, daily limit of 5, text refused.
 
-**Creator and admin**: edit (rename, active or inactive). A creator's "inactive" is a request that
+**Creator and admin**: edit (rename, active or inactive), and **add a photo** while the phone is at the spot (D-129): an admin's replaces the old one, a creator's waits for an admin (D-130). A creator's "inactive" is a request that
 needs an admin (Q40); an admin's applies at once. **Admin**: approve or reject pending (each asks for a
 confirmation), shown on the spot page. **Everyone**: "report a problem with this spot" in the menu: a dialog with four reasons (wrong place, gone, listed twice, something else), then a toast; it hides nothing and waits in the admin list (D-81). Reporting a photo hides it from the reporter at once.
 
 ## States and ranges
 Food and water each: green, orange, red, grey. Spot kinds: city station (read-only, no rename),
-custom active, custom inactive, pending, hidden-or-missing (looks the same as not found). History:
+custom active, custom inactive, waiting (checks, then admin, D-118), hidden-or-missing (looks the same as not found). History:
 0 to 30 rows. Name 1 to 60 characters, address 1 to 80.
 
 ## Interaction and layout

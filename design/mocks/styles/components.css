@@ -109,6 +109,32 @@ body[data-chrome='tabs'] .main {
   background: var(--glass-hover);
 }
 
+/* A tab whose screen is not built yet (D-136): dimmed by its own colour (so the pill stays bright), not a
+   link, and the word "soon" in a small pill on the top edge of the bar, so it is never grey alone. */
+[data-ui~='nav__item'][aria-disabled='true'] {
+  position: relative;
+  cursor: default;
+  color: rgb(238 243 250 / 0.55);
+}
+
+[data-ui~='nav__item'][aria-disabled='true']:hover {
+  background: none;
+}
+
+[data-ui~='nav__soon'] {
+  position: absolute;
+  inset-block-start: -14px;
+  inset-inline-end: 0;
+  padding-inline: var(--s-2);
+  border-radius: var(--r-pill);
+  background: var(--glass-active-ink);
+  color: var(--dado);
+  font-size: var(--fs-nav);
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
 [data-ui~='nav__item'][aria-current='page'] {
   background: var(--glass-active);
   color: var(--glass-active-ink);
@@ -326,6 +352,17 @@ body[data-chrome='tabs'] .main {
   color: var(--ink-2);
   font-size: var(--fs-s);
   font-weight: 600;
+}
+
+/* The Admin badge (D-128): the tag with the shield icon and the word, beside a name; it stays on one line. */
+.tag--admin {
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.tag--admin .icon {
+  inline-size: 1rem;
+  block-size: 1rem;
 }
 
 .tag--pending {

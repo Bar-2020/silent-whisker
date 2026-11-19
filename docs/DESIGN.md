@@ -349,6 +349,7 @@ Every component below, with its states, is drawn in `design/mocks/design-system.
   levels, kinds, "in review" and "not verified" (both grey). A count (admin lists) is a slate-mist
   chip: slate means "tap", never a state.
 - **Tag:** 8 px radius, 1 px line, quiet ink; dashed slate for "waiting for approval".
+- **Admin badge** (D-128): a tag at the inline end of an admin's name, wherever the name shows (Profile, the "added by" line of a spot, later logs, posts, comments and chat): a shield icon then the word "Admin" (translated, 14 px label type), quiet ink on a 1 px line, never a state colour. The meaning is in the icon and the word, so it holds in greyscale and forced colours; it is not a button; it mirrors in right to left; on a wrapped name it stays whole on the line where the name ends. Other members have none.
 
 ### Cards and containers
 Used sparingly: the map card and a reported-content card in the admin list (white, 1 px line, no
@@ -381,6 +382,7 @@ tile hides its mark until it is chosen, so an unchosen tile does not look like a
   / 0.12)` with a 1 px light edge, same label weight as the inactive items), inactive labels in #eef3fa, all 14 px. **Rail** (768 px up): the same pane vertical, the logo above, the
   language switch below. **Top bar:** white, a hairline below, the brand mark, then back arrow, title
   and at most two actions at the end (a plus to add, a pencil to edit, three dots for a menu).
+- **Coming soon** (D-136): while a tab's screen is not built (Cats and Alerts until Phases 5 and 6) its item keeps its place, with the icon and name dimmed, a small light pill at the item's top inline-end corner that says "soon" (so it is not grey alone), no active pill and no link (`aria-disabled`); its accessible name is "name, coming soon". Same on the rail. Shown in the mocks by `map.html?nav=soon`.
 - **Pinned action bar:** the main button of a form (and a small group such as Navigate and Show on
   map) is on a flat white bar at the bottom of the screen, always at the bottom even when the form is
   short, with no glass, line or shadow, above the safe area. The screen is as tall as the viewport, so
@@ -447,7 +449,7 @@ and "Mark inactive": for a creator it is a request that needs an admin's approva
 active meanwhile), for an admin it applies at once. **Navigate** is a small secondary button, a plain link to Google Maps
 directions to the spot (`https://www.google.com/maps/dir/?api=1&destination=lat,lng`, new tab): on a
 phone with the Google Maps app it starts navigation, otherwise it shows the route on the Google Maps
-site (D-57). No key, no SDK, nothing stored. Cat alerts get the same button.
+site (D-57). No key, no SDK, nothing stored. Cat alerts get the same button. In Phase 3 the Log, Cats, Chat and History tabs do not exist yet: the page shows the head row and the two state rows ("no data") only. The creator and admins also get **Add a photo**, only while the phone is at the spot (D-129); a creator's new photo shows "waiting for an admin" and the old one stays (D-130); a spot waiting for the checks or for an admin carries a dashed "waiting for approval" tag (D-118).
 
 ### Map card
 Opens when a pin is tapped: name and address, a 72 px photo at the inline-start (the spot's most

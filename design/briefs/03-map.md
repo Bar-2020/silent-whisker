@@ -11,7 +11,7 @@ alert is, then pick one and go. Used in glare, one-handed, often while moving.
 - **Spot markers**: one per spot, a pin whose tip is the exact point. Colour = the worse of food
   and water (red, orange, green; grey only when the spot has no data at all). The pin is colour only (D-57, Q36):
   no glyph, no badge; the card and the legend carry the words. The selected pin is larger with a dark
-  outline. Inactive spots are drawn quiet, pending spots (creator and admins only) dashed.
+  outline. Inactive spots are drawn quiet, waiting spots (`in_moderation` or `awaiting_admin`, creator and admins only, D-118) dashed.
 - **Cat alert markers**: a different silhouette (a rounded sign on a stem, plum) with a cat-and-!
   glyph and a text label ("danger" or "sick") next to it. Never shown as a spot.
 - Cat photos are never on the map.
@@ -19,7 +19,7 @@ alert is, then pick one and go. Used in glare, one-handed, often while moving.
   spot's most liked approved one, Q37; two state chips; the last log) and one button to the full
   page. The close X sits at the inline-end corner of the title row.
 - The "+" button opens a dialog: "New feeding spot" (the new spot form) and "Report a cat"
-  (the cat alert form: in danger, sick, or spay or neuter); both screens are in the mocks. A search box sits at the top (Q38), and a round button always opens a card with the spots to feed near the phone, which closes with its X, Escape or a tap on the map; on a phone it covers the whole screen above the bottom bar, search box and legend button included (D-103). The two
+  (the cat alert form: in danger, sick, or spay or neuter); both screens are in the mocks. Until cat alerts exist (Phase 6) the "+" opens the new spot form directly (D-136). A search box sits at the top (Q38), and a round button always opens a card with the spots to feed near the phone, which closes with its X, Escape or a tap on the map; on a phone it covers the whole screen above the bottom bar, search box and legend button included (D-103). The two
   action buttons sit at the right on a phone and hide while a card is open. The map credit shows in a
   corner and folds into an (i) after five seconds (Q43).
 
@@ -31,7 +31,7 @@ Markers are the loudest thing on the screen; chrome stays quiet.
 Default; list view (the spots within 2 km of the phone that need help: red with kittens seen, then red, then the rest, nearest first inside each, each row a real button, D-103); list with nothing to feed; spot selected; cat alert selected; many pins (zoom hint when the area holds more than the
 cell limit: "zoom in to see spots"); location unavailable (the "my location" control explains,
 does not nag); map tiles failing (grey ground, markers still work); empty area ("no spots here
-yet"); admin view (pending spots dashed, with approve and reject in the sheet). Ranges: 0 to about
+yet"); admin view (waiting spots dashed, with approve and reject in the sheet). Ranges: 0 to about
 60 markers in view.
 
 ## Interaction and layout
