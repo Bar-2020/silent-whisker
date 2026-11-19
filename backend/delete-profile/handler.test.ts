@@ -14,6 +14,7 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
+import { fixtureCity } from '../../shared/__tests__/city-fixture';
 import { TERMS_VERSION } from '../../shared/constants/profile';
 import { handler as getProfile } from '../get-profile/handler';
 import type { ApiEvent } from '../shared/api.types';
@@ -25,6 +26,8 @@ const dbMock = mockClient(DynamoDBDocumentClient);
 const cognitoMock = mockClient(CognitoIdentityProviderClient);
 
 const USERS = 'users';
+// The code of a place on the made-up list (D-117)
+const HAIFA_ID = fixtureCity('Haifa').id;
 const COUNTERS = 'daily_usage_counters';
 const POOL = 'eu-north-1_pool';
 const NOW = new Date('2026-11-15T12:00:00Z');
@@ -62,9 +65,7 @@ const FULL_ROW: UserRow = {
   created_at: '2026-10-01T08:00:00.000Z',
   avatar_url: 'https://lh3.googleusercontent.com/a/photo=s96-c',
   display_name: 'דנה לוי',
-  city: 'חיפה',
-  city_lat: 32.79,
-  city_lng: 34.99,
+  city_id: HAIFA_ID,
   terms_accepted_at: '2026-10-01T08:00:00.000Z',
   terms_version: TERMS_VERSION,
   chat_restricted_until: '2026-12-01T00:00:00.000Z',
@@ -190,7 +191,7 @@ function fakeDatabase(): void {
 // The settings update-profile needs; the delete itself needs only USERS_TABLE and USER_POOL_ID.
 const UPDATE_PROFILE_SETTINGS = {
   COUNTERS_TABLE: COUNTERS,
-  GEOCODE_TABLE: 'geocode_cache',
+  SITE_BUCKET: 'site-bucket',
   ALERT_TOPIC_ARN: 'arn:aws:sns:eu-north-1:123456789012:alerts-delete-test',
   GUARDRAIL_ID: 'gr-id',
   GUARDRAIL_VERSION: '1',
@@ -515,7 +516,7 @@ describe('The deleted mark (PROF-28, D-109)', () => {
 });
 
 describe('Every route refuses the token of a deleted account (PROF-14, D-59, D-71, D-109)', () => {
-  const PATCH_BODY = { display_name: 'Noa Katz', city: 'Haifa', accept_terms: true };
+  const PATCH_BODY = { display_name: 'Noa Katz', city_id: HAIFA_ID, accept_terms: true };
 
   it.each([
     ['an active member', FULL_ROW, MARKED_ACTIVE],

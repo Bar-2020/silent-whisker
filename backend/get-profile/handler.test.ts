@@ -7,6 +7,7 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
+import { fixtureCity } from '../../shared/__tests__/city-fixture';
 import { TERMS_VERSION } from '../../shared/constants/profile';
 import { handler } from './handler';
 import type { ApiEvent as ProfileEvent } from '../shared/api.types';
@@ -15,6 +16,8 @@ import type { UserRow } from '../shared/schemas/user-row.schema';
 const dbMock = mockClient(DynamoDBDocumentClient);
 
 const USERS = 'users';
+// The code of a place on the made-up list (D-117)
+const HAIFA_ID = fixtureCity('Haifa').id;
 const NOW = new Date('2026-10-28T12:00:00Z');
 const PHOTO = 'https://lh3.googleusercontent.com/a/photo=s96-c';
 
@@ -139,9 +142,10 @@ describe('GET /api/profile creates the row on the first call (D-59)', () => {
       },
     });
     expect(result.statusCode).toBe(200);
+    // D-117: the answer carries city_id (null until set), never a city text
     expect(body(result)).toEqual({
       display_name: null,
-      city: null,
+      city_id: null,
       avatar_url: null,
       show_google_photo: false,
       status: 'active',
@@ -150,7 +154,7 @@ describe('GET /api/profile creates the row on the first call (D-59)', () => {
   });
 
   it('makes one row when two first calls arrive at once, and both get that row', async () => {
-    const winner = row({ display_name: 'Dana', city: 'Haifa' });
+    const winner = row({ display_name: 'Dana', city_id: HAIFA_ID });
     dbMock.on(GetCommand, { TableName: USERS }).resolvesOnce({}).resolvesOnce({ Item: winner });
     dbMock.on(PutCommand).rejects(conditionFailed());
 
@@ -160,7 +164,7 @@ describe('GET /api/profile creates the row on the first call (D-59)', () => {
     expect(dbMock.commandCalls(UpdateCommand)).toHaveLength(0);
     const [, rereading] = dbMock.commandCalls(GetCommand, { TableName: USERS });
     expect(rereading.args[0].input.ConsistentRead).toBe(true);
-    expect(body(result)).toMatchObject({ display_name: 'Dana', city: 'Haifa' });
+    expect(body(result)).toMatchObject({ display_name: 'Dana', city_id: HAIFA_ID });
   });
 });
 
@@ -242,7 +246,7 @@ const NEWER_PHOTO = 'https://lh3.googleusercontent.com/a/newer=s96-c';
 const NAMED_MEMBER = row({
   show_google_photo: true,
   display_name: 'Dana',
-  city: 'Haifa',
+  city_id: HAIFA_ID,
   terms_version: TERMS_VERSION,
 });
 
@@ -303,7 +307,7 @@ describe('GET /api/profile when the row is deleted while the photo is updated (P
     expect(result.statusCode).toBe(200);
     expect(body(result)).toEqual({
       display_name: null,
-      city: null,
+      city_id: null,
       avatar_url: null,
       show_google_photo: false,
       status: 'active',
@@ -328,7 +332,7 @@ describe('GET /api/profile when the row is deleted while the photo is updated (P
 const BANNED_MEMBER = row({ ...NAMED_MEMBER, status: 'banned' });
 const BANNED_PROFILE = {
   display_name: 'Dana',
-  city: 'Haifa',
+  city_id: HAIFA_ID,
   avatar_url: PHOTO,
   show_google_photo: true,
   status: 'banned',
@@ -411,7 +415,7 @@ describe('GET /api/profile reads the stub a deleted banned member leaves (PROF-1
     expect(result.statusCode).toBe(200);
     expect(body(result)).toEqual({
       display_name: null,
-      city: null,
+      city_id: null,
       avatar_url: null,
       show_google_photo: false,
       status: 'banned',

@@ -14,9 +14,8 @@ export const userRowSchema = z.object({
   created_at: z.string().optional(),
   avatar_url: z.string().optional(),
   display_name: z.string().optional(),
-  city: z.string().optional(),
-  city_lat: z.number().optional(),
-  city_lng: z.number().optional(),
+  /** The code of the picked city; its position is read from the list (D-117). */
+  city_id: z.number().optional(),
   terms_accepted_at: z.string().optional(),
   terms_version: z.number().optional(),
   chat_restricted_until: z.string().optional(),
@@ -29,12 +28,6 @@ export type UserRow = z.infer<typeof userRowSchema>;
 export type UserRowUpdate = Partial<
   Pick<
     UserRow,
-    | 'display_name'
-    | 'city'
-    | 'city_lat'
-    | 'city_lng'
-    | 'show_google_photo'
-    | 'terms_accepted_at'
-    | 'terms_version'
+    'display_name' | 'city_id' | 'show_google_photo' | 'terms_accepted_at' | 'terms_version'
   >
 >;

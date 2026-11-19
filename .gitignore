@@ -26,3 +26,6 @@ coverage/
 
 # Screenshots made while choosing the look.
 design/previews/
+
+# The city files `npm run cities:local` writes for the dev server (D-117); the site gets them from S3.
+frontend/public/cities/

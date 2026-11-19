@@ -41,3 +41,7 @@ mock_resource "aws_bedrock_guardrail" {
 mock_resource "aws_sns_topic" {
   defaults = { arn = "arn:aws:sns:eu-north-1:123456789012:silent-whisker-cost-alerts" }
 }
+
+mock_resource "aws_lambda_function" {
+  defaults = { arn = "arn:aws:lambda:eu-north-1:123456789012:function:silent-whisker-mock" }
+}

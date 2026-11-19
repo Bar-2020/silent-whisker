@@ -4,6 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 
 import type { App as AppComponent } from '@app/App';
 import { ENGLISH_CODE, getLocaleText, LANGUAGE_CODES } from '@shared/test-support/locale-texts';
+import { answerCityFile } from '@shared/test-support/city-files-fake';
+import { HAIFA_ID, pickCity } from '@shared/test-support/pick-city';
 import { renderAppAtPath } from '@shared/test-support/render-app-in-memory-router';
 import { readCurrentPath } from '@shared/test-support/router-location';
 import { settleAsyncUpdates } from '@shared/test-support/settle-async-updates';
@@ -26,11 +28,11 @@ const INSTALL_PATH = '/profile/install';
 
 const settleScreen = (): Promise<void> => settleAsyncUpdates(SETTLE_ROUNDS);
 
-const MEMBER: ProfileResponse = { ...PROFILE, display_name: 'Dana Levi', city: 'Haifa' };
+const MEMBER: ProfileResponse = { ...PROFILE, display_name: 'Dana Levi', city_id: HAIFA_ID };
 const NEW_MEMBER: ProfileResponse = {
   ...MEMBER,
   display_name: null,
-  city: null,
+  city_id: null,
   terms_accepted: false,
 };
 
@@ -63,7 +65,9 @@ beforeEach(async () => {
   localStorage.clear();
   profile = MEMBER;
   fetchMock.mockReset();
-  fetchMock.mockImplementation((_url, init) => {
+  fetchMock.mockImplementation((url, init) => {
+    const cityFile = answerCityFile(url);
+    if (cityFile !== undefined) return Promise.resolve(cityFile);
     if ((init?.method ?? 'GET').toUpperCase() === 'PATCH') {
       profile = MEMBER;
       return Promise.resolve(jsonResponse(STATUS_OK, MEMBER));
@@ -358,8 +362,6 @@ describe('the install step, before and after Continue', () => {
 describe('the install step, in the first run', () => {
   const nameField = (): HTMLElement =>
     screen.getByRole('textbox', { name: text('firstrun.name.label') });
-  const cityField = (): HTMLElement =>
-    screen.getByRole('textbox', { name: text('firstrun.city.label') });
 
   // FIRST-11, FIRST-07, D-110, D-108: a member who has not accepted the terms sees the sign-up form, not the step
   it('is not shown while the terms are not accepted: the sign-up form comes first', async () => {
@@ -374,7 +376,7 @@ describe('the install step, in the first run', () => {
   it('comes after the sign-up form, and Continue then shows the page', async () => {
     await open('/profile', ENGLISH_CODE, NEW_MEMBER);
     fireEvent.change(nameField(), { target: { value: 'Dana Cohen' } });
-    fireEvent.change(cityField(), { target: { value: 'Haifa' } });
+    await pickCity('Haifa', 'Haifa');
     fireEvent.click(screen.getByRole('checkbox'));
     await pressContinue();
 

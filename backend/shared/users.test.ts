@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vite-plus/test';
+import { fixtureCity } from '../../shared/__tests__/city-fixture';
 import { parseUserRow } from './users';
+
+// The code of a place on the made-up list (D-117)
+const HAIFA_ID = fixtureCity('Haifa').id;
 
 const FULL = {
   user_id: 'user-1',
@@ -19,9 +23,7 @@ describe('parseUserRow checks a stored row instead of trusting it (DATA.md)', ()
       ...FULL,
       avatar_url: 'https://lh3.googleusercontent.com/a/p',
       display_name: 'Dana Levi',
-      city: 'Haifa',
-      city_lat: 32.79,
-      city_lng: 34.99,
+      city_id: HAIFA_ID,
       terms_accepted_at: '2026-10-01T08:00:00.000Z',
       terms_version: 1,
     };
@@ -68,6 +70,7 @@ describe('parseUserRow checks a stored row instead of trusting it (DATA.md)', ()
   });
 
   it('refuses an optional field of the wrong type', () => {
-    expect(() => parseUserRow({ ...FULL, city: 5 })).toThrow(/city/);
+    // D-117: the row keeps the city's code, a number
+    expect(() => parseUserRow({ ...FULL, city_id: 'Haifa' })).toThrow(/city_id/);
   });
 });

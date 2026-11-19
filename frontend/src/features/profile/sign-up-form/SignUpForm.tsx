@@ -36,7 +36,7 @@ export function SignUpForm({
     resolver: zodResolver(createProfileFormSchema(t, true)),
     defaultValues: {
       fullName: '',
-      cityName: '',
+      cityId: null,
       photoChoice: hasGooglePhoto ? PhotoChoice.Unanswered : PhotoChoice.Initials,
       termsAccepted: false,
     },

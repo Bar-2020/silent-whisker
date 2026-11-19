@@ -3,7 +3,9 @@ import { cleanup, fireEvent, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
 import type { App as AppComponent } from '@app/App';
+import { answerCityFile } from '@shared/test-support/city-files-fake';
 import { ENGLISH_CODE, getLocaleText } from '@shared/test-support/locale-texts';
+import { HAIFA_ID } from '@shared/test-support/pick-city';
 import { renderAppAtPath } from '@shared/test-support/render-app-in-memory-router';
 import { settleAsyncUpdates } from '@shared/test-support/settle-async-updates';
 import type { fakeUserManager as FakeUserManager } from '@shared/test-support/sign-in-fakes';
@@ -31,7 +33,7 @@ const settleScreen = (): Promise<void> => settleAsyncUpdates(SETTLE_ROUNDS);
 const MEMBER: ProfileResponse = {
   ...PROFILE,
   display_name: 'Dana Levi',
-  city: 'Haifa',
+  city_id: HAIFA_ID,
   terms_accepted: true,
 };
 
@@ -151,7 +153,9 @@ async function boot(
   if (doneSteps) localStorage.setItem(LOCATION_STEP_DONE_STORAGE_KEY, 'true');
   browser = installFixedBrowser(permission);
   fetchMock.mockReset();
-  fetchMock.mockImplementation(() => Promise.resolve(jsonResponse(STATUS_OK, MEMBER)));
+  fetchMock.mockImplementation((url) =>
+    Promise.resolve(answerCityFile(url) ?? jsonResponse(STATUS_OK, MEMBER))
+  );
   vi.stubGlobal('fetch', fetchMock);
   replace.mockReset();
   vi.stubGlobal('location', { origin: ORIGIN, href: `${ORIGIN}/`, replace });

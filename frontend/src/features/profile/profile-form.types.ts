@@ -7,7 +7,8 @@ export enum PhotoChoice {
 
 export interface ProfileFormValues {
   fullName: string;
-  cityName: string;
+  /** The code of the place picked from the list; null until one is picked (D-117). */
+  cityId: number | null;
   photoChoice: PhotoChoice;
   termsAccepted: boolean;
 }

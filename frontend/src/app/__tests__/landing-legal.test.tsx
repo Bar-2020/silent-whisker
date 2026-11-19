@@ -48,9 +48,11 @@ const CODES = LANGUAGES.map(({ code }) => code);
 const MAIL_HREF = `mailto:${CONTACT_EMAIL}`;
 const HEADINGS = 'h1, h2, h3, h4, h5, h6';
 
+/** The keys of each page's sections (`legal.<name>.s<key>.h`), in the order the page shows them. */
 const PAGES = [
-  { path: '/privacy', name: 'privacy', sections: 8 },
-  { path: '/terms', name: 'terms', sections: 7 },
+  { path: '/privacy', name: 'privacy', keys: [1, 2, 3, 4, 5, 6, 7, 8] },
+  // LAND-07, D-117: "Data sources" (key 8) stands before the last section, "Changes to the terms" (key 7)
+  { path: '/terms', name: 'terms', keys: [1, 2, 3, 4, 5, 6, 8, 7] },
 ] as const;
 
 let fetchSpy: ReturnType<typeof vi.fn>;
@@ -125,10 +127,12 @@ describe('locale files hold no literal contact address', () => {
   });
 });
 
-describe.each(CODES)('legal pages signed out, language %s', (code) => {
-  describe.each(PAGES)('$path', ({ path, name, sections }) => {
-    const ids = Array.from({ length: sections }, (_, i) => `${name}-${i + 1}`);
+/** The section headings of a legal page, in the order shown: their ids start with the page's name. */
+const sectionHeadings = (name: string): Element[] =>
+  headings().filter((h) => h.id.startsWith(`${name}-`));
 
+describe.each(CODES)('legal pages signed out, language %s', (code) => {
+  describe.each(PAGES)('$path', ({ path, name, keys }) => {
     // LAND-05, R-22, D-68
     it('shows its title and the contents label', async () => {
       await openRoute(path, code);
@@ -142,25 +146,24 @@ describe.each(CODES)('legal pages signed out, language %s', (code) => {
     });
 
     // LAND-05, R-22, D-68
-    it('has its section headings in order, with the ids of the contents links', async () => {
+    it('has its section headings in order, each with an id of its own', async () => {
       await openRoute(path, code);
-      const sectionIds = headings()
-        .map((h) => h.id)
-        .filter((id) => id.startsWith(`${name}-`));
-      expect(sectionIds).toEqual(ids);
-      ids.forEach((id, i) => {
-        const heading = document.getElementById(id);
-        expect(heading?.textContent ?? '').toContain(text(code, `legal.${name}.s${i + 1}.h`));
+      const sections = sectionHeadings(name);
+      expect(sections).toHaveLength(keys.length);
+      expect(new Set(sections.map((h) => h.id)).size).toBe(keys.length);
+      keys.forEach((key, i) => {
+        expect(sections[i].textContent).toContain(text(code, `legal.${name}.s${key}.h`));
       });
     });
 
     // LAND-05: each contents entry is a link to its section's heading
     it('has one contents link per section, in order, pointing at that heading', async () => {
       await openRoute(path, code);
+      const ids = sectionHeadings(name).map((h) => h.id);
       const toc = links().filter((a) => ids.some((id) => a.getAttribute('href') === `#${id}`));
       expect(toc.map((a) => a.getAttribute('href'))).toEqual(ids.map((id) => `#${id}`));
       toc.forEach((a, i) => {
-        expect(a.textContent).toContain(text(code, `legal.${name}.s${i + 1}.h`));
+        expect(a.textContent).toContain(text(code, `legal.${name}.s${keys[i]}.h`));
       });
     });
 
@@ -185,6 +188,86 @@ describe.each(CODES)('legal pages signed out, language %s', (code) => {
       await openRoute(path, code);
       expectFooterLinks(code);
     });
+  });
+});
+
+/** What follows a section's heading, up to the next section heading of the page. */
+function sectionText(heading: Element, name: string): string {
+  const parts: string[] = [];
+  let next = heading.nextElementSibling;
+  while (next !== null && !(next.matches(HEADINGS) && next.id.startsWith(`${name}-`))) {
+    parts.push(next.textContent);
+    next = next.nextElementSibling;
+  }
+  const found = parts.join(' ').trim();
+  if (found === '') throw new Error('there is no text after the section heading');
+  return found;
+}
+
+const DATA_SOURCES_KEY = 'legal.terms.s8.h';
+const CHANGES_KEY = 'legal.terms.s7.h';
+
+/** The heading of the Data sources section on the terms page shown in `code`. */
+function dataSourcesHeading(code: string): Element {
+  const found = sectionHeadings('terms').find((h) =>
+    h.textContent.includes(text(code, DATA_SOURCES_KEY))
+  );
+  if (found === undefined) throw new Error('the terms have no Data sources heading');
+  return found;
+}
+
+describe.each(CODES)('terms of use, the Data sources section, language %s', (code) => {
+  // LAND-07, D-117
+  it('stands before the last section, Changes to the terms, and is in the contents list', async () => {
+    await openRoute('/terms', code);
+    const sections = sectionHeadings('terms');
+    const at = sections.indexOf(dataSourcesHeading(code));
+
+    expect(sections[at + 1].textContent).toContain(text(code, CHANGES_KEY));
+    expect(at + 2).toBe(sections.length);
+    const entry = links().find((a) => a.getAttribute('href') === `#${sections[at].id}`);
+    expect(entry?.textContent).toContain(text(code, DATA_SOURCES_KEY));
+  });
+
+  // LAND-07, D-117: the host name is the same in every language
+  it('names data.gov.il as the source', async () => {
+    await openRoute('/terms', code);
+
+    expect(sectionText(dataSourcesHeading(code), 'terms')).toContain('data.gov.il');
+  });
+});
+
+describe('terms of use, the Data sources section, in words (LAND-07, D-117)', () => {
+  // LAND-07, D-117
+  it('is the section Data sources, before Changes to the terms', () => {
+    expect(text('en', DATA_SOURCES_KEY)).toBe('Data sources');
+    expect(text('en', CHANGES_KEY)).toBe('Changes to the terms');
+  });
+
+  // LAND-07, D-117
+  it('says where the city list comes from, under which licence, that the Agency does not sponsor or approve the app, and that it is given as is', async () => {
+    await openRoute('/terms', 'en');
+    const section = sectionText(dataSourcesHeading('en'), 'terms');
+
+    expect(section).toContain('data.gov.il');
+    expect(section).toContain('National Digital Agency');
+    expect(section).toMatch(/licen[cs]e/i);
+    expect(section).toMatch(/sponsor/i);
+    expect(section).toMatch(/approv/i);
+    expect(section).toMatch(/as[ -]is/i);
+  });
+
+  // LAND-07, D-117: only the address of a new spot is looked up by the server now
+  it('leaves the privacy policy with no sentence that has the city looked up by the server', async () => {
+    await openRoute('/privacy', 'en');
+    const sentences = document.body.textContent.split(/(?<=[.!?])\s+/);
+    const cityLookups = sentences.filter(
+      (sentence) =>
+        /\bcity\b/i.test(sentence) && /look(?:ed|s)?[ -]?up|search|geocod/i.test(sentence)
+    );
+
+    expect(cityLookups).toEqual([]);
+    expect(document.body.textContent).toMatch(/address/i);
   });
 });
 

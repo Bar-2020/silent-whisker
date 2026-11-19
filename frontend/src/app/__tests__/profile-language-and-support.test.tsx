@@ -15,12 +15,15 @@ import {
   getLocaleText,
   LANGUAGE_CODES,
 } from '@shared/test-support/locale-texts';
+import { answerCityFile } from '@shared/test-support/city-files-fake';
+import { HAIFA_ID } from '@shared/test-support/pick-city';
 import { RouterLocationProbe } from '@shared/test-support/RouterLocationProbe';
 import { readCurrentPath } from '@shared/test-support/router-location';
 import { settleAsyncUpdates } from '@shared/test-support/settle-async-updates';
 import type { fakeUserManager as FakeUserManager } from '@shared/test-support/sign-in-fakes';
 import { jsonResponse, makeUser, PROFILE } from '@shared/test-support/sign-in-fakes';
 import type { ProfileResponse } from '@schemas/profile.schema';
+import { CITY_FILES_PATH } from '@constants/cities';
 import { CONTACT_EMAIL, SOURCE_CODE_URL } from '@constants/contact';
 import {
   INSTALL_STEP_DONE_STORAGE_KEY,
@@ -44,7 +47,7 @@ const settleScreen = (): Promise<void> => settleAsyncUpdates(SETTLE_ROUNDS);
 const MEMBER: ProfileResponse = {
   ...PROFILE,
   display_name: 'Dana Levi',
-  city: 'Haifa',
+  city_id: HAIFA_ID,
   terms_accepted: true,
 };
 
@@ -78,7 +81,7 @@ beforeEach(async () => {
     if (locale !== undefined) {
       return Promise.resolve(jsonResponse(STATUS_OK, getLocaleMessages(locale)));
     }
-    return Promise.resolve(jsonResponse(STATUS_OK, MEMBER));
+    return Promise.resolve(answerCityFile(url) ?? jsonResponse(STATUS_OK, MEMBER));
   });
   vi.stubGlobal('fetch', fetchMock);
   replace.mockReset();
@@ -253,7 +256,9 @@ describe('the Language row of Profile', () => {
 
     const sent = requestedUrls().slice(before);
     expect(sent.filter((url) => url.includes(API_PATH_PREFIX))).toEqual([]);
-    expect(sent.filter((url) => !url.endsWith(`${LOCALES_PATH}${next.code}.json`))).toEqual([]);
+    // the locale file of the new language and, for the city line, its city file (D-117); nothing else
+    const expected = [`${LOCALES_PATH}${next.code}.json`, `${CITY_FILES_PATH}/${next.code}.json`];
+    expect(sent.filter((url) => !expected.some((end) => url.endsWith(end)))).toEqual([]);
 
     // the row now shows the new language, and the dialog marks it
     const hint = languageRow(next.code).querySelector('span[lang]');

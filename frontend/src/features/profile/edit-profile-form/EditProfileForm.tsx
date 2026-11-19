@@ -31,7 +31,7 @@ export function EditProfileForm({
     resolver: zodResolver(createProfileFormSchema(t, false)),
     defaultValues: {
       fullName: profile.display_name ?? '',
-      cityName: profile.city ?? '',
+      cityId: profile.city_id,
       photoChoice:
         hasGooglePhoto && profile.show_google_photo ? PhotoChoice.Show : PhotoChoice.Initials,
       termsAccepted: false,

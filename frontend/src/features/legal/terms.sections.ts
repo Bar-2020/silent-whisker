@@ -30,6 +30,10 @@ export const TERMS_SECTIONS: LegalSection[] = [
     blocks: [{ paragraph: 'legal.terms.s6.p' }],
   },
   {
+    heading: 'legal.terms.s8.h',
+    blocks: [{ paragraph: 'legal.terms.s8.p' }],
+  },
+  {
     heading: 'legal.terms.s7.h',
     blocks: [{ paragraph: 'legal.terms.s7.p' }],
   },

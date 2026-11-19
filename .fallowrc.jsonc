@@ -12,6 +12,7 @@
     // One folder per handler (backend/README.md); Terraform, not an import, points at the file.
     "backend/*/handler.ts",
     "scripts/*.mjs",
+    "scripts/*.ts",
     "design/mocks/styles/*.css",
   ],
   "ignorePatterns": ["design/**/*.js", "design/**/*.mjs"],

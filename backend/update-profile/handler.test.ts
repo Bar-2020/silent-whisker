@@ -1,39 +1,60 @@
 import { ApplyGuardrailCommand, BedrockRuntimeClient } from '@aws-sdk/client-bedrock-runtime';
 import { ConditionalCheckFailedException } from '@aws-sdk/client-dynamodb';
+import { GetObjectCommand, NoSuchKey, S3Client } from '@aws-sdk/client-s3';
+import type { GetObjectCommandOutput } from '@aws-sdk/client-s3';
 import { SNSClient } from '@aws-sdk/client-sns';
 import { DynamoDBDocumentClient, GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
+import { fixtureCity, fixtureRows } from '../../shared/__tests__/city-fixture';
+import { CITY_FILES_FOLDER } from '../../shared/constants/cities';
 import { BREAKER_DAILY_MICRO_USD, TEXT_CHECK_COST_MICRO_USD } from '../../shared/constants/cost';
 import { WRITES_PER_DAY } from '../../shared/constants/limits';
 import {
   PROFILE_NAME_BLOCKED_WORDS,
+  PROFILE_NAME_MAX_LENGTH,
   PROFILE_NAME_MIN_LENGTH,
   PROFILE_SAVES_PER_DAY,
-  PROFILE_TEXT_MAX_LENGTH,
-  PROFILE_TEXT_MIN_LENGTH,
   TERMS_VERSION,
 } from '../../shared/constants/profile';
 import type { ApiEvent } from '../shared/api.types';
-import { GeocoderUnavailable, lookupPlace } from '../shared/geocode';
 import type { UserRow } from '../shared/schemas/user-row.schema';
-import { handler } from './handler';
-
-vi.mock('../shared/geocode', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../shared/geocode')>()),
-  lookupPlace: vi.fn(),
-}));
+import type { handler as handlerOfModule } from './handler';
 
 const dbMock = mockClient(DynamoDBDocumentClient);
 const bedrockMock = mockClient(BedrockRuntimeClient);
 const snsMock = mockClient(SNSClient);
-const lookup = vi.mocked(lookupPlace);
+const s3Mock = mockClient(S3Client);
 
 const USERS = 'users';
 const COUNTERS = 'daily_usage_counters';
+const SITE_BUCKET = 'site-bucket';
 const NOW = new Date('2026-10-30T12:00:00Z');
 const DAY = '2026-10-30';
-const HAIFA = { lat: 32.79, lng: 34.99, place: 'Haifa, Israel' };
+
+// The made-up list in S3 (D-117): the codes of `cities/en.json` of the site's bucket
+const HAIFA_ID = fixtureCity('Haifa').id;
+const JERUSALEM_ID = fixtureCity('Jerusalem').id;
+const LISTED_IDS = new Set(fixtureRows('en').map(([id]) => id));
+const ID_NOT_ON_THE_LIST = Math.max(...LISTED_IDS) + 1;
+const CITY_FILE_KEY = `${CITY_FILES_FOLDER}/en.json`;
+
+/** The function is loaded afresh for each test. */
+let handler: typeof handlerOfModule;
+
+/** The body of a `GetObject` answer: the SDK's stream, of which the code reads the text. */
+const bodyOfFile = (text: string): GetObjectCommandOutput['Body'] =>
+  ({ transformToString: () => Promise.resolve(text) }) as unknown as GetObjectCommandOutput['Body'];
+
+/** The list in S3 as the upload makes it: rows of [code, name, English name]. */
+const fileOfList = (rows: unknown = fixtureRows('en')): string => JSON.stringify(rows);
+
+function listInS3(text: string = fileOfList()): void {
+  s3Mock.reset();
+  s3Mock.on(GetObjectCommand).resolves({ Body: bodyOfFile(text) });
+}
+
+const listReads = () => s3Mock.commandCalls(GetObjectCommand);
 
 const conditionFailed = () =>
   new ConditionalCheckFailedException({ message: 'The conditional request failed', $metadata: {} });
@@ -55,15 +76,13 @@ const row = (extra: Partial<UserRow> = {}): UserRow => ({
   waters: 0,
   created_at: '2026-10-01T08:00:00.000Z',
   display_name: 'Dana Levi',
-  city: 'Haifa',
-  city_lat: HAIFA.lat,
-  city_lng: HAIFA.lng,
+  city_id: HAIFA_ID,
   terms_version: TERMS_VERSION,
   terms_accepted_at: '2026-10-01T08:00:00.000Z',
   ...extra,
 });
 
-const FIRST_SAVE = { display_name: 'Dana Levi', city: 'Haifa', accept_terms: true };
+const FIRST_SAVE = { display_name: 'Dana Levi', city_id: HAIFA_ID, accept_terms: true };
 
 interface CounterInput {
   Key: { key: string };
@@ -113,19 +132,35 @@ const userWrites = () =>
   dbMock.commandCalls(UpdateCommand).filter((call) => call.args[0].input.TableName === USERS);
 
 let topicCount = 0;
+const fetchSpy = vi.fn();
 
-beforeEach(() => {
+/** D-117: the route calls no geocoder: no request leaves for one and no `geocode_cache` row is read or written. */
+const noOutsideLookup = () => {
+  expect(fetchSpy).not.toHaveBeenCalled();
+  // the city list is read from the site's bucket only, never anything else of it
+  for (const read of listReads()) {
+    expect(read.args[0].input).toEqual({ Bucket: SITE_BUCKET, Key: CITY_FILE_KEY });
+  }
+  const tables = dbMock.calls().map((call) => JSON.stringify(call.args[0].input));
+  expect(tables.some((input) => input.includes('geocode'))).toBe(false);
+};
+
+beforeEach(async () => {
+  vi.resetModules();
+  ({ handler } = await import('./handler'));
   counters.clear();
   dbMock.reset();
   bedrockMock.reset();
   snsMock.reset();
-  lookup.mockReset().mockResolvedValue(HAIFA);
+  listInS3();
+  fetchSpy.mockReset();
+  vi.stubGlobal('fetch', fetchSpy);
   vi.useFakeTimers({ toFake: ['Date'] });
   vi.setSystemTime(NOW);
   topicCount += 1;
   process.env.USERS_TABLE = USERS;
   process.env.COUNTERS_TABLE = COUNTERS;
-  process.env.GEOCODE_TABLE = 'geocode_cache';
+  process.env.SITE_BUCKET = SITE_BUCKET;
   process.env.ALERT_TOPIC_ARN = `arn:aws:sns:eu-north-1:123456789012:alerts-${String(topicCount)}`;
   process.env.GUARDRAIL_ID = 'gr-id';
   process.env.GUARDRAIL_VERSION = '1';
@@ -136,6 +171,7 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.useRealTimers();
+  vi.unstubAllGlobals();
 });
 
 const bodyOf = (result: { body: string }): unknown => JSON.parse(result.body);
@@ -211,7 +247,7 @@ describe('PATCH /api/profile reads the caller first, in this order (PROF-14, R-0
     expect(bodyOf(result)).toEqual({ code: 'UNAUTHORIZED' });
     expect(dbMock.calls()).toHaveLength(1);
     expect(counters.size).toBe(0);
-    expect(lookup).not.toHaveBeenCalled();
+    noOutsideLookup();
     expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
   });
 
@@ -289,25 +325,22 @@ const spell = (pair: string, length: number): string => pair.repeat(length).slic
 describe('PATCH /api/profile reads its input strictly (PROF-05, D-61, D-92, D-116)', () => {
   it.each([
     ['a name of 1 character', { display_name: 'ד' }],
-    // PROF-05, D-116: one under the name's minimum of 3 (the city's is still 2)
+    // PROF-05, D-116: one under the name's minimum
     ['a name of one under the minimum', { display_name: spell('דנ', PROFILE_NAME_MIN_LENGTH - 1) }],
-    ['a name of 36 characters', { display_name: spell('אב', PROFILE_TEXT_MAX_LENGTH + 1) }],
-    ['a name of 36 Latin letters', { display_name: spell('da', PROFILE_TEXT_MAX_LENGTH + 1) }],
-    ['a name of 35 emoji', { display_name: '🐱'.repeat(PROFILE_TEXT_MAX_LENGTH) }],
+    ['a name of 36 characters', { display_name: spell('אב', PROFILE_NAME_MAX_LENGTH + 1) }],
+    ['a name of 36 Latin letters', { display_name: spell('da', PROFILE_NAME_MAX_LENGTH + 1) }],
+    ['a name of 35 emoji', { display_name: '🐱'.repeat(PROFILE_NAME_MAX_LENGTH) }],
     [
       'a name that is an emoji family joined by invisible joiners',
       { display_name: '\u{1F468}‍\u{1F469}‍\u{1F467}' },
     ],
     ['a name of only spaces', { display_name: '    ' }],
-    ['a city of 1 character', { city: 'x' }],
-    ['a city of 36 characters', { city: 'x'.repeat(36) }],
     ['a name that is not text', { display_name: 7 }],
     ['show_google_photo that is not true or false', { show_google_photo: 'yes' }],
     ['a name of only zero-width spaces', { display_name: '​​​' }],
     ['a name with a control character', { display_name: 'Dana\u0007Levi' }],
     ['a name with a line break', { display_name: 'Dana\nLevi' }],
     ['a name with a text-direction override', { display_name: 'Dana‮Ivel' }],
-    ['a city with a text-direction isolate', { city: 'Hai⁧fa' }],
   ])('refuses %s, with nothing spent or saved', async (_name, extra) => {
     const result = await handler(patch({ ...FIRST_SAVE, ...extra }));
 
@@ -325,8 +358,8 @@ describe('PATCH /api/profile reads its input strictly (PROF-05, D-61, D-92, D-11
 
   it.each([
     ['the minimum of Hebrew letters', spell('דנ', PROFILE_NAME_MIN_LENGTH)],
-    ['35 Hebrew letters (70 bytes)', spell('אב', PROFILE_TEXT_MAX_LENGTH)],
-    ['35 Arabic letters', spell('عس', PROFILE_TEXT_MAX_LENGTH)],
+    ['35 Hebrew letters (70 bytes)', spell('אב', PROFILE_NAME_MAX_LENGTH)],
+    ['35 Arabic letters', spell('عس', PROFILE_NAME_MAX_LENGTH)],
     ['Russian', 'Иван Петров'],
     ['a Persian name with a half-space', 'می‌خواهم'],
     ['Hebrew with a right-to-left mark', 'דנה‏ לוי'],
@@ -357,13 +390,22 @@ describe('PATCH /api/profile reads its input strictly (PROF-05, D-61, D-92, D-11
       status: 'active',
       avatar_url: 'https://evil.example.com/x',
       cats_helped: 999,
+      // D-117: the old text fields of the city are unknown fields now, ignored like any other
+      city: 'Atlantis',
+      city_lat: 1,
+      city_lng: 2,
     };
 
-    await handler(patch(hostile));
+    const result = await handler(patch(hostile));
 
+    expect(result.statusCode).toBe(200);
     const [write] = userWrites();
     expect(write.args[0].input.Key).toEqual({ user_id: 'user-1' });
     const written = Object.values(write.args[0].input.ExpressionAttributeNames ?? {});
+    expect(written).not.toContain('city');
+    expect(written).not.toContain('city_lat');
+    expect(written).not.toContain('city_lng');
+    expect(bodyOf(result)).not.toHaveProperty('city');
     expect(written).not.toContain('is_admin');
     expect(written).not.toContain('avatar_url');
     expect(written).not.toContain('cats_helped');
@@ -385,26 +427,15 @@ const FILLERS_AROUND_A_LETTER = `${HANGUL_FILLER}Da${HANGUL_FILLER}na${HANGUL_FI
 const EMOJI_WITH_VARIATION_SELECTOR = '\u{2764}\u{FE0F}';
 const TWO_BRAILLE_LETTERS = '\u{2801}\u{2803}';
 
-/** Real in a name and in a city alike. */
 const REAL_TEXTS: [string, string][] = [
   ['Hebrew with points (niqqud)', 'ש\u{5B8}\u{5C1}לו\u{5B9}ם'],
   ['Arabic with a zero-width non-joiner', 'عبد\u{200C}الله'],
   ['Russian', 'Анна Иванова'],
-];
-
-type Row = [string, string][];
-const CITY_ONLY_SAVED: Row = [
-  ['a letter with fillers around it', FILLERS_AROUND_A_LETTER],
-  ['an emoji with a variation selector', EMOJI_WITH_VARIATION_SELECTOR],
-  ['two braille letters', TWO_BRAILLE_LETTERS],
-];
-const NAME_ONLY_SAVED: Row = [
   ['Persian with a half-space', 'می\u{200C}خواهم'],
   ['Hebrew with a right-to-left mark', 'דנה\u{200F} לוי'],
 ];
-const CITY_ONLY_REFUSED: Row = [
-  ['braille blanks and a space', `${BRAILLE_BLANK} ${BRAILLE_BLANK}`],
-];
+
+type Row = [string, string][];
 const NAME_ONLY_REFUSED: Row = [
   ['a letter with fillers around it', FILLERS_AROUND_A_LETTER],
   ['an emoji with a variation selector', EMOJI_WITH_VARIATION_SELECTOR],
@@ -415,69 +446,60 @@ const NAME_ONLY_REFUSED: Row = [
   ['a Hangul filler between two words', `Dana${HALFWIDTH_HANGUL_FILLER}Levi`],
 ];
 
-describe.each([
-  ['display_name', NAME_ONLY_SAVED, NAME_ONLY_REFUSED],
-  ['city', CITY_ONLY_SAVED, CITY_ONLY_REFUSED],
-])(
-  'PATCH /api/profile and a %s that draws nothing (PROF-19, D-61, D-92, D-116)',
-  (field, extraSaved, extraRefused) => {
-    const refusedWithNothingSpent = async (value: string) => {
-      const result = await handler(patch({ ...FIRST_SAVE, [field]: value }));
+// PROF-19 concerns the name only: the city has no text rules any more (D-117)
+describe('PATCH /api/profile and a name that draws nothing (PROF-19, D-61, D-92, D-116, D-117)', () => {
+  const refusedWithNothingSpent = async (value: string) => {
+    const result = await handler(patch({ ...FIRST_SAVE, display_name: value }));
 
-      expect(result.statusCode).toBe(400);
-      expect(bodyOf(result)).toEqual({ code: 'INVALID_INPUT' });
-      expect(counters.size).toBe(0);
-      expect(dbMock.commandCalls(UpdateCommand)).toHaveLength(0);
-      expect(userWrites()).toHaveLength(0);
-      expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
-      expect(lookup).not.toHaveBeenCalled();
-    };
+    expect(result.statusCode).toBe(400);
+    expect(bodyOf(result)).toEqual({ code: 'INVALID_INPUT' });
+    expect(counters.size).toBe(0);
+    expect(dbMock.commandCalls(UpdateCommand)).toHaveLength(0);
+    expect(userWrites()).toHaveLength(0);
+    expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
+    noOutsideLookup();
+  };
 
-    const savedAsTyped = async (value: string) => {
-      const result = await handler(patch({ [field]: value }));
+  const savedAsTyped = async (value: string) => {
+    const result = await handler(patch({ display_name: value }));
 
-      expect(result.statusCode).toBe(200);
-      expect(userWrites()[0].args[0].input.ExpressionAttributeValues).toMatchObject({
-        [`:${field}`]: value,
-      });
-      expect(bodyOf(result)).toMatchObject({ [field]: value });
-      expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(1);
-    };
+    expect(result.statusCode).toBe(200);
+    expect(userWrites()[0].args[0].input.ExpressionAttributeValues).toMatchObject({
+      ':display_name': value,
+    });
+    expect(bodyOf(result)).toMatchObject({ display_name: value });
+    expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(1);
+  };
 
-    it.each([
-      ['Hangul fillers', HANGUL_FILLER.repeat(PROFILE_TEXT_MIN_LENGTH)],
-      ['braille blanks', BRAILLE_BLANK.repeat(PROFILE_TEXT_MIN_LENGTH)],
-      ['variation selectors', VARIATION_SELECTOR.repeat(PROFILE_TEXT_MIN_LENGTH)],
-      ['zero-width spaces', ZERO_WIDTH_SPACE.repeat(PROFILE_TEXT_MIN_LENGTH)],
-      ['all five invisible characters together', MIXED_INVISIBLE],
-    ])('refuses only %s: INVALID_INPUT, nothing saved, no paid check', async (_name, value) => {
-      // PROF-19, D-61, D-92
+  it.each([
+    ['Hangul fillers', HANGUL_FILLER.repeat(PROFILE_NAME_MIN_LENGTH)],
+    ['braille blanks', BRAILLE_BLANK.repeat(PROFILE_NAME_MIN_LENGTH)],
+    ['variation selectors', VARIATION_SELECTOR.repeat(PROFILE_NAME_MIN_LENGTH)],
+    ['zero-width spaces', ZERO_WIDTH_SPACE.repeat(PROFILE_NAME_MIN_LENGTH)],
+    ['all five invisible characters together', MIXED_INVISIBLE],
+  ])('refuses only %s: INVALID_INPUT, nothing saved, no paid check', async (_name, value) => {
+    // PROF-19, D-61, D-92
+    await refusedWithNothingSpent(value);
+  });
+
+  it.each(NAME_ONLY_REFUSED)(
+    'refuses %s: INVALID_INPUT, nothing saved, no paid check',
+    async (_name, value) => {
+      // PROF-19, D-61, D-92, D-116
       await refusedWithNothingSpent(value);
-    });
+    }
+  );
 
-    // What differs: the city keeps its old rule (D-92), the full name does not (D-116)
-    it.each(extraRefused)(
-      'refuses %s: INVALID_INPUT, nothing saved, no paid check',
-      async (_name, value) => {
-        // PROF-19, D-61, D-92, D-116
-        await refusedWithNothingSpent(value);
-      }
-    );
+  it.each(REAL_TEXTS)('saves a real name as typed: %s', async (_name, value) => {
+    // PROF-19, D-61, D-92, D-116
+    await savedAsTyped(value);
+  });
 
-    it.each([...extraSaved, ...REAL_TEXTS])(
-      'saves a real text as typed: %s',
-      async (_name, value) => {
-        // PROF-19, D-61, D-92, D-116
-        await savedAsTyped(value);
-      }
-    );
-
-    it('counts a filler as a character: the longest text plus a filler is too long', async () => {
-      // PROF-19, D-61, D-92
-      await refusedWithNothingSpent(`${spell('da', PROFILE_TEXT_MAX_LENGTH)}${HANGUL_FILLER}`);
-    });
-  }
-);
+  it('counts a filler as a character: the longest text plus a filler is too long', async () => {
+    // PROF-19, D-61, D-92
+    await refusedWithNothingSpent(`${spell('da', PROFILE_NAME_MAX_LENGTH)}${HANGUL_FILLER}`);
+  });
+});
 
 describe('PATCH /api/profile and the full name that does not look like a name (PROF-32, D-116, R-01)', () => {
   const refused = async (display_name: string) => {
@@ -488,7 +510,7 @@ describe('PATCH /api/profile and the full name that does not look like a name (P
     expect(counters.size).toBe(0);
     expect(userWrites()).toHaveLength(0);
     expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
-    expect(lookup).not.toHaveBeenCalled();
+    noOutsideLookup();
   };
 
   const saved = async (display_name: string, stored: string) => {
@@ -576,19 +598,270 @@ describe('PATCH /api/profile and the full name that does not look like a name (P
   });
 });
 
+describe('PATCH /api/profile and the city list (PROF-09, D-117)', () => {
+  const NEW_MEMBER = row({
+    display_name: undefined,
+    city_id: undefined,
+    terms_version: undefined,
+    terms_accepted_at: undefined,
+  });
+
+  it('knows the places the tests rely on', () => {
+    expect(LISTED_IDS.has(HAIFA_ID)).toBe(true);
+    expect(LISTED_IDS.has(JERUSALEM_ID)).toBe(true);
+    expect(LISTED_IDS.has(ID_NOT_ON_THE_LIST)).toBe(false);
+  });
+
+  it('reads the list from cities/en.json of the site bucket, once for a save with a city_id', async () => {
+    await handler(patch({ city_id: JERUSALEM_ID }));
+
+    expect(listReads()).toHaveLength(1);
+    expect(listReads()[0].args[0].input).toEqual({ Bucket: SITE_BUCKET, Key: CITY_FILE_KEY });
+  });
+
+  it('does not read the list at all for a save without a city_id', async () => {
+    await handler(patch({ display_name: 'Dana Cohen' }));
+    await handler(patch({ show_google_photo: true }));
+
+    expect(listReads()).toHaveLength(0);
+  });
+
+  it('saves a code that is on the list as city_id and nothing else about the city, with no outside lookup', async () => {
+    const result = await handler(patch({ city_id: JERUSALEM_ID }));
+
+    expect(result.statusCode).toBe(200);
+    const [write] = userWrites();
+    expect(write.args[0].input.ExpressionAttributeValues).toMatchObject({
+      ':city_id': JERUSALEM_ID,
+    });
+    const written = Object.values(write.args[0].input.ExpressionAttributeNames ?? {});
+    expect(written).toContain('city_id');
+    expect(written).not.toContain('city');
+    expect(written).not.toContain('city_lat');
+    expect(written).not.toContain('city_lng');
+    const body = bodyOf(result);
+    expect(body).toMatchObject({ city_id: JERUSALEM_ID });
+    expect(body).not.toHaveProperty('city');
+    noOutsideLookup();
+  });
+
+  it('saves a first save with a name, a listed code and the terms', async () => {
+    fakeUsers(NEW_MEMBER);
+
+    const result = await handler(patch(FIRST_SAVE));
+
+    expect(result.statusCode).toBe(200);
+    expect(bodyOf(result)).toMatchObject({
+      display_name: 'Dana Levi',
+      city_id: HAIFA_ID,
+      terms_accepted: true,
+    });
+    noOutsideLookup();
+  });
+
+  it.each([
+    ['999999', 999999],
+    ['0', 0],
+    ['-1', -1],
+    ['1.5', 1.5],
+    ['the text "5000"', '5000'],
+    ['null', null],
+    ['a list holding a good code', [HAIFA_ID]],
+    ['true', true],
+    ['an object', { id: HAIFA_ID }],
+    ['a code one above the last on the list', ID_NOT_ON_THE_LIST],
+  ])('refuses a city_id of %s with nothing spent, checked or saved', async (_name, city_id) => {
+    // The name is a good one, so a paid check would run if the city were let through
+    const result = await handler(patch({ ...FIRST_SAVE, city_id }));
+
+    expect(result.statusCode).toBe(400);
+    expect(bodyOf(result)).toEqual({ code: 'INVALID_INPUT' });
+    // No write unit, no save allowance, no check: no counter is touched at all
+    expect(counters.size).toBe(0);
+    expect(userWrites()).toHaveLength(0);
+    expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
+    noOutsideLookup();
+  });
+
+  it('refuses a code that is not on the list also when it is the only change', async () => {
+    const result = await handler(patch({ city_id: 999999 }));
+
+    expect(result.statusCode).toBe(400);
+    expect(bodyOf(result)).toEqual({ code: 'INVALID_INPUT' });
+    expect(counters.size).toBe(0);
+    expect(userWrites()).toHaveLength(0);
+  });
+
+  it('refuses a first save with a name and no city_id, and saves and spends nothing', async () => {
+    fakeUsers(NEW_MEMBER);
+
+    const result = await handler(patch({ display_name: 'Dana Levi', accept_terms: true }));
+
+    expect(result.statusCode).toBe(400);
+    expect(bodyOf(result)).toEqual({ code: 'INVALID_INPUT' });
+    expect(counters.size).toBe(0);
+    expect(userWrites()).toHaveLength(0);
+    expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
+  });
+
+  it('ignores a text city in the body, like any unknown field: no CITY_NOT_FOUND, nothing stored', async () => {
+    const result = await handler(patch({ display_name: 'Noa Katz', city: 'Atlantis' }));
+
+    expect(result.statusCode).toBe(200);
+    const written = Object.values(userWrites()[0].args[0].input.ExpressionAttributeNames ?? {});
+    expect(written).not.toContain('city');
+    expect(bodyOf(result)).not.toHaveProperty('city');
+    noOutsideLookup();
+  });
+});
+
+describe('PATCH /api/profile and the list in S3, read at every save and not readable (PROF-36, D-117)', () => {
+  const save = (city_id = JERUSALEM_ID) => handler(patch({ city_id }));
+
+  const expectUnavailable = (result: { statusCode: number; body: string }): void => {
+    expect(result.statusCode).toBe(503);
+    expect(bodyOf(result)).toEqual({ code: 'CHECK_UNAVAILABLE' });
+    expect(userWrites()).toHaveLength(0);
+    // nothing spent: no write unit, no save allowance, no check
+    expect(counters.size).toBe(0);
+    expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
+  };
+
+  beforeEach(() => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+  });
+
+  it('reads the list at every save that carries a city_id: two saves in a row read twice', async () => {
+    expect((await save()).statusCode).toBe(200);
+    expect((await save(HAIFA_ID)).statusCode).toBe(200);
+
+    expect(listReads()).toHaveLength(2);
+    for (const read of listReads()) {
+      expect(read.args[0].input).toEqual({ Bucket: SITE_BUCKET, Key: CITY_FILE_KEY });
+    }
+  });
+
+  it('refuses at the second save a code taken off the list between two saves', async () => {
+    expect((await save(HAIFA_ID)).statusCode).toBe(200);
+    listInS3(fileOfList(fixtureRows('en').filter(([id]) => id !== HAIFA_ID)));
+
+    const result = await save(HAIFA_ID);
+
+    expect(result.statusCode).toBe(400);
+    expect(bodyOf(result)).toEqual({ code: 'INVALID_INPUT' });
+    expect(listReads()).toHaveLength(1);
+  });
+
+  it('accepts at the second save a code put on the list between two saves', async () => {
+    listInS3(fileOfList(fixtureRows('en').filter(([id]) => id !== HAIFA_ID)));
+    expect((await save(HAIFA_ID)).statusCode).toBe(400);
+
+    listInS3();
+
+    expect((await save(HAIFA_ID)).statusCode).toBe(200);
+  });
+
+  it.each([
+    [
+      'a missing file',
+      () =>
+        s3Mock.on(GetObjectCommand).rejects(new NoSuchKey({ message: 'no key', $metadata: {} })),
+    ],
+    ['an S3 error', () => s3Mock.on(GetObjectCommand).rejects(new Error('S3 is down'))],
+    [
+      'a file that is not JSON',
+      () => {
+        listInS3('not json');
+      },
+    ],
+    [
+      'a file that is not rows',
+      () => {
+        listInS3(fileOfList({ a: 1 }));
+      },
+    ],
+    [
+      'rows of the wrong shape',
+      () => {
+        listInS3(fileOfList([['Haifa', 1]]));
+      },
+    ],
+    [
+      'rows with a fourth item (a row is three items)',
+      () => {
+        listInS3(fileOfList(fixtureRows('en').map((row) => [...row, 0])));
+      },
+    ],
+    [
+      'an empty body',
+      () => {
+        listInS3('');
+      },
+    ],
+  ])('answers 503 CHECK_UNAVAILABLE and spends nothing for %s', async (_name, arrange) => {
+    s3Mock.reset();
+    arrange();
+
+    expectUnavailable(await save());
+  });
+
+  it('does not remember a failure: the next save works once the file is there', async () => {
+    s3Mock.reset();
+    s3Mock.on(GetObjectCommand).rejects(new Error('S3 is down'));
+    expectUnavailable(await save());
+    expectUnavailable(await save());
+    expect(listReads()).toHaveLength(2);
+
+    listInS3();
+    const result = await save();
+
+    expect(result.statusCode).toBe(200);
+    expect(bodyOf(result)).toMatchObject({ city_id: JERUSALEM_ID });
+    expect(listReads()).toHaveLength(1);
+  });
+
+  it('does not remember an invalid file either', async () => {
+    listInS3('not json');
+    expectUnavailable(await save());
+
+    listInS3();
+
+    expect((await save()).statusCode).toBe(200);
+  });
+
+  it('is not needed by a save that has no city_id: it works with the list unreadable', async () => {
+    s3Mock.reset();
+    s3Mock.on(GetObjectCommand).rejects(new Error('S3 is down'));
+
+    const result = await handler(patch({ display_name: 'Dana Cohen' }));
+
+    expect(result.statusCode).toBe(200);
+    expect(listReads()).toHaveLength(0);
+  });
+
+  it('refuses a code that is not on the list with INVALID_INPUT, not 503, when the list is readable', async () => {
+    const result = await save(ID_NOT_ON_THE_LIST);
+
+    expect(result.statusCode).toBe(400);
+    expect(bodyOf(result)).toEqual({ code: 'INVALID_INPUT' });
+    expect(counters.size).toBe(0);
+  });
+});
+
 describe('PATCH /api/profile and the terms (PROF-11, D-69, R-36)', () => {
   const NEW_MEMBER = row({
     display_name: undefined,
-    city: undefined,
-    city_lat: undefined,
-    city_lng: undefined,
+    city_id: undefined,
     terms_version: undefined,
     terms_accepted_at: undefined,
   });
 
   it.each([
-    ['without accept_terms', { display_name: 'Dana Levi', city: 'Haifa' }],
-    ['with accept_terms false', { display_name: 'Dana Levi', city: 'Haifa', accept_terms: false }],
+    ['without accept_terms', { display_name: 'Dana Levi', city_id: HAIFA_ID }],
+    [
+      'with accept_terms false',
+      { display_name: 'Dana Levi', city_id: HAIFA_ID, accept_terms: false },
+    ],
   ])('refuses a first save %s', async (_name, body) => {
     fakeUsers(NEW_MEMBER);
 
@@ -620,13 +893,22 @@ describe('PATCH /api/profile and the terms (PROF-11, D-69, R-36)', () => {
     expect(result.statusCode).toBe(400);
   });
 
-  it('needs both name and city on the first save', async () => {
-    fakeUsers(NEW_MEMBER);
+  it.each([
+    ['a name and no city_id', { display_name: 'Dana Levi', accept_terms: true }],
+    ['a city_id and no name', { city_id: HAIFA_ID, accept_terms: true }],
+  ])(
+    'needs both name and city on the first save: %s is refused (PROF-09, D-117)',
+    async (_name, body) => {
+      fakeUsers(NEW_MEMBER);
 
-    const result = await handler(patch({ display_name: 'Dana Levi', accept_terms: true }));
+      const result = await handler(patch(body));
 
-    expect(result.statusCode).toBe(400);
-  });
+      expect(result.statusCode).toBe(400);
+      expect(bodyOf(result)).toEqual({ code: 'INVALID_INPUT' });
+      expect(userWrites()).toHaveLength(0);
+      expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
+    }
+  );
 
   it('does not stamp the terms again for a member who accepted them', async () => {
     await handler(patch({ show_google_photo: true, accept_terms: true }));
@@ -636,49 +918,90 @@ describe('PATCH /api/profile and the terms (PROF-11, D-69, R-36)', () => {
   });
 });
 
-describe('PATCH /api/profile runs one paid check for name and city (PROF-10, D-62, R-05)', () => {
-  it('takes the allowance, looks the city up, checks both texts once, then saves', async () => {
-    fakeUsers(row({ display_name: undefined, city: undefined, city_lat: undefined }));
+describe('PATCH /api/profile runs one paid check, for the name only (PROF-10, D-62, D-117, R-05)', () => {
+  it('takes the allowance, checks the name once, then saves the name and the city code', async () => {
+    fakeUsers(row({ display_name: undefined, city_id: undefined }));
 
     const result = await handler(patch(FIRST_SAVE));
 
     expect(result.statusCode).toBe(200);
     expect(result.headers['cache-control']).toBe('no-store');
     expect(countOf('profile_save#user-1')).toBe(1);
-    expect(lookup).toHaveBeenCalledExactlyOnceWith(expect.anything(), 'Haifa');
     const checks = bedrockMock.commandCalls(ApplyGuardrailCommand);
     expect(checks).toHaveLength(1);
     expect(checks[0].args[0].input).toMatchObject({
       guardrailIdentifier: 'gr-id',
       guardrailVersion: '1',
       source: 'INPUT',
-      content: [{ text: { text: 'Dana Levi\nHaifa' } }],
+      content: [{ text: { text: 'Dana Levi' } }],
     });
     expect(countOf('breaker')).toBe(TEXT_CHECK_COST_MICRO_USD);
     expect(userWrites()[0].args[0].input.ExpressionAttributeValues).toMatchObject({
       ':display_name': 'Dana Levi',
-      ':city': 'Haifa',
-      ':city_lat': HAIFA.lat,
-      ':city_lng': HAIFA.lng,
+      ':city_id': HAIFA_ID,
     });
-    expect(bodyOf(result)).toMatchObject({ display_name: 'Dana Levi', city: 'Haifa' });
+    expect(bodyOf(result)).toMatchObject({ display_name: 'Dana Levi', city_id: HAIFA_ID });
+    noOutsideLookup();
   });
 
-  it('checks nothing and spends nothing when only the photo choice changes', async () => {
+  it('checks the name alone, even when a changed city comes with it', async () => {
+    const result = await handler(patch({ display_name: 'Dana Cohen', city_id: JERUSALEM_ID }));
+
+    expect(result.statusCode).toBe(200);
+    const checks = bedrockMock.commandCalls(ApplyGuardrailCommand);
+    expect(checks).toHaveLength(1);
+    expect(checks[0].args[0].input).toMatchObject({ content: [{ text: { text: 'Dana Cohen' } }] });
+    expect(countOf('profile_save#user-1')).toBe(1);
+  });
+
+  it('checks nothing and takes no allowance when only the city changes', async () => {
+    const result = await handler(patch({ city_id: JERUSALEM_ID }));
+
+    expect(result.statusCode).toBe(200);
+    expect(bodyOf(result)).toMatchObject({ city_id: JERUSALEM_ID });
+    expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
+    expect(countOf('profile_save#user-1')).toBe(0);
+    expect(countOf('breaker')).toBe(0);
+    expect(countOf('write_budget#user-1')).toBe(1);
+    noOutsideLookup();
+  });
+
+  it('lets more city-only saves than the daily limit of name saves through', async () => {
+    for (let n = 0; n <= PROFILE_SAVES_PER_DAY; n += 1) {
+      const result = await handler(patch({ city_id: n % 2 === 0 ? JERUSALEM_ID : HAIFA_ID }));
+      expect(result.statusCode).toBe(200);
+    }
+
+    expect(countOf('profile_save#user-1')).toBe(0);
+    expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
+  });
+
+  it('checks nothing and takes no allowance when only the photo choice changes', async () => {
     const result = await handler(patch({ show_google_photo: true }));
 
     expect(result.statusCode).toBe(200);
     expect(bodyOf(result)).toMatchObject({ show_google_photo: true });
     expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
-    expect(lookup).not.toHaveBeenCalled();
+    noOutsideLookup();
     expect(countOf('profile_save#user-1')).toBe(0);
     expect(countOf('write_budget#user-1')).toBe(1);
   });
 
-  it('keeps the stored centre when the city is the same and only the name changes', async () => {
+  it('checks nothing and takes no allowance when only the terms are accepted again', async () => {
+    fakeUsers(row({ terms_version: TERMS_VERSION - 1 }));
+
+    const result = await handler(patch({ accept_terms: true }));
+
+    expect(result.statusCode).toBe(200);
+    expect(bodyOf(result)).toMatchObject({ terms_accepted: true });
+    expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
+    expect(countOf('profile_save#user-1')).toBe(0);
+  });
+
+  it('checks the name when only the name changes', async () => {
     await handler(patch({ display_name: 'Dana Cohen' }));
 
-    expect(lookup).not.toHaveBeenCalled();
+    noOutsideLookup();
     expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(1);
   });
 });
@@ -695,17 +1018,13 @@ describe('PATCH /api/profile when the text is refused (PROF-06, PROF-09, D-62)',
     expect(countOf('profile_save#user-1')).toBe(1);
   });
 
-  it('answers CITY_NOT_FOUND, never runs the check, and the allowance stays spent', async () => {
-    lookup.mockResolvedValue(undefined);
+  it('a refused name saves nothing, not even the city that came with it (PROF-06, D-117)', async () => {
+    bedrockMock.on(ApplyGuardrailCommand).resolves({ action: 'GUARDRAIL_INTERVENED' });
 
-    const result = await handler(patch({ city: 'Atlantis' }));
+    const result = await handler(patch({ display_name: 'Rude Name', city_id: JERUSALEM_ID }));
 
     expect(result.statusCode).toBe(422);
-    expect(bodyOf(result)).toEqual({ code: 'CITY_NOT_FOUND' });
-    expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
     expect(userWrites()).toHaveLength(0);
-    expect(countOf('profile_save#user-1')).toBe(1);
-    expect(countOf('breaker')).toBe(0);
   });
 });
 
@@ -739,14 +1058,13 @@ describe('PATCH /api/profile when the check cannot run (PROF-07, D-62, R-05)', (
     }
   );
 
-  it('answers 503 and gives the allowance back when the geocoder is down (PROF-09)', async () => {
-    lookup.mockRejectedValue(new GeocoderUnavailable('down'));
+  it('does not need the check for a save that changes only the city: the breaker tripped changes nothing (PROF-10, D-117)', async () => {
+    trip();
 
-    const result = await handler(patch({ city: 'Eilat' }));
+    const result = await handler(patch({ city_id: JERUSALEM_ID }));
 
-    expect(result.statusCode).toBe(503);
-    expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
-    expect(countOf('profile_save#user-1')).toBe(0);
+    expect(result.statusCode).toBe(200);
+    expect(bodyOf(result)).toMatchObject({ city_id: JERUSALEM_ID });
   });
 });
 
