@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
 import { CITY_SUGGESTIONS_LIMIT } from '@constants/profile';
-import type { City } from '@schemas/city.schema';
-import { cityName, matchCities } from '../cities/city-name';
+import { matchCities } from '../cities/city-name';
+import type { CityName } from '../cities/city-names.schema';
 import { useCities } from '../cities/use-cities';
 import type { ProfileFormValues } from '../profile-form.types';
 
@@ -13,7 +12,6 @@ import type { ProfileFormValues } from '../profile-form.types';
  * it, which one is active, and the handlers. The form's value is the code of the place picked, or null.
  */
 export function useCityCombobox() {
-  const { i18n } = useTranslation();
   const { control, clearErrors } = useFormContext<ProfileFormValues>();
   const { field, fieldState } = useController({ name: 'cityId', control });
   const { data: cities = [], isError } = useCities();
@@ -23,12 +21,12 @@ export function useCityCombobox() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const picked = cities.find((city) => city.id === field.value);
-  const text = typed ?? (picked ? cityName(picked, i18n.language) : '');
+  const text = typed ?? picked?.name ?? '';
   const matches = typed === null ? [] : matchCities(cities, typed, CITY_SUGGESTIONS_LIMIT);
   const isListOpen = isOpen && matches.length > 0;
   const hasNoMatch = isOpen && typed !== null && typed.trim() !== '' && matches.length === 0;
 
-  const choose = (city: City) => {
+  const choose = (city: CityName) => {
     field.onChange(city.id);
     setTyped(null);
     setIsOpen(false);

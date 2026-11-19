@@ -45,20 +45,37 @@ vi.mock('@shared/auth/user-manager', async () => {
   return { userManager: fake, COGNITO_DOMAIN: domain };
 });
 
-// How often the app loads the list file, and whether that load fails (D-117: a chunk of its own, loaded on need)
-const listFile = vi.hoisted(() => ({ loads: 0, fails: false }));
-vi.mock('@constants/cities.json', async (importOriginal) => {
-  // The mock is cached across `vi.resetModules`, so a count of the factory would see only the first load:
-  // each read of the file's content counts instead.
-  const original = await importOriginal<{ default: unknown }>();
-  return {
+// How often the app loads the names file of each language, and which of them fail (D-117: one small file
+// per language, loaded on need). The mocks are cached across `vi.resetModules`, so a count of the factory
+// would see only the first load: each read of a file's content counts instead.
+const namesFile = vi.hoisted(() => {
+  const loads = new Map<string, number>();
+  const failing = new Set<string>();
+  const counted = (code: string, original: { default: unknown }) => ({
     get default() {
-      listFile.loads += 1;
-      if (listFile.fails) throw new Error('the list file could not be loaded');
+      loads.set(code, (loads.get(code) ?? 0) + 1);
+      if (failing.has(code)) throw new Error(`the names file of ${code} could not be loaded`);
       return original.default;
     },
-  };
+  });
+  return { loads, failing, counted };
 });
+vi.mock('@features/profile/cities/names/he.json', async (importOriginal) =>
+  namesFile.counted('he', await importOriginal<{ default: unknown }>())
+);
+vi.mock('@features/profile/cities/names/en.json', async (importOriginal) =>
+  namesFile.counted('en', await importOriginal<{ default: unknown }>())
+);
+vi.mock('@features/profile/cities/names/ar.json', async (importOriginal) =>
+  namesFile.counted('ar', await importOriginal<{ default: unknown }>())
+);
+vi.mock('@features/profile/cities/names/ru.json', async (importOriginal) =>
+  namesFile.counted('ru', await importOriginal<{ default: unknown }>())
+);
+
+const loadsOf = (code: string): number => namesFile.loads.get(code) ?? 0;
+/** The languages whose names file was loaded. */
+const loadedLanguages = (): string[] => LANGUAGE_CODES.filter((code) => loadsOf(code) > 0);
 
 const ORIGIN = 'https://app.example.test';
 const SETTLE_ROUNDS = 6;
@@ -101,8 +118,8 @@ function bodyOfRequest(init?: RequestInit): Record<string, unknown> {
 
 beforeEach(async () => {
   vi.resetModules();
-  listFile.loads = 0;
-  listFile.fails = false;
+  namesFile.loads.clear();
+  namesFile.failing.clear();
   const seam = await import('@shared/auth/user-manager');
   if (!isFake(seam.userManager)) throw new Error('the user-manager seam is not the fake');
   fakeUserManager = seam.userManager;
@@ -210,7 +227,7 @@ const listIsOpen = (): boolean => screen.queryByRole('listbox') !== null;
 
 /** What the list of FIRST-15 shows for `typed` in `code`, checked against the list file (D-117). */
 function expectListFor(typed: string, code: string): void {
-  const { listed, count } = expectedFor(typed);
+  const { listed, count } = expectedFor(typed, code);
   const shown = optionNames();
   expect(shown).toHaveLength(count);
   expect(shown.length).toBeLessThanOrEqual(CITY_SUGGESTIONS_LIMIT);
@@ -220,7 +237,7 @@ function expectListFor(typed: string, code: string): void {
 
 /** Whether the place an option shows has a Russian name on the list (the better-known places). */
 function optionHasRussianName(name: string, code: string, typed: string): boolean {
-  const { starting } = expectedFor(typed);
+  const { starting } = expectedFor(typed, code);
   const place = starting.find((city) => shownName(city, code) === name);
   if (place === undefined) throw new Error(`${name} does not start with ${typed}`);
   return place.ru !== undefined;
@@ -246,7 +263,7 @@ describe.each(FORMS)('the city box of the %s form, what it lists (FIRST-15, D-11
       expect(shown).toContain(shownName(cityById(TEL_AVIV_ID), code));
 
       const flags = shown
-        .slice(0, expectedFor(TYPED_IN[code]).starting.length)
+        .slice(0, expectedFor(TYPED_IN[code], code).starting.length)
         .map((name) => optionHasRussianName(name, code, TYPED_IN[code]));
       expect(flags.length).toBeGreaterThan(0);
       // no place without a Russian name stands before one that has it
@@ -268,7 +285,7 @@ describe.each(FORMS)('the city box of the %s form, what it lists (FIRST-15, D-11
   it('lists at most the limit of places, though more match', async () => {
     await openForm(form);
     await typeInCityBox('a');
-    expect(expectedFor('a').matching.length).toBeGreaterThan(CITY_SUGGESTIONS_LIMIT);
+    expect(expectedFor('a', ENGLISH_CODE).matching.length).toBeGreaterThan(CITY_SUGGESTIONS_LIMIT);
     expect(optionNames()).toHaveLength(CITY_SUGGESTIONS_LIMIT);
   });
 
@@ -279,12 +296,42 @@ describe.each(FORMS)('the city box of the %s form, what it lists (FIRST-15, D-11
     expectListFor('haifa', 'he');
   });
 
-  it('finds a place by its name in any of the four languages', async () => {
-    await openForm(form, 'en');
-    for (const typed of ['חיפה', 'حيفا', 'Хайфа', 'Haifa']) {
-      await typeInCityBox(typed);
-      expect(optionNames(), typed).toContain('Haifa');
-    }
+  // D-117: what is typed is compared with the name in the app's language and the English name only
+  it.each(LANGUAGE_CODES)('finds Haifa by its English name in the %s app', async (code) => {
+    await openForm(form, code);
+    // the edit form starts with Haifa in the box: change the text first so that typing it again is a change
+    await typeInCityBox('x', code);
+    await typeInCityBox('Haifa', code);
+    expect(optionNames()).toContain(shownName(cityById(HAIFA_ID), code));
+  });
+
+  it.each(LANGUAGE_CODES)('finds Haifa by its name in the language of the %s app', async (code) => {
+    await openForm(form, code);
+    const own = shownName(cityById(HAIFA_ID), code);
+    await typeInCityBox('x', code);
+    await typeInCityBox(own, code);
+    expect(optionNames()).toContain(own);
+  });
+
+  it.each([
+    ['en', 'חיפה'],
+    ['en', 'حيفا'],
+    ['en', 'Хайфа'],
+    ['he', 'حيفا'],
+    ['he', 'Хайфа'],
+    ['ar', 'חיפה'],
+    ['ar', 'Хайфа'],
+    ['ru', 'חיפה'],
+    ['ru', 'حيفا'],
+  ])('finds nothing for a name in another language: %s app, %s typed', async (code, typed) => {
+    expect(expectedFor(typed, code).matching).toHaveLength(0);
+    await openForm(form, code);
+    await typeInCityBox(typed, code);
+    expect(optionNames()).toEqual([]);
+    expect(listIsOpen()).toBe(false);
+    expect(screen.getAllByRole('status').map((node) => node.textContent.trim())).toContain(
+      text('firstrun.city.noMatch', code)
+    );
   });
 
   it('ignores case, Hebrew points and Arabic marks', async () => {
@@ -327,7 +374,7 @@ describe.each(FORMS)('the city box of the %s form, what it lists (FIRST-15, D-11
 
   it('shows what matches nothing as "No city matches" and lists no place', async () => {
     const typed = 'qqqzzzxxx';
-    expect(expectedFor(typed).matching).toHaveLength(0);
+    expect(expectedFor(typed, ENGLISH_CODE).matching).toHaveLength(0);
     await openForm(form);
     await typeInCityBox(typed);
     expect(optionNames()).toEqual([]);
@@ -579,33 +626,48 @@ function cityByEnglishName(name: string) {
   return found;
 }
 
-// ---- FIRST-15: the list file loads on need
+// ---- FIRST-15: the names file of the app's language loads on need
 
-describe('the city list file loads only for a screen that has the box (FIRST-15, ME-19, D-117)', () => {
-  it('is not loaded by the public pages or the signed-in home screen', async () => {
-    await renderAppAtPath(<App />, '/');
-    await settleScreen();
-    cleanup();
-    expect(listFile.loads).toBe(0);
+describe('the names file of the app language loads only for a screen that has the box (FIRST-15, ME-19, D-117)', () => {
+  it.each(LANGUAGE_CODES)(
+    'is not loaded by the public pages or the signed-in home screen, in %s',
+    async (code) => {
+      await renderAppAtPath(<App />, '/', code);
+      await settleScreen();
+      cleanup();
+      expect(loadedLanguages()).toEqual([]);
 
-    await open(MEMBER, ENGLISH_CODE, MEMBER_HOME_PATH);
-    expect(listFile.loads).toBe(0);
-  });
+      await open(MEMBER, code, MEMBER_HOME_PATH);
+      expect(loadedLanguages()).toEqual([]);
+    }
+  );
 
-  it.each(['sign-up', 'profile'])(
-    'is loaded when the %s screen opens, with no /api/ call for it',
-    async (screenName) => {
-      await open(screenName === 'sign-up' ? NEW_MEMBER : MEMBER);
-      expect(listFile.loads).toBeGreaterThan(0);
+  it.each(
+    LANGUAGE_CODES.flatMap((code) => [['sign-up', code] as const, ['profile', code] as const])
+  )(
+    'loads only the file of the language when the %s screen opens in %s, with no /api/ call for it',
+    async (screenName, code) => {
+      await open(screenName === 'sign-up' ? NEW_MEMBER : MEMBER, code);
+      expect(loadedLanguages()).toEqual([code]);
       const urls = fetchMock.mock.calls.map(([url]) => url);
       expect(urls.filter((url) => url.toLowerCase().includes('cit'))).toEqual([]);
     }
   );
 
+  it('loads the file of the other language when the language is switched, and keeps no other', async () => {
+    await openWithAllLanguages(MEMBER, ENGLISH_CODE);
+    expect(loadedLanguages()).toEqual([ENGLISH_CODE]);
+
+    await switchLanguage(ENGLISH_CODE, 'he');
+    expect(loadedLanguages().toSorted()).toEqual(['en', 'he']);
+    expect(loadsOf('ar')).toBe(0);
+    expect(loadsOf('ru')).toBe(0);
+  });
+
   it(
-    'says the profile is unavailable when the list file cannot be loaded',
+    'says the profile is unavailable when the names file cannot be loaded',
     async () => {
-      listFile.fails = true;
+      namesFile.failing.add(ENGLISH_CODE);
       await open(NEW_MEMBER);
       await typeInCityBox('tel');
       await waitFor(

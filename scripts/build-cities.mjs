@@ -1,11 +1,15 @@
 // Builds shared/constants/cities.json from the government's list of localities in Hebrew, English,
 // Arabic and Russian (data.gov.il, "יישובים ומדינות", National Digital Agency; D-117).
-// Run by hand when the list changes: `node scripts/build-cities.mjs`. The result is committed.
+// Run by hand when the list changes: `node scripts/build-cities.mjs`, then `npm run lint:fix` to
+// format the files. The results are committed.
 import { writeFileSync } from 'node:fs';
 
 const SOURCE =
   'https://data.gov.il/api/3/action/datastore_search?resource_id=e9701dcb-9f1c-43bb-bd44-eb380ade542f&limit=5000';
 const OUTPUT = new URL('../shared/constants/cities.json', import.meta.url);
+const NAMES_FOLDER = '../frontend/src/features/profile/cities/names/';
+// The app's languages (shared/constants/languages.ts).
+const LANGUAGES = ['he', 'en', 'ar', 'ru'];
 
 // Israeli Transverse Mercator (EPSG:2039, GRS80) to latitude and longitude, by Krueger's series.
 const A = 6378137;
@@ -88,5 +92,14 @@ const cities = result.records
   })
   .sort((a, b) => a.id - b.id);
 
-writeFileSync(OUTPUT, `[\n${cities.map((city) => `  ${JSON.stringify(city)}`).join(',\n')}\n]\n`);
+const lines = (rows) => `[\n${rows.map((row) => `  ${JSON.stringify(row)}`).join(',\n')}\n]\n`;
+writeFileSync(OUTPUT, lines(cities));
+
+// What a phone needs, one small file per language (D-117): [code, the name in that language (the
+// English one where the list has none), the English name (for typing in Latin letters), 1 when the
+// place has a Russian name in the list, which is how the better-known places are told apart].
+for (const language of LANGUAGES) {
+  const rows = cities.map((city) => [city.id, city[language] ?? city.en, city.en, city.ru ? 1 : 0]);
+  writeFileSync(new URL(`${NAMES_FOLDER}${language}.json`, import.meta.url), lines(rows));
+}
 console.log(`${cities.length} cities written`);

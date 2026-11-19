@@ -1,6 +1,5 @@
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
-import { cityName } from '../cities/city-name';
 import { FormMessage } from '../form-message/FormMessage';
 import { ProfileFieldFrame } from '../profile-field-frame/ProfileFieldFrame';
 import { ProfileTextBox } from '../profile-text-box/ProfileTextBox';
@@ -12,7 +11,7 @@ import { useCityCombobox } from './use-city-combobox';
  * four languages, and only a place the member chose from it counts. The form holds the place's code.
  */
 export function CityField() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const combobox = useCityCombobox();
   const id = useId();
   const listId = `${id}-list`;
@@ -83,7 +82,7 @@ export function CityField() {
                   combobox.choose(city);
                 }}
               >
-                {cityName(city, i18n.language)}
+                {city.name}
               </li>
             ))}
           </ul>

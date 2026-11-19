@@ -2,6 +2,7 @@
   "latitudeRange": { "min": 29, "max": 34 },
   "longitudeRange": { "min": 34, "max": 36 },
   "placesWithoutArabicName": [528],
+  "maxNamesFileBytes": 60000,
   "wellKnownPlaces": [
     {
       "id": 5000,

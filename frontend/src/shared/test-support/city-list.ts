@@ -30,8 +30,6 @@ export function shownName(city: City, code: string): string {
   return city.en;
 }
 
-const NAMES = ['he', 'en', 'ar', 'ru'] as const;
-
 /** Case, Hebrew points and Arabic marks, hyphens, apostrophes (also geresh and gershayim) and extra spaces do not matter. */
 const IGNORED = /[\p{M}'’‘`´ʼ׳"״]/gu;
 /** A hyphen or a dash counts as a space. */
@@ -40,7 +38,7 @@ const normalize = (text: string): string =>
   text.toLowerCase().replace(IGNORED, '').replace(DASHES, ' ').replace(/\s+/gu, ' ').trim();
 
 export interface Expected {
-  /** Places that match through any of their four names. */
+  /** Places that match through their name in the app's language or their English name. */
   matching: City[];
   /** Those among them with a name that starts with the text. */
   starting: City[];
@@ -53,13 +51,10 @@ export interface Expected {
 }
 
 /** What the box must list for `typed`, worked out from the list file and the rule of FIRST-15 and D-117. */
-export function expectedFor(typed: string): Expected {
+export function expectedFor(typed: string, code: string): Expected {
   const wanted = normalize(typed);
-  const namesOf = (city: City): string[] =>
-    NAMES.flatMap((language) => {
-      const name = city[language];
-      return name === undefined ? [] : [normalize(name)];
-    });
+  // Only the name in the app's language and the English name are compared (D-117), never the other two
+  const namesOf = (city: City): string[] => [normalize(shownName(city, code)), normalize(city.en)];
   const matching = CITIES.filter((city) => namesOf(city).some((name) => name.includes(wanted)));
   const starting = matching.filter((city) => namesOf(city).some((name) => name.startsWith(wanted)));
   // Names that start with the text come before names that only contain it; in each group the places that

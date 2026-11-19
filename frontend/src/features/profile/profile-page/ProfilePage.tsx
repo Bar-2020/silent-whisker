@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router';
 import { EditIcon } from '@shared/components/icon/EditIcon';
-import { cityName } from '../cities/city-name';
 import { useCities } from '../cities/use-cities';
 import { BannedAccountNotice } from '../banned-account-notice/BannedAccountNotice';
 import { DeleteAccountDialog } from '../delete-account-dialog/DeleteAccountDialog';
@@ -17,15 +16,14 @@ import { MEMBER_STATUS } from '@constants/member-status';
 
 /** Who the member is to everyone else, a way to change it, sign out, delete the account, and the support links. Stats and the admin group come with their own backend. */
 export function ProfilePage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { data: cities } = useCities();
   const { profile, hasGooglePhoto } = profileContextSchema.parse(useOutletContext());
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const banned = profile.status === MEMBER_STATUS.banned;
   const fullName = profile.display_name ?? '';
-  const city = cities?.find(({ id }) => id === profile.city_id);
-  const cityLabel = city ? cityName(city, i18n.language) : '';
+  const cityLabel = cities?.find(({ id }) => id === profile.city_id)?.name ?? '';
 
   return (
     <div className={styles.page}>
