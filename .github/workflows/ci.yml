@@ -131,7 +131,8 @@ jobs:
           aws s3 sync ../../frontend/dist "$SITE"
           ID=$(aws cloudfront create-invalidation --distribution-id "$DIST" --paths "/*" --query Invalidation.Id --output text)
           aws cloudfront wait invalidation-completed --distribution-id "$DIST" --id "$ID"
-          aws s3 sync ../../frontend/dist "$SITE" --delete
+          # cities/ is not part of the build: `npm run cities:upload` puts the city files there (D-117).
+          aws s3 sync ../../frontend/dist "$SITE" --delete --exclude "cities/*"
           echo "Live at $(terraform output -raw site_url)"
 
       # Under design/, the path CloudFront serves them from. Cached one second (infra/app/design.tf),

@@ -1,18 +1,21 @@
 import { fireEvent, screen } from '@testing-library/react';
 
+import { cityNamed } from './city-list';
+import settings from './city-test-settings.json';
 import { ENGLISH_CODE, getLocaleText } from './locale-texts';
 import { settleAsyncUpdates } from './settle-async-updates';
 
-import {
-  CITY_LIST_SETTLE_ROUNDS,
-  HAIFA_ID,
-  JERUSALEM_ID,
-  NO_ARABIC_OR_RUSSIAN_ID,
-  NO_RUSSIAN_ID,
-  TEL_AVIV_ID,
-} from '@constants/cities';
+/** Codes of places on the made-up list the tests use (`shared/__tests__/city-fixture.json`, D-117). */
+export const HAIFA_ID = cityNamed('Haifa').id;
+export const TEL_AVIV_ID = cityNamed('Tel Aviv - Yafo').id;
+export const JERUSALEM_ID = cityNamed('Jerusalem').id;
+/** A place with neither an Arabic nor a Russian name on the list: Uzeir. */
+export const NO_ARABIC_OR_RUSSIAN_ID = cityNamed('Uzeir').id;
+/** A place with an Arabic name and no Russian one on the list: Kiryat Ata. */
+export const NO_RUSSIAN_ID = cityNamed('Kiryat Ata').id;
 
-export { HAIFA_ID, JERUSALEM_ID, NO_ARABIC_OR_RUSSIAN_ID, NO_RUSSIAN_ID, TEL_AVIV_ID };
+/** The city file is fetched and read a macrotask or two after a screen with the box opens (D-117). */
+const CITY_LIST_SETTLE_ROUNDS = settings.settleRounds;
 
 /** The city box of the sign-up form or the edit form, found by its role and its label in `code` (FIRST-15, D-117). */
 export function cityBox(code = ENGLISH_CODE): HTMLInputElement {
@@ -21,7 +24,7 @@ export function cityBox(code = ENGLISH_CODE): HTMLInputElement {
   return found;
 }
 
-/** Types `query` in the city box and waits for the list file and its options. */
+/** Types `query` in the city box and waits for the city file and its options. */
 export async function typeInCityBox(query: string, code = ENGLISH_CODE): Promise<void> {
   fireEvent.change(cityBox(code), { target: { value: query } });
   await settleAsyncUpdates(CITY_LIST_SETTLE_ROUNDS);

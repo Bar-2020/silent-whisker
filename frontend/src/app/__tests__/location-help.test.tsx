@@ -13,6 +13,7 @@ import {
   restoreBrowserLocation,
 } from '@shared/test-support/geolocation-fakes';
 import { ENGLISH_CODE, getLocaleText, LANGUAGE_CODES } from '@shared/test-support/locale-texts';
+import { answerCityFile } from '@shared/test-support/city-files-fake';
 import { HAIFA_ID } from '@shared/test-support/pick-city';
 import { renderAppAtPath } from '@shared/test-support/render-app-in-memory-router';
 import { readCurrentPath } from '@shared/test-support/router-location';
@@ -88,7 +89,9 @@ beforeEach(async () => {
   browser = installBrowserLocation(withState('prompt'));
   profile = MEMBER;
   fetchMock.mockReset();
-  fetchMock.mockImplementation(() => Promise.resolve(jsonResponse(STATUS_OK, profile)));
+  fetchMock.mockImplementation((url) =>
+    Promise.resolve(answerCityFile(url) ?? jsonResponse(STATUS_OK, profile))
+  );
   vi.stubGlobal('fetch', fetchMock);
   replace.mockReset();
   vi.stubGlobal('location', { origin: ORIGIN, href: `${ORIGIN}/`, replace });

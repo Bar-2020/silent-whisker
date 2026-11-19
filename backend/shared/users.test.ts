@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vite-plus/test';
-import { HAIFA_ID } from '../../shared/constants/cities';
+import { fixtureCity } from '../../shared/__tests__/city-fixture';
 import { parseUserRow } from './users';
+
+// The code of a place on the made-up list (D-117)
+const HAIFA_ID = fixtureCity('Haifa').id;
 
 const FULL = {
   user_id: 'user-1',

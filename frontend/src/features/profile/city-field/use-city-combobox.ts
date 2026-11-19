@@ -3,7 +3,7 @@ import type { ChangeEvent, KeyboardEvent } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { CITY_SUGGESTIONS_LIMIT } from '@constants/profile';
 import { matchCities } from '../cities/city-name';
-import type { CityName } from '../cities/city-names.schema';
+import type { CityName } from '../cities/city-name.types';
 import { useCities } from '../cities/use-cities';
 import type { ProfileFormValues } from '../profile-form.types';
 

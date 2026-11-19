@@ -1,16 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { CITY_FILES_PATH } from '@constants/cities';
 import { DEFAULT_LANGUAGE } from '@constants/languages';
+import { cityNamesSchema } from '@schemas/city-names.schema';
 import { languageSchema } from '@shared/i18n/language.schema';
-import { cityNamesSchema } from './city-names.schema';
-import type { CityName } from './city-names.schema';
+import type { CityName } from './city-name.types';
 
-// One small file per language, loaded the first time a screen needs it; each is a chunk of its own (D-117).
-const loaders = import.meta.glob<{ default: unknown }>('./names/*.json');
-
+// One small file per language, fetched the first time a screen needs it (D-117): `/cities/<code>.json`
+// on the site, put there by `npm run cities:upload`, not part of the build.
 async function loadNames(language: string): Promise<CityName[]> {
-  const { default: names } = await loaders[`./names/${language}.json`]();
-  return cityNamesSchema.parse(names).map(([id, name, english, known]) => ({
+  const response = await fetch(`${CITY_FILES_PATH}/${language}.json`);
+  if (!response.ok) throw new Error(`The ${language} city file did not load`);
+  return cityNamesSchema.parse(await response.json()).map(([id, name, english, known]) => ({
     id,
     name,
     english,

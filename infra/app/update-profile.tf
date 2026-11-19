@@ -1,6 +1,6 @@
 # PATCH /api/profile (backend/update-profile/): checks the name on the spot (D-62), so its role also
 # reaches the daily counters, the cost alert topic and the text moderation guardrail. The city is a
-# code from a list in the code (D-117): no geocoder. A longer timeout than the others: an outside call.
+# code from the list of the site's bucket (D-117): no geocoder. A longer timeout than the others: an outside call.
 
 module "update_profile" {
   source             = "./modules/lambda"
@@ -15,6 +15,7 @@ module "update_profile" {
   environment = {
     USERS_TABLE       = aws_dynamodb_table.users.name
     COUNTERS_TABLE    = aws_dynamodb_table.daily_usage_counters.name
+    SITE_BUCKET       = aws_s3_bucket.site.bucket
     ALERT_TOPIC_ARN   = aws_sns_topic.cost_alerts.arn
     GUARDRAIL_ID      = aws_bedrock_guardrail.text_moderation.guardrail_id
     GUARDRAIL_VERSION = aws_bedrock_guardrail_version.text_moderation.version
@@ -31,6 +32,12 @@ module "update_profile" {
       Effect   = "Allow"
       Action   = ["dynamodb:UpdateItem", "dynamodb:PutItem"]
       Resource = aws_dynamodb_table.daily_usage_counters.arn
+    },
+    # The city list (D-117): one file of the site's bucket, to check the code of a picked city.
+    {
+      Effect   = "Allow"
+      Action   = "s3:GetObject"
+      Resource = "${aws_s3_bucket.site.arn}/cities/en.json"
     },
     {
       Effect   = "Allow"

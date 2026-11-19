@@ -1,4 +1,5 @@
 import { ConditionalCheckFailedException, DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { S3Client } from '@aws-sdk/client-s3';
 import { SNSClient } from '@aws-sdk/client-sns';
 import { DynamoDBDocumentClient, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import {
@@ -10,7 +11,7 @@ import {
 import { TERMS_VERSION } from '../../shared/constants/profile';
 import { profileUpdateSchema } from '../../shared/schemas/profile.schema';
 import type { ProfileUpdate } from '../../shared/schemas/profile.schema';
-import { findCity } from '../shared/cities';
+import { CityListUnavailable, isListedCity } from '../shared/cities';
 import { invalidInput, parseBody, Refusal, refuse, reply } from '../shared/api';
 import type { ApiEvent, ApiResult } from '../shared/api.types';
 import { readSettings } from '../shared/env';
@@ -35,6 +36,7 @@ import { MEMBER_STATUS } from '../../shared/constants/member-status';
 
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const sns = new SNSClient({});
+const s3 = new S3Client({});
 
 /** Everything one save needs: who, when, the settings, the stored row and what was asked. */
 interface ProfileSaveContext extends MemberDay {
@@ -63,9 +65,18 @@ function requireTermsAndTexts({ user, request }: ProfileSaveContext): void {
   }
 }
 
-/** A picked city must be on the list (D-117), refused before anything is spent. */
-function requireListedCity({ request }: ProfileSaveContext): void {
-  if (request.city_id !== undefined && !findCity(request.city_id)) throw invalidInput();
+/**
+ * A picked city must be on the list (D-117), refused before anything is spent. The list is a file
+ * of the site's bucket; when it cannot be read the save waits, like when the text check cannot run.
+ */
+async function requireListedCity({ request, settings, now }: ProfileSaveContext): Promise<void> {
+  if (request.city_id === undefined) return;
+  try {
+    if (!(await isListedCity(s3, settings.SITE_BUCKET, request.city_id, now))) throw invalidInput();
+  } catch (error) {
+    if (!(error instanceof CityListUnavailable)) throw error;
+    throw new Refusal(refuse(STATUS_UNAVAILABLE, 'CHECK_UNAVAILABLE'));
+  }
 }
 
 /** Only the city's code is stored; its position stays in the list. */
@@ -174,7 +185,7 @@ export async function handler(event: ApiEvent): Promise<ApiResult> {
       },
     };
     requireTermsAndTexts(context);
-    requireListedCity(context);
+    await requireListedCity(context);
     const saved = await withMemberLimit(
       context,
       WRITE_BUDGET,

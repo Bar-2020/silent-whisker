@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 
 import type { App as AppComponent } from '@app/App';
 import { ENGLISH_CODE, getLocaleText, LANGUAGE_CODES } from '@shared/test-support/locale-texts';
+import { answerCityFile } from '@shared/test-support/city-files-fake';
 import { HAIFA_ID, pickCity } from '@shared/test-support/pick-city';
 import { renderAppAtPath } from '@shared/test-support/render-app-in-memory-router';
 import { readCurrentPath } from '@shared/test-support/router-location';
@@ -64,7 +65,9 @@ beforeEach(async () => {
   localStorage.clear();
   profile = MEMBER;
   fetchMock.mockReset();
-  fetchMock.mockImplementation((_url, init) => {
+  fetchMock.mockImplementation((url, init) => {
+    const cityFile = answerCityFile(url);
+    if (cityFile !== undefined) return Promise.resolve(cityFile);
     if ((init?.method ?? 'GET').toUpperCase() === 'PATCH') {
       profile = MEMBER;
       return Promise.resolve(jsonResponse(STATUS_OK, MEMBER));

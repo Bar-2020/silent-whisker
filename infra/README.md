@@ -122,3 +122,11 @@ Two commands check every module without AWS, using `infra/iac-offline-checks.sh`
 - `npm run test:iac`: `terraform test`, which runs the `tests/` files against a mock AWS.
 
 They use their own working folder (`.terraform-check/`), so they never touch the real state.
+
+**6. The city list (D-117).** The app and the profile save read the list of places from the site's bucket (`cities/<code>.json`); it is not in the repository and nothing uploads it by itself. After the first deploy, once, and whenever the list should change, from a computer in Israel (the government source may refuse other countries), with the AWS login of this project:
+
+```
+AWS_PROFILE=silent-whisker npm run cities:upload
+```
+
+It finds the site bucket by name (or set `SITE_BUCKET`), refuses a list with fewer than 1,000 places or one that lacks a code of the list on the site, and uploads four files. Until it has run once no member can finish sign-up. `npm run cities:local` writes the same files to `frontend/public/cities/` for `npm run dev`. The deploy leaves the `cities/` folder alone.

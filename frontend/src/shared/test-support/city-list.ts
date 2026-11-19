@@ -1,24 +1,44 @@
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { z } from 'zod';
 
 import { CITY_SUGGESTIONS_LIMIT } from '@constants/profile';
-import { cityListSchema } from '@schemas/city.schema';
-import type { City } from '@schemas/city.schema';
 
 /**
- * The city list read from its file with `fs`, not imported: a test that counts when the app loads the
- * list file (a mock of `@constants/cities.json`) must not load it itself (D-117).
+ * The made-up city list the tests use (`shared/__tests__/city-fixture.json`, D-117): the real list is not in
+ * the repo, the app fetches a file per language. Read with `fs`, so the files the app is given and what a test
+ * expects come from one source that no app code reads.
  */
+const citySchema = z.object({
+  id: z.number().int().positive(),
+  he: z.string(),
+  en: z.string(),
+  ar: z.string().optional(),
+  ru: z.string().optional(),
+});
+export type City = z.infer<typeof citySchema>;
+
 const thisFolder = dirname(fileURLToPath(import.meta.url));
 
-export const CITIES: City[] = cityListSchema.parse(
-  JSON.parse(readFileSync(resolve(thisFolder, '../../../../shared/constants/cities.json'), 'utf8'))
-);
+export const CITIES: City[] = z
+  .array(citySchema)
+  .parse(
+    JSON.parse(
+      readFileSync(resolve(thisFolder, '../../../../shared/__tests__/city-fixture.json'), 'utf8')
+    )
+  );
 
 export const cityById = (id: number): City => {
   const found = CITIES.find((city) => city.id === id);
   if (found === undefined) throw new Error(`no city ${String(id)} on the list`);
+  return found;
+};
+
+/** A place by its English name. */
+export const cityNamed = (english: string): City => {
+  const found = CITIES.find((city) => city.en === english);
+  if (found === undefined) throw new Error(`no city ${english} on the list`);
   return found;
 };
 
@@ -30,9 +50,12 @@ export function shownName(city: City, code: string): string {
   return city.en;
 }
 
-/** Case, Hebrew points and Arabic marks, hyphens, apostrophes (also geresh and gershayim) and extra spaces do not matter. */
+/** What `/cities/<code>.json` holds: a row [code, name, English name, 1 for a place with a Russian name, else 0] per place. */
+export const rowsFor = (code: string): [number, string, string, number][] =>
+  CITIES.map((city) => [city.id, shownName(city, code), city.en, city.ru === undefined ? 0 : 1]);
+
+/** Case, Hebrew points and Arabic marks, apostrophes (also geresh and gershayim) and extra spaces do not matter; a hyphen is a space. */
 const IGNORED = /[\p{M}'’‘`´ʼ׳"״]/gu;
-/** A hyphen or a dash counts as a space. */
 const DASHES = /[-‐-―־]/gu;
 const normalize = (text: string): string =>
   text.toLowerCase().replace(IGNORED, '').replace(DASHES, ' ').replace(/\s+/gu, ' ').trim();
@@ -50,7 +73,7 @@ export interface Expected {
   count: number;
 }
 
-/** What the box must list for `typed`, worked out from the list file and the rule of FIRST-15 and D-117. */
+/** What the box must list for `typed` in the app language `code`, worked out from the list and the rule of FIRST-15 and D-117. */
 export function expectedFor(typed: string, code: string): Expected {
   const wanted = normalize(typed);
   // Only the name in the app's language and the English name are compared (D-117), never the other two

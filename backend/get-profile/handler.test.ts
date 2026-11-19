@@ -7,7 +7,7 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
-import { HAIFA_ID } from '../../shared/constants/cities';
+import { fixtureCity } from '../../shared/__tests__/city-fixture';
 import { TERMS_VERSION } from '../../shared/constants/profile';
 import { handler } from './handler';
 import type { ApiEvent as ProfileEvent } from '../shared/api.types';
@@ -16,6 +16,8 @@ import type { UserRow } from '../shared/schemas/user-row.schema';
 const dbMock = mockClient(DynamoDBDocumentClient);
 
 const USERS = 'users';
+// The code of a place on the made-up list (D-117)
+const HAIFA_ID = fixtureCity('Haifa').id;
 const NOW = new Date('2026-10-28T12:00:00Z');
 const PHOTO = 'https://lh3.googleusercontent.com/a/photo=s96-c';
 

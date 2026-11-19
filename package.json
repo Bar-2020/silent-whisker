@@ -26,7 +26,9 @@
     "test:iac": "bash infra/iac-offline-checks.sh test",
     "build": "npm run build -w silent-whisker-frontend && npm run build:backend",
     "build:backend": "vp pack",
-    "design": "node design/serve.mjs"
+    "design": "node design/serve.mjs",
+    "cities:upload": "node scripts/build-cities.ts --upload",
+    "cities:local": "node scripts/build-cities.ts --local"
   },
   "devDependencies": {
     "@testing-library/react": "16.3.3",
@@ -37,5 +39,8 @@
     "stylelint": "17.16.0",
     "typescript": "~6.0.3",
     "vite-plus": "1.2.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "3.1147.0"
   }
 }

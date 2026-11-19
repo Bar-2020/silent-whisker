@@ -32,6 +32,7 @@ import {
   UNRELATED_STORAGE_KEY,
   UNRELATED_STORAGE_VALUE,
 } from '@shared/test-support/sign-in-fakes';
+import { answerCityFile } from '@shared/test-support/city-files-fake';
 import auth from '@constants/auth.json';
 import { MS_PER_SECOND } from '@constants/cost';
 import { INSTALL_STEP_DONE_STORAGE_KEY } from '@constants/first-run';
@@ -103,7 +104,11 @@ beforeEach(async () => {
   localStorage.setItem(INSTALL_STEP_DONE_STORAGE_KEY, 'true');
   fetchMock.mockReset();
   fetchMock.mockImplementation(() => Promise.resolve(jsonResponse(STATUS_OK, PROFILE)));
-  vi.stubGlobal('fetch', fetchMock);
+  // The Profile page also fetches the site's city file (D-117): that is not a call of the API this test counts
+  vi.stubGlobal('fetch', (url: string, init?: RequestInit) => {
+    const cityFile = answerCityFile(url);
+    return cityFile === undefined ? fetchMock(url, init) : Promise.resolve(cityFile);
+  });
   replace.mockReset();
   vi.stubGlobal('location', { origin: ORIGIN, href: `${ORIGIN}/`, replace });
   allTimersFaked = false;

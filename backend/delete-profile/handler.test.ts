@@ -14,7 +14,7 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
-import { HAIFA_ID } from '../../shared/constants/cities';
+import { fixtureCity } from '../../shared/__tests__/city-fixture';
 import { TERMS_VERSION } from '../../shared/constants/profile';
 import { handler as getProfile } from '../get-profile/handler';
 import type { ApiEvent } from '../shared/api.types';
@@ -26,6 +26,8 @@ const dbMock = mockClient(DynamoDBDocumentClient);
 const cognitoMock = mockClient(CognitoIdentityProviderClient);
 
 const USERS = 'users';
+// The code of a place on the made-up list (D-117)
+const HAIFA_ID = fixtureCity('Haifa').id;
 const COUNTERS = 'daily_usage_counters';
 const POOL = 'eu-north-1_pool';
 const NOW = new Date('2026-11-15T12:00:00Z');
@@ -189,6 +191,7 @@ function fakeDatabase(): void {
 // The settings update-profile needs; the delete itself needs only USERS_TABLE and USER_POOL_ID.
 const UPDATE_PROFILE_SETTINGS = {
   COUNTERS_TABLE: COUNTERS,
+  SITE_BUCKET: 'site-bucket',
   ALERT_TOPIC_ARN: 'arn:aws:sns:eu-north-1:123456789012:alerts-delete-test',
   GUARDRAIL_ID: 'gr-id',
   GUARDRAIL_VERSION: '1',

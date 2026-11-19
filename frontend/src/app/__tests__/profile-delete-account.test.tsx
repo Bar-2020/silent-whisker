@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import type { App as AppComponent } from '@app/App';
 import { installDialogMethods, pressEscapeIn } from '@shared/test-support/dialog-methods';
 import { ENGLISH_CODE, getLocaleText, LANGUAGE_CODES } from '@shared/test-support/locale-texts';
+import { answerCityFile, isCityFileUrl } from '@shared/test-support/city-files-fake';
 import { HAIFA_ID } from '@shared/test-support/pick-city';
 import { renderAppAtPath } from '@shared/test-support/render-app-in-memory-router';
 import { settleAsyncUpdates } from '@shared/test-support/settle-async-updates';
@@ -81,7 +82,7 @@ const methodOf = (init?: RequestInit): string => (init?.method ?? 'GET').toUpper
 type Call = [url: string, init?: RequestInit];
 
 const callsOf = (method: string): Call[] =>
-  fetchMock.mock.calls.filter(([, init]) => methodOf(init) === method);
+  fetchMock.mock.calls.filter(([url, init]) => methodOf(init) === method && !isCityFileUrl(url));
 const deleteCalls = (): Call[] => callsOf('DELETE');
 
 const bodySchema = z.record(z.string(), z.unknown());
@@ -111,6 +112,8 @@ beforeEach(async () => {
   deleteQueue = [];
   fetchMock.mockReset();
   fetchMock.mockImplementation((url, init) => {
+    const cityFile = answerCityFile(url);
+    if (cityFile !== undefined) return Promise.resolve(cityFile);
     if (methodOf(init) !== 'DELETE') return Promise.resolve(jsonResponse(STATUS_OK, profile));
     const next = deleteQueue.shift();
     if (next !== undefined) return next();

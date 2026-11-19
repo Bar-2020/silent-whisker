@@ -1,12 +1,14 @@
 import { ApplyGuardrailCommand, BedrockRuntimeClient } from '@aws-sdk/client-bedrock-runtime';
 import { ConditionalCheckFailedException } from '@aws-sdk/client-dynamodb';
+import { GetObjectCommand, NoSuchKey, S3Client } from '@aws-sdk/client-s3';
+import type { GetObjectCommandOutput } from '@aws-sdk/client-s3';
 import { SNSClient } from '@aws-sdk/client-sns';
 import { DynamoDBDocumentClient, GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
-import { cityListSchema } from '../../shared/schemas/city.schema';
-import cityFile from '../../shared/constants/cities.json';
-import { HAIFA_ID, JERUSALEM_ID } from '../../shared/constants/cities';
+import { fixtureCity, fixtureRows } from '../../shared/__tests__/city-fixture';
+import { CITY_CODES_CACHE_SECONDS, CITY_FILES_FOLDER } from '../../shared/constants/cities';
+import { MS_PER_SECOND } from '../../shared/constants/cost';
 import { BREAKER_DAILY_MICRO_USD, TEXT_CHECK_COST_MICRO_USD } from '../../shared/constants/cost';
 import { WRITES_PER_DAY } from '../../shared/constants/limits';
 import {
@@ -18,19 +20,43 @@ import {
 } from '../../shared/constants/profile';
 import type { ApiEvent } from '../shared/api.types';
 import type { UserRow } from '../shared/schemas/user-row.schema';
-import { handler } from './handler';
+import type { handler as handlerOfModule } from './handler';
 
 const dbMock = mockClient(DynamoDBDocumentClient);
 const bedrockMock = mockClient(BedrockRuntimeClient);
 const snsMock = mockClient(SNSClient);
+const s3Mock = mockClient(S3Client);
 
 const USERS = 'users';
 const COUNTERS = 'daily_usage_counters';
+const SITE_BUCKET = 'site-bucket';
 const NOW = new Date('2026-10-30T12:00:00Z');
 const DAY = '2026-10-30';
 
-const CITY_IDS = new Set(cityListSchema.parse(cityFile).map((city) => city.id));
-const ID_NOT_ON_THE_LIST = Math.max(...CITY_IDS) + 1;
+// The made-up list in S3 (D-117): the codes of `cities/en.json` of the site's bucket
+const HAIFA_ID = fixtureCity('Haifa').id;
+const JERUSALEM_ID = fixtureCity('Jerusalem').id;
+const LISTED_IDS = new Set(fixtureRows('en').map(([id]) => id));
+const ID_NOT_ON_THE_LIST = Math.max(...LISTED_IDS) + 1;
+const CITY_FILE_KEY = `${CITY_FILES_FOLDER}/en.json`;
+const CACHE_MS = CITY_CODES_CACHE_SECONDS * MS_PER_SECOND;
+
+/** The list is module state of the function (kept for an hour): each test loads the handler afresh. */
+let handler: typeof handlerOfModule;
+
+/** The body of a `GetObject` answer: the SDK's stream, of which the code reads the text. */
+const bodyOfFile = (text: string): GetObjectCommandOutput['Body'] =>
+  ({ transformToString: () => Promise.resolve(text) }) as unknown as GetObjectCommandOutput['Body'];
+
+/** The list in S3 as the upload makes it: rows of [code, name, English name, 0 or 1]. */
+const fileOfList = (rows: unknown = fixtureRows('en')): string => JSON.stringify(rows);
+
+function listInS3(text: string = fileOfList()): void {
+  s3Mock.reset();
+  s3Mock.on(GetObjectCommand).resolves({ Body: bodyOfFile(text) });
+}
+
+const listReads = () => s3Mock.commandCalls(GetObjectCommand);
 
 const conditionFailed = () =>
   new ConditionalCheckFailedException({ message: 'The conditional request failed', $metadata: {} });
@@ -113,15 +139,22 @@ const fetchSpy = vi.fn();
 /** D-117: the route calls no geocoder: no request leaves for one and no `geocode_cache` row is read or written. */
 const noOutsideLookup = () => {
   expect(fetchSpy).not.toHaveBeenCalled();
+  // the city list is read from the site's bucket only, never anything else of it
+  for (const read of listReads()) {
+    expect(read.args[0].input).toEqual({ Bucket: SITE_BUCKET, Key: CITY_FILE_KEY });
+  }
   const tables = dbMock.calls().map((call) => JSON.stringify(call.args[0].input));
   expect(tables.some((input) => input.includes('geocode'))).toBe(false);
 };
 
-beforeEach(() => {
+beforeEach(async () => {
+  vi.resetModules();
+  ({ handler } = await import('./handler'));
   counters.clear();
   dbMock.reset();
   bedrockMock.reset();
   snsMock.reset();
+  listInS3();
   fetchSpy.mockReset();
   vi.stubGlobal('fetch', fetchSpy);
   vi.useFakeTimers({ toFake: ['Date'] });
@@ -129,6 +162,7 @@ beforeEach(() => {
   topicCount += 1;
   process.env.USERS_TABLE = USERS;
   process.env.COUNTERS_TABLE = COUNTERS;
+  process.env.SITE_BUCKET = SITE_BUCKET;
   process.env.ALERT_TOPIC_ARN = `arn:aws:sns:eu-north-1:123456789012:alerts-${String(topicCount)}`;
   process.env.GUARDRAIL_ID = 'gr-id';
   process.env.GUARDRAIL_VERSION = '1';
@@ -575,9 +609,23 @@ describe('PATCH /api/profile and the city list (PROF-09, D-117)', () => {
   });
 
   it('knows the places the tests rely on', () => {
-    expect(CITY_IDS.has(HAIFA_ID)).toBe(true);
-    expect(CITY_IDS.has(JERUSALEM_ID)).toBe(true);
-    expect(CITY_IDS.has(ID_NOT_ON_THE_LIST)).toBe(false);
+    expect(LISTED_IDS.has(HAIFA_ID)).toBe(true);
+    expect(LISTED_IDS.has(JERUSALEM_ID)).toBe(true);
+    expect(LISTED_IDS.has(ID_NOT_ON_THE_LIST)).toBe(false);
+  });
+
+  it('reads the list from cities/en.json of the site bucket, once for a save with a city_id', async () => {
+    await handler(patch({ city_id: JERUSALEM_ID }));
+
+    expect(listReads()).toHaveLength(1);
+    expect(listReads()[0].args[0].input).toEqual({ Bucket: SITE_BUCKET, Key: CITY_FILE_KEY });
+  });
+
+  it('does not read the list at all for a save without a city_id', async () => {
+    await handler(patch({ display_name: 'Dana Cohen' }));
+    await handler(patch({ show_google_photo: true }));
+
+    expect(listReads()).toHaveLength(0);
   });
 
   it('saves a code that is on the list as city_id and nothing else about the city, with no outside lookup', async () => {
@@ -666,6 +714,134 @@ describe('PATCH /api/profile and the city list (PROF-09, D-117)', () => {
     expect(written).not.toContain('city');
     expect(bodyOf(result)).not.toHaveProperty('city');
     noOutsideLookup();
+  });
+});
+
+describe('PATCH /api/profile and the list in S3, read, kept and not readable (PROF-36, D-117)', () => {
+  const save = (city_id = JERUSALEM_ID) => handler(patch({ city_id }));
+
+  const expectUnavailable = (result: { statusCode: number; body: string }): void => {
+    expect(result.statusCode).toBe(503);
+    expect(bodyOf(result)).toEqual({ code: 'CHECK_UNAVAILABLE' });
+    expect(userWrites()).toHaveLength(0);
+    // nothing spent: no write unit, no save allowance, no check
+    expect(counters.size).toBe(0);
+    expect(bedrockMock.commandCalls(ApplyGuardrailCommand)).toHaveLength(0);
+  };
+
+  beforeEach(() => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+  });
+
+  it('serves two saves in a row with one read', async () => {
+    expect((await save()).statusCode).toBe(200);
+    expect((await save(HAIFA_ID)).statusCode).toBe(200);
+
+    expect(listReads()).toHaveLength(1);
+  });
+
+  it('serves the saves of an hour with one read and reads again after the hour', async () => {
+    await save();
+    vi.setSystemTime(new Date(NOW.getTime() + CACHE_MS - 1));
+    await save(HAIFA_ID);
+    expect(listReads()).toHaveLength(1);
+
+    vi.setSystemTime(new Date(NOW.getTime() + CACHE_MS + 1));
+    expect((await save()).statusCode).toBe(200);
+    expect(listReads()).toHaveLength(2);
+  });
+
+  it('reads the list again after the hour: a code taken off the list is then refused', async () => {
+    expect((await save(HAIFA_ID)).statusCode).toBe(200);
+    listInS3(fileOfList(fixtureRows('en').filter(([id]) => id !== HAIFA_ID)));
+
+    // still kept: the old list answers
+    expect((await save(HAIFA_ID)).statusCode).toBe(200);
+    vi.setSystemTime(new Date(NOW.getTime() + CACHE_MS + 1));
+    const result = await save(HAIFA_ID);
+
+    expect(result.statusCode).toBe(400);
+    expect(bodyOf(result)).toEqual({ code: 'INVALID_INPUT' });
+  });
+
+  it.each([
+    [
+      'a missing file',
+      () =>
+        s3Mock.on(GetObjectCommand).rejects(new NoSuchKey({ message: 'no key', $metadata: {} })),
+    ],
+    ['an S3 error', () => s3Mock.on(GetObjectCommand).rejects(new Error('S3 is down'))],
+    [
+      'a file that is not JSON',
+      () => {
+        listInS3('not json');
+      },
+    ],
+    [
+      'a file that is not rows',
+      () => {
+        listInS3(fileOfList({ a: 1 }));
+      },
+    ],
+    [
+      'rows of the wrong shape',
+      () => {
+        listInS3(fileOfList([['Haifa', 1]]));
+      },
+    ],
+    [
+      'an empty body',
+      () => {
+        listInS3('');
+      },
+    ],
+  ])('answers 503 CHECK_UNAVAILABLE and spends nothing for %s', async (_name, arrange) => {
+    s3Mock.reset();
+    arrange();
+
+    expectUnavailable(await save());
+  });
+
+  it('does not remember a failure: the next save works once the file is there', async () => {
+    s3Mock.reset();
+    s3Mock.on(GetObjectCommand).rejects(new Error('S3 is down'));
+    expectUnavailable(await save());
+    expectUnavailable(await save());
+    expect(listReads()).toHaveLength(2);
+
+    listInS3();
+    const result = await save();
+
+    expect(result.statusCode).toBe(200);
+    expect(bodyOf(result)).toMatchObject({ city_id: JERUSALEM_ID });
+    expect(listReads()).toHaveLength(1);
+  });
+
+  it('does not remember an invalid file either', async () => {
+    listInS3('not json');
+    expectUnavailable(await save());
+
+    listInS3();
+
+    expect((await save()).statusCode).toBe(200);
+  });
+
+  it('is not needed by a save that has no city_id: it works with the list unreadable', async () => {
+    s3Mock.reset();
+    s3Mock.on(GetObjectCommand).rejects(new Error('S3 is down'));
+
+    const result = await handler(patch({ display_name: 'Dana Cohen' }));
+
+    expect(result.statusCode).toBe(200);
+    expect(listReads()).toHaveLength(0);
+  });
+
+  it('refuses a code that is not on the list with INVALID_INPUT, not 503, when the list is readable', async () => {
+    const result = await save(ID_NOT_ON_THE_LIST);
+
+    expect(result.statusCode).toBe(400);
+    expect(bodyOf(result)).toEqual({ code: 'INVALID_INPUT' });
+    expect(counters.size).toBe(0);
   });
 });
 

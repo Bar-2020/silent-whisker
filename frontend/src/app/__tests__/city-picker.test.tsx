@@ -7,6 +7,13 @@ import { z } from 'zod';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
 import type { App as AppComponent } from '@app/App';
+import {
+  answerCityFile,
+  breakCityFile,
+  cityFilesRequested,
+  isCityFileUrl,
+  resetCityFiles,
+} from '@shared/test-support/city-files-fake';
 import { CITIES, cityById, expectedFor, shownName } from '@shared/test-support/city-list';
 import { installDialogMethods } from '@shared/test-support/dialog-methods';
 import {
@@ -35,7 +42,8 @@ import {
   INSTALL_STEP_DONE_STORAGE_KEY,
   LOCATION_STEP_DONE_STORAGE_KEY,
 } from '@constants/first-run';
-import { STATUS_OK } from '@constants/http';
+import { CITY_FILES_PATH } from '@constants/cities';
+import { API_PATH_PREFIX, STATUS_OK } from '@constants/http';
 import { CITY_SUGGESTIONS_LIMIT } from '@constants/profile';
 import { MEMBER_HOME_PATH } from '@constants/routes';
 
@@ -45,37 +53,10 @@ vi.mock('@shared/auth/user-manager', async () => {
   return { userManager: fake, COGNITO_DOMAIN: domain };
 });
 
-// How often the app loads the names file of each language, and which of them fail (D-117: one small file
-// per language, loaded on need). The mocks are cached across `vi.resetModules`, so a count of the factory
-// would see only the first load: each read of a file's content counts instead.
-const namesFile = vi.hoisted(() => {
-  const loads = new Map<string, number>();
-  const failing = new Set<string>();
-  const counted = (code: string, original: { default: unknown }) => ({
-    get default() {
-      loads.set(code, (loads.get(code) ?? 0) + 1);
-      if (failing.has(code)) throw new Error(`the names file of ${code} could not be loaded`);
-      return original.default;
-    },
-  });
-  return { loads, failing, counted };
-});
-vi.mock('@features/profile/cities/names/he.json', async (importOriginal) =>
-  namesFile.counted('he', await importOriginal<{ default: unknown }>())
-);
-vi.mock('@features/profile/cities/names/en.json', async (importOriginal) =>
-  namesFile.counted('en', await importOriginal<{ default: unknown }>())
-);
-vi.mock('@features/profile/cities/names/ar.json', async (importOriginal) =>
-  namesFile.counted('ar', await importOriginal<{ default: unknown }>())
-);
-vi.mock('@features/profile/cities/names/ru.json', async (importOriginal) =>
-  namesFile.counted('ru', await importOriginal<{ default: unknown }>())
-);
-
-const loadsOf = (code: string): number => namesFile.loads.get(code) ?? 0;
-/** The languages whose names file was loaded. */
-const loadedLanguages = (): string[] => LANGUAGE_CODES.filter((code) => loadsOf(code) > 0);
+// D-117: the app fetches `/cities/<code>.json` of the language it shows, when a screen needs it; the
+// requests are counted by the fake of the site's city files (`answerCityFile`).
+const loadedLanguages = (): string[] => [...new Set(cityFilesRequested())];
+const loadsOf = (code: string): number => cityFilesRequested().filter((one) => one === code).length;
 
 const ORIGIN = 'https://app.example.test';
 const SETTLE_ROUNDS = 6;
@@ -118,8 +99,7 @@ function bodyOfRequest(init?: RequestInit): Record<string, unknown> {
 
 beforeEach(async () => {
   vi.resetModules();
-  namesFile.loads.clear();
-  namesFile.failing.clear();
+  resetCityFiles();
   const seam = await import('@shared/auth/user-manager');
   if (!isFake(seam.userManager)) throw new Error('the user-manager seam is not the fake');
   fakeUserManager = seam.userManager;
@@ -137,6 +117,8 @@ beforeEach(async () => {
     if (locale !== undefined) {
       return Promise.resolve(jsonResponse(STATUS_OK, getLocaleMessages(locale)));
     }
+    const cityFile = answerCityFile(url);
+    if (cityFile !== undefined) return Promise.resolve(cityFile);
     if (methodOf(init) !== 'PATCH') return Promise.resolve(jsonResponse(STATUS_OK, profile));
     const sent = bodyOfRequest(init);
     const saved = {
@@ -162,8 +144,9 @@ afterEach(() => {
 
 const text = (key: string, code = ENGLISH_CODE): string => getLocaleText(code, key);
 const settleScreen = (): Promise<void> => settleAsyncUpdates(SETTLE_ROUNDS);
+/** The calls of the profile API: the city files are fetched with GET too and are not counted. */
 const callsOf = (method: string) =>
-  fetchMock.mock.calls.filter(([, init]) => methodOf(init) === method);
+  fetchMock.mock.calls.filter(([url, init]) => methodOf(init) === method && !isCityFileUrl(url));
 
 async function open(
   answerWith: ProfileResponse,
@@ -649,8 +632,13 @@ describe('the names file of the app language loads only for a screen that has th
     async (screenName, code) => {
       await open(screenName === 'sign-up' ? NEW_MEMBER : MEMBER, code);
       expect(loadedLanguages()).toEqual([code]);
-      const urls = fetchMock.mock.calls.map(([url]) => url);
-      expect(urls.filter((url) => url.toLowerCase().includes('cit'))).toEqual([]);
+      // a plain fetch of the site's file, not a call of the API
+      const cityUrls = fetchMock.mock.calls.map(([url]) => url).filter(isCityFileUrl);
+      expect(cityUrls.length).toBeGreaterThan(0);
+      for (const url of cityUrls) {
+        expect(url).toBe(`${CITY_FILES_PATH}/${code}.json`);
+        expect(url.startsWith(API_PATH_PREFIX)).toBe(false);
+      }
     }
   );
 
@@ -664,10 +652,13 @@ describe('the names file of the app language loads only for a screen that has th
     expect(loadsOf('ru')).toBe(0);
   });
 
-  it(
-    'says the profile is unavailable when the names file cannot be loaded',
-    async () => {
-      namesFile.failing.add(ENGLISH_CODE);
+  it.each([
+    ['is not on the site (404)', 'missing' as const],
+    ['holds rows of the wrong shape', 'invalid' as const],
+  ])(
+    'says the profile is unavailable when the city file %s',
+    async (_name, fault) => {
+      breakCityFile(ENGLISH_CODE, fault);
       await open(NEW_MEMBER);
       await typeInCityBox('tel');
       await waitFor(
@@ -680,6 +671,14 @@ describe('the names file of the app language loads only for a screen that has th
     },
     FAILED_LOAD_TEST_TIMEOUT_MS
   );
+
+  it('is not stopped by a broken file of another language', async () => {
+    // a broken English file does not stop the Hebrew app
+    breakCityFile(ENGLISH_CODE, 'missing');
+    await openForm('sign-up', 'he');
+    await typeInCityBox('חיפה', 'he');
+    expect(optionNames()).toContain(shownName(cityById(HAIFA_ID), 'he'));
+  });
 });
 
 // ---- ME-19: the city line of Profile

@@ -1,4 +1,4 @@
-import type { CityName } from './city-names.schema';
+import type { CityName } from './city-name.types';
 
 /** Lower case, without marks (Hebrew points, Arabic vowels, accents) or apostrophes, and a hyphen is a space: what a search compares. */
 const searchable = (text: string): string =>

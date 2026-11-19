@@ -21,7 +21,7 @@ import {
   STATUS_UNPROCESSABLE,
 } from '@constants/http';
 import type { ProfileResponse, ProfileUpdate } from '@schemas/profile.schema';
-import { HAIFA_ID } from '@constants/cities';
+import { HAIFA_ID } from '@shared/test-support/pick-city';
 import {
   PROFILE_NAME_BLOCKED_WORDS,
   PROFILE_NAME_MAX_LENGTH,

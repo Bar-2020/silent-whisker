@@ -1,11 +1,11 @@
-/** Codes on the city list (`cities.json`, D-117) that the tests refer to by name. */
-export const HAIFA_ID = 4000;
-export const TEL_AVIV_ID = 5000;
-export const JERUSALEM_ID = 3000;
-/** A place with neither an Arabic nor a Russian name on the list: Uzeir. */
-export const NO_ARABIC_OR_RUSSIAN_ID = 528;
-/** A place with an Arabic name and no Russian one on the list: I'billin. */
-export const NO_RUSSIAN_ID = 529;
+/** Where the app reads the city files: one per language, `<code>.json`, on the site (D-117). */
+export const CITY_FILES_PATH = '/cities';
 
-/** The list file loads in a chunk of its own, a macrotask or two after a screen with the box opens. */
-export const CITY_LIST_SETTLE_ROUNDS = 6;
+/** The same folder as a key prefix in the site's S3 bucket, where `npm run cities:upload` puts the files. */
+export const CITY_FILES_FOLDER = 'cities';
+
+/** A new list with fewer places is refused: the source is plausibly broken, and the list on the site stays (D-117). */
+export const CITY_LIST_MIN_PLACES = 1000;
+
+/** How long a running profile function keeps the codes it read from S3 before reading them again (D-117). */
+export const CITY_CODES_CACHE_SECONDS = 3600;
